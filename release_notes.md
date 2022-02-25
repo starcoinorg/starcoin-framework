@@ -1,4 +1,4 @@
-# Starcoin Stdlib Release Notes
+# Starcoin Move Framework Release Notes
 
 ## Version 1
 
