@@ -190,7 +190,7 @@ function install_mpm {
   VERSION="$(mpm --version || true)"
     if [ -n "$VERSION" ]; then
   	  if [[ "${BATCH_MODE}" == "false" ]]; then
-        echo "Rustup is already installed, version: $VERSION"
+        echo "mpm is already installed, version: $VERSION"
       fi
     else
       # install from source
@@ -473,8 +473,6 @@ if [[ "$INSTALL_BUILD_TOOLS" == "true" ]]; then
   install_pkg clang "$PACKAGE_MANAGER"
   install_pkg llvm "$PACKAGE_MANAGER"
 
-  install_gcc_powerpc_linux_gnu "$PACKAGE_MANAGER"
-  install_openssl_dev "$PACKAGE_MANAGER"
   install_pkg_config "$PACKAGE_MANAGER"
 
   install_rustup "$BATCH_MODE"
