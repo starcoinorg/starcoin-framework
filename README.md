@@ -3,11 +3,10 @@
 
 ## Build and Test
 
-Install `mpm` first, download from the release page of [starcoiorg/starcoin](https://github.com/starcoinorg/starcoin).
+Setup dev environment:
 
-Or use:
 ```bash
-cargo install --git https://github.com/starcoinorg/starcoin --bin mpm
+bash scripts/dev_setup.sh -t -y
 ```
 
 Build:
@@ -20,6 +19,12 @@ Run unit test:
 
 ```shell
 mpm package test
+```
+
+Run move prove
+
+```shell
+mpm package prove
 ```
 
 Run spec test:
