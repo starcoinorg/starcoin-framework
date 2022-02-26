@@ -21,7 +21,7 @@ jobs:
       - name: setup environment
         run: |
           bash scripts/dev_setup.sh -b -t -y -p
-          echo "$HOME/bin" >> $GITHUB_PATH
+          source "$HOME/.profile"
       - name: build
         run: mpm package build
       - name: test

@@ -201,8 +201,8 @@ function install_mpm {
       else
         mpm_file="mpm-ubuntu-latest";
       fi
-      curl -sL -o "${INSTALL_DIR}"/mpm "https://github.com/starcoinorg/starcoin/releases/download/${MPM_VERSION}/${mpm_file}"
-      chmod +x "${INSTALL_DIR}"/mpm
+      curl -sL -o "${INSTALL_DIR}"mpm "https://github.com/starcoinorg/starcoin/releases/download/${MPM_VERSION}/${mpm_file}"
+      chmod +x "${INSTALL_DIR}"mpm
     fi
 }
 
