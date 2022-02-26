@@ -21,14 +21,21 @@ jobs:
       - name: setup environment
         run: |
           bash scripts/dev_setup.sh -b -t -y -p
-          source "$HOME/.profile"
       - name: build
-        run: mpm package build
+        run: |
+          source "$HOME/.profile"
+          mpm package build
       - name: test
-        run: mpm package test
+        run: |
+          source "$HOME/.profile"
+          mpm package test
       - name: spec test
-        run: mpm package test
+        run: |
+          source "$HOME/.profile"
+          mpm package test
       - name: move-prover-test
-        run: mpm package prove
+        run: |
+          source "$HOME/.profile"
+          mpm package prove
       - name: check changed files
         run: bash ./scripts/changed-files.sh
