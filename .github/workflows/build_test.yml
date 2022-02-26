@@ -19,7 +19,7 @@ jobs:
         with:
           profile: minimal
       - name: setup environment
-        run: bash scripts/dev_setup.sh -b -t -y
+        run: bash scripts/dev_setup.sh -b -t -y -p
       - name: build
         run: mpm package build
       - name: test

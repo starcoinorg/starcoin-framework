@@ -188,6 +188,7 @@ function install_toolchain {
 }
 
 function install_mpm {
+   echo "Installing mpm"
   VERSION="$(mpm --version || true)"
     if [ -n "$VERSION" ]; then
   	  if [[ "${BATCH_MODE}" == "false" ]]; then
