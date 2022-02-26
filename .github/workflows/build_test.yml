@@ -19,7 +19,9 @@ jobs:
         with:
           profile: minimal
       - name: setup environment
-        run: bash scripts/dev_setup.sh -b -t -y -p
+        run: |
+          bash scripts/dev_setup.sh -b -t -y -p
+          echo "$HOME/bin" >> $GITHUB_PATH
       - name: build
         run: mpm package build
       - name: test
