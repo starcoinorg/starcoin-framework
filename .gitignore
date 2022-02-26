@@ -1,0 +1,50 @@
+**/target
+/target
+public
+resources
+**/*.rs.bk
+
+# macOS Specific ignores
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+.idea
+.vscode
+*iml
+
+# Github action's files
+packages-microsoft-prod.deb
+
+examples/*.mv
+
+# Move trace file.
+*.mvcov
+
+# Move Build Output
+build/
+*.bak
+
+# Remove Cargo.lock from gitignore if creating an executable, leave it for libraries
+# More information here https://doc.rust-lang.org/cargo/guide/cargo-toml-vs-cargo-lock.html
+Cargo.lock
