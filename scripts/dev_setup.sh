@@ -19,6 +19,7 @@ Z3_VERSION=4.8.13
 CVC5_VERSION=0.0.3
 DOTNET_VERSION=5.0
 BOOGIE_VERSION=2.9.6
+MPM_VERSION=v1.11.0-alpha
 
 
 SCRIPT_PATH="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
@@ -193,9 +194,14 @@ function install_mpm {
         echo "mpm is already installed, version: $VERSION"
       fi
     else
-      # install from source
-      # TODO install by download the release binary.
-      cargo install --git https://github.com/starcoinorg/starcoin move-package-manager --bin mpm
+
+      if [[ $(uname -s) == "Darwin" ]]; then
+        mpm_file="mpm-macos-latest";
+      else
+        mpm_file="mpm-ubuntu-latest";
+      fi
+      curl -sL -o "${INSTALL_DIR}"/mpm "https://github.com/starcoinorg/starcoin/releases/download/${MPM_VERSION}/${mpm_file}"
+      chmod +x "${INSTALL_DIR}"/mpm
     fi
 }
 
