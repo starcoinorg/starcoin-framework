@@ -80,29 +80,6 @@ function update_path_and_profile {
   fi
 }
 
-function install_build_essentials {
-  PACKAGE_MANAGER=$1
-  #Differently named packages for pkg-config
-  if [[ "$PACKAGE_MANAGER" == "apt-get" ]]; then
-    install_pkg build-essential "$PACKAGE_MANAGER"
-  fi
-  if [[ "$PACKAGE_MANAGER" == "pacman" ]]; then
-    install_pkg base-devel "$PACKAGE_MANAGER"
-  fi
-  if [[ "$PACKAGE_MANAGER" == "apk" ]]; then
-    install_pkg alpine-sdk "$PACKAGE_MANAGER"
-    install_pkg coreutils "$PACKAGE_MANAGER"
-  fi
-  if [[ "$PACKAGE_MANAGER" == "yum" ]] || [[ "$PACKAGE_MANAGER" == "dnf" ]]; then
-    install_pkg gcc "$PACKAGE_MANAGER"
-    install_pkg gcc-c++ "$PACKAGE_MANAGER"
-    install_pkg make "$PACKAGE_MANAGER"
-  fi
-  #if [[ "$PACKAGE_MANAGER" == "brew" ]]; then
-  #  install_pkg pkgconfig "$PACKAGE_MANAGER"
-  #fi
-}
-
 function install_rustup {
   echo installing rust.
   BATCH_MODE=$1
@@ -160,21 +137,6 @@ function install_pkg {
     fi
   fi
 }
-
-function install_pkg_config {
-  PACKAGE_MANAGER=$1
-  #Differently named packages for pkg-config
-  if [[ "$PACKAGE_MANAGER" == "apt-get" ]] || [[ "$PACKAGE_MANAGER" == "dnf" ]]; then
-    install_pkg pkg-config "$PACKAGE_MANAGER"
-  fi
-  if [[ "$PACKAGE_MANAGER" == "pacman" ]]; then
-    install_pkg pkgconf "$PACKAGE_MANAGER"
-  fi
-  if [[ "$PACKAGE_MANAGER" == "brew" ]] || [[ "$PACKAGE_MANAGER" == "apk" ]] || [[ "$PACKAGE_MANAGER" == "yum" ]]; then
-    install_pkg pkgconfig "$PACKAGE_MANAGER"
-  fi
-}
-
 
 function install_toolchain {
   version=$1
@@ -475,12 +437,6 @@ install_pkg curl "$PACKAGE_MANAGER"
 
 
 if [[ "$INSTALL_BUILD_TOOLS" == "true" ]]; then
-  install_build_essentials "$PACKAGE_MANAGER"
-  install_pkg cmake "$PACKAGE_MANAGER"
-  install_pkg clang "$PACKAGE_MANAGER"
-  install_pkg llvm "$PACKAGE_MANAGER"
-
-  install_pkg_config "$PACKAGE_MANAGER"
 
   install_rustup "$BATCH_MODE"
   # Add all the components that we need
