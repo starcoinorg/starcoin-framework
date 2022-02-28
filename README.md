@@ -50,4 +50,6 @@ Contributions in the following are welcome:
 3. Add a spec test [spectests](../spectests), such as: `test_my_module.move`.
 4. Run the spec test `mpm spectest test_my_module.move `
 
+If you are not sure that the module belongs to starcoin-framework, please submit it to [starcoin-framework-commons](https://github.com/starcoinorg/starcoin-framework-commons) first.
+
 You can view our [Code of Conduct](./CODE_OF_CONDUCT.md).
