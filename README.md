@@ -53,3 +53,11 @@ Contributions in the following are welcome:
 If you are not sure that the module belongs to starcoin-framework, please submit it to [starcoin-framework-commons](https://github.com/starcoinorg/starcoin-framework-commons) first.
 
 You can view our [Code of Conduct](./CODE_OF_CONDUCT.md).
+
+
+## Support
+
+Reach out to the maintainer at one of the following places:
+
+- [Starcoin Discord](https://discord.gg/starcoin)
+- [Starcoin Contributor Telegram group](https://t.me/starcoin_contributor)
