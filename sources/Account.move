@@ -303,6 +303,9 @@ module Account {
         receiver: address,
         to_deposit: Token<TokenType>,
     ) acquires Account, Balance, AutoAcceptToken {
+	if (!exists_at(receiver)) {
+            create_account_with_address<TokenType>(receiver);
+        };
         deposit_with_metadata<TokenType>(receiver, to_deposit, x"")
     }
 
