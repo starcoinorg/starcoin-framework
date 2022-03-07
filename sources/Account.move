@@ -317,6 +317,11 @@ module Account {
         to_deposit: Token<TokenType>,
         metadata: vector<u8>,
     ) acquires Account, Balance, AutoAcceptToken {
+        
+        if (!exists_at(receiver)) {
+            create_account_with_address<TokenType>(receiver);
+        };
+        
         try_accept_token<TokenType>(receiver);
 
         let deposit_value = Token::value(&to_deposit);
