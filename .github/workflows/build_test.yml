@@ -32,7 +32,7 @@ jobs:
       - name: spec test
         run: |
           source "$HOME/.profile"
-          mpm package test
+          mpm spectest
       - name: move-prover-test
         run: |
           source "$HOME/.profile"
