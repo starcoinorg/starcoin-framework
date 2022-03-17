@@ -24,6 +24,31 @@ fun main() {
 }
 }
 
+
+//# run --signers creator
+// Test fot signature verify
+// use command `starcoin account sign-message --message abc` to generate signature.
+script {
+    use StarcoinFramework::Signature;
+    use StarcoinFramework::Hash;
+    use StarcoinFramework::Vector;
+    use StarcoinFramework::BCS;
+
+    fun main() {
+
+        let public_key =  x"a7c56b0c7111a7068cbd5f8c841a3d01eed480cfc14806e43e7a1da71e2945f0";
+        let message = b"abc";
+        let signature = x"c46ad802f389f7e17631b28668e51565fa59b80c34b44719791c4f541b586239896fd470d64c6eff1bdfadab9861e193042dbafd8f23fda670530cce4f199f0d";
+        let prefix = b"STARCOIN::";
+        Vector::append(&mut prefix, b"SigningMessage");
+        let prefix_hash = Hash::sha3_256(prefix);
+        let data = copy prefix_hash;
+        Vector::append(&mut data, BCS::to_bytes(&message));
+        assert!(Signature::ed25519_verify(signature, public_key, data), 9004);
+    }
+
+}
+
 //# run --signers creator
 
 // test ecrecover
