@@ -24,7 +24,7 @@ jobs:
       - name: build
         run: |
           source "$HOME/.profile"
-          mpm package build
+          bash ./scripts/build.sh
       - name: test
         run: |
           source "$HOME/.profile"

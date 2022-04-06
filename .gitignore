@@ -36,14 +36,12 @@ Temporary Items
 # Github action's files
 packages-microsoft-prod.deb
 
-examples/*.mv
 
 # Move trace file.
 *.mvcov
 
-# Move Build Output
-build/
-*.bak
+# Move Build Output sources
+build/StarcoinFramework/sources/*.move
 
 # Remove Cargo.lock from gitignore if creating an executable, leave it for libraries
 # More information here https://doc.rust-lang.org/cargo/guide/cargo-toml-vs-cargo-lock.html
