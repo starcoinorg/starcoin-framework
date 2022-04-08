@@ -32,7 +32,7 @@ module ChainId {
 
     spec initialize {
         aborts_if !Timestamp::is_genesis();
-        aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
         aborts_if exists<ChainId>(Signer::address_of(account));
         ensures exists<ChainId>(Signer::address_of(account));
     }
@@ -62,33 +62,33 @@ module ChainId {
     }
 
     spec is_dev {
-        aborts_if !exists<ChainId>(CoreAddresses::SPEC_GENESIS_ADDRESS());
-        ensures exists<ChainId>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<ChainId>(CoreAddresses::GENESIS_ADDRESS());
+        ensures exists<ChainId>(CoreAddresses::GENESIS_ADDRESS());
     }
     spec is_test {
-        aborts_if !exists<ChainId>(CoreAddresses::SPEC_GENESIS_ADDRESS());
-        ensures exists<ChainId>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<ChainId>(CoreAddresses::GENESIS_ADDRESS());
+        ensures exists<ChainId>(CoreAddresses::GENESIS_ADDRESS());
     }
     spec is_halley {
-        aborts_if !exists<ChainId>(CoreAddresses::SPEC_GENESIS_ADDRESS());
-        ensures exists<ChainId>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<ChainId>(CoreAddresses::GENESIS_ADDRESS());
+        ensures exists<ChainId>(CoreAddresses::GENESIS_ADDRESS());
     }
     spec is_proxima {
-        aborts_if !exists<ChainId>(CoreAddresses::SPEC_GENESIS_ADDRESS());
-        ensures exists<ChainId>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<ChainId>(CoreAddresses::GENESIS_ADDRESS());
+        ensures exists<ChainId>(CoreAddresses::GENESIS_ADDRESS());
     }
     spec is_barnard {
-        aborts_if !exists<ChainId>(CoreAddresses::SPEC_GENESIS_ADDRESS());
-        ensures exists<ChainId>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<ChainId>(CoreAddresses::GENESIS_ADDRESS());
+        ensures exists<ChainId>(CoreAddresses::GENESIS_ADDRESS());
     }
     spec is_main {
-        aborts_if !exists<ChainId>(CoreAddresses::SPEC_GENESIS_ADDRESS());
-        ensures exists<ChainId>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<ChainId>(CoreAddresses::GENESIS_ADDRESS());
+        ensures exists<ChainId>(CoreAddresses::GENESIS_ADDRESS());
     }
 
     spec get {
-        aborts_if !exists<ChainId>(CoreAddresses::SPEC_GENESIS_ADDRESS());
-        ensures exists<ChainId>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<ChainId>(CoreAddresses::GENESIS_ADDRESS());
+        ensures exists<ChainId>(CoreAddresses::GENESIS_ADDRESS());
     }
 }
 }

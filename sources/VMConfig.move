@@ -397,7 +397,7 @@ module VMConfig {
     }
 
     spec initialize {
-        aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
         aborts_if exists<Config::Config<VMConfig>>(Signer::address_of(account));
         aborts_if
             exists<Config::ModifyConfigCapabilityHolder<VMConfig>>(

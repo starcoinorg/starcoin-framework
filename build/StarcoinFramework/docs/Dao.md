@@ -642,7 +642,7 @@ can optin this module by call this <code>register function</code>.
 
 
 <pre><code><b>schema</b> <a href="Dao.md#0x1_Dao_AbortIfTimestampNotExist">AbortIfTimestampNotExist</a> {
-    <b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">Timestamp::CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
+    <b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">Timestamp::CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 }
 </code></pre>
 
@@ -783,7 +783,7 @@ propose a proposal.
 <pre><code><b>pragma</b> addition_overflow_unchecked;
 <b>include</b> <a href="Dao.md#0x1_Dao_AbortIfDaoConfigNotExist">AbortIfDaoConfigNotExist</a>&lt;TokenT&gt;;
 <b>include</b> <a href="Dao.md#0x1_Dao_AbortIfDaoInfoNotExist">AbortIfDaoInfoNotExist</a>&lt;TokenT&gt;;
-<b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">Timestamp::CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
+<b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">Timestamp::CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 <b>aborts_if</b> action_delay &gt; 0 && action_delay &lt; <a href="Dao.md#0x1_Dao_spec_dao_config">spec_dao_config</a>&lt;TokenT&gt;().min_action_delay;
 <b>include</b> <a href="Dao.md#0x1_Dao_CheckQuorumVotes">CheckQuorumVotes</a>&lt;TokenT&gt;;
 <b>let</b> sender = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(signer);
@@ -1558,7 +1558,7 @@ Get the proposal state.
 
 
 <pre><code><b>include</b> <a href="Dao.md#0x1_Dao_AbortIfTimestampNotExist">AbortIfTimestampNotExist</a>;
-<b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">Timestamp::CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
+<b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">Timestamp::CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 <b>aborts_if</b> !<b>exists</b>&lt;<a href="Dao.md#0x1_Dao_Proposal">Proposal</a>&lt;TokenT, ActionT&gt;&gt;(proposer_address);
 <b>let</b> proposal = <b>global</b>&lt;<a href="Dao.md#0x1_Dao_Proposal">Proposal</a>&lt;TokenT, ActionT&gt;&gt;(proposer_address);
 <b>aborts_if</b> proposal.id != proposal_id;

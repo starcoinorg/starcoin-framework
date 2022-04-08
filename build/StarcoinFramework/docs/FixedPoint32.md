@@ -165,8 +165,32 @@ control flow, so we can assume some arbitrary (but fixed) behavior here.
 
 
 <pre><code><b>pragma</b> opaque = <b>true</b>;
-<b>pragma</b> verify = <b>false</b>;
+<b>include</b> <a href="FixedPoint32.md#0x1_FixedPoint32_MultiplyAbortsIf">MultiplyAbortsIf</a>;
 <b>ensures</b> result == <a href="FixedPoint32.md#0x1_FixedPoint32_spec_multiply_u64">spec_multiply_u64</a>(val, multiplier);
+</code></pre>
+
+
+
+
+<a name="0x1_FixedPoint32_MultiplyAbortsIf"></a>
+
+
+<pre><code><b>schema</b> <a href="FixedPoint32.md#0x1_FixedPoint32_MultiplyAbortsIf">MultiplyAbortsIf</a> {
+    val: num;
+    multiplier: <a href="FixedPoint32.md#0x1_FixedPoint32">FixedPoint32</a>;
+    <b>aborts_if</b> <a href="FixedPoint32.md#0x1_FixedPoint32_spec_multiply_u64">spec_multiply_u64</a>(val, multiplier) &gt; <a href="FixedPoint32.md#0x1_FixedPoint32_MAX_U64">MAX_U64</a> <b>with</b> <a href="Errors.md#0x1_Errors_LIMIT_EXCEEDED">Errors::LIMIT_EXCEEDED</a>;
+}
+</code></pre>
+
+
+
+
+<a name="0x1_FixedPoint32_spec_multiply_u64"></a>
+
+
+<pre><code><b>fun</b> <a href="FixedPoint32.md#0x1_FixedPoint32_spec_multiply_u64">spec_multiply_u64</a>(val: num, multiplier: <a href="FixedPoint32.md#0x1_FixedPoint32">FixedPoint32</a>): num {
+   (val * multiplier.value) &gt;&gt; 32
+}
 </code></pre>
 
 
@@ -218,8 +242,33 @@ See comment at <code>Self::multiply_64</code>.
 
 
 <pre><code><b>pragma</b> opaque = <b>true</b>;
-<b>pragma</b> verify = <b>false</b>;
+<b>include</b> <a href="FixedPoint32.md#0x1_FixedPoint32_DivideAbortsIf">DivideAbortsIf</a>;
 <b>ensures</b> result == <a href="FixedPoint32.md#0x1_FixedPoint32_spec_divide_u64">spec_divide_u64</a>(val, divisor);
+</code></pre>
+
+
+
+
+<a name="0x1_FixedPoint32_DivideAbortsIf"></a>
+
+
+<pre><code><b>schema</b> <a href="FixedPoint32.md#0x1_FixedPoint32_DivideAbortsIf">DivideAbortsIf</a> {
+    val: num;
+    divisor: <a href="FixedPoint32.md#0x1_FixedPoint32">FixedPoint32</a>;
+    <b>aborts_if</b> divisor.value == 0 <b>with</b> <a href="Errors.md#0x1_Errors_INVALID_ARGUMENT">Errors::INVALID_ARGUMENT</a>;
+    <b>aborts_if</b> <a href="FixedPoint32.md#0x1_FixedPoint32_spec_divide_u64">spec_divide_u64</a>(val, divisor) &gt; <a href="FixedPoint32.md#0x1_FixedPoint32_MAX_U64">MAX_U64</a> <b>with</b> <a href="Errors.md#0x1_Errors_LIMIT_EXCEEDED">Errors::LIMIT_EXCEEDED</a>;
+}
+</code></pre>
+
+
+
+
+<a name="0x1_FixedPoint32_spec_divide_u64"></a>
+
+
+<pre><code><b>fun</b> <a href="FixedPoint32.md#0x1_FixedPoint32_spec_divide_u64">spec_divide_u64</a>(val: num, divisor: <a href="FixedPoint32.md#0x1_FixedPoint32">FixedPoint32</a>): num {
+   (val &lt;&lt; 32) / divisor.value
+}
 </code></pre>
 
 
@@ -275,8 +324,37 @@ See comment at <code>Self::multiply_64</code>.
 
 
 <pre><code><b>pragma</b> opaque = <b>true</b>;
-<b>pragma</b> verify = <b>false</b>;
+<b>include</b> <a href="FixedPoint32.md#0x1_FixedPoint32_CreateFromRationalAbortsIf">CreateFromRationalAbortsIf</a>;
 <b>ensures</b> result == <a href="FixedPoint32.md#0x1_FixedPoint32_spec_create_from_rational">spec_create_from_rational</a>(numerator, denominator);
+</code></pre>
+
+
+
+
+<a name="0x1_FixedPoint32_CreateFromRationalAbortsIf"></a>
+
+
+<pre><code><b>schema</b> <a href="FixedPoint32.md#0x1_FixedPoint32_CreateFromRationalAbortsIf">CreateFromRationalAbortsIf</a> {
+    numerator: u64;
+    denominator: u64;
+    <b>let</b> scaled_numerator = numerator &lt;&lt; 64;
+    <b>let</b> scaled_denominator = denominator &lt;&lt; 32;
+    <b>let</b> quotient = scaled_numerator / scaled_denominator;
+    <b>aborts_if</b> scaled_denominator == 0 <b>with</b> <a href="Errors.md#0x1_Errors_INVALID_ARGUMENT">Errors::INVALID_ARGUMENT</a>;
+    <b>aborts_if</b> quotient == 0 && scaled_numerator != 0 <b>with</b> <a href="Errors.md#0x1_Errors_INVALID_ARGUMENT">Errors::INVALID_ARGUMENT</a>;
+    <b>aborts_if</b> quotient &gt; <a href="FixedPoint32.md#0x1_FixedPoint32_MAX_U64">MAX_U64</a> <b>with</b> <a href="Errors.md#0x1_Errors_LIMIT_EXCEEDED">Errors::LIMIT_EXCEEDED</a>;
+}
+</code></pre>
+
+
+
+
+<a name="0x1_FixedPoint32_spec_create_from_rational"></a>
+
+
+<pre><code><b>fun</b> <a href="FixedPoint32.md#0x1_FixedPoint32_spec_create_from_rational">spec_create_from_rational</a>(numerator: num, denominator: num): <a href="FixedPoint32.md#0x1_FixedPoint32">FixedPoint32</a> {
+   <a href="FixedPoint32.md#0x1_FixedPoint32">FixedPoint32</a>{value: (numerator &lt;&lt; 64) / (denominator &lt;&lt; 32)}
+}
 </code></pre>
 
 
@@ -302,6 +380,20 @@ create a fixedpoint 32  from u64.
 <pre><code><b>public</b> <b>fun</b> <a href="FixedPoint32.md#0x1_FixedPoint32_create_from_raw_value">create_from_raw_value</a>(value: u64): <a href="FixedPoint32.md#0x1_FixedPoint32">FixedPoint32</a> {
     <a href="FixedPoint32.md#0x1_FixedPoint32">FixedPoint32</a> { value }
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> opaque;
+<b>aborts_if</b> <b>false</b>;
+<b>ensures</b> result.value == value;
 </code></pre>
 
 
@@ -343,34 +435,4 @@ values directly.
 
 <pre><code><b>pragma</b> verify;
 <b>pragma</b> aborts_if_is_strict;
-</code></pre>
-
-
-Uninterpreted function for <code><a href="FixedPoint32.md#0x1_FixedPoint32_multiply_u64">Self::multiply_u64</a></code>.
-
-
-<a name="0x1_FixedPoint32_spec_multiply_u64"></a>
-
-
-<pre><code><b>fun</b> <a href="FixedPoint32.md#0x1_FixedPoint32_spec_multiply_u64">spec_multiply_u64</a>(val: u64, multiplier: <a href="FixedPoint32.md#0x1_FixedPoint32">FixedPoint32</a>): u64;
-</code></pre>
-
-
-Uninterpreted function for <code><a href="FixedPoint32.md#0x1_FixedPoint32_divide_u64">Self::divide_u64</a></code>.
-
-
-<a name="0x1_FixedPoint32_spec_divide_u64"></a>
-
-
-<pre><code><b>fun</b> <a href="FixedPoint32.md#0x1_FixedPoint32_spec_divide_u64">spec_divide_u64</a>(val: u64, divisor: <a href="FixedPoint32.md#0x1_FixedPoint32">FixedPoint32</a>): u64;
-</code></pre>
-
-
-Uninterpreted function for <code><a href="FixedPoint32.md#0x1_FixedPoint32_create_from_rational">Self::create_from_rational</a></code>.
-
-
-<a name="0x1_FixedPoint32_spec_create_from_rational"></a>
-
-
-<pre><code><b>fun</b> <a href="FixedPoint32.md#0x1_FixedPoint32_spec_create_from_rational">spec_create_from_rational</a>(numerator: u64, denominator: u64): <a href="FixedPoint32.md#0x1_FixedPoint32">FixedPoint32</a>;
 </code></pre>

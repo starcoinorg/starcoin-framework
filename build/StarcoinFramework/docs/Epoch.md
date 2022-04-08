@@ -342,9 +342,9 @@ Initialization of the module.
 
 
 <pre><code><b>aborts_if</b> !<a href="Timestamp.md#0x1_Timestamp_is_genesis">Timestamp::is_genesis</a>();
-<b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>();
-<b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">Timestamp::CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
-<b>aborts_if</b> !<b>exists</b>&lt;<a href="Config.md#0x1_Config_Config">Config::Config</a>&lt;<a href="ConsensusConfig.md#0x1_ConsensusConfig">ConsensusConfig</a>&gt;&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
+<b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>();
+<b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">Timestamp::CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+<b>aborts_if</b> !<b>exists</b>&lt;<a href="Config.md#0x1_Config_Config">Config::Config</a>&lt;<a href="ConsensusConfig.md#0x1_ConsensusConfig">ConsensusConfig</a>&gt;&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 <b>aborts_if</b> <b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account));
 <b>aborts_if</b> <b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch_EpochData">EpochData</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account));
 </code></pre>
@@ -485,7 +485,7 @@ adjust_epoch try to advance to next epoch if current epoch ends.
 
 
 <pre><code><b>pragma</b> verify = <b>false</b>;
-<b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>();
+<b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>();
 <b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account));
 <b>aborts_if</b> <b>global</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account)).max_uncles_per_block &lt; uncles;
 <b>aborts_if</b> <b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch_EpochData">EpochData</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account));
@@ -757,7 +757,7 @@ Get start time of current epoch
 
 
 
-<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 </code></pre>
 
 
@@ -795,7 +795,7 @@ Get uncles number of current epoch
 
 
 
-<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch_EpochData">EpochData</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch_EpochData">EpochData</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 </code></pre>
 
 
@@ -833,7 +833,7 @@ Get total gas of current epoch
 
 
 
-<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch_EpochData">EpochData</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch_EpochData">EpochData</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 </code></pre>
 
 
@@ -871,7 +871,7 @@ Get block's gas_limit of current epoch
 
 
 
-<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 </code></pre>
 
 
@@ -909,7 +909,7 @@ Get start block's number of current epoch
 
 
 
-<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 </code></pre>
 
 
@@ -947,7 +947,7 @@ Get end block's number of current epoch
 
 
 
-<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 </code></pre>
 
 
@@ -985,7 +985,7 @@ Get current epoch number
 
 
 
-<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 </code></pre>
 
 
@@ -1023,7 +1023,7 @@ Get current block time target
 
 
 
-<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 </code></pre>
 
 

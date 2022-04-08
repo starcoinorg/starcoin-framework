@@ -64,7 +64,7 @@ module TransactionPublishOption {
 
     spec initialize {
         aborts_if !Timestamp::is_genesis();
-        aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
         include Config::PublishNewConfigAbortsIf<TransactionPublishOption>;
         include Config::PublishNewConfigEnsures<TransactionPublishOption>;
     }
@@ -107,7 +107,7 @@ module TransactionPublishOption {
 
     spec schema AbortsIfTxnPublishOptionNotExist {
         include Config::AbortsIfConfigNotExist<TransactionPublishOption>{
-            addr: CoreAddresses::SPEC_GENESIS_ADDRESS()
+            addr: CoreAddresses::GENESIS_ADDRESS()
         };
     }
 

@@ -64,7 +64,7 @@ module MintDaoProposal {
         // copy from Dao::propose spec.
         include Dao::AbortIfDaoConfigNotExist<TokenT>;
         include Dao::AbortIfDaoInfoNotExist<TokenT>;
-        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS());
         aborts_if exec_delay > 0 && exec_delay < Dao::spec_dao_config<TokenT>().min_action_delay;
         include Dao::CheckQuorumVotes<TokenT>;
         let sender = Signer::address_of(signer);

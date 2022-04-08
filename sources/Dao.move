@@ -180,7 +180,7 @@ module Dao {
     }
     spec schema AbortIfTimestampNotExist {
         use StarcoinFramework::CoreAddresses;
-        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS());
     }
 
     spec module {
@@ -264,7 +264,7 @@ module Dao {
         pragma addition_overflow_unchecked;
         include AbortIfDaoConfigNotExist<TokenT>;
         include AbortIfDaoInfoNotExist<TokenT>;
-        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS());
 
         aborts_if action_delay > 0 && action_delay < spec_dao_config<TokenT>().min_action_delay;
         include CheckQuorumVotes<TokenT>;
@@ -766,7 +766,7 @@ module Dao {
     spec proposal_state {
         use StarcoinFramework::CoreAddresses;
         include AbortIfTimestampNotExist;
-        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS());
         aborts_if !exists<Proposal<TokenT, ActionT>>(proposer_address);
 
         let proposal = global<Proposal<TokenT, ActionT>>(proposer_address);

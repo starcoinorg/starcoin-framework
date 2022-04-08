@@ -181,7 +181,7 @@ module TransactionManager {
     spec epilogue {
         pragma verify = false;//fixme : timeout
         include CoreAddresses::AbortsIfNotGenesisAddress;
-        aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
         aborts_if !exists<Account::Account>(txn_sender);
         aborts_if !exists<Account::Balance<TokenType>>(txn_sender);
         aborts_if txn_max_gas_units < gas_units_remaining;

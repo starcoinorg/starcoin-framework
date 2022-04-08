@@ -15,9 +15,12 @@ module StarcoinFramework::GenesisSignerCapability {
         cap: Account::SignerCapability,
     }
 
-    public(friend) fun initialize(signer:&signer, cap: Account::SignerCapability) {
+    public(friend) fun initialize(signer: &signer, cap: Account::SignerCapability) {
         CoreAddresses::assert_genesis_address(signer);
-        assert!(Account::signer_address(&cap) == CoreAddresses::GENESIS_ADDRESS(), Errors::invalid_argument(ENOT_GENESIS_ACCOUNT));
+        assert!(
+            Account::signer_address(&cap) == CoreAddresses::GENESIS_ADDRESS(), 
+            Errors::invalid_argument(ENOT_GENESIS_ACCOUNT)
+        );
         move_to(signer, GenesisSignerCapability{cap});
     }
 
