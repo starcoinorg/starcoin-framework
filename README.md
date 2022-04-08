@@ -1,5 +1,16 @@
 # Starcoin Move framework
 
+## Network Deploy status
+
+- halley: latest
+- proxima: v11
+- barnard: v11
+- main: v11
+
+## Documents
+
+- [latest](./build/StarcoinFramework/docs)
+- [v11](./release/v11/docs)
 
 ## Build and Test
 
