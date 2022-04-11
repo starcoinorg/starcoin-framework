@@ -634,8 +634,11 @@ module IdentifierNFT {
 
     /// Check `owner` is owns the IdentifierNFT<NFTMeta, NFTBody>
     public fun owns<NFTMeta: copy + store + drop, NFTBody: store>(owner: address): bool acquires IdentifierNFT {
-        exists<IdentifierNFT<NFTMeta, NFTBody>>(owner) && 
-            Option::is_some(&borrow_global<IdentifierNFT<NFTMeta, NFTBody>>(owner).nft)
+        if (!exists<IdentifierNFT<NFTMeta, NFTBody>>(owner)) {
+            return false
+        };
+        let id_nft = borrow_global<IdentifierNFT<NFTMeta, NFTBody>>(owner);
+        Option::is_some(&id_nft.nft)
     }
     /// deprecated. Use `owns()` instead.
     public fun is_owns<NFTMeta: copy + store + drop, NFTBody: store>(owner: address): bool acquires IdentifierNFT {

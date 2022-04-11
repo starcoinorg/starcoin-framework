@@ -44,7 +44,7 @@ script {
     use creator::TestNFT::{Self, TestNFT};
     fun main(sender: signer) {
         TestNFT::init(&sender);
-        assert!(NFT::is_register<TestNFT>(), 1001);
+        assert!(NFT::is_registered<TestNFT>(), 1001);
         TestNFT::mint(&sender);
     }
 }

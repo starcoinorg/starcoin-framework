@@ -93,7 +93,7 @@ module creator::XMembership {
     // check memebership in special method.
     public fun do_membership_action(sender: &signer) acquires XMembershipBurnCapability{
         let addr = Signer::address_of(sender);
-        assert!(IdentifierNFT::is_owns<XMembership, XMembershipBody>(addr), 1001);
+        assert!(IdentifierNFT::owns<XMembership, XMembershipBody>(addr), 1001);
         let nft_info = Option::destroy_some(IdentifierNFT::get_nft_info<XMembership, XMembershipBody>(addr));
         let now = Timestamp::now_milliseconds();
         let (_id,_creator,_metadata,membership) = NFT::unpack_info(nft_info);
