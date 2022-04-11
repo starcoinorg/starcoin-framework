@@ -110,9 +110,9 @@ module Epoch {
 
     spec initialize {
         aborts_if !Timestamp::is_genesis();
-        aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
-        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS());
-        aborts_if !exists<Config::Config<ConsensusConfig>>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
+        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS());
+        aborts_if !exists<Config::Config<ConsensusConfig>>(CoreAddresses::GENESIS_ADDRESS());
 
         aborts_if exists<Epoch>(Signer::address_of(account));
         aborts_if exists<EpochData>(Signer::address_of(account));
@@ -198,7 +198,7 @@ module Epoch {
 
     spec adjust_epoch {
         pragma verify = false; //timeout
-        aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
         aborts_if !exists<Epoch>(Signer::address_of(account));
         aborts_if global<Epoch>(Signer::address_of(account)).max_uncles_per_block < uncles;
         aborts_if exists<EpochData>(Signer::address_of(account));
@@ -303,7 +303,7 @@ module Epoch {
     }
 
     spec start_time {
-        aborts_if !exists<Epoch>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<Epoch>(CoreAddresses::GENESIS_ADDRESS());
     }
 
     /// Get uncles number of current epoch
@@ -313,7 +313,7 @@ module Epoch {
     }
 
     spec uncles {
-        aborts_if !exists<EpochData>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<EpochData>(CoreAddresses::GENESIS_ADDRESS());
     }
 
     /// Get total gas of current epoch
@@ -323,7 +323,7 @@ module Epoch {
     }
 
     spec total_gas {
-        aborts_if !exists<EpochData>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<EpochData>(CoreAddresses::GENESIS_ADDRESS());
     }
 
     /// Get block's gas_limit of current epoch
@@ -333,7 +333,7 @@ module Epoch {
     }
 
     spec block_gas_limit {
-        aborts_if !exists<Epoch>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<Epoch>(CoreAddresses::GENESIS_ADDRESS());
     }
 
     /// Get start block's number of current epoch
@@ -343,7 +343,7 @@ module Epoch {
     }
 
     spec start_block_number {
-        aborts_if !exists<Epoch>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<Epoch>(CoreAddresses::GENESIS_ADDRESS());
     }
 
     /// Get end block's number of current epoch
@@ -353,7 +353,7 @@ module Epoch {
     }
 
     spec end_block_number {
-        aborts_if !exists<Epoch>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<Epoch>(CoreAddresses::GENESIS_ADDRESS());
     }
 
     /// Get current epoch number
@@ -363,7 +363,7 @@ module Epoch {
     }
 
     spec number {
-        aborts_if !exists<Epoch>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<Epoch>(CoreAddresses::GENESIS_ADDRESS());
     }
 
     /// Get current block time target
@@ -373,7 +373,7 @@ module Epoch {
     }
 
     spec block_time_target {
-        aborts_if !exists<Epoch>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<Epoch>(CoreAddresses::GENESIS_ADDRESS());
     }
 
 }

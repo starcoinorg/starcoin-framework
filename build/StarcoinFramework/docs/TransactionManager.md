@@ -274,7 +274,7 @@ It collects gas and bumps the sequence number
 
 <pre><code><b>pragma</b> verify = <b>false</b>;
 <b>include</b> <a href="CoreAddresses.md#0x1_CoreAddresses_AbortsIfNotGenesisAddress">CoreAddresses::AbortsIfNotGenesisAddress</a>;
-<b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>();
+<b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>();
 <b>aborts_if</b> !<b>exists</b>&lt;<a href="Account.md#0x1_Account_Account">Account::Account</a>&gt;(txn_sender);
 <b>aborts_if</b> !<b>exists</b>&lt;<a href="Account.md#0x1_Account_Balance">Account::Balance</a>&lt;TokenType&gt;&gt;(txn_sender);
 <b>aborts_if</b> txn_max_gas_units &lt; gas_units_remaining;

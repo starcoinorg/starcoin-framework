@@ -79,7 +79,7 @@ module ConsensusConfig {
 
     spec initialize {
         aborts_if !Timestamp::is_genesis();
-        aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
         aborts_if uncle_rate_target == 0;
         aborts_if epoch_block_count == 0;
         aborts_if base_reward_per_block == 0;
@@ -144,11 +144,11 @@ module ConsensusConfig {
     }
 
     spec get_config {
-        aborts_if !exists<Config::Config<ConsensusConfig>>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<Config::Config<ConsensusConfig>>(CoreAddresses::GENESIS_ADDRESS());
     }
 
     spec fun spec_get_config(): ConsensusConfig {
-        global<Config::Config<ConsensusConfig>>(CoreAddresses::SPEC_GENESIS_ADDRESS()).payload
+        global<Config::Config<ConsensusConfig>>(CoreAddresses::GENESIS_ADDRESS()).payload
     }
 
     /// Get uncle_rate_target
@@ -212,7 +212,7 @@ module ConsensusConfig {
     }
 
     spec compute_reward_per_block {
-        aborts_if !exists<Config::Config<ConsensusConfig>>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<Config::Config<ConsensusConfig>>(CoreAddresses::GENESIS_ADDRESS());
         include Math::MulDivAbortsIf{x: spec_get_config().base_reward_per_block, y: new_epoch_block_time_target, z: spec_get_config().base_block_time_target};
     }
 

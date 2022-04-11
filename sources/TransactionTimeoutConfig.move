@@ -30,7 +30,7 @@ module TransactionTimeoutConfig {
 
     spec initialize {
         aborts_if !Timestamp::is_genesis();
-        aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
         include Config::PublishNewConfigAbortsIf<TransactionTimeoutConfig>;
         include Config::PublishNewConfigEnsures<TransactionTimeoutConfig>;
     }

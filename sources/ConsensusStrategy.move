@@ -31,7 +31,7 @@ module ConsensusStrategy {
 
     spec initialize {
         aborts_if !Timestamp::is_genesis();
-        aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
         aborts_if exists<Config::Config<ConsensusStrategy>>(Signer::address_of(account));
         aborts_if exists<Config::ModifyConfigCapabilityHolder<ConsensusStrategy>>(Signer::address_of(account));
         ensures exists<Config::Config<ConsensusStrategy>>(Signer::address_of(account));
@@ -43,7 +43,7 @@ module ConsensusStrategy {
     }
 
     spec get {
-        aborts_if !exists<Config::Config<ConsensusStrategy>>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<Config::Config<ConsensusStrategy>>(CoreAddresses::GENESIS_ADDRESS());
     }
 }
 }

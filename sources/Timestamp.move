@@ -35,7 +35,7 @@ module Timestamp {
         move_to<CurrentTimeMilliseconds>(account, milli_timer);
     }
     spec initialize {
-        aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
         aborts_if exists<CurrentTimeMilliseconds>(Signer::address_of(account));
         ensures exists<CurrentTimeMilliseconds>(Signer::address_of(account));
     }
@@ -49,10 +49,10 @@ module Timestamp {
         global_milli_timer.milliseconds = timestamp;
     }
     spec update_global_time {
-        aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
-        aborts_if !exists<CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS());
-        aborts_if timestamp <= global<CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS()).milliseconds;
-        ensures global<CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS()).milliseconds == timestamp;
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
+        aborts_if !exists<CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS());
+        aborts_if timestamp <= global<CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS()).milliseconds;
+        ensures global<CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS()).milliseconds == timestamp;
     }
 
     // Get the timestamp representing `now` in seconds.
@@ -60,11 +60,11 @@ module Timestamp {
         now_milliseconds() / MILLI_CONVERSION_FACTOR
     }
     spec now_seconds {
-        aborts_if !exists<CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS());
         ensures result == now_milliseconds() / MILLI_CONVERSION_FACTOR;
     }
     spec fun spec_now_seconds(): u64 {
-        global<CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS()).milliseconds / MILLI_CONVERSION_FACTOR
+        global<CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS()).milliseconds / MILLI_CONVERSION_FACTOR
     }
 
     // Get the timestamp representing `now` in milliseconds.
@@ -73,12 +73,12 @@ module Timestamp {
     }
 
     spec now_milliseconds {
-        aborts_if !exists<CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS());
-        ensures result == global<CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS()).milliseconds;
+        aborts_if !exists<CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS());
+        ensures result == global<CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS()).milliseconds;
     }
 
     spec fun spec_now_millseconds(): u64 {
-        global<CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS()).milliseconds
+        global<CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS()).milliseconds
     }
 
     /// Marks that time has started and genesis has finished. This can only be called from genesis.
@@ -94,7 +94,7 @@ module Timestamp {
     }
 
     spec set_time_has_started {
-        aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
         aborts_if !exists<CurrentTimeMilliseconds>(Signer::address_of(account));
         aborts_if exists<TimeHasStarted>(Signer::address_of(account));
         ensures exists<TimeHasStarted>(Signer::address_of(account));
@@ -107,7 +107,7 @@ module Timestamp {
 
     spec is_genesis {
         aborts_if false;
-        ensures result == !exists<TimeHasStarted>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        ensures result == !exists<TimeHasStarted>(CoreAddresses::GENESIS_ADDRESS());
     }
 
     /// Helper function to assert genesis state.
@@ -125,7 +125,7 @@ module Timestamp {
     }
 
     spec schema AbortsIfTimestampNotExists {
-        aborts_if !exists<CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS());
     }
 }
 }

@@ -51,8 +51,16 @@ module FixedPoint32 {
         /// conversion (where `FixedPoint32` is used for) is not relevant for the rest of the contract
         /// control flow, so we can assume some arbitrary (but fixed) behavior here.
         pragma opaque = true;
-        pragma verify = false;
+        include MultiplyAbortsIf;
         ensures result == spec_multiply_u64(val, multiplier);
+    }
+    spec schema MultiplyAbortsIf {
+        val: num;
+        multiplier: FixedPoint32;
+        aborts_if spec_multiply_u64(val, multiplier) > MAX_U64 with Errors::LIMIT_EXCEEDED;
+    }
+    spec fun spec_multiply_u64(val: num, multiplier: FixedPoint32): num {
+        (val * multiplier.value) >> 32
     }
 
     /// Divide a u64 integer by a fixed-point number, truncating any
@@ -74,8 +82,17 @@ module FixedPoint32 {
     spec divide_u64 {
         /// See comment at `Self::multiply_64`.
         pragma opaque = true;
-        pragma verify = false;
+        include DivideAbortsIf;
         ensures result == spec_divide_u64(val, divisor);
+    }
+    spec schema DivideAbortsIf {
+        val: num;
+        divisor: FixedPoint32;
+        aborts_if divisor.value == 0 with Errors::INVALID_ARGUMENT;
+        aborts_if spec_divide_u64(val, divisor) > MAX_U64 with Errors::LIMIT_EXCEEDED;
+    }
+    spec fun spec_divide_u64(val: num, divisor: FixedPoint32): num {
+        (val << 32) / divisor.value
     }
 
     /// Create a fixed-point value from a rational number specified by its
@@ -101,13 +118,31 @@ module FixedPoint32 {
     spec create_from_rational {
         /// See comment at `Self::multiply_64`.
         pragma opaque = true;
-        pragma verify = false;
+        include CreateFromRationalAbortsIf;
         ensures result == spec_create_from_rational(numerator, denominator);
+    }
+    spec schema CreateFromRationalAbortsIf {
+        numerator: u64;
+        denominator: u64;
+        let scaled_numerator = numerator << 64;
+        let scaled_denominator = denominator << 32;
+        let quotient = scaled_numerator / scaled_denominator;
+        aborts_if scaled_denominator == 0 with Errors::INVALID_ARGUMENT;
+        aborts_if quotient == 0 && scaled_numerator != 0 with Errors::INVALID_ARGUMENT;
+        aborts_if quotient > MAX_U64 with Errors::LIMIT_EXCEEDED;
+    }
+    spec fun spec_create_from_rational(numerator: num, denominator: num): FixedPoint32 {
+        FixedPoint32{value: (numerator << 64) / (denominator << 32)}
     }
 
     /// create a fixedpoint 32  from u64.
     public fun create_from_raw_value(value: u64): FixedPoint32 {
         FixedPoint32 { value }
+    }
+    spec create_from_raw_value {
+        pragma opaque;
+        aborts_if false;
+        ensures result.value == value;
     }
 
     /// Accessor for the raw u64 value. Other less common operations, such as
@@ -116,20 +151,6 @@ module FixedPoint32 {
     public fun get_raw_value(num: FixedPoint32): u64 {
         num.value
     }
-
-    // **************** SPECIFICATIONS ****************
-
-
-        /// Uninterpreted function for `Self::multiply_u64`.
-        spec fun spec_multiply_u64(val: u64, multiplier: FixedPoint32): u64;
-
-        /// Uninterpreted function for `Self::divide_u64`.
-        spec fun spec_divide_u64(val: u64, divisor: FixedPoint32): u64;
-
-        /// Uninterpreted function for `Self::create_from_rational`.
-        spec fun spec_create_from_rational(numerator: u64, denominator: u64): FixedPoint32;
-
-
 }
 
 }

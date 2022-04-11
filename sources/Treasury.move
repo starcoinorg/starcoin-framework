@@ -162,7 +162,7 @@ module Treasury {
     spec issue_linear_withdraw_capability {
         aborts_if period == 0;
         aborts_if amount == 0;
-        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(StarcoinFramework::CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(StarcoinFramework::CoreAddresses::GENESIS_ADDRESS());
     }
     
     /// Withdraw tokens with given `LinearWithdrawCapability`.
@@ -218,7 +218,7 @@ module Treasury {
         
     spec withdraw_amount_of_linear_cap {
         pragma verify = false; //timeout, fix later
-        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(StarcoinFramework::CoreAddresses::SPEC_GENESIS_ADDRESS());
+        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(StarcoinFramework::CoreAddresses::GENESIS_ADDRESS());
         aborts_if Timestamp::spec_now_seconds() < cap.start_time;
         aborts_if Timestamp::spec_now_seconds() - cap.start_time >= cap.period && cap.total < cap.withdraw;
         aborts_if [abstract] Timestamp::spec_now_seconds() - cap.start_time < cap.period && Math::spec_mul_div() < cap.withdraw;

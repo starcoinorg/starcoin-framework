@@ -56,7 +56,10 @@ Transfer NFT<NFTMeta, NFTBody> with <code>id</code> from <code>sender</code> to 
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="NFT.md#0x1_NFTGalleryScripts_transfer">transfer</a>&lt;NFTMeta: <b>copy</b> + store + drop, NFTBody: store&gt;(sender: signer, id: u64, receiver: <b>address</b>) {
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="NFT.md#0x1_NFTGalleryScripts_transfer">transfer</a>&lt;NFTMeta: <b>copy</b> + store + drop, NFTBody: store&gt;(
+    sender: signer,
+    id: u64, receiver: <b>address</b>
+) {
     <a href="NFT.md#0x1_NFTGallery_transfer">NFTGallery::transfer</a>&lt;NFTMeta, NFTBody&gt;(&sender, id, receiver);
 }
 </code></pre>

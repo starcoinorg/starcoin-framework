@@ -427,7 +427,7 @@ address StarcoinFramework {
         }
 
         spec package_txn_prologue {
-            aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
+            aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
             include CheckPackageTxnAbortsIf{};
         }
 
@@ -457,7 +457,7 @@ address StarcoinFramework {
         }
 
         spec package_txn_epilogue {
-            aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
+            aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
             aborts_if spec_get_module_upgrade_strategy(package_address) == 1
                 && success && !exists<TwoPhaseUpgrade>(package_address);
             aborts_if spec_get_module_upgrade_strategy(package_address) == 1

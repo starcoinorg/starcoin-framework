@@ -156,7 +156,7 @@ Conversion factor between seconds and milliseconds
 
 
 
-<pre><code><b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>();
+<pre><code><b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>();
 <b>aborts_if</b> <b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account));
 <b>ensures</b> <b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account));
 </code></pre>
@@ -198,10 +198,10 @@ Conversion factor between seconds and milliseconds
 
 
 
-<pre><code><b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>();
-<b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
-<b>aborts_if</b> timestamp &lt;= <b>global</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>()).milliseconds;
-<b>ensures</b> <b>global</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>()).milliseconds == timestamp;
+<pre><code><b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>();
+<b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+<b>aborts_if</b> timestamp &lt;= <b>global</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).milliseconds;
+<b>ensures</b> <b>global</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).milliseconds == timestamp;
 </code></pre>
 
 
@@ -237,7 +237,7 @@ Conversion factor between seconds and milliseconds
 
 
 
-<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 <b>ensures</b> result == <a href="Timestamp.md#0x1_Timestamp_now_milliseconds">now_milliseconds</a>() / <a href="Timestamp.md#0x1_Timestamp_MILLI_CONVERSION_FACTOR">MILLI_CONVERSION_FACTOR</a>;
 </code></pre>
 
@@ -248,7 +248,7 @@ Conversion factor between seconds and milliseconds
 
 
 <pre><code><b>fun</b> <a href="Timestamp.md#0x1_Timestamp_spec_now_seconds">spec_now_seconds</a>(): u64 {
-   <b>global</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>()).milliseconds / <a href="Timestamp.md#0x1_Timestamp_MILLI_CONVERSION_FACTOR">MILLI_CONVERSION_FACTOR</a>
+   <b>global</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).milliseconds / <a href="Timestamp.md#0x1_Timestamp_MILLI_CONVERSION_FACTOR">MILLI_CONVERSION_FACTOR</a>
 }
 </code></pre>
 
@@ -285,8 +285,8 @@ Conversion factor between seconds and milliseconds
 
 
 
-<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
-<b>ensures</b> result == <b>global</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>()).milliseconds;
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+<b>ensures</b> result == <b>global</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).milliseconds;
 </code></pre>
 
 
@@ -296,7 +296,7 @@ Conversion factor between seconds and milliseconds
 
 
 <pre><code><b>fun</b> <a href="Timestamp.md#0x1_Timestamp_spec_now_millseconds">spec_now_millseconds</a>(): u64 {
-   <b>global</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>()).milliseconds
+   <b>global</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).milliseconds
 }
 </code></pre>
 
@@ -341,7 +341,7 @@ Marks that time has started and genesis has finished. This can only be called fr
 
 
 
-<pre><code><b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>();
+<pre><code><b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>();
 <b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account));
 <b>aborts_if</b> <b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_TimeHasStarted">TimeHasStarted</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account));
 <b>ensures</b> <b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_TimeHasStarted">TimeHasStarted</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account));
@@ -382,7 +382,7 @@ Helper function to determine if the blockchain is in genesis state.
 
 
 <pre><code><b>aborts_if</b> <b>false</b>;
-<b>ensures</b> result == !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_TimeHasStarted">TimeHasStarted</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
+<b>ensures</b> result == !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_TimeHasStarted">TimeHasStarted</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 </code></pre>
 
 
@@ -442,7 +442,7 @@ Helper schema to specify that a function aborts if not in genesis.
 
 
 <pre><code><b>schema</b> <a href="Timestamp.md#0x1_Timestamp_AbortsIfTimestampNotExists">AbortsIfTimestampNotExists</a> {
-    <b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
+    <b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">CurrentTimeMilliseconds</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 }
 </code></pre>
 

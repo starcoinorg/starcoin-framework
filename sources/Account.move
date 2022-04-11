@@ -906,7 +906,7 @@ module Account {
     }
 
     spec txn_prologue {
-        aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
         aborts_if !exists<Account>(txn_sender);
         aborts_if global<Account>(txn_sender).authentication_key == DUMMY_AUTH_KEY && Authenticator::spec_derived_address(Hash::sha3_256(txn_authentication_key_preimage)) != txn_sender;
         aborts_if global<Account>(txn_sender).authentication_key != DUMMY_AUTH_KEY && Hash::sha3_256(txn_authentication_key_preimage) != global<Account>(txn_sender).authentication_key;
@@ -978,7 +978,7 @@ module Account {
 
     spec txn_epilogue_v2 {
         pragma verify = false; // Todo: fix me, cost too much time
-        aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
         aborts_if !exists<Account>(txn_sender);
         aborts_if !exists<Balance<TokenType>>(txn_sender);
         aborts_if txn_max_gas_units < gas_units_remaining;
@@ -989,9 +989,9 @@ module Account {
         aborts_if txn_gas_price * (txn_max_gas_units - gas_units_remaining) > 0 &&
                 global<Balance<TokenType>>(txn_sender).token.value  < txn_gas_price * (txn_max_gas_units - gas_units_remaining);
         aborts_if txn_gas_price * (txn_max_gas_units - gas_units_remaining) > 0 &&
-                !exists<TransactionFee::TransactionFee<TokenType>>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+                !exists<TransactionFee::TransactionFee<TokenType>>(CoreAddresses::GENESIS_ADDRESS());
         aborts_if txn_gas_price * (txn_max_gas_units - gas_units_remaining) > 0 &&
-                global<TransactionFee::TransactionFee<TokenType>>(CoreAddresses::SPEC_GENESIS_ADDRESS()).fee.value + txn_gas_price * (txn_max_gas_units - gas_units_remaining) > max_u128();
+                global<TransactionFee::TransactionFee<TokenType>>(CoreAddresses::GENESIS_ADDRESS()).fee.value + txn_gas_price * (txn_max_gas_units - gas_units_remaining) > max_u128();
     }
 }
 
