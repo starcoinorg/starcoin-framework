@@ -39,4 +39,4 @@ jobs:
           source "$HOME/.profile"
           bash ./scripts/build.sh
       - name: check changed files
-        run: bash ./scripts/changed-files.sh
+        run: bash ./scripts/changed_files.sh
