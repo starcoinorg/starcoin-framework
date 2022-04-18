@@ -19,7 +19,7 @@ Z3_VERSION=4.8.13
 CVC5_VERSION=0.0.3
 DOTNET_VERSION=5.0
 BOOGIE_VERSION=2.9.6
-MPM_VERSION=v1.11.0-alpha
+MPM_VERSION=v1.11.4-alpha
 
 
 SCRIPT_PATH="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
@@ -163,8 +163,11 @@ function install_mpm {
       else
         mpm_file="mpm-ubuntu-latest";
       fi
-      curl -sL -o "${INSTALL_DIR}"mpm "https://github.com/starcoinorg/starcoin/releases/download/${MPM_VERSION}/${mpm_file}"
-      chmod +x "${INSTALL_DIR}"mpm
+      curl -sL -o "${INSTALL_DIR}${mpm_file}.zip" "https://github.com/starcoinorg/starcoin/releases/download/${MPM_VERSION}/${mpm_file}.zip"
+      unzip -q "${INSTALL_DIR}${mpm_file}.zip" -d "${INSTALL_DIR}"
+      mv "${INSTALL_DIR}${mpm_file}/mpm" "${INSTALL_DIR}mpm"
+      chmod +x "${INSTALL_DIR}mpm"
+      rmdir "${INSTALL_DIR}${mpm_file}"
     fi
 }
 
