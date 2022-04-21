@@ -25,10 +25,10 @@ jobs:
         run: |
           source "$HOME/.profile"
           mpm package test
-      - name: spec test
+      - name: integration test
         run: |
           source "$HOME/.profile"
-          mpm spectest
+          mpm integration-test
       - name: move-prover-test
         run: |
           source "$HOME/.profile"
@@ -39,4 +39,4 @@ jobs:
           source "$HOME/.profile"
           bash ./scripts/build.sh
       - name: check changed files
-        run: bash ./scripts/changed-files.sh
+        run: bash ./scripts/changed_files.sh

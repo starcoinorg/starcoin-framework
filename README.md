@@ -38,10 +38,10 @@ Run move prove
 mpm package prove
 ```
 
-Run spec test:
+Run integration test:
 
 ```shell
-mpm spectest
+mpm integration-test
 ```
 
 ## Contributing
@@ -58,8 +58,8 @@ Contributions in the following are welcome:
 
 1. Add New Move module to `sources` dir, such as `MyModule.move`.
 2. Write Move code and add unit test in the module file.
-3. Add a spec test [spectests](../spectests), such as: `test_my_module.move`.
-4. Run the spec test `mpm spectest test_my_module.move `.
+3. Add an integration test to [tests](../tests) dir, such as: `test_my_module.move`.
+4. Run the integration test `mpm integration-test test_my_module.move `.
 5. Run script `./script/build.sh` for build and generate documents.
 6. Commit the changes and create a pull request.
 
