@@ -38,7 +38,7 @@ module OnChainConfigDao {
         pragma aborts_if_is_partial = false;
         let sender = Signer::address_of(signer);
         aborts_if sender != Token::SPEC_TOKEN_TEST_ADDRESS();
-        include Config::AbortsIfCapNotExist<ConfigT>{account: sender};
+        include Config::AbortsIfCapNotExist<ConfigT>{address: sender};
         aborts_if exists<WrappedConfigModifyCapability<TokenT, ConfigT>>(sender);
         ensures exists<WrappedConfigModifyCapability<TokenT, ConfigT>>(sender);
     }
