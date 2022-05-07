@@ -88,6 +88,13 @@ The module for the Treasury of DAO, which can hold the token of DAO.
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+</details>
+
 <a name="0x1_Treasury_WithdrawCapability"></a>
 
 ## Resource `WithdrawCapability`
@@ -272,7 +279,7 @@ Message for treasury deposit event.
 
 ## Function `initialize`
 
-Init a Treasury for TokenT,can only be called by token issuer.
+Init a Treasury for TokenT. Can only be called by token issuer.
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_initialize">initialize</a>&lt;TokenT: store&gt;(signer: &signer, init_token: <a href="Token.md#0x1_Token_Token">Token::Token</a>&lt;TokenT&gt;): <a href="Treasury.md#0x1_Treasury_WithdrawCapability">Treasury::WithdrawCapability</a>&lt;TokenT&gt;
@@ -284,15 +291,15 @@ Init a Treasury for TokenT,can only be called by token issuer.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_initialize">initialize</a>&lt;TokenT:store&gt;(signer: &signer, init_token: <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt;) :<a href="Treasury.md#0x1_Treasury_WithdrawCapability">WithdrawCapability</a>&lt;TokenT&gt; {
+<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_initialize">initialize</a>&lt;TokenT: store&gt;(signer: &signer, init_token: <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt;): <a href="Treasury.md#0x1_Treasury_WithdrawCapability">WithdrawCapability</a>&lt;TokenT&gt; {
     <b>let</b> token_issuer = <a href="Token.md#0x1_Token_token_address">Token::token_address</a>&lt;TokenT&gt;();
     <b>assert</b>!(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(signer) == token_issuer, <a href="Errors.md#0x1_Errors_requires_address">Errors::requires_address</a>(<a href="Treasury.md#0x1_Treasury_ERR_NOT_AUTHORIZED">ERR_NOT_AUTHORIZED</a>));
-    <b>let</b> treasure = <a href="Treasury.md#0x1_Treasury">Treasury</a>{
+    <b>let</b> treasure = <a href="Treasury.md#0x1_Treasury">Treasury</a> {
         balance: init_token,
         withdraw_events: <a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="Treasury.md#0x1_Treasury_WithdrawEvent">WithdrawEvent</a>&gt;(signer),
         deposit_events: <a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="Treasury.md#0x1_Treasury_DepositEvent">DepositEvent</a>&gt;(signer),
     };
-    <b>move_to</b>(signer,treasure);
+    <b>move_to</b>(signer, treasure);
     <a href="Treasury.md#0x1_Treasury_WithdrawCapability">WithdrawCapability</a>&lt;TokenT&gt;{}
 }
 </code></pre>
@@ -303,6 +310,14 @@ Init a Treasury for TokenT,can only be called by token issuer.
 
 <details>
 <summary>Specification</summary>
+
+
+
+<pre><code><b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(signer) != <a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">Token::SPEC_TOKEN_TEST_ADDRESS</a>();
+<b>aborts_if</b> <b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury">Treasury</a>&lt;TokenT&gt;&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">Token::SPEC_TOKEN_TEST_ADDRESS</a>());
+<b>ensures</b> <b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury">Treasury</a>&lt;TokenT&gt;&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">Token::SPEC_TOKEN_TEST_ADDRESS</a>());
+<b>ensures</b> result == <a href="Treasury.md#0x1_Treasury_WithdrawCapability">WithdrawCapability</a>&lt;TokenT&gt;{};
+</code></pre>
 
 
 
@@ -324,7 +339,7 @@ Check the Treasury of TokenT is exists.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_exists_at">exists_at</a>&lt;TokenT:store&gt;(): bool {
+<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_exists_at">exists_at</a>&lt;TokenT: store&gt;(): bool {
     <b>let</b> token_issuer = <a href="Token.md#0x1_Token_token_address">Token::token_address</a>&lt;TokenT&gt;();
     <b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury">Treasury</a>&lt;TokenT&gt;&gt;(token_issuer)
 }
@@ -336,6 +351,12 @@ Check the Treasury of TokenT is exists.
 
 <details>
 <summary>Specification</summary>
+
+
+
+<pre><code><b>aborts_if</b> <b>false</b>;
+<b>ensures</b> result == <b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury">Treasury</a>&lt;TokenT&gt;&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">Token::SPEC_TOKEN_TEST_ADDRESS</a>());
+</code></pre>
 
 
 
@@ -358,9 +379,9 @@ if the Treasury do not exists, return 0.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_balance">balance</a>&lt;TokenT:store&gt;(): u128 <b>acquires</b> <a href="Treasury.md#0x1_Treasury">Treasury</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_balance">balance</a>&lt;TokenT:store&gt;(): u128 <b>acquires</b> <a href="Treasury.md#0x1_Treasury">Treasury</a> {
     <b>let</b> token_issuer = <a href="Token.md#0x1_Token_token_address">Token::token_address</a>&lt;TokenT&gt;();
-    <b>if</b>(!<b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury">Treasury</a>&lt;TokenT&gt;&gt;(token_issuer)){
+    <b>if</b> (!<b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury">Treasury</a>&lt;TokenT&gt;&gt;(token_issuer)) {
         <b>return</b> 0
     };
     <b>let</b> treasury = <b>borrow_global</b>&lt;<a href="Treasury.md#0x1_Treasury">Treasury</a>&lt;TokenT&gt;&gt;(token_issuer);
@@ -374,6 +395,15 @@ if the Treasury do not exists, return 0.
 
 <details>
 <summary>Specification</summary>
+
+
+
+<pre><code><b>aborts_if</b> <b>false</b>;
+<b>ensures</b> <b>if</b> (<b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury">Treasury</a>&lt;TokenT&gt;&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">Token::SPEC_TOKEN_TEST_ADDRESS</a>()))
+            result == <a href="Treasury.md#0x1_Treasury_spec_balance">spec_balance</a>&lt;TokenT&gt;()
+        <b>else</b>
+            result == 0;
+</code></pre>
 
 
 
@@ -394,17 +424,15 @@ if the Treasury do not exists, return 0.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_deposit">deposit</a>&lt;TokenT:store&gt;(token: <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt;) <b>acquires</b> <a href="Treasury.md#0x1_Treasury">Treasury</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_deposit">deposit</a>&lt;TokenT: store&gt;(token: <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt;) <b>acquires</b> <a href="Treasury.md#0x1_Treasury">Treasury</a> {
     <b>assert</b>!(<a href="Treasury.md#0x1_Treasury_exists_at">exists_at</a>&lt;TokenT&gt;(), <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="Treasury.md#0x1_Treasury_ERR_TREASURY_NOT_EXIST">ERR_TREASURY_NOT_EXIST</a>));
     <b>let</b> token_address = <a href="Token.md#0x1_Token_token_address">Token::token_address</a>&lt;TokenT&gt;();
     <b>let</b> treasury = <b>borrow_global_mut</b>&lt;<a href="Treasury.md#0x1_Treasury">Treasury</a>&lt;TokenT&gt;&gt;(token_address);
     <b>let</b> amount = <a href="Token.md#0x1_Token_value">Token::value</a>(&token);
     <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(
-            &<b>mut</b> treasury.deposit_events,
-            <a href="Treasury.md#0x1_Treasury_DepositEvent">DepositEvent</a> {
-                amount,
-            },
-        );
+        &<b>mut</b> treasury.deposit_events,
+        <a href="Treasury.md#0x1_Treasury_DepositEvent">DepositEvent</a> { amount },
+    );
     <a href="Token.md#0x1_Token_deposit">Token::deposit</a>(&<b>mut</b> treasury.balance, token);
 }
 </code></pre>
@@ -415,6 +443,13 @@ if the Treasury do not exists, return 0.
 
 <details>
 <summary>Specification</summary>
+
+
+
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury">Treasury</a>&lt;TokenT&gt;&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">Token::SPEC_TOKEN_TEST_ADDRESS</a>());
+<b>aborts_if</b> <a href="Treasury.md#0x1_Treasury_spec_balance">spec_balance</a>&lt;TokenT&gt;() + token.value &gt; MAX_U128;
+<b>ensures</b> <a href="Treasury.md#0x1_Treasury_spec_balance">spec_balance</a>&lt;TokenT&gt;() == <b>old</b>(<a href="Treasury.md#0x1_Treasury_spec_balance">spec_balance</a>&lt;TokenT&gt;()) + token.value;
+</code></pre>
 
 
 
@@ -435,7 +470,7 @@ if the Treasury do not exists, return 0.
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="Treasury.md#0x1_Treasury_do_withdraw">do_withdraw</a>&lt;TokenT:store&gt;(amount: u128): <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt; <b>acquires</b> <a href="Treasury.md#0x1_Treasury">Treasury</a> {
+<pre><code><b>fun</b> <a href="Treasury.md#0x1_Treasury_do_withdraw">do_withdraw</a>&lt;TokenT: store&gt;(amount: u128): <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt; <b>acquires</b> <a href="Treasury.md#0x1_Treasury">Treasury</a> {
     <b>assert</b>!(amount &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Treasury.md#0x1_Treasury_ERR_ZERO_AMOUNT">ERR_ZERO_AMOUNT</a>));
     <b>assert</b>!(<a href="Treasury.md#0x1_Treasury_exists_at">exists_at</a>&lt;TokenT&gt;(), <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="Treasury.md#0x1_Treasury_ERR_TREASURY_NOT_EXIST">ERR_TREASURY_NOT_EXIST</a>));
     <b>let</b> token_address = <a href="Token.md#0x1_Token_token_address">Token::token_address</a>&lt;TokenT&gt;();
@@ -443,9 +478,7 @@ if the Treasury do not exists, return 0.
     <b>assert</b>!(amount &lt;= <a href="Token.md#0x1_Token_value">Token::value</a>(&treasury.balance) , <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Treasury.md#0x1_Treasury_ERR_TOO_BIG_AMOUNT">ERR_TOO_BIG_AMOUNT</a>));
     <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(
         &<b>mut</b> treasury.withdraw_events,
-        <a href="Treasury.md#0x1_Treasury_WithdrawEvent">WithdrawEvent</a> {
-            amount,
-        },
+        <a href="Treasury.md#0x1_Treasury_WithdrawEvent">WithdrawEvent</a> { amount },
     );
     <a href="Token.md#0x1_Token_withdraw">Token::withdraw</a>(&<b>mut</b> treasury.balance, amount)
 }
@@ -460,7 +493,23 @@ if the Treasury do not exists, return 0.
 
 
 
-<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury">Treasury</a>&lt;TokenT&gt;&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">Token::SPEC_TOKEN_TEST_ADDRESS</a>());
+<pre><code><b>include</b> <a href="Treasury.md#0x1_Treasury_WithdrawSchema">WithdrawSchema</a>&lt;TokenT&gt;;
+</code></pre>
+
+
+
+
+<a name="0x1_Treasury_WithdrawSchema"></a>
+
+
+<pre><code><b>schema</b> <a href="Treasury.md#0x1_Treasury_WithdrawSchema">WithdrawSchema</a>&lt;TokenT&gt; {
+    amount: u64;
+    <b>aborts_if</b> amount &lt;= 0;
+    <b>aborts_if</b> !<b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury">Treasury</a>&lt;TokenT&gt;&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">Token::SPEC_TOKEN_TEST_ADDRESS</a>());
+    <b>aborts_if</b> <a href="Treasury.md#0x1_Treasury_spec_balance">spec_balance</a>&lt;TokenT&gt;() &lt; amount;
+    <b>ensures</b> <a href="Treasury.md#0x1_Treasury_spec_balance">spec_balance</a>&lt;TokenT&gt;() ==
+        <b>old</b>(<a href="Treasury.md#0x1_Treasury_spec_balance">spec_balance</a>&lt;TokenT&gt;()) - amount;
+}
 </code></pre>
 
 
@@ -483,9 +532,11 @@ Withdraw tokens with given <code><a href="Treasury.md#0x1_Treasury_LinearWithdra
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_withdraw_with_capability">withdraw_with_capability</a>&lt;TokenT:store&gt;(_cap: &<b>mut</b> <a href="Treasury.md#0x1_Treasury_WithdrawCapability">WithdrawCapability</a>&lt;TokenT&gt;, amount: u128): <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt; <b>acquires</b> <a href="Treasury.md#0x1_Treasury">Treasury</a> {
-    <b>let</b> token = <a href="Treasury.md#0x1_Treasury_do_withdraw">do_withdraw</a>(amount);
-    token
+<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_withdraw_with_capability">withdraw_with_capability</a>&lt;TokenT: store&gt;(
+    _cap: &<b>mut</b> <a href="Treasury.md#0x1_Treasury_WithdrawCapability">WithdrawCapability</a>&lt;TokenT&gt;,
+    amount: u128,
+): <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt; <b>acquires</b> <a href="Treasury.md#0x1_Treasury">Treasury</a> {
+    <a href="Treasury.md#0x1_Treasury_do_withdraw">do_withdraw</a>(amount)
 }
 </code></pre>
 
@@ -498,13 +549,18 @@ Withdraw tokens with given <code><a href="Treasury.md#0x1_Treasury_LinearWithdra
 
 
 
+<pre><code><b>include</b> <a href="Treasury.md#0x1_Treasury_WithdrawSchema">WithdrawSchema</a>&lt;TokenT&gt;;
+</code></pre>
+
+
+
 </details>
 
 <a name="0x1_Treasury_withdraw"></a>
 
 ## Function `withdraw`
 
-Withdraw from TokenT's  treasury, the signer must have WithdrawCapability<TokenT>
+Withdraw from TokenT's treasury, the signer must have WithdrawCapability<TokenT>
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_withdraw">withdraw</a>&lt;TokenT: store&gt;(signer: &signer, amount: u128): <a href="Token.md#0x1_Token_Token">Token::Token</a>&lt;TokenT&gt;
@@ -516,7 +572,10 @@ Withdraw from TokenT's  treasury, the signer must have WithdrawCapability<TokenT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_withdraw">withdraw</a>&lt;TokenT:store&gt;(signer: &signer, amount: u128) : <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt; <b>acquires</b> <a href="Treasury.md#0x1_Treasury">Treasury</a>, <a href="Treasury.md#0x1_Treasury_WithdrawCapability">WithdrawCapability</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_withdraw">withdraw</a>&lt;TokenT: store&gt;(
+    signer: &signer,
+    amount: u128
+): <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt; <b>acquires</b> <a href="Treasury.md#0x1_Treasury">Treasury</a>, <a href="Treasury.md#0x1_Treasury_WithdrawCapability">WithdrawCapability</a> {
     <b>let</b> cap = <b>borrow_global_mut</b>&lt;<a href="Treasury.md#0x1_Treasury_WithdrawCapability">WithdrawCapability</a>&lt;TokenT&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(signer));
     <a href="Treasury.md#0x1_Treasury_withdraw_with_capability">Self::withdraw_with_capability</a>(cap, amount)
 }
@@ -528,6 +587,12 @@ Withdraw from TokenT's  treasury, the signer must have WithdrawCapability<TokenT
 
 <details>
 <summary>Specification</summary>
+
+
+
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury_WithdrawCapability">WithdrawCapability</a>&lt;TokenT&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(signer));
+<b>include</b> <a href="Treasury.md#0x1_Treasury_WithdrawSchema">WithdrawSchema</a>&lt;TokenT&gt;;
+</code></pre>
 
 
 
@@ -549,8 +614,11 @@ Issue a <code><a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">Linear
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_issue_linear_withdraw_capability">issue_linear_withdraw_capability</a>&lt;TokenT: store&gt;( _capability: &<b>mut</b> <a href="Treasury.md#0x1_Treasury_WithdrawCapability">WithdrawCapability</a>&lt;TokenT&gt;,
-                                            amount: u128, period: u64): <a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;{
+<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_issue_linear_withdraw_capability">issue_linear_withdraw_capability</a>&lt;TokenT: store&gt;(
+    _capability: &<b>mut</b> <a href="Treasury.md#0x1_Treasury_WithdrawCapability">WithdrawCapability</a>&lt;TokenT&gt;,
+    amount: u128,
+    period: u64
+): <a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt; {
     <b>assert</b>!(period &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Treasury.md#0x1_Treasury_ERR_INVALID_PERIOD">ERR_INVALID_PERIOD</a>));
     <b>assert</b>!(amount &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Treasury.md#0x1_Treasury_ERR_ZERO_AMOUNT">ERR_ZERO_AMOUNT</a>));
     <b>let</b> start_time = <a href="Timestamp.md#0x1_Timestamp_now_seconds">Timestamp::now_seconds</a>();
@@ -558,7 +626,7 @@ Issue a <code><a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">Linear
         total: amount,
         withdraw: 0,
         start_time,
-        period
+        period,
     }
 }
 </code></pre>
@@ -597,7 +665,9 @@ Withdraw tokens with given <code><a href="Treasury.md#0x1_Treasury_LinearWithdra
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_withdraw_with_linear_capability">withdraw_with_linear_capability</a>&lt;TokenT: store&gt;(cap: &<b>mut</b> <a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;): <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt; <b>acquires</b> <a href="Treasury.md#0x1_Treasury">Treasury</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_withdraw_with_linear_capability">withdraw_with_linear_capability</a>&lt;TokenT: store&gt;(
+    cap: &<b>mut</b> <a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;,
+): <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt; <b>acquires</b> <a href="Treasury.md#0x1_Treasury">Treasury</a> {
     <b>let</b> amount = <a href="Treasury.md#0x1_Treasury_withdraw_amount_of_linear_cap">withdraw_amount_of_linear_cap</a>(cap);
     <b>let</b> token = <a href="Treasury.md#0x1_Treasury_do_withdraw">do_withdraw</a>(amount);
     cap.withdraw = cap.withdraw + amount;
@@ -614,7 +684,7 @@ Withdraw tokens with given <code><a href="Treasury.md#0x1_Treasury_LinearWithdra
 
 
 
-<pre><code><b>pragma</b> verify = <b>false</b>;
+<pre><code><b>pragma</b> aborts_if_is_partial;
 </code></pre>
 
 
@@ -637,10 +707,25 @@ Withdraw from TokenT's  treasury, the signer must have LinearWithdrawCapability<
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_withdraw_by_linear">withdraw_by_linear</a>&lt;TokenT:store&gt;(signer: &signer) : <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt; <b>acquires</b> <a href="Treasury.md#0x1_Treasury">Treasury</a>, <a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_withdraw_by_linear">withdraw_by_linear</a>&lt;TokenT:store&gt;(
+    signer: &signer,
+): <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt; <b>acquires</b> <a href="Treasury.md#0x1_Treasury">Treasury</a>, <a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a> {
     <b>let</b> cap = <b>borrow_global_mut</b>&lt;<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(signer));
     <a href="Treasury.md#0x1_Treasury_withdraw_with_linear_capability">Self::withdraw_with_linear_capability</a>(cap)
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> aborts_if_is_partial;
+<b>aborts_if</b> !<b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(signer));
 </code></pre>
 
 
@@ -663,7 +748,10 @@ Split the given <code><a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_split_linear_withdraw_cap">split_linear_withdraw_cap</a>&lt;TokenT: store&gt;(cap: &<b>mut</b> <a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;, amount: u128): (<a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt;, <a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;) <b>acquires</b> <a href="Treasury.md#0x1_Treasury">Treasury</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_split_linear_withdraw_cap">split_linear_withdraw_cap</a>&lt;TokenT: store&gt;(
+    cap: &<b>mut</b> <a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;,
+    amount: u128,
+): (<a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt;, <a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;) <b>acquires</b> <a href="Treasury.md#0x1_Treasury">Treasury</a> {
     <b>assert</b>!(amount &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Treasury.md#0x1_Treasury_ERR_ZERO_AMOUNT">ERR_ZERO_AMOUNT</a>));
     <b>let</b> token = <a href="Treasury.md#0x1_Treasury_withdraw_with_linear_capability">Self::withdraw_with_linear_capability</a>(cap);
     <b>assert</b>!((cap.withdraw + amount) &lt;= cap.total, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Treasury.md#0x1_Treasury_ERR_TOO_BIG_AMOUNT">ERR_TOO_BIG_AMOUNT</a>));
@@ -689,7 +777,9 @@ Split the given <code><a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability
 
 
 
-<pre><code><b>pragma</b> verify = <b>false</b>;
+<pre><code><b>pragma</b> aborts_if_is_partial;
+<b>ensures</b> <b>old</b>(cap.total - cap.withdraw) ==
+    result_1.value + (result_2.total - result_2.withdraw) + (cap.total - cap.withdraw);
 </code></pre>
 
 
@@ -717,7 +807,7 @@ Returns the amount of the LinearWithdrawCapability can mint now.
     <b>let</b> elapsed_time = now - cap.start_time;
     <b>if</b> (elapsed_time &gt;= cap.period) {
         cap.total - cap.withdraw
-    }<b>else</b> {
+    } <b>else</b> {
         <a href="Math.md#0x1_Math_mul_div">Math::mul_div</a>(cap.total, (elapsed_time <b>as</b> u128), (cap.period <b>as</b> u128)) - cap.withdraw
     }
 }
@@ -732,11 +822,13 @@ Returns the amount of the LinearWithdrawCapability can mint now.
 
 
 
-<pre><code><b>pragma</b> verify = <b>false</b>;
+<pre><code><b>pragma</b> aborts_if_is_partial;
 <b>aborts_if</b> !<b>exists</b>&lt;<a href="Timestamp.md#0x1_Timestamp_CurrentTimeMilliseconds">Timestamp::CurrentTimeMilliseconds</a>&gt;(StarcoinFramework::CoreAddresses::GENESIS_ADDRESS());
 <b>aborts_if</b> <a href="Timestamp.md#0x1_Timestamp_spec_now_seconds">Timestamp::spec_now_seconds</a>() &lt; cap.start_time;
 <b>aborts_if</b> <a href="Timestamp.md#0x1_Timestamp_spec_now_seconds">Timestamp::spec_now_seconds</a>() - cap.start_time &gt;= cap.period && cap.total &lt; cap.withdraw;
-<b>aborts_if</b> [abstract] <a href="Timestamp.md#0x1_Timestamp_spec_now_seconds">Timestamp::spec_now_seconds</a>() - cap.start_time &lt; cap.period && <a href="Math.md#0x1_Math_spec_mul_div">Math::spec_mul_div</a>() &lt; cap.withdraw;
+<b>aborts_if</b> [abstract]
+    <a href="Timestamp.md#0x1_Timestamp_spec_now_seconds">Timestamp::spec_now_seconds</a>() - cap.start_time &lt; cap.period && <a href="Math.md#0x1_Math_spec_mul_div">Math::spec_mul_div</a>() &lt; cap.withdraw;
+<b>ensures</b> [abstract] result &lt;= cap.total - cap.withdraw;
 </code></pre>
 
 
@@ -774,6 +866,7 @@ Check if the given <code><a href="Treasury.md#0x1_Treasury_LinearWithdrawCapabil
 
 
 <pre><code><b>aborts_if</b> <b>false</b>;
+<b>ensures</b> result == (key.total == key.withdraw);
 </code></pre>
 
 
@@ -874,7 +967,7 @@ Destroy the given mint capability.
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_destroy_withdraw_capability">destroy_withdraw_capability</a>&lt;TokenT: store&gt;(cap: <a href="Treasury.md#0x1_Treasury_WithdrawCapability">WithdrawCapability</a>&lt;TokenT&gt;) {
-    <b>let</b> <a href="Treasury.md#0x1_Treasury_WithdrawCapability">WithdrawCapability</a>&lt;TokenT&gt; { } = cap;
+    <b>let</b> <a href="Treasury.md#0x1_Treasury_WithdrawCapability">WithdrawCapability</a>&lt;TokenT&gt; {} = cap;
 }
 </code></pre>
 
@@ -905,9 +998,22 @@ Add LinearWithdrawCapability to <code>signer</code>, a address only can have one
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_add_linear_withdraw_capability">add_linear_withdraw_capability</a>&lt;TokenT: store&gt;(signer: &signer, cap: <a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;){
+<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_add_linear_withdraw_capability">add_linear_withdraw_capability</a>&lt;TokenT: store&gt;(signer: &signer, cap: <a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;) {
     <b>move_to</b>(signer, cap)
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>aborts_if</b> <b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(signer));
+<b>ensures</b> <b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(signer));
 </code></pre>
 
 
@@ -934,6 +1040,19 @@ Remove LinearWithdrawCapability from <code>signer</code>.
 <b>acquires</b> <a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a> {
     <b>move_from</b>&lt;<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(signer))
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(signer));
+<b>ensures</b> !<b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(signer));
 </code></pre>
 
 
@@ -980,7 +1099,7 @@ Destroy LinearWithdrawCapability.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_is_empty_linear_withdraw_capability">is_empty_linear_withdraw_capability</a>&lt;TokenT: store&gt;(cap: &<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;):bool {
+<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_is_empty_linear_withdraw_capability">is_empty_linear_withdraw_capability</a>&lt;TokenT: store&gt;(cap: &<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;): bool {
     cap.total == cap.withdraw
 }
 </code></pre>
@@ -1005,7 +1124,7 @@ Get LinearWithdrawCapability total amount
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_get_linear_withdraw_capability_total">get_linear_withdraw_capability_total</a>&lt;TokenT: store&gt;(cap: &<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;):u128 {
+<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_get_linear_withdraw_capability_total">get_linear_withdraw_capability_total</a>&lt;TokenT: store&gt;(cap: &<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;): u128 {
     cap.total
 }
 </code></pre>
@@ -1030,7 +1149,7 @@ Get LinearWithdrawCapability withdraw amount
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_get_linear_withdraw_capability_withdraw">get_linear_withdraw_capability_withdraw</a>&lt;TokenT: store&gt;(cap: &<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;):u128 {
+<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_get_linear_withdraw_capability_withdraw">get_linear_withdraw_capability_withdraw</a>&lt;TokenT: store&gt;(cap: &<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;): u128 {
     cap.withdraw
 }
 </code></pre>
@@ -1055,7 +1174,7 @@ Get LinearWithdrawCapability period in seconds
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_get_linear_withdraw_capability_period">get_linear_withdraw_capability_period</a>&lt;TokenT: store&gt;(cap: &<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;):u64 {
+<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_get_linear_withdraw_capability_period">get_linear_withdraw_capability_period</a>&lt;TokenT: store&gt;(cap: &<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;): u64 {
     cap.period
 }
 </code></pre>
@@ -1080,7 +1199,7 @@ Get LinearWithdrawCapability start_time in seconds
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_get_linear_withdraw_capability_start_time">get_linear_withdraw_capability_start_time</a>&lt;TokenT: store&gt;(cap: &<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;):u64 {
+<pre><code><b>public</b> <b>fun</b> <a href="Treasury.md#0x1_Treasury_get_linear_withdraw_capability_start_time">get_linear_withdraw_capability_start_time</a>&lt;TokenT: store&gt;(cap: &<a href="Treasury.md#0x1_Treasury_LinearWithdrawCapability">LinearWithdrawCapability</a>&lt;TokenT&gt;): u64 {
     cap.start_time
 }
 </code></pre>
@@ -1095,7 +1214,7 @@ Get LinearWithdrawCapability start_time in seconds
 
 
 
-<pre><code><b>pragma</b> verify = <b>false</b>;
+<pre><code><b>pragma</b> verify;
 <b>pragma</b> aborts_if_is_strict;
 </code></pre>
 
@@ -1105,7 +1224,7 @@ Get LinearWithdrawCapability start_time in seconds
 <a name="0x1_Treasury_spec_balance"></a>
 
 
-<pre><code><b>fun</b> <a href="Treasury.md#0x1_Treasury_spec_balance">spec_balance</a>&lt;TokenType&gt;(): u128 {
+<pre><code><b>fun</b> <a href="Treasury.md#0x1_Treasury_spec_balance">spec_balance</a>&lt;TokenType&gt;(): num {
    <b>global</b>&lt;<a href="Treasury.md#0x1_Treasury">Treasury</a>&lt;TokenType&gt;&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">Token::SPEC_TOKEN_TEST_ADDRESS</a>()).balance.value
 }
 </code></pre>

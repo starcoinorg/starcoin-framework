@@ -53,7 +53,7 @@ module ModifyDaoConfigProposal {
         pragma aborts_if_is_partial = false;
         let sender = Signer::address_of(signer);
         aborts_if sender != Token::SPEC_TOKEN_TEST_ADDRESS();
-        include Config::AbortsIfCapNotExist<Dao::DaoConfig<TokenT>>{account: sender};
+        include Config::AbortsIfCapNotExist<Dao::DaoConfig<TokenT>>{address: sender};
         let config_cap = Config::spec_cap<Dao::DaoConfig<TokenT>>(sender);
         aborts_if Option::is_none(config_cap);
         aborts_if Option::borrow(config_cap).account_address != sender;

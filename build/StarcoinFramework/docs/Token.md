@@ -120,7 +120,7 @@ Token Code which identify a unique Token.
 <code>name: vector&lt;u8&gt;</code>
 </dt>
 <dd>
- name of the token. may nested if the token is a instantiated generic token type.
+ name of the token. may nested if the token is an instantiated generic token type.
 </dd>
 </dl>
 
@@ -684,7 +684,7 @@ Destroy the given mint capability.
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="Token.md#0x1_Token_destroy_mint_capability">destroy_mint_capability</a>&lt;TokenType: store&gt;(cap: <a href="Token.md#0x1_Token_MintCapability">MintCapability</a>&lt;TokenType&gt;) {
-    <b>let</b> <a href="Token.md#0x1_Token_MintCapability">MintCapability</a>&lt;TokenType&gt; { } = cap;
+    <b>let</b> <a href="Token.md#0x1_Token_MintCapability">MintCapability</a>&lt;TokenType&gt; {} = cap;
 }
 </code></pre>
 
@@ -793,7 +793,7 @@ Destroy the given burn capability.
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="Token.md#0x1_Token_destroy_burn_capability">destroy_burn_capability</a>&lt;TokenType: store&gt;(cap: <a href="Token.md#0x1_Token_BurnCapability">BurnCapability</a>&lt;TokenType&gt;) {
-    <b>let</b> <a href="Token.md#0x1_Token_BurnCapability">BurnCapability</a>&lt;TokenType&gt; { } = cap;
+    <b>let</b> <a href="Token.md#0x1_Token_BurnCapability">BurnCapability</a>&lt;TokenType&gt; {} = cap;
 }
 </code></pre>
 
@@ -961,8 +961,11 @@ Issue a <code><a href="Token.md#0x1_Token_FixedTimeMintKey">FixedTimeMintKey</a>
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Token.md#0x1_Token_issue_fixed_mint_key">issue_fixed_mint_key</a>&lt;TokenType: store&gt;( _capability: &<a href="Token.md#0x1_Token_MintCapability">MintCapability</a>&lt;TokenType&gt;,
-                                 _amount: u128, _period: u64): <a href="Token.md#0x1_Token_FixedTimeMintKey">FixedTimeMintKey</a>&lt;TokenType&gt;{
+<pre><code><b>public</b> <b>fun</b> <a href="Token.md#0x1_Token_issue_fixed_mint_key">issue_fixed_mint_key</a>&lt;TokenType: store&gt;(
+    _capability: &<a href="Token.md#0x1_Token_MintCapability">MintCapability</a>&lt;TokenType&gt;,
+    _amount: u128,
+    _period: u64,
+): <a href="Token.md#0x1_Token_FixedTimeMintKey">FixedTimeMintKey</a>&lt;TokenType&gt; {
     <b>abort</b> <a href="Errors.md#0x1_Errors_deprecated">Errors::deprecated</a>(<a href="Token.md#0x1_Token_EDEPRECATED_FUNCTION">EDEPRECATED_FUNCTION</a>)
 }
 </code></pre>
@@ -973,6 +976,11 @@ Issue a <code><a href="Token.md#0x1_Token_FixedTimeMintKey">FixedTimeMintKey</a>
 
 <details>
 <summary>Specification</summary>
+
+
+
+<pre><code><b>aborts_if</b> <b>true</b>;
+</code></pre>
 
 
 
@@ -995,8 +1003,11 @@ Issue a <code><a href="Token.md#0x1_Token_LinearTimeMintKey">LinearTimeMintKey</
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Token.md#0x1_Token_issue_linear_mint_key">issue_linear_mint_key</a>&lt;TokenType: store&gt;( _capability: &<a href="Token.md#0x1_Token_MintCapability">MintCapability</a>&lt;TokenType&gt;,
-                                            _amount: u128, _period: u64): <a href="Token.md#0x1_Token_LinearTimeMintKey">LinearTimeMintKey</a>&lt;TokenType&gt;{
+<pre><code><b>public</b> <b>fun</b> <a href="Token.md#0x1_Token_issue_linear_mint_key">issue_linear_mint_key</a>&lt;TokenType: store&gt;(
+    _capability: &<a href="Token.md#0x1_Token_MintCapability">MintCapability</a>&lt;TokenType&gt;,
+    _amount: u128,
+    _period: u64,
+): <a href="Token.md#0x1_Token_LinearTimeMintKey">LinearTimeMintKey</a>&lt;TokenType&gt; {
     <b>abort</b> <a href="Errors.md#0x1_Errors_deprecated">Errors::deprecated</a>(<a href="Token.md#0x1_Token_EDEPRECATED_FUNCTION">EDEPRECATED_FUNCTION</a>)
 }
 </code></pre>
@@ -1007,6 +1018,11 @@ Issue a <code><a href="Token.md#0x1_Token_LinearTimeMintKey">LinearTimeMintKey</
 
 <details>
 <summary>Specification</summary>
+
+
+
+<pre><code><b>aborts_if</b> <b>true</b>;
+</code></pre>
 
 
 
@@ -1029,7 +1045,7 @@ Destroy <code><a href="Token.md#0x1_Token_LinearTimeMintKey">LinearTimeMintKey</
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="Token.md#0x1_Token_destroy_linear_time_key">destroy_linear_time_key</a>&lt;TokenType: store&gt;(key: <a href="Token.md#0x1_Token_LinearTimeMintKey">LinearTimeMintKey</a>&lt;TokenType&gt;): (u128, u128, u64, u64) {
-    <b>let</b> <a href="Token.md#0x1_Token_LinearTimeMintKey">LinearTimeMintKey</a>&lt;TokenType&gt; { total, minted, start_time, period} = key;
+    <b>let</b> <a href="Token.md#0x1_Token_LinearTimeMintKey">LinearTimeMintKey</a>&lt;TokenType&gt; { total, minted, start_time, period } = key;
     (total, minted, start_time, period)
 }
 </code></pre>
@@ -1186,6 +1202,11 @@ Create a new Token::Token<TokenType> with a value of 0
 
 
 
+<pre><code><b>ensures</b> result.value == 0;
+</code></pre>
+
+
+
 </details>
 
 <a name="0x1_Token_value"></a>
@@ -1219,6 +1240,7 @@ Public accessor for the value of a token
 
 
 <pre><code><b>aborts_if</b> <b>false</b>;
+<b>ensures</b> result == token.value;
 </code></pre>
 
 
@@ -1245,8 +1267,8 @@ Splits the given token into two and returns them both
     token: <a href="Token.md#0x1_Token">Token</a>&lt;TokenType&gt;,
     value: u128,
 ): (<a href="Token.md#0x1_Token">Token</a>&lt;TokenType&gt;, <a href="Token.md#0x1_Token">Token</a>&lt;TokenType&gt;) {
-    <b>let</b> other = <a href="Token.md#0x1_Token_withdraw">withdraw</a>(&<b>mut</b> token, value);
-    (token, other)
+    <b>let</b> rest = <a href="Token.md#0x1_Token_withdraw">withdraw</a>(&<b>mut</b> token, value);
+    (token, rest)
 }
 </code></pre>
 
@@ -1260,7 +1282,7 @@ Splits the given token into two and returns them both
 
 
 <pre><code><b>aborts_if</b> token.<a href="Token.md#0x1_Token_value">value</a> &lt; value;
-<b>ensures</b> <b>old</b>(token.value) == result_1.value + result_2.value;
+<b>ensures</b> token.value == result_1.value + result_2.value;
 </code></pre>
 
 
@@ -1351,7 +1373,6 @@ value is equal to the sum of the two inputs
 
 
 <pre><code><b>aborts_if</b> token1.value + token2.value &gt; max_u128();
-<b>ensures</b> <b>old</b>(token1).value + <b>old</b>(token2).value == result.value;
 <b>ensures</b> token1.value + token2.value == result.value;
 </code></pre>
 
@@ -1473,6 +1494,7 @@ Returns the scaling_factor for the <code>TokenType</code> token.
 
 
 <pre><code><b>aborts_if</b> <b>false</b>;
+<b>ensures</b> result == <b>global</b>&lt;<a href="Token.md#0x1_Token_TokenInfo">TokenInfo</a>&lt;TokenType&gt;&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">SPEC_TOKEN_TEST_ADDRESS</a>()).scaling_factor;
 </code></pre>
 
 
@@ -1511,6 +1533,7 @@ Return the total amount of token of type <code>TokenType</code>.
 
 
 <pre><code><b>aborts_if</b> <b>false</b>;
+<b>ensures</b> result == <b>global</b>&lt;<a href="Token.md#0x1_Token_TokenInfo">TokenInfo</a>&lt;TokenType&gt;&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">SPEC_TOKEN_TEST_ADDRESS</a>()).total_value;
 </code></pre>
 
 
@@ -1548,6 +1571,7 @@ Return true if the type <code>TokenType</code> is a registered in <code>token_ad
 
 
 <pre><code><b>aborts_if</b> <b>false</b>;
+<b>ensures</b> result == <b>exists</b>&lt;<a href="Token.md#0x1_Token_TokenInfo">TokenInfo</a>&lt;TokenType&gt;&gt;(token_address);
 </code></pre>
 
 
@@ -1776,7 +1800,7 @@ Return Token's module address, module name, and type name of <code>TokenType</co
 <a name="0x1_Token_spec_abstract_total_value"></a>
 
 
-<pre><code><b>fun</b> <a href="Token.md#0x1_Token_spec_abstract_total_value">spec_abstract_total_value</a>&lt;TokenType&gt;(): u128 {
+<pre><code><b>fun</b> <a href="Token.md#0x1_Token_spec_abstract_total_value">spec_abstract_total_value</a>&lt;TokenType&gt;(): num {
    <b>global</b>&lt;<a href="Token.md#0x1_Token_TokenInfo">TokenInfo</a>&lt;TokenType&gt;&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">SPEC_TOKEN_TEST_ADDRESS</a>()).total_value
 }
 </code></pre>
@@ -1791,6 +1815,6 @@ Return Token's module address, module name, and type name of <code>TokenType</co
 
 
 
-<pre><code><b>pragma</b> verify = <b>false</b>;
-<b>pragma</b> aborts_if_is_strict = <b>true</b>;
+<pre><code><b>pragma</b> verify;
+<b>pragma</b> aborts_if_is_strict;
 </code></pre>

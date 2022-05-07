@@ -293,7 +293,7 @@ module U256 {
     }
 
     spec mul {
-        // pragma verify = false;
+        pragma verify = false;
         pragma timeout = 200; // Take longer time
         aborts_if value_of_U256(a) * value_of_U256(b) >= P64 * P64 * P64 * P64;
         ensures value_of_U256(result) == value_of_U256(a) * value_of_U256(b);
@@ -313,6 +313,7 @@ module U256 {
     }
 
     spec div {
+        pragma verify = false;
         pragma timeout = 160; // Might take longer time
         aborts_if value_of_U256(b) == 0;
         ensures value_of_U256(result) == value_of_U256(a) / value_of_U256(b);
@@ -334,6 +335,8 @@ module U256 {
     }
 
     spec rem {
+        pragma verify = false;
+        pragma timeout = 160; // Might take longer time
         aborts_if value_of_U256(b) == 0;
         ensures value_of_U256(result) == value_of_U256(a) % value_of_U256(b);
     }
