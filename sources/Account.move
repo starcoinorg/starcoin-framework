@@ -993,6 +993,18 @@ module Account {
         aborts_if txn_gas_price * (txn_max_gas_units - gas_units_remaining) > 0 &&
                 global<TransactionFee::TransactionFee<TokenType>>(CoreAddresses::GENESIS_ADDRESS()).fee.value + txn_gas_price * (txn_max_gas_units - gas_units_remaining) > max_u128();
     }
+
+    /// Remove zero Balance
+    public fun remove_zero_balance<TokenType: store>(account: &signer) acquires Balance {
+        let addr: address = Signer::address_of(account);
+        let Balance<TokenType> { token } = move_from<Balance<TokenType>>(addr);
+        Token::destroy_zero<TokenType>(token);
+    }
+
+    spec remove_zero_balance {
+        let addr = Signer::address_of(account);
+        aborts_if !exists<Balance<CoinType>>(addr);
+    }
 }
 
 }

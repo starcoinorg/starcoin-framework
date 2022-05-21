@@ -1,4 +1,4 @@
-processed 16 tasks
+processed 17 tasks
 
 task 4 'run'. lines 70-78:
 {
@@ -93,5 +93,23 @@ task 15 'run'. lines 236-250:
   "gas_used": 2060975,
   "status": {
     "Keep": "Executed"
+  }
+}
+
+task 16 'run'. lines 252-269:
+{
+  "gas_used": 519398,
+  "status": {
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "Vector"
+          }
+        },
+        3
+      ]
+    }
   }
 }

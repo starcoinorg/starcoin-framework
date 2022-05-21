@@ -248,3 +248,22 @@ fun main(sender: signer) {
 }
 
 // check: EXECUTED
+
+//# run --signers bob
+script {
+    use creator::AnyNFT::{AnyNFT, AnyNFTBody};
+    use StarcoinFramework::NFTGallery;
+    use StarcoinFramework::Signer;
+
+    fun main(sender: signer) {
+        let addr: address = Signer::address_of(&sender);
+
+        NFTGallery::accept<AnyNFT, AnyNFTBody>(&sender);
+        assert!(NFTGallery::is_accept<AnyNFT, AnyNFTBody>(addr), 1);
+
+        NFTGallery::remove_empty_gallery<AnyNFT, AnyNFTBody>(&sender);
+        assert!(!NFTGallery::is_accept<AnyNFT, AnyNFTBody>(addr), 2);
+    }
+}
+
+// check: EXECUTED
