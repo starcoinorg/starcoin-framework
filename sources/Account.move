@@ -1003,7 +1003,8 @@ module Account {
 
     spec remove_zero_balance {
         let addr = Signer::address_of(account);
-        aborts_if !exists<Balance<CoinType>>(addr);
+        aborts_if !old(exists<Balance<TokenType>>(addr));
+        ensures !exists<Balance<CoinType>>(addr);
     }
 }
 

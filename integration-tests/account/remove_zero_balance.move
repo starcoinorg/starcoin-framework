@@ -1,24 +1,30 @@
 //# init -n dev
 
-//# faucet --addr alice --amount 0
+//# faucet --addr alice
 
 //# run --signers alice
 script {
-    use StarcoinFramework::STC::{STC};
-    use StarcoinFramework::Signer;
+    use StarcoinFramework::DummyToken::DummyToken;
     use StarcoinFramework::Account;
     use StarcoinFramework::Token;
 
     fun main(account: signer) {
-        let addr: address = Signer::address_of(&account);
-
-        let coin = Token::zero<STC>();
-        Account::deposit_to_self<STC>(&account, coin);
-
-        Account::remove_zero_balance<STC>(&account);
-
-        Account::set_auto_accept_token(&account, false);
-        assert!(!Account::is_accept_token<STC>(addr), 101);
+        let coin = Token::zero<DummyToken>();
+        Account::deposit_to_self<DummyToken>(&account, coin);
+        Account::remove_zero_balance<DummyToken>(&account);
     }
 }
 // check: EXECUTED
+
+//# run --signers alice
+script {
+    use StarcoinFramework::DummyToken::{Self, DummyToken};
+    use StarcoinFramework::Account;
+
+    fun main(account: signer) {
+        let coin = DummyToken::mint(&account, 10000);
+        Account::deposit_to_self<DummyToken>(&account, coin);
+        Account::remove_zero_balance<DummyToken>(&account);
+    }
+}
+// check: ABORTED

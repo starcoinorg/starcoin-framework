@@ -1,6 +1,6 @@
-processed 17 tasks
+processed 18 tasks
 
-task 4 'run'. lines 70-78:
+task 5 'run'. lines 71-79:
 {
   "gas_used": 210684,
   "status": {
@@ -8,7 +8,7 @@ task 4 'run'. lines 70-78:
   }
 }
 
-task 5 'run'. lines 80-88:
+task 6 'run'. lines 81-89:
 {
   "gas_used": 85929,
   "status": {
@@ -16,7 +16,7 @@ task 5 'run'. lines 80-88:
   }
 }
 
-task 6 'run'. lines 91-105:
+task 7 'run'. lines 92-106:
 {
   "gas_used": 56773,
   "status": {
@@ -24,7 +24,7 @@ task 6 'run'. lines 91-105:
   }
 }
 
-task 7 'run'. lines 107-115:
+task 8 'run'. lines 108-116:
 {
   "gas_used": 108590,
   "status": {
@@ -32,7 +32,7 @@ task 7 'run'. lines 107-115:
   }
 }
 
-task 8 'run'. lines 117-133:
+task 9 'run'. lines 118-134:
 {
   "gas_used": 112663,
   "status": {
@@ -40,7 +40,7 @@ task 8 'run'. lines 117-133:
   }
 }
 
-task 9 'run'. lines 135-143:
+task 10 'run'. lines 136-144:
 {
   "gas_used": 18640403,
   "status": {
@@ -48,7 +48,7 @@ task 9 'run'. lines 135-143:
   }
 }
 
-task 10 'run'. lines 147-160:
+task 11 'run'. lines 148-161:
 {
   "gas_used": 3113987,
   "status": {
@@ -56,7 +56,7 @@ task 10 'run'. lines 147-160:
   }
 }
 
-task 11 'run'. lines 163-184:
+task 12 'run'. lines 164-185:
 {
   "gas_used": 28324758,
   "status": {
@@ -64,7 +64,7 @@ task 11 'run'. lines 163-184:
   }
 }
 
-task 12 'run'. lines 186-205:
+task 13 'run'. lines 187-206:
 {
   "gas_used": 2262261,
   "status": {
@@ -72,7 +72,7 @@ task 12 'run'. lines 186-205:
   }
 }
 
-task 13 'run'. lines 207-219:
+task 14 'run'. lines 208-220:
 {
   "gas_used": 19223,
   "status": {
@@ -80,7 +80,7 @@ task 13 'run'. lines 207-219:
   }
 }
 
-task 14 'run'. lines 223-233:
+task 15 'run'. lines 224-234:
 {
   "gas_used": 145028,
   "status": {
@@ -88,7 +88,7 @@ task 14 'run'. lines 223-233:
   }
 }
 
-task 15 'run'. lines 236-250:
+task 16 'run'. lines 237-251:
 {
   "gas_used": 2060975,
   "status": {
@@ -96,20 +96,10 @@ task 15 'run'. lines 236-250:
   }
 }
 
-task 16 'run'. lines 252-269:
+task 17 'run'. lines 253-267:
 {
-  "gas_used": 519398,
+  "gas_used": 328171,
   "status": {
-    "Keep": {
-      "MoveAbort": [
-        {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "Vector"
-          }
-        },
-        3
-      ]
-    }
+    "Keep": "Executed"
   }
 }

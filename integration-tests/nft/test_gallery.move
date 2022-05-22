@@ -4,6 +4,7 @@
 
 //# faucet --addr bob
 
+//# faucet --addr alice
 
 //# publish
 module creator::AnyNFT {
@@ -249,20 +250,17 @@ fun main(sender: signer) {
 
 // check: EXECUTED
 
-//# run --signers bob
+//# run --signers alice
 script {
-    use creator::AnyNFT::{AnyNFT, AnyNFTBody};
+    use creator::AnyNFT::{Self, AnyNFT, AnyNFTBody};
     use StarcoinFramework::NFTGallery;
-    use StarcoinFramework::Signer;
 
     fun main(sender: signer) {
-        let addr: address = Signer::address_of(&sender);
-
-        NFTGallery::accept<AnyNFT, AnyNFTBody>(&sender);
-        assert!(NFTGallery::is_accept<AnyNFT, AnyNFTBody>(addr), 1);
-
+        AnyNFT::do_accept(&sender);
+        AnyNFT::mint(&sender);
+        let nft = NFTGallery::withdraw_one<AnyNFT, AnyNFTBody>(&sender);
+        AnyNFT::burn(nft);
         NFTGallery::remove_empty_gallery<AnyNFT, AnyNFTBody>(&sender);
-        assert!(!NFTGallery::is_accept<AnyNFT, AnyNFTBody>(addr), 2);
     }
 }
 
