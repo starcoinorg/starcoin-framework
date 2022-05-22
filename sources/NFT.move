@@ -892,10 +892,11 @@ module NFTGallery {
 
     spec remove_empty_gallery {
         let sender_addr = Signer::address_of(sender);
-        aborts_if !old(exists<NFTGallery<NFTMeta, NFTBody>>(sender_addr));
+        aborts_if !exists<NFTGallery<NFTMeta, NFTBody>>(sender_addr);
 
         let gallery = global<NFTGallery<NFTMeta, NFTBody>>(sender_addr);
         aborts_if Vector::length<NFT<NFTMeta, NFTBody>>(gallery.items) > 0;
+        
         ensures !exists<NFTGallery<NFTMeta, NFTBody>>(sender_addr);
     }
 
