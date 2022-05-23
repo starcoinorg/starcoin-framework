@@ -72,6 +72,7 @@ The module for the account resource that governs every account
 -  [Function `txn_prologue`](#0x1_Account_txn_prologue)
 -  [Function `txn_epilogue`](#0x1_Account_txn_epilogue)
 -  [Function `txn_epilogue_v2`](#0x1_Account_txn_epilogue_v2)
+-  [Function `remove_zero_balance`](#0x1_Account_remove_zero_balance)
 -  [Module Specification](#@Module_Specification_1)
 
 
@@ -2961,6 +2962,47 @@ It collects gas and bumps the sequence number
         !<b>exists</b>&lt;<a href="TransactionFee.md#0x1_TransactionFee_TransactionFee">TransactionFee::TransactionFee</a>&lt;TokenType&gt;&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 <b>aborts_if</b> txn_gas_price * (txn_max_gas_units - gas_units_remaining) &gt; 0 &&
         <b>global</b>&lt;<a href="TransactionFee.md#0x1_TransactionFee_TransactionFee">TransactionFee::TransactionFee</a>&lt;TokenType&gt;&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).fee.value + txn_gas_price * (txn_max_gas_units - gas_units_remaining) &gt; max_u128();
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_Account_remove_zero_balance"></a>
+
+## Function `remove_zero_balance`
+
+Remove zero Balance
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_remove_zero_balance">remove_zero_balance</a>&lt;TokenType: store&gt;(account: &signer)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_remove_zero_balance">remove_zero_balance</a>&lt;TokenType: store&gt;(account: &signer) <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a> {
+    <b>let</b> addr: <b>address</b> = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account);
+    <b>let</b> <a href="Account.md#0x1_Account_Balance">Balance</a>&lt;TokenType&gt; { token } = <b>move_from</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;TokenType&gt;&gt;(addr);
+    <a href="Token.md#0x1_Token_destroy_zero">Token::destroy_zero</a>&lt;TokenType&gt;(token);
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>let</b> addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account);
+<b>aborts_if</b> !<b>exists</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;TokenType&gt;&gt;(addr);
+<b>ensures</b> !<b>exists</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;TokenType&gt;&gt;(addr);
 </code></pre>
 
 
