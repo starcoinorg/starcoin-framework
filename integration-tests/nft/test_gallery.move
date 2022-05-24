@@ -4,6 +4,7 @@
 
 //# faucet --addr bob
 
+//# faucet --addr alice
 
 //# publish
 module creator::AnyNFT {
@@ -245,6 +246,22 @@ fun main(sender: signer) {
     let nft = Option::destroy_some(nft);
     AnyNFT::burn(nft);
 }
+}
+
+// check: EXECUTED
+
+//# run --signers alice
+script {
+    use creator::AnyNFT::{Self, AnyNFT, AnyNFTBody};
+    use StarcoinFramework::NFTGallery;
+
+    fun main(sender: signer) {
+        AnyNFT::do_accept(&sender);
+        AnyNFT::mint(&sender);
+        let nft = NFTGallery::withdraw_one<AnyNFT, AnyNFTBody>(&sender);
+        AnyNFT::burn(nft);
+        NFTGallery::remove_empty_gallery<AnyNFT, AnyNFTBody>(&sender);
+    }
 }
 
 // check: EXECUTED

@@ -879,6 +879,27 @@ module NFTGallery {
         let gallery = borrow_global_mut<NFTGallery<NFTMeta, NFTBody>>(owner);
         Vector::length(&gallery.items)
     }
+
+    /// Remove empty NFTGallery<Meta,Body>.
+    public fun remove_empty_gallery<NFTMeta: copy + store + drop, NFTBody: store>(sender: &signer) acquires NFTGallery{
+        let sender_addr = Signer::address_of(sender);
+        let NFTGallery<NFTMeta, NFTBody> {withdraw_events, deposit_events, items} = move_from<NFTGallery<NFTMeta, NFTBody>>(sender_addr);
+           
+        Event::destroy_handle<WithdrawEvent<NFTMeta>>(withdraw_events);
+        Event::destroy_handle<DepositEvent<NFTMeta>>(deposit_events);           
+        Vector::destroy_empty<NFT<NFTMeta, NFTBody>>(items);
+    }
+
+    spec remove_empty_gallery {
+        let sender_addr = Signer::address_of(sender);
+        aborts_if !exists<NFTGallery<NFTMeta, NFTBody>>(sender_addr);
+
+        let gallery = global<NFTGallery<NFTMeta, NFTBody>>(sender_addr);
+        aborts_if Vector::length<NFT<NFTMeta, NFTBody>>(gallery.items) > 0;
+        
+        ensures !exists<NFTGallery<NFTMeta, NFTBody>>(sender_addr);
+    }
+
 }
 
 module NFTGalleryScripts {
@@ -899,6 +920,11 @@ module NFTGalleryScripts {
         id: u64, receiver: address
     ) {
         NFTGallery::transfer<NFTMeta, NFTBody>(&sender, id, receiver);
+    }
+
+    /// Remove empty NFTGallery<Meta,Body>.
+    public(script) fun remove_empty_gallery<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer) {
+        NFTGallery::remove_empty_gallery<NFTMeta, NFTBody>(&sender);
     }
 }
 }

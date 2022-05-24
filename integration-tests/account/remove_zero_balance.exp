@@ -1,0 +1,27 @@
+processed 4 tasks
+
+task 2 'run'. lines 5-17:
+{
+  "gas_used": 92550,
+  "status": {
+    "Keep": "Executed"
+  }
+}
+
+task 3 'run'. lines 19-30:
+{
+  "gas_used": 146733,
+  "status": {
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "Token"
+          }
+        },
+        4097
+      ]
+    }
+  }
+}
