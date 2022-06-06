@@ -390,7 +390,6 @@ module StarcoinFramework::Genesis {
         // v12 -> v13
         WithdrawPlugin::initialize(&genesis_account);
         StarcoinDAO::upgrade_dao();
-
         //Start time, Timestamp::is_genesis() will return false. this call should at the end of genesis init.
         Timestamp::set_time_has_started(&genesis_account);
         Account::release_genesis_signer(genesis_account);
