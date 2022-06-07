@@ -14,6 +14,7 @@ module Account {
     use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Errors;
     use StarcoinFramework::STC::{Self, STC};
+    use StarcoinFramework::BCS;
 
     spec module {
         pragma verify = false;
@@ -132,6 +133,9 @@ module Account {
     const DUMMY_AUTH_KEY:vector<u8> = x"0000000000000000000000000000000000000000000000000000000000000000";
     // cannot be dummy key, or empty key
     const CONTRACT_ACCOUNT_AUTH_KEY_PLACEHOLDER:vector<u8> = x"0000000000000000000000000000000000000000000000000000000000000001";
+    
+    /// The address bytes length
+    const ADDRESS_LENGTH: u64 = 16;
 
     /// A one-way action, once SignerCapability is removed from signer, the address cannot send txns anymore.
     /// This function can only called once by signer.
@@ -278,6 +282,35 @@ module Account {
     spec create_account_with_initial_amount_v2 {
          pragma verify = false;
     }
+
+    /// Generate an new address and create a new account, then delegate the account and return the new account address and `SignerCapability`
+    public fun create_delegate_account(sender: &signer) : (address, SignerCapability) acquires Balance, Account {
+        let sender_address = Signer::address_of(sender);
+        let sequence_number = Self::sequence_number(sender_address);
+        // use stc balance as part of seed, just for new address more random.
+        let stc_balance = Self::balance<STC>(sender_address);
+
+        let seed_bytes = BCS::to_bytes(&sender_address);
+        Vector::append(&mut seed_bytes, BCS::to_bytes(&sequence_number));
+        Vector::append(&mut seed_bytes, BCS::to_bytes(&stc_balance));
+
+        let seed_hash = Hash::sha3_256(seed_bytes);
+        let i = 0;
+        let address_bytes = Vector::empty();
+        while (i < ADDRESS_LENGTH) {
+            Vector::push_back(&mut address_bytes, *Vector::borrow(&seed_hash,i));
+            i = i + 1;
+        };
+        let new_address = BCS::to_address(address_bytes);
+        Self::create_account_with_address<STC>(new_address);
+        let new_signer = Self::create_signer(new_address);
+        (new_address, Self::remove_signer_capability(&new_signer))
+    }
+
+    spec create_delegate_account {
+        pragma verify = false;
+        //TODO write spec
+    }    
 
     /// Deposits the `to_deposit` token into the self's account balance
     public fun deposit_to_self<TokenType: store>(account: &signer, to_deposit: Token<TokenType>)

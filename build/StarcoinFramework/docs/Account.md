@@ -30,6 +30,7 @@ The module for the account resource that governs every account
 -  [Function `create_signer`](#0x1_Account_create_signer)
 -  [Function `create_account_with_initial_amount`](#0x1_Account_create_account_with_initial_amount)
 -  [Function `create_account_with_initial_amount_v2`](#0x1_Account_create_account_with_initial_amount_v2)
+-  [Function `create_delegate_account`](#0x1_Account_create_delegate_account)
 -  [Function `deposit_to_self`](#0x1_Account_deposit_to_self)
 -  [Function `deposit`](#0x1_Account_deposit)
 -  [Function `deposit_with_metadata`](#0x1_Account_deposit_with_metadata)
@@ -77,6 +78,7 @@ The module for the account resource that governs every account
 
 
 <pre><code><b>use</b> <a href="Authenticator.md#0x1_Authenticator">0x1::Authenticator</a>;
+<b>use</b> <a href="BCS.md#0x1_BCS">0x1::BCS</a>;
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Event.md#0x1_Event">0x1::Event</a>;
@@ -472,6 +474,16 @@ Message for accept token events
 
 
 <pre><code><b>const</b> <a href="Account.md#0x1_Account_EPROLOGUE_ACCOUNT_DOES_NOT_EXIST">EPROLOGUE_ACCOUNT_DOES_NOT_EXIST</a>: u64 = 0;
+</code></pre>
+
+
+
+<a name="0x1_Account_ADDRESS_LENGTH"></a>
+
+The address bytes length
+
+
+<pre><code><b>const</b> <a href="Account.md#0x1_Account_ADDRESS_LENGTH">ADDRESS_LENGTH</a>: u64 = 16;
 </code></pre>
 
 
@@ -1080,6 +1092,62 @@ reserved address for the MoveVM.
     <b>if</b> (initial_amount &gt; 0) {
         <a href="Account.md#0x1_Account_pay_from">pay_from</a>&lt;TokenType&gt;(&account, fresh_address, initial_amount);
     };
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_Account_create_delegate_account"></a>
+
+## Function `create_delegate_account`
+
+Generate an new address and create a new account, then delegate the account and return the new account address and <code><a href="Account.md#0x1_Account_SignerCapability">SignerCapability</a></code>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_create_delegate_account">create_delegate_account</a>(sender: &signer): (<b>address</b>, <a href="Account.md#0x1_Account_SignerCapability">Account::SignerCapability</a>)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_create_delegate_account">create_delegate_account</a>(sender: &signer) : (<b>address</b>, <a href="Account.md#0x1_Account_SignerCapability">SignerCapability</a>) <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account">Account</a> {
+    <b>let</b> sender_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
+    <b>let</b> sequence_number = <a href="Account.md#0x1_Account_sequence_number">Self::sequence_number</a>(sender_address);
+    // <b>use</b> stc balance <b>as</b> part of seed, just for new <b>address</b> more random.
+    <b>let</b> stc_balance = <a href="Account.md#0x1_Account_balance">Self::balance</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(sender_address);
+
+    <b>let</b> seed_bytes = <a href="BCS.md#0x1_BCS_to_bytes">BCS::to_bytes</a>(&sender_address);
+    <a href="Vector.md#0x1_Vector_append">Vector::append</a>(&<b>mut</b> seed_bytes, <a href="BCS.md#0x1_BCS_to_bytes">BCS::to_bytes</a>(&sequence_number));
+    <a href="Vector.md#0x1_Vector_append">Vector::append</a>(&<b>mut</b> seed_bytes, <a href="BCS.md#0x1_BCS_to_bytes">BCS::to_bytes</a>(&stc_balance));
+
+    <b>let</b> seed_hash = <a href="Hash.md#0x1_Hash_sha3_256">Hash::sha3_256</a>(seed_bytes);
+    <b>let</b> i = 0;
+    <b>let</b> address_bytes = <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>();
+    <b>while</b> (i &lt; <a href="Account.md#0x1_Account_ADDRESS_LENGTH">ADDRESS_LENGTH</a>) {
+        <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> address_bytes, *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&seed_hash,i));
+        i = i + 1;
+    };
+    <b>let</b> new_address = <a href="BCS.md#0x1_BCS_to_address">BCS::to_address</a>(address_bytes);
+    <a href="Account.md#0x1_Account_create_account_with_address">Self::create_account_with_address</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(new_address);
+    <b>let</b> new_signer = <a href="Account.md#0x1_Account_create_signer">Self::create_signer</a>(new_address);
+    (new_address, <a href="Account.md#0x1_Account_remove_signer_capability">Self::remove_signer_capability</a>(&new_signer))
 }
 </code></pre>
 
