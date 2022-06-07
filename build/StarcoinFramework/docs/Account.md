@@ -1155,6 +1155,18 @@ Generate an new address and create a new account, then delegate the account and 
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Account_deposit_to_self"></a>
 
 ## Function `deposit_to_self`
