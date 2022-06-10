@@ -636,7 +636,7 @@ module IdentifierNFT {
     public fun borrow_mut<NFTMeta: copy + store + drop, NFTBody: store>(
         _cap: &mut UpdateCapability<NFTMeta>, 
         owner: address
-    ): IdentifierNFT<NFTMeta, NFTBody>  acquires IdentifierNFT {
+    ): &mut IdentifierNFT<NFTMeta, NFTBody>  acquires IdentifierNFT {
         assert!(exists<IdentifierNFT<NFTMeta, NFTBody>>(owner), Errors::not_published(ERR_NFT_NOT_EXISTS));
 
         borrow_global_mut<IdentifierNFT<NFTMeta, NFTBody>>(owner)
