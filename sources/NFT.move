@@ -556,7 +556,7 @@ module NFT {
 /// The NFT can not been transfer by owner.
 module IdentifierNFT {
     use StarcoinFramework::Option::{Self, Option};
-    use StarcoinFramework::NFT::{Self, NFT, MintCapability, BurnCapability};
+    use StarcoinFramework::NFT::{Self, NFT, MintCapability, BurnCapability, UpdateCapability};
     use StarcoinFramework::Signer;
     use StarcoinFramework::Errors;
 
@@ -630,6 +630,25 @@ module IdentifierNFT {
         assert!(Option::is_some(&id_nft.nft), Errors::not_published(ERR_NFT_NOT_EXISTS));
         let IdentifierNFT { nft } = id_nft;
         Option::destroy_some(nft)
+    }
+
+    /// borrow_mut the NFT<NFTMeta, NFTBody> from owner.
+    public fun borrow_mut<NFTMeta: copy + store + drop, NFTBody: store>(
+        _cap: &mut UpdateCapability<NFTMeta>, 
+        owner: address
+    ): IdentifierNFT<NFTMeta, NFTBody>  acquires IdentifierNFT {
+        assert!(exists<IdentifierNFT<NFTMeta, NFTBody>>(owner), Errors::not_published(ERR_NFT_NOT_EXISTS));
+
+        borrow_global_mut<IdentifierNFT<NFTMeta, NFTBody>>(owner)
+    }
+
+    /// borrow the NFT<NFTMeta, NFTBody> from owner.
+    public fun borrow<NFTMeta: copy + store + drop, NFTBody: store>(
+        owner: address
+    ): &IdentifierNFT<NFTMeta, NFTBody>  acquires IdentifierNFT {
+        assert!(exists<IdentifierNFT<NFTMeta, NFTBody>>(owner), Errors::not_published(ERR_NFT_NOT_EXISTS));
+        
+        borrow_global<IdentifierNFT<NFTMeta, NFTBody>>(owner)
     }
 
     /// Check `owner` is owns the IdentifierNFT<NFTMeta, NFTBody>
