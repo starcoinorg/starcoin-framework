@@ -563,6 +563,7 @@ module IdentifierNFT {
     const ERR_NFT_EXISTS: u64 = 101;
     const ERR_NFT_NOT_EXISTS: u64 = 102;
     const ERR_NFT_NOT_ACCEPT: u64 = 103;
+    const ERR_BORROW_ADDR_NOT_SAME: u64 = 104;
 
     spec module {
         pragma verify = false;
@@ -570,6 +571,11 @@ module IdentifierNFT {
 
     struct IdentifierNFT<NFTMeta: copy + store + drop, NFTBody: store> has key {
         nft: Option<NFT<NFTMeta, NFTBody>>,
+    }
+
+    struct BorrowIdentifierNFT<NFTMeta: copy + store + drop, NFTBody: store> has key {
+        nft: NFT<NFTMeta, NFTBody>,
+        addr:address
     }
 
     /// Check the `owner` is prepared with IdentifierNFT for accept the NFT<NFTMeta, NFTBody>
@@ -633,23 +639,39 @@ module IdentifierNFT {
     }
 
     /// borrow_mut the NFT<NFTMeta, NFTBody> from owner.
-    public fun borrow_mut<NFTMeta: copy + store + drop, NFTBody: store>(
+    public fun borrow_out<NFTMeta: copy + store + drop, NFTBody: store>(
         _cap: &mut UpdateCapability<NFTMeta>, 
         owner: address
-    ): &mut IdentifierNFT<NFTMeta, NFTBody>  acquires IdentifierNFT {
+    ):  BorrowIdentifierNFT<NFTMeta, NFTBody>  acquires IdentifierNFT {
         assert!(exists<IdentifierNFT<NFTMeta, NFTBody>>(owner), Errors::not_published(ERR_NFT_NOT_EXISTS));
 
-        borrow_global_mut<IdentifierNFT<NFTMeta, NFTBody>>(owner)
+        let id_nft = borrow_global_mut<IdentifierNFT<NFTMeta, NFTBody>>(owner);
+        assert!(Option::is_some(&id_nft.nft), Errors::not_published(ERR_NFT_NOT_EXISTS));
+
+        let  nft = Option::extract(&mut id_nft.nft);
+
+        BorrowIdentifierNFT{ 
+            nft : nft,
+            addr: owner
+        }
     }
 
-    /// borrow the NFT<NFTMeta, NFTBody> from owner.
-    public fun borrow<NFTMeta: copy + store + drop, NFTBody: store>(
+    /// borrow_mut the NFT<NFTMeta, NFTBody> back to  owner.
+    public fun borrow_back<NFTMeta: copy + store + drop, NFTBody: store>(
+        borrownft: BorrowIdentifierNFT<NFTMeta, NFTBody>, 
         owner: address
-    ): &IdentifierNFT<NFTMeta, NFTBody>  acquires IdentifierNFT {
+    )  acquires IdentifierNFT {
+        assert!( *&borrownft.addr == owner, Errors::not_published(ERR_BORROW_ADDR_NOT_SAME));
         assert!(exists<IdentifierNFT<NFTMeta, NFTBody>>(owner), Errors::not_published(ERR_NFT_NOT_EXISTS));
-        
-        borrow_global<IdentifierNFT<NFTMeta, NFTBody>>(owner)
+        let id_nft = borrow_global_mut<IdentifierNFT<NFTMeta, NFTBody>>(owner);
+        let BorrowIdentifierNFT{
+            nft: nft,
+            addr: _
+        } = borrownft ;
+
+        Option::fill(&mut id_nft.nft , nft)
     }
+
 
     /// Check `owner` is owns the IdentifierNFT<NFTMeta, NFTBody>
     public fun owns<NFTMeta: copy + store + drop, NFTBody: store>(owner: address): bool acquires IdentifierNFT {
