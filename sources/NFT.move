@@ -672,6 +672,17 @@ module IdentifierNFT {
         Option::fill(&mut id_nft.nft , nft)
     }
 
+    public fun borrow_nft<NFTMeta: copy + store + drop, NFTBody: store>(
+        borrownft:&BorrowIdentifierNFT<NFTMeta, NFTBody>
+    ) : & NFT<NFTMeta, NFTBody> {
+       & borrownft.nft
+    }
+
+    public fun borrow_nft_mut <NFTMeta: copy + store + drop, NFTBody: store>(
+        borrownft:&mut BorrowIdentifierNFT<NFTMeta, NFTBody>
+    ) : &mut NFT<NFTMeta, NFTBody> {
+       &mut borrownft.nft
+    }
 
     /// Check `owner` is owns the IdentifierNFT<NFTMeta, NFTBody>
     public fun owns<NFTMeta: copy + store + drop, NFTBody: store>(owner: address): bool acquires IdentifierNFT {
