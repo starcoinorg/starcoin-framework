@@ -9,7 +9,6 @@ module GeneralDaoStateGuard {
 
     const ERROR_STATE_NOT_MATCH: u64 = 101;
 
-
     /// The section of DAO as follow, which to control DAO state can be advance to next section
     ///
     struct Dao {}
@@ -22,7 +21,7 @@ module GeneralDaoStateGuard {
 
     struct Action {}
 
-    struct Guard<phantom Type> has store {
+    struct Guard<phantom Type> has store, drop {
         state: u8,
     }
 

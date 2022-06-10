@@ -34,9 +34,10 @@ module GeneralDao {
     }
 
     /// Genesis dao type from a genesis signer
+    /// Only called by genesis
     public fun genesis_dao<DaoType>(signer: &signer) {
-        let broker = Signer::address_of(signer);
-        assert!(!exists<DaoGlobal<DaoType>>(broker), Errors::invalid_state(ERROR_INVALID_GLOBAL_STATE));
+        let genesis_broker = Signer::address_of(signer);
+        assert!(!exists<DaoGlobal<DaoType>>(genesis_broker), Errors::invalid_state(ERROR_INVALID_GLOBAL_STATE));
 
         move_to(signer, DaoGlobal<DaoType>{
             next_id: 0,
@@ -89,6 +90,13 @@ module GeneralDao {
         let dao_global = borrow_global_mut<DaoGlobal<DaoType>>(genesis_broker);
         let dao = IDizedSet::borrow(&dao_global.dao_set, &BCS::to_bytes<u64>(&id));
         GeneralDaoStateGuard::gen_guard<GeneralDaoStateGuard::Dao>(dao.state)
+    }
+
+    public fun borrow_account_signer_cap<DaoType: store>(dao_cap: &DaoCapability<DaoType>, genesis_broker: address)
+    : &GeneralDaoAccount::SignerCapability acquires DaoGlobal {
+        let global = borrow_global<DaoGlobal<DaoType>>(genesis_broker);
+        let dao = IDizedSet::borrow(&global.dao_set, &BCS::to_bytes(&dao_cap.id));
+        &dao.signer_cap
     }
 }
 }

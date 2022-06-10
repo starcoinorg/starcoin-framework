@@ -55,5 +55,15 @@ module GeneralDaoAccount {
         let StorageItem{ item } = move_from<StorageItem<V>>(cap.dao_address);
         item
     }
+
+    public fun borrow_with_cap<V>(cap: &SignerCapability): &V acquires StorageItem {
+        let StorageItem{ item } = borrow_global<StorageItem<V>>(cap.dao_address);
+        item
+    }
+
+    public fun borrow_mut_with_cap<V>(cap: &SignerCapability): &mut V acquires StorageItem {
+        let StorageItem{ item } = borrow_global_mut<StorageItem<V>>(cap.dao_address);
+        item
+    }
 }
 }
