@@ -659,16 +659,15 @@ module IdentifierNFT {
     /// borrow_mut the NFT<NFTMeta, NFTBody> back to  owner.
     public fun borrow_back<NFTMeta: copy + store + drop, NFTBody: store>(
         borrownft: BorrowIdentifierNFT<NFTMeta, NFTBody>, 
-        owner: address
     )  acquires IdentifierNFT {
-        assert!( *&borrownft.addr == owner, Errors::not_published(ERR_BORROW_ADDR_NOT_SAME));
-        assert!(exists<IdentifierNFT<NFTMeta, NFTBody>>(owner), Errors::not_published(ERR_NFT_NOT_EXISTS));
-        let id_nft = borrow_global_mut<IdentifierNFT<NFTMeta, NFTBody>>(owner);
+
         let BorrowIdentifierNFT{
             nft: nft,
-            addr: _
+            addr: owner
         } = borrownft ;
-
+        assert!(exists<IdentifierNFT<NFTMeta, NFTBody>>(owner), Errors::not_published(ERR_NFT_NOT_EXISTS));
+        let id_nft = borrow_global_mut<IdentifierNFT<NFTMeta, NFTBody>>(owner);
+    
         Option::fill(&mut id_nft.nft , nft)
     }
 
