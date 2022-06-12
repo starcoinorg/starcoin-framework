@@ -127,6 +127,18 @@ Deserialize bool
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_BCS_from_bytes_to_u64"></a>
 
 ## Function `from_bytes_to_u64`
@@ -153,6 +165,18 @@ Deserialize u64
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_BCS_from_bytes_to_u128"></a>
 
 ## Function `from_bytes_to_u128`
@@ -173,6 +197,18 @@ Deserialize u128
     <a href="BCS.md#0x1_BCS_check_length">check_length</a>(bytes, 16);
     <a href="BCS.md#0x1_BCS_bytes_slice_to_u128">bytes_slice_to_u128</a>(bytes, 0)
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -215,6 +251,18 @@ Deserialize bool vector
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_BCS_from_bytes_to_u8_vec"></a>
 
 ## Function `from_bytes_to_u8_vec`
@@ -244,6 +292,18 @@ Deserialize u8 vector
     };
     value
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -286,6 +346,18 @@ Deserialize u64 vector
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_BCS_from_bytes_to_u128_vec"></a>
 
 ## Function `from_bytes_to_u128_vec`
@@ -322,6 +394,18 @@ Deserialize u128 vector
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_BCS_bytes_slice_to_u64"></a>
 
 ## Function `bytes_slice_to_u64`
@@ -352,6 +436,18 @@ Deserialize u128 vector
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_BCS_bytes_slice_to_u128"></a>
 
 ## Function `bytes_slice_to_u128`
@@ -369,13 +465,25 @@ Deserialize u128 vector
 
 <pre><code><b>fun</b> <a href="BCS.md#0x1_BCS_bytes_slice_to_u128">bytes_slice_to_u128</a>(bytes: &vector&lt;u8&gt;, offset: u64): u128 {
     <b>let</b> value = 0u128;
-    <b>let</b> i = 0;
+    <b>let</b> i = 0u64;
     <b>while</b> (i &lt; 16) {
         value = value | ((*<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(bytes, i + offset) <b>as</b> u128) &lt;&lt; ((8*i) <b>as</b> u8));
         i = i + 1;
     };
     value
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -401,6 +509,18 @@ Deserialize u128 vector
     <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(vec);
     <b>assert</b>!(len == expect, <a href="BCS.md#0x1_BCS_EBYTES_LENGTH_NOT_MATCH">EBYTES_LENGTH_NOT_MATCH</a>);
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>aborts_if</b> <a href="Vector.md#0x1_Vector_length">Vector::length</a>(vec) != expect;
 </code></pre>
 
 
@@ -446,14 +566,12 @@ Return ULEB128 decoding data and ULEB128 encoding length.
 
 </details>
 
-<a name="@Module_Specification_1"></a>
-
-## Module Specification
-
+<details>
+<summary>Specification</summary>
 
 
-<pre><code><b>pragma</b> verify;
-<b>pragma</b> aborts_if_is_strict;
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -463,4 +581,18 @@ Return ULEB128 decoding data and ULEB128 encoding length.
 
 
 <pre><code><b>native</b> <b>fun</b> <a href="BCS.md#0x1_BCS_serialize">serialize</a>&lt;MoveValue&gt;(v: &MoveValue): vector&lt;u8&gt;;
+</code></pre>
+
+
+
+</details>
+
+<a name="@Module_Specification_1"></a>
+
+## Module Specification
+
+
+
+<pre><code><b>pragma</b> verify;
+<b>pragma</b> aborts_if_is_strict;
 </code></pre>

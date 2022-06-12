@@ -30,16 +30,28 @@ module BCS {
         v == 1
     }
 
+    spec from_bytes_to_bool {
+        pragma verify = false;
+    }
+
     /// Deserialize u64
     public fun from_bytes_to_u64(bytes: &vector<u8>): u64 {
         check_length(bytes, 8);
         bytes_slice_to_u64(bytes, 0)
+    }
+    
+    spec from_bytes_to_u64 {
+        pragma verify = false;
     }
 
     /// Deserialize u128
     public fun from_bytes_to_u128(bytes: &vector<u8>): u128 {
         check_length(bytes, 16);
         bytes_slice_to_u128(bytes, 0)
+    }
+    
+    spec from_bytes_to_u128 {
+        pragma verify = false;
     }
 
     /// Deserialize bool vector
@@ -57,6 +69,9 @@ module BCS {
         };
         value
     }
+    spec from_bytes_to_bool_vec {
+        pragma verify = false;
+    }
 
     /// Deserialize u8 vector
     public fun from_bytes_to_u8_vec(bytes: &vector<u8>): vector<u8> {
@@ -71,6 +86,9 @@ module BCS {
             i = i + 1;
         };
         value
+    }
+    spec from_bytes_to_u8_vec {
+        pragma verify = false;
     }
 
     /// Deserialize u64 vector
@@ -88,6 +106,9 @@ module BCS {
         };
         value
     }
+    spec from_bytes_to_u64_vec {
+        pragma verify = false;
+    }
 
     /// Deserialize u128 vector
     public fun from_bytes_to_u128_vec(bytes: &vector<u8>): vector<u128> {
@@ -104,6 +125,9 @@ module BCS {
         };
         value
     }
+    spec from_bytes_to_u128_vec {
+        pragma verify = false;
+    }
 
     fun bytes_slice_to_u64(bytes: &vector<u8>, offset: u64): u64 {
         let value = 0u64;
@@ -114,20 +138,30 @@ module BCS {
         };
         value
     }
+    spec bytes_slice_to_u64 {
+        pragma verify = false;
+    }
 
     fun bytes_slice_to_u128(bytes: &vector<u8>, offset: u64): u128 {
         let value = 0u128;
-        let i = 0;
+        let i = 0u64;
         while (i < 16) {
             value = value | ((*Vector::borrow(bytes, i + offset) as u128) << ((8*i) as u8));
             i = i + 1;
         };
         value    
     }
+    spec bytes_slice_to_u128 {
+        pragma verify = false;
+    }
 
     fun check_length(vec: &vector<u8>, expect: u64) {
         let len = Vector::length(vec);
         assert!(len == expect, EBYTES_LENGTH_NOT_MATCH); 
+    }
+
+    spec check_length {
+        aborts_if Vector::length(vec) != expect;
     }
 
     /// Return ULEB128 decoding data and ULEB128 encoding length.
@@ -147,6 +181,10 @@ module BCS {
             }
         };
         (value, i+1)
+    }
+
+    spec deserialize_uleb128_to_u64 {
+        pragma verify = false;
     }
     // ------------------------------------------------------------------------
     // Specification
