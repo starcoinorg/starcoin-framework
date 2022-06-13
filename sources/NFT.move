@@ -573,7 +573,7 @@ module IdentifierNFT {
         nft: Option<NFT<NFTMeta, NFTBody>>,
     }
     
-    //Used when lending or returning NFT, note: there is no drop ability, it must be returned after lending
+    //Used when borrowing or returning NFT, note: there is no drop ability, it must be returned after borrowing
     struct BorrowNFT<NFTMeta: copy + store + drop, NFTBody: store>  {
         nft: NFT<NFTMeta, NFTBody>,
         addr:address
