@@ -572,8 +572,9 @@ module IdentifierNFT {
     struct IdentifierNFT<NFTMeta: copy + store + drop, NFTBody: store> has key {
         nft: Option<NFT<NFTMeta, NFTBody>>,
     }
-
-    struct BorrowIdentifierNFT<NFTMeta: copy + store + drop, NFTBody: store> has key {
+    
+    //Used when lending or returning NFT, note: there is no drop ability, it must be returned after lending
+    struct BorrowNFT<NFTMeta: copy + store + drop, NFTBody: store>  {
         nft: NFT<NFTMeta, NFTBody>,
         addr:address
     }
@@ -638,11 +639,11 @@ module IdentifierNFT {
         Option::destroy_some(nft)
     }
 
-    /// borrow_mut the NFT<NFTMeta, NFTBody> from owner.
+    /// borrow_out the NFT<NFTMeta, NFTBody> from owner.
     public fun borrow_out<NFTMeta: copy + store + drop, NFTBody: store>(
         _cap: &mut UpdateCapability<NFTMeta>, 
         owner: address
-    ):  BorrowIdentifierNFT<NFTMeta, NFTBody>  acquires IdentifierNFT {
+    ):  BorrowNFT<NFTMeta, NFTBody>  acquires IdentifierNFT {
         assert!(exists<IdentifierNFT<NFTMeta, NFTBody>>(owner), Errors::not_published(ERR_NFT_NOT_EXISTS));
 
         let id_nft = borrow_global_mut<IdentifierNFT<NFTMeta, NFTBody>>(owner);
@@ -650,18 +651,18 @@ module IdentifierNFT {
 
         let  nft = Option::extract(&mut id_nft.nft);
 
-        BorrowIdentifierNFT{ 
+        BorrowNFT{ 
             nft : nft,
             addr: owner
         }
     }
 
-    /// borrow_mut the NFT<NFTMeta, NFTBody> back to  owner.
-    public fun borrow_back<NFTMeta: copy + store + drop, NFTBody: store>(
-        borrownft: BorrowIdentifierNFT<NFTMeta, NFTBody>, 
+    /// return_back the NFT<NFTMeta, NFTBody>  to  owner.
+    public fun return_back<NFTMeta: copy + store + drop, NFTBody: store>(
+        borrownft: BorrowNFT<NFTMeta, NFTBody>, 
     )  acquires IdentifierNFT {
 
-        let BorrowIdentifierNFT{
+        let BorrowNFT{
             nft: nft,
             addr: owner
         } = borrownft ;
@@ -672,13 +673,13 @@ module IdentifierNFT {
     }
 
     public fun borrow_nft<NFTMeta: copy + store + drop, NFTBody: store>(
-        borrownft:&BorrowIdentifierNFT<NFTMeta, NFTBody>
+        borrownft:&BorrowNFT<NFTMeta, NFTBody>
     ) : & NFT<NFTMeta, NFTBody> {
        & borrownft.nft
     }
 
     public fun borrow_nft_mut <NFTMeta: copy + store + drop, NFTBody: store>(
-        borrownft:&mut BorrowIdentifierNFT<NFTMeta, NFTBody>
+        borrownft:&mut BorrowNFT<NFTMeta, NFTBody>
     ) : &mut NFT<NFTMeta, NFTBody> {
        &mut borrownft.nft
     }
