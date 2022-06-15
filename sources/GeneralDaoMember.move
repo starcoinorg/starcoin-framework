@@ -27,13 +27,9 @@ module GeneralDaoMember {
         token_burn_cap: Token::BurnCapability<DaoType>,
     }
 
-    public fun register_dao<DaoType: store>(signer: &signer,
-                                            guard: GeneralDaoStateGuard::Guard<GeneralDaoStateGuard::Dao>): MemberCapability<DaoType> {
+    public fun genesis_dao_member<DaoType: store>(signer: &signer): MemberCapability<DaoType> {
         assert!(!NFT::is_registered<MemberNFTMeta<DaoType>>(), Errors::invalid_state(ERROR_NFT_HAS_REGISTERED));
         NFT::register_v2<MemberNFTMeta<DaoType>>(signer, new_meta_data());
-
-        Token::register_token<DaoType>(signer, PRECISION);
-        Account::do_accept_token<DaoType>(signer);
 
         // Strip update capability to issue capability
         MemberCapability<DaoType>{
@@ -44,12 +40,16 @@ module GeneralDaoMember {
         }
     }
 
+    public fun register_dao<DaoType: store>(signer: &signer, _cap: &MemberCapability<DaoType>) {
+        Token::register_token<DaoType>(signer, PRECISION);
+        Account::do_accept_token<DaoType>(signer);
+    }
+
     /// Issue NFT with DAO type
     /// TODO: Need to discuss whether multiple DAOs share a SBT
     public fun grant_nft_to_user<DaoType: store>(to_signer: &signer,
                                                  sbt_amount: u128,
-                                                 cap: &MemberCapability<DaoType>,
-                                                 guard: GeneralDaoStateGuard::Guard<GeneralDaoStateGuard::Dao>) {
+                                                 cap: &MemberCapability<DaoType>) {
         Account::do_accept_token<DaoType>(to_signer);
 
         let receive_address = Signer::address_of(to_signer);
@@ -76,24 +76,27 @@ module GeneralDaoMember {
         owner: address,
         weight: u128,
         cap: &mut MemberCapability<DaoType>) {
+        let credential =
+            IdentifierNFT::borrow_out<MemberNFTMeta<DaoType>, MemberNFTBody<DaoType>>(&mut cap.nft_update_cap, owner);
         let nft =
-            IdentifierNFT::revoke<MemberNFTMeta<DaoType>, MemberNFTBody<DaoType>>(&mut cap.nft_burn_cap, owner);
+            IdentifierNFT::borrow_nft_mut<MemberNFTMeta<DaoType>, MemberNFTBody<DaoType>>(&mut credential);
         let body =
-            NFT::borrow_body_mut_with_cap(&mut cap.nft_update_cap, &mut nft);
+            NFT::borrow_body_mut_with_cap(&mut cap.nft_update_cap, nft);
+
         Token::deposit(&mut body.token, Token::mint_with_capability<DaoType>(&cap.token_mint_cap, weight));
-        IdentifierNFT::grant_to<MemberNFTMeta<DaoType>, MemberNFTBody<DaoType>>(&mut cap.nft_mint_cap, owner, nft);
     }
 
     /// Remove weight from NFT capability
     public fun remove_weight<DaoType>(owner: address,
                                       weight: u128,
                                       cap: &MemberCapability<DaoType>) {
+        let credential =
+            IdentifierNFT::borrow_out<MemberNFTMeta<DaoType>, MemberNFTBody<DaoType>>(&mut cap.nft_update_cap, owner);
         let nft =
-            IdentifierNFT::revoke<MemberNFTMeta<DaoType>, MemberNFTBody<DaoType>>(&mut cap.nft_burn_cap, owner);
+            IdentifierNFT::borrow_nft_mut<MemberNFTMeta<DaoType>, MemberNFTBody<DaoType>>(&mut credential);
         let body =
-            NFT::borrow_body_mut_with_cap(&mut cap.nft_update_cap, &mut nft);
+            NFT::borrow_body_mut_with_cap(&mut cap.nft_update_cap, nft);
         let token = Token::withdraw(&mut body.token, weight);
-        IdentifierNFT::grant_to<MemberNFTMeta<DaoType>, MemberNFTBody<DaoType>>(&mut cap.nft_mint_cap, owner, nft);
         Token::burn_with_capability(&cap.token_burn_cap, token);
     }
 }

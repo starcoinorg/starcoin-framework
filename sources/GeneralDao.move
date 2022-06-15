@@ -29,13 +29,15 @@ module GeneralDao {
     }
 
     /// This Dao capability can be used to operate resource in Dao
-    struct DaoCapability<phantom DaoType> has key {
+    struct DaoCapability<phantom DaoType> has key, store {}
+
+    struct DaoInstance<phantom DaoType> has key, store {
         id: u64,
     }
 
     /// Genesis dao type from a genesis signer
     /// Only called by genesis
-    public fun genesis_dao<DaoType>(signer: &signer) {
+    public fun genesis_dao<DaoType>(signer: &signer): DaoCapability<DaoType> {
         let genesis_broker = Signer::address_of(signer);
         assert!(!exists<DaoGlobal<DaoType>>(genesis_broker), Errors::invalid_state(ERROR_INVALID_GLOBAL_STATE));
 
@@ -43,11 +45,16 @@ module GeneralDao {
             next_id: 0,
             dao_set: IDizedSet::empty<Dao<DaoType>>()
         });
+
+        DaoCapability<DaoType>{}
     }
 
     /// Create DAO from name
-    public fun create_dao<DaoType: store>(signer: &signer, genesis_broker: address, name: &vector<u8>)
-    : (u64, DaoCapability<DaoType>, GeneralDaoStateGuard::Guard<GeneralDaoStateGuard::Dao>) acquires DaoGlobal {
+    public fun create_dao<DaoType: store>(signer: &signer,
+                                          genesis_broker: address,
+                                          name: &vector<u8>,
+                                          _cap: &DaoCapability<DaoType>)
+    : (u64, DaoInstance<DaoType>, GeneralDaoStateGuard::Guard<GeneralDaoStateGuard::Dao>) acquires DaoGlobal {
         assert!(exists<DaoGlobal<DaoType>>(genesis_broker), Errors::invalid_state(ERROR_INVALID_GLOBAL_STATE));
 
         // Create delegate account
@@ -68,14 +75,15 @@ module GeneralDao {
 
         (
             dao_id,
-            DaoCapability<DaoType>{ id: dao_id },
+            DaoInstance<DaoType>{ id: dao_id },
             GeneralDaoStateGuard::gen_guard<GeneralDaoStateGuard::Dao>(GUARD_STATE_INIT)
         )
     }
 
     public fun update_guard_state<DaoType: store, GuardType: store>(genesis_broker: address,
                                                                     id: u64,
-                                                                    guard: GeneralDaoStateGuard::Guard<GuardType>) acquires DaoGlobal {
+                                                                    guard: GeneralDaoStateGuard::Guard<GuardType>)
+    acquires DaoGlobal {
         let dao_global = borrow_global_mut<DaoGlobal<DaoType>>(genesis_broker);
         let dao = IDizedSet::borrow(&dao_global.dao_set, &BCS::to_bytes<u64>(&id));
         if (GeneralDaoStateGuard::typeof<GuardType, GeneralDaoStateGuard::Plugin>(&guard)) {
