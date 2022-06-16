@@ -5,7 +5,6 @@ module GeneralDaoMember {
     use StarcoinFramework::NFT;
     use StarcoinFramework::Token;
     use StarcoinFramework::Account;
-    use StarcoinFramework::GeneralDaoStateGuard;
     use StarcoinFramework::Signer;
     use StarcoinFramework::IdentifierNFT;
 

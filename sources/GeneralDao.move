@@ -3,11 +3,8 @@ address StarcoinFramework {
 module GeneralDao {
 
     use StarcoinFramework::GeneralDaoAccount;
-    use StarcoinFramework::GeneralDaoStateGuard;
     use StarcoinFramework::Signer;
-    use StarcoinFramework::IDizedSet;
     use StarcoinFramework::Errors;
-    use StarcoinFramework::BCS;
 
     const GUARD_STATE_INIT: u8 = 1;
     const GUARD_STATE_PLUGIN_ADDED: u8 = 2;
@@ -18,10 +15,10 @@ module GeneralDao {
 
     struct DaoGlobal<phantom DaoType> has key {
         next_id: u64,
-        dao_set: IDizedSet::Set<Dao<DaoType>>,
     }
 
     struct Dao<phantom DaoType> has key {
+        id: u64,
         name: vector<u8>,
         creator: address,
         signer_cap: GeneralDaoAccount::SignerCapability,
@@ -31,10 +28,6 @@ module GeneralDao {
     /// This Dao capability can be used to operate resource in Dao
     struct DaoCapability<phantom DaoType> has key, store {}
 
-    struct DaoInstance<phantom DaoType> has key, store {
-        id: u64,
-    }
-
     /// Genesis dao type from a genesis signer
     /// Only called by genesis
     public fun genesis_dao<DaoType>(signer: &signer): DaoCapability<DaoType> {
@@ -43,7 +36,6 @@ module GeneralDao {
 
         move_to(signer, DaoGlobal<DaoType>{
             next_id: 0,
-            dao_set: IDizedSet::empty<Dao<DaoType>>()
         });
 
         DaoCapability<DaoType>{}
@@ -53,8 +45,7 @@ module GeneralDao {
     public fun create_dao<DaoType: store>(signer: &signer,
                                           genesis_broker: address,
                                           name: &vector<u8>,
-                                          _cap: &DaoCapability<DaoType>)
-    : (u64, DaoInstance<DaoType>, GeneralDaoStateGuard::Guard<GeneralDaoStateGuard::Dao>) acquires DaoGlobal {
+                                          _cap: &DaoCapability<DaoType>) acquires DaoGlobal {
         assert!(exists<DaoGlobal<DaoType>>(genesis_broker), Errors::invalid_state(ERROR_INVALID_GLOBAL_STATE));
 
         // Create delegate account
@@ -66,44 +57,18 @@ module GeneralDao {
         dao_global.next_id = dao_global.next_id + 1;
         let dao_id = dao_global.next_id;
 
-        IDizedSet::push_back(&mut dao_global.dao_set, &BCS::to_bytes<u64>(&dao_id), Dao<DaoType>{
+        move_to(signer, Dao<DaoType>{
+            id: dao_id,
             name: *name,
             creator: Signer::address_of(signer),
             signer_cap,
             state,
         });
-
-        (
-            dao_id,
-            DaoInstance<DaoType>{ id: dao_id },
-            GeneralDaoStateGuard::gen_guard<GeneralDaoStateGuard::Dao>(GUARD_STATE_INIT)
-        )
     }
 
-    public fun update_guard_state<DaoType: store, GuardType: store>(genesis_broker: address,
-                                                                    id: u64,
-                                                                    guard: GeneralDaoStateGuard::Guard<GuardType>)
-    acquires DaoGlobal {
-        let dao_global = borrow_global_mut<DaoGlobal<DaoType>>(genesis_broker);
-        let dao = IDizedSet::borrow(&dao_global.dao_set, &BCS::to_bytes<u64>(&id));
-        if (GeneralDaoStateGuard::typeof<GuardType, GeneralDaoStateGuard::Plugin>(&guard)) {
-            dao.state = GUARD_STATE_PLUGIN_ADDED;
-        } else if (GeneralDaoStateGuard::typeof<GuardType, GeneralDaoStateGuard::Proposal>(&guard)) {
-            dao.state = GUARD_STATE_READY;
-        };
-    }
-
-    public fun query_guard<DaoType: store>(genesis_broker: address, id: u64)
-    : GeneralDaoStateGuard::Guard<GeneralDaoStateGuard::Dao> acquires DaoGlobal {
-        let dao_global = borrow_global_mut<DaoGlobal<DaoType>>(genesis_broker);
-        let dao = IDizedSet::borrow(&dao_global.dao_set, &BCS::to_bytes<u64>(&id));
-        GeneralDaoStateGuard::gen_guard<GeneralDaoStateGuard::Dao>(dao.state)
-    }
-
-    public fun borrow_account_signer_cap<DaoType: store>(dao_cap: &DaoCapability<DaoType>, genesis_broker: address)
-    : &GeneralDaoAccount::SignerCapability acquires DaoGlobal {
-        let global = borrow_global<DaoGlobal<DaoType>>(genesis_broker);
-        let dao = IDizedSet::borrow(&global.dao_set, &BCS::to_bytes(&dao_cap.id));
+    public fun borrow_account_signer_cap<DaoType: store>(dao_cap: &DaoCapability<DaoType>, dao_creator: address)
+    : &GeneralDaoAccount::SignerCapability acquires Dao {
+        let dao = borrow_global<Dao<DaoType>>(dao_creator);
         &dao.signer_cap
     }
 }

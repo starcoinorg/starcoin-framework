@@ -65,5 +65,9 @@ module GeneralDaoAccount {
         let StorageItem{ item } = borrow_global_mut<StorageItem<V>>(cap.dao_address);
         item
     }
+
+    public fun exists_with_cap<V: key>(cap: &SignerCapability): bool {
+        exists<V>(cap.account)
+    }
 }
 }
