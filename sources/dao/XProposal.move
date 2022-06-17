@@ -10,6 +10,7 @@ module XProposal {
 
     use StarcoinFramework::XDaoConfig;
     use StarcoinFramework::DaoRegistry;
+    use StarcoinFramework::StarcoinVerifier;
 
 
     struct ProposalCapability {
@@ -207,6 +208,7 @@ module XProposal {
     const ERR_VOTE_STATE_MISMATCH: u64 = 1408;
     const ERR_ACTION_MUST_EXIST: u64 = 1409;
     const ERR_VOTED_OTHERS_ALREADY: u64 = 1410;
+    const ERR_STATE_PROOF_VERIFY_INVALID: u64 = 1411;
 
 
     /// Initialize proposal
@@ -342,13 +344,31 @@ module XProposal {
 //        agree: bool,
         vote_amount: u128,
         choice: u8,
-        cap: &ProposalCapability
+        cap: &ProposalCapability,
+
+        account_proof_leaf: vector<vector<u8>>,
+        account_proof_siblings: vector<vector<u8>>,
+        account_state: vector<u8>,
+        account_state_proof_leaf: vector<vector<u8>>,
+        account_state_proof_siblings: vector<vector<u8>>,
+        state: vector<u8>,
+        state_root: vector<u8>,
+        resource_struct_tag: vector<u8>,
     ) acquires Proposal, ProposalCapability, ProposalEvent, Vote {
         {
             let state = proposal_state<DaoT, ActionT>(proposer_address, proposal_id);
             // only when proposal is active, use can cast vote.
             assert!(state == ACTIVE, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
         };
+
+        /// verify snapshot state proof
+        let user_address = Signer::address_of(signer);
+        let state_proof = StarcoinVerifier::new_state_proof_from_proof(account_proof_leaf, account_proof_siblings, account_state, account_state_proof_leaf, account_state_proof_siblings);
+        let verify = StarcoinVerifier::verify_resource_state_proof(&state_proof, &state_root, user_address, &resource_struct_tag, &state);
+        assert!(verify, Errors::invalid_state(ERR_STATE_PROOF_VERIFY_INVALID));
+
+        //TODO decode token value from account_state
+
         let proposal = borrow_global_mut<Proposal<DaoT, ActionT>>(proposer_address);
         assert!(proposal.id == proposal_id, Errors::invalid_argument(ERR_PROPOSAL_ID_MISMATCH));
         let sender = Signer::address_of(signer);
@@ -395,7 +415,7 @@ module XProposal {
         voter: address;
         stake_value: u128;
         let vote = global<Vote<DaoT> >(voter);
-        aborts_if vote.id != proposal_id;
+        aborts_if vote.proposal_id != proposal_id;
         aborts_if vote.agree != agree;
         aborts_if vote.stake.value + stake_value > MAX_U128;
     }
@@ -486,7 +506,7 @@ module XProposal {
         proposer_address: address;
         proposal_id: u64;
 
-        aborts_if vote.id != proposal_id;
+        aborts_if vote.proposal_id != proposal_id;
         aborts_if vote.proposer != proposer_address;
     }
 //    spec schema CheckChangeVote<DaoT, ActionT> {
@@ -904,7 +924,7 @@ module XProposal {
     ): (u8, u128) acquires Vote {
         let vote = borrow_global<Vote<DaoT> >(voter);
         assert!(vote.proposer == proposer_address, Errors::requires_address(ERR_PROPOSER_MISMATCH));
-        assert!(vote.id == proposal_id, Errors::invalid_argument(ERR_VOTED_OTHERS_ALREADY));
+        assert!(vote.proposal_id == proposal_id, Errors::invalid_argument(ERR_VOTED_OTHERS_ALREADY));
         (vote.choice, vote.vote_amount)
     }
 
@@ -925,7 +945,7 @@ module XProposal {
         };
 
         let vote = borrow_global<Vote<DaoT> >(voter);
-        vote.proposer == proposer_address && vote.id == proposal_id
+        vote.proposer == proposer_address && vote.proposal_id == proposal_id
     }
 
 }
