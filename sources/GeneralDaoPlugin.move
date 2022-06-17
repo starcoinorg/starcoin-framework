@@ -69,10 +69,10 @@ module GeneralDaoPlugin {
     const ERROR_PLUGIN_NOT_EXISTS: u64 = 102;
     const ERROR_PLUGIN_NOT_REGISTERED: u64 = 103;
 
-    struct PluginCapability<phantom DaoType> {}
+    struct PluginCapability<phantom DaoType> has key, store {}
 
     /// Represented register table of plugin, which saved in to DAO delegate account
-    struct PluginRegistarTable<phantom DaoType> has key {
+    struct PluginRegistarTable<phantom DaoType> has store, copy, drop {
         table: vector<vector<u8>>
     }
 
@@ -87,8 +87,7 @@ module GeneralDaoPlugin {
     }
 
     /// Genesis PluginRegister struct to delegate signer
-    public fun create_dao_plugin_table<DaoType>(
-        delegate_signer: &GeneralDaoAccount::SignerCapability)
+    public fun create_dao_plugin_table<DaoType>(delegate_signer: &GeneralDaoAccount::SignerCapability)
     : PluginCapability<DaoType> {
         move_to_with_cap(delegate_signer, PluginRegistarTable<DaoType>{
             table: Vector::empty<vector<u8>>(),
@@ -98,7 +97,6 @@ module GeneralDaoPlugin {
 
     /// Add plugin to register table, created by dao creator
     public fun register_plugin_name<DaoType, PluginT>(delegate_signer: &GeneralDaoAccount::SignerCapability,
-                                                      _cap: &PluginCapability<DaoType>,
                                                       plugin_name: &vector<u8>,
                                                       required: bool) {
         let table = borrow_mut_with_cap<PluginRegistarTable<DaoType>>(delegate_signer);
@@ -110,7 +108,7 @@ module GeneralDaoPlugin {
         });
     }
 
-    public fun create_empty_table<DaoType>(_cap: &PluginCapability<DaoType>)
+    public fun create_empty_table<DaoType>()
     : PluginRegistarTable<DaoType> {
         PluginRegistarTable<DaoType>{
             table: Vector::empty<vector<u8>>(),
@@ -133,8 +131,7 @@ module GeneralDaoPlugin {
     public fun register_plugin_data<DaoType, PluginT>(proposal_signer: &signer,
                                                       delegate_signer: &GeneralDaoAccount::SignerCapability,
                                                       table: &mut PluginRegistarTable<DaoType>,
-                                                      plugin: PluginT,
-                                                      _cap: &PluginCapability<DaoType>) {
+                                                      plugin: PluginT) {
         // check the plugin type has registered ?
         assert!(exists_with_cap<PluginRegister<DaoType, PluginT>>(delegate_signer),
             Errors::invalid_state(ERROR_PLUGIN_NOT_REGISTERED));
@@ -153,8 +150,7 @@ module GeneralDaoPlugin {
 
     /// After execution, the plugin name must be removed from copied table
     public fun remove_from_table<DaoType, PluginT>(proposal_creator: address,
-                                                   table: &mut PluginRegistarTable<DaoType>,
-                                                   _cap: &PluginCapability<DaoType>): PluginT acquires Plugin {
+                                                   table: &mut PluginRegistarTable<DaoType>): PluginT acquires Plugin {
         let Plugin<DaoType, PluginT>{
             name,
             plugin,
@@ -164,6 +160,5 @@ module GeneralDaoPlugin {
         Vector::remove(&mut table.table, idx);
         plugin
     }
-
 }
 }
