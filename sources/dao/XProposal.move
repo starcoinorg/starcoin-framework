@@ -13,7 +13,7 @@ module XProposal {
     use StarcoinFramework::StarcoinVerifier;
 
 
-    struct ProposalCapability {
+    struct ProposalCapability has key {
         proposal_id: u64,
     }
 
@@ -239,9 +239,9 @@ module XProposal {
         strategy: u8, //TODO todo implementation
         action: ActionT,
         action_delay: u64,
-    ) acquires  ProposalCapability, ProposalEvent {
+    ) acquires  ProposalEvent {
         if (action_delay == 0) {
-            action_delay = XDaoConfig::XDaoConfig::min_action_delay<DaoT>();
+            action_delay = XDaoConfig::min_action_delay<DaoT>();
         } else {
             assert!(action_delay >= XDaoConfig::min_action_delay<DaoT>(), Errors::invalid_argument(ERR_ACTION_DELAY_TOO_SMALL));
         };
@@ -275,7 +275,7 @@ module XProposal {
             dao_id,
             category,
             voting_system,
-            ///TODO strategy should be an intance of strategy template
+            // TODO strategy should be an intance of strategy template
             strategy,
             block_number,
             root_hash,
@@ -316,10 +316,10 @@ module XProposal {
         VOTING_SYSTEM_SINGLE_CHOICE_VOTING
     }
 
-    /// TODO
-    public fun extract_strategy<Action>(id: u64) : Action {
-
-    }
+//    /// TODO
+//    public fun extract_strategy<Action>(id: u64) : Action {
+//
+//    }
 
 
 //    public fun cast_vote(
@@ -344,7 +344,7 @@ module XProposal {
 //        agree: bool,
         vote_amount: u128,
         choice: u8,
-        cap: &ProposalCapability,
+        _cap: &ProposalCapability,
 
         account_proof_leaf: vector<vector<u8>>,
         account_proof_siblings: vector<vector<u8>>,
@@ -354,14 +354,14 @@ module XProposal {
         state: vector<u8>,
         state_root: vector<u8>,
         resource_struct_tag: vector<u8>,
-    ) acquires Proposal, ProposalCapability, ProposalEvent, Vote {
+    ) acquires Proposal, ProposalEvent, Vote {
         {
             let state = proposal_state<DaoT, ActionT>(proposer_address, proposal_id);
             // only when proposal is active, use can cast vote.
             assert!(state == ACTIVE, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
         };
 
-        /// verify snapshot state proof
+        // verify snapshot state proof
         let user_address = Signer::address_of(signer);
         let state_proof = StarcoinVerifier::new_state_proof_from_proof(account_proof_leaf, account_proof_siblings, account_state, account_state_proof_leaf, account_state_proof_siblings);
         let verify = StarcoinVerifier::verify_resource_state_proof(&state_proof, &state_root, user_address, &resource_struct_tag, &state);
@@ -373,7 +373,7 @@ module XProposal {
         assert!(proposal.id == proposal_id, Errors::invalid_argument(ERR_PROPOSAL_ID_MISMATCH));
         let sender = Signer::address_of(signer);
         //TODO calculate vote weight via strategy
-        let total_voted = if (exists<Vote<DaoT> >(sender)) {
+        let _total_voted = if (exists<Vote<DaoT> >(sender)) {
             let my_vote = borrow_global_mut<Vote<DaoT> >(sender);
             assert!(my_vote.proposal_id == proposal_id, Errors::invalid_argument(ERR_VOTED_OTHERS_ALREADY));
             assert!(my_vote.choice == VOTING_CHOICE_AGREE, Errors::invalid_state(ERR_VOTE_STATE_MISMATCH));
@@ -564,8 +564,8 @@ module XProposal {
         voting_power: u128,
         vote_amount: u128,
         choice: u8,
-        cap: &ProposalCapability
-    ): Token::Token<DaoT>  acquires Proposal, Vote, ProposalEvent {
+        _cap: &ProposalCapability
+    ) acquires Proposal, Vote, ProposalEvent {
         {
             let state = proposal_state<DaoT, ActionT>(proposer_address, proposal_id);
             // only when proposal is active, user can revoke vote.
@@ -581,7 +581,8 @@ module XProposal {
             assert!(my_vote.proposal_id == proposal_id, Errors::invalid_argument(ERR_VOTED_OTHERS_ALREADY));
         };
         // revoke vote on proposal
-        let reverted_stake =do_revoke_vote(proposal, &mut my_vote, voting_power);
+        //let reverted_stake =do_revoke_vote(proposal, &mut my_vote, voting_power);
+        do_revoke_vote(proposal, &mut my_vote, voting_power);
         // emit vote changed event
         let gov_info = borrow_global_mut<ProposalEvent<DaoT> >(DaoRegistry::dao_address<DaoT>());
         Event::emit_event(
@@ -604,7 +605,7 @@ module XProposal {
             move_to(signer, my_vote);
         };
 
-        reverted_stake
+//        reverted_stake
     }
 
     spec revoke_vote {
@@ -631,20 +632,20 @@ module XProposal {
         ensures result.value == voting_power;
     }
 
-    fun do_revoke_vote<DaoT: copy + drop + store, ActionT: copy + drop + store>(proposal: &mut Proposal<DaoT, ActionT>, vote: &mut Vote<DaoT> , to_revoke: u128): Token::Token<DaoT>  {
+    fun do_revoke_vote<DaoT: copy + drop + store, ActionT: copy + drop + store>(proposal: &mut Proposal<DaoT, ActionT>, vote: &mut Vote<DaoT> , to_revoke: u128) {
         spec {
             assume vote.stake.value >= to_revoke;
         };
-        let reverted_stake = Token::withdraw(&mut vote.stake, to_revoke);
-        if (vote.agree) {
+//        let reverted_stake = Token::withdraw(&mut vote.stake, to_revoke);
+        if (VOTING_CHOICE_AGREE == vote.choice) {
             proposal.for_votes = proposal.for_votes - to_revoke;
         } else {
             proposal.against_votes = proposal.against_votes - to_revoke;
         };
-        spec {
-            assert Token::value(reverted_stake) == to_revoke;
-        };
-        reverted_stake
+//        spec {
+//            assert Token::value(reverted_stake) == to_revoke;
+//        };
+//        reverted_stake
     }
     spec schema CheckRevokeVote<DaoT, ActionT> {
         vote: Vote<DaoT> ;

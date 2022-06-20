@@ -1,10 +1,7 @@
 address StarcoinFramework {
 module StarcoinVerifierTest {
-    #[test]
     use StarcoinFramework::Vector;
-    #[test]
     use StarcoinFramework::Debug;
-    #[test]
     use StarcoinFramework::StarcoinVerifier;
 
     #[test]

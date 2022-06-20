@@ -2,7 +2,7 @@ module StarcoinFramework::GenesisDao{
     use StarcoinFramework::DaoAccount::{Self, DaoAccountCapability};
     use StarcoinFramework::Account;
     use StarcoinFramework::Vector;
-    use StarcoinFramework::NFT::{Self, NFT};
+    use StarcoinFramework::NFT::{Self};
     use StarcoinFramework::IdentifierNFT;
     use StarcoinFramework::Signer;
     use StarcoinFramework::DaoRegistry;
@@ -160,7 +160,7 @@ module StarcoinFramework::GenesisDao{
     }
 
 
-    public fun grant_cap<DaoT: store>(cap: &DaoRootCap<DaoT>, to_signer: &signer, granted_cap: CapType) acquires KeyHolder, KeyHolders{
+    public fun grant_cap<DaoT: store>(_cap: &DaoRootCap<DaoT>, to_signer: &signer, granted_cap: CapType) acquires KeyHolder, KeyHolders{
         let dao_address = dao_address<DaoT>();
         let to_addr = Signer::address_of(to_signer);
         if (exists<KeyHolder<DaoT>>(to_addr)){
@@ -177,12 +177,12 @@ module StarcoinFramework::GenesisDao{
         add_element(&mut holders.holders, to_addr); 
     }
 
-    public fun grant_caps<DaoT: store>(cap: &DaoRootCap<DaoT>, to_signer: &signer, granted_caps: vector<CapType>){
+    public fun grant_caps<DaoT: store>(_cap: &DaoRootCap<DaoT>, _to_signer: &signer, _granted_caps: vector<CapType>){
         //TODO implement batch grant
     }
   
     ///  Install PluginT to Dao and grant the capabilites
-    public fun install_plugin<DaoT:store, PluginT>(cap: &DaoRootCap<DaoT>, granted_caps: vector<CapType>) acquires DaoAccountCapHolder{
+    public fun install_plugin<DaoT:store, PluginT>(_cap: &DaoRootCap<DaoT>, granted_caps: vector<CapType>) acquires DaoAccountCapHolder{
         //TODO check no repeat item in granted_caps
         let dao_signer = dao_signer<DaoT>();
         //TODO error code
@@ -257,20 +257,20 @@ module StarcoinFramework::GenesisDao{
     }
 
     /// Member quit Dao by self 
-    public fun quit_member<DaoT>(sender: &signer){
+    public fun quit_member<DaoT>(_sender: &signer){
         //revoke IdentifierNFT
         //burn NFT
         //burn SBT Token
     }
 
     /// Revoke membership with cap
-    public fun revoke_member<DaoT:store>(_cap: &DaoMemberCap<DaoT>, member_addr: address){
+    public fun revoke_member<DaoT:store>(_cap: &DaoMemberCap<DaoT>, _member_addr: address){
         //revoke IdentifierNFT
         //burn NFT
         //burn SBT Token
     }
 
-    public fun update_member_sbt<DaoT:store>(_cap: &DaoMemberCap<DaoT>, member_addr: address, new_amount: u128){
+    public fun update_member_sbt<DaoT:store>(_cap: &DaoMemberCap<DaoT>, _member_addr: address, _new_amount: u128){
         //borrow mut the NFT
         // compare sbt and new_amount
         // mint more sbt token or burn sbt token

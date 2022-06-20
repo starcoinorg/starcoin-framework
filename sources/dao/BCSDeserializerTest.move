@@ -85,7 +85,7 @@ module BCSDeserializerTest {
 
     #[test]
     public fun test_deserialize_account_state() {
-        let bs = x"020001200f30a41872208c6324fa842889315b14f9be6f3dd0d5050686317adfdd0cda60";
+        let bs = x"020120f04f55f0433ac6013dbb16e7c4e394b04eb083320a6a5fb70ba0bf38e785ae420120541960a5adf7c90807b32789e7fff84d644d9e029f1b67fe69cea8c0379de94a";
         Debug::print<vector<u8>>(&bs);
         let (acc_state, _) = deserialize_account_state(&bs, 0);
         let rbs = BCS::to_bytes<AccountState>(&acc_state);
@@ -202,6 +202,23 @@ module BCSDeserializerTest {
         };
         Vector::push_back(&mut output, (value as u8));
         output
+    }
+
+
+    #[test]
+    public fun test_deserialize_state() {
+        let bs = x"fa0000000000000038bc7e1800000000000000000000000000000000000000000000000000000000";
+        Debug::print<vector<u8>>(&bs);
+
+        let (r, offset) = BCSDeserializer::deserialize_u64(&bs, 0);
+        Debug::print(&r);
+        Debug::print<u64>(&offset);
+        let (r, offset) = BCSDeserializer::deserialize_u128(&bs, offset);
+        Debug::print(&r);
+        Debug::print<u64>(&offset);
+        let (r, offset) = BCSDeserializer::deserialize_u128(&bs, offset);
+        Debug::print(&r);
+        Debug::print<u64>(&offset);
     }
 }
 }
