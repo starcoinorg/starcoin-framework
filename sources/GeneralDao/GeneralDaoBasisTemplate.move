@@ -152,7 +152,7 @@ module GeneralDaoBasisTemplate {
 }
 
 
-module SendTokenDao {
+module MultiPluginsDao {
 
     use StarcoinFramework::GeneralDaoBasisTemplate;
     use StarcoinFramework::GenenralDaoPluginSendToken;
