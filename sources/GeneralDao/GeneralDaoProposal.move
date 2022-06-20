@@ -80,11 +80,6 @@ module GeneralDaoProposal {
         vote: u128,
     }
 
-//    struct Proposals<phantom DaoType, phantom Action> {
-//        /// propose set
-//        propose_set: IDizedSet::Set<Proposal<DaoType, Action>>
-//    }
-
     /// Proposal data struct.
     struct Proposal<phantom Token: store, Action: store> has key {
         /// id of the proposal

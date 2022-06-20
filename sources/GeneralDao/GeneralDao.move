@@ -21,6 +21,7 @@ module GeneralDao {
         id: u64,
         name: vector<u8>,
         creator: address,
+        genesis_broker: address,
         signer_cap: GeneralDaoAccount::SignerCapability,
         state: u8,
     }
@@ -61,6 +62,7 @@ module GeneralDao {
             id: dao_id,
             name: *name,
             creator: Signer::address_of(signer),
+            genesis_broker,
             signer_cap,
             state,
         });
