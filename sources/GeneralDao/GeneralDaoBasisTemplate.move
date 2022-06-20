@@ -7,14 +7,12 @@ module GeneralDaoBasisTemplate {
     use StarcoinFramework::GeneralDaoProposal;
     use StarcoinFramework::Signer;
     use StarcoinFramework::GeneralDaoPlugin;
-    use StarcoinFramework::GenenralDaoPluginSendToken;
-    use StarcoinFramework::STC;
-    use StarcoinFramework::Token;
-    use StarcoinFramework::GeneralDao::borrow_account_signer_cap;
     use StarcoinFramework::Errors;
-    use StarcoinFramework::Vector::borrow_mut;
+    use StarcoinFramework::Option;
 
     const ERROR_DAO_NOT_EXISTS: u64 = 101;
+    const ERROR_DAO_TYPE_NOT_EXISTS: u64 = 102;
+    const ERROR_DAO_PLUGIN_NOT_READY: u64 = 103;
 
     struct DaoBasisGlobal<phantom DaoType> has key {
         dao_cap: GeneralDao::DaoCapability<DaoType>,
@@ -23,7 +21,7 @@ module GeneralDaoBasisTemplate {
     }
 
     struct DaoPluginTableWrapper<phantom DaoType> has key {
-        table: GeneralDaoPlugin::PluginRegistarTable<DaoType>,
+        table: Option::Option<GeneralDaoPlugin::PluginProposalRegisterTable<DaoType>>,
     }
 
     public fun genesis_dao<DaoType: copy + drop + store>(signer: &signer,
@@ -50,8 +48,8 @@ module GeneralDaoBasisTemplate {
         let account_signer_cap = GeneralDao::borrow_account_signer_cap(&global.dao_cap, dao_creator_broker);
         GeneralDaoPlugin::create_dao_plugin_table<DaoType>(account_signer_cap);
 
-        move_to(dao_creator_signer, DaoPluginTableWrapper<DaoType> {
-            table: GeneralDaoPlugin::create_empty_table<DaoType>(),
+        move_to(dao_creator_signer, DaoPluginTableWrapper<DaoType>{
+            table: Option::none<GeneralDaoPlugin::PluginProposalRegisterTable<DaoType>>(),
         });
     }
 
@@ -76,63 +74,78 @@ module GeneralDaoBasisTemplate {
                                                                dao_broker: address,
                                                                plugin_data: PluginT)
     acquires DaoBasisGlobal, DaoPluginTableWrapper {
-        assert!(GeneralDao::dao_exists<DaoType>(dao_broker), Errors::invalid_state(ERROR_DAO_NOT_EXISTS));
-        let global = borrow_global_mut<DaoBasisGlobal<DaoType>>(
-            GeneralDao::query_genesis_broker(dao_broker));
+        assert!(GeneralDao::is_dao_account<DaoType>(dao_broker), Errors::invalid_state(ERROR_DAO_NOT_EXISTS));
 
-        let signer_ability = borrow_account_signer_cap(&global.dao_cap, dao_broker);
+        let global = borrow_global_mut<
+            DaoBasisGlobal<DaoType>>(GeneralDao::query_genesis_broker<DaoType>(dao_broker));
+
+        let signer_ability = GeneralDao::borrow_account_signer_cap(&global.dao_cap, dao_broker);
         let table_wrapper =
             borrow_global_mut<DaoPluginTableWrapper<DaoType>>(Signer::address_of(proposal_signer));
-        GeneralDaoPlugin::register_plugin_data(proposal_signer, signer_ability, &mut table_wrapper.table, plugin_data);
+
+        if (Option::is_none(&table_wrapper.table)) {
+            Option::fill(&mut table_wrapper.table, GeneralDaoPlugin::create_empty_register_table<DaoType>());
+        };
+
+        GeneralDaoPlugin::register_plugin_data(
+            proposal_signer,
+            signer_ability,
+            Option::borrow_mut(&mut table_wrapper.table),
+            plugin_data);
     }
 
     /// Register member by basis type
-    public fun register_member<DaoType: store>(signer: &signer, dao_id: u128) acquires DaoBasisGlobal {
-        let global = borrow_global<DaoBasisGlobal<DaoType>>(genesis_account());
+    public fun register_member<DaoType: store>(signer: &signer, dao_broker: address) acquires DaoBasisGlobal {
+        let genesis_broker = GeneralDao::query_genesis_broker<DaoType>(dao_broker);
+        let global = borrow_global<DaoBasisGlobal<DaoType>>(genesis_broker);
         GeneralDaoMember::register_dao<DaoType>(signer, &global.member_cap);
     }
 
     /// Create proposal
-    public fun proposal<DaoType: copy + drop + store>(signer: &signer,
+    public fun proposal<DaoType: copy + drop + store>(proposal_signer: &signer,
                                                       dao_broker: address,
-                                                      action_delay: u64) acquires DaoBasisGlobal {
-        // Checking the plugin data has ready?
-
-        let global = borrow_global<DaoBasisGlobal<DaoType>>(genesis_account());
-
-        let table = GeneralDaoPlugin::create_empty_table<DaoType>();
+                                                      action_delay: u64)
+    acquires DaoBasisGlobal, DaoPluginTableWrapper {
+        let global = borrow_global<DaoBasisGlobal<DaoType>>(
+            GeneralDao::query_genesis_broker<DaoType>(dao_broker));
         let signer_ability = GeneralDao::borrow_account_signer_cap(&global.dao_cap, dao_broker);
 
-//        GeneralDaoPlugin::register_plugin_data(
-//            signer, signer_ability, &mut table,
-//            GenenralDaoPluginSendToken::create_plugin<DaoType, STC::STC>(@0x1, Token::zero<STC::STC>()));
+        // Checking the plugin data has ready
+        let table_wrapper = borrow_global_mut<DaoPluginTableWrapper<DaoType>>(dao_broker);
+        assert!(GeneralDaoPlugin::check_plugin_table_completed<DaoType>(
+            signer_ability,
+            Option::borrow(&table_wrapper.table)),
+            Errors::invalid_state(ERROR_DAO_PLUGIN_NOT_READY));
 
-        GeneralDaoProposal::propose<DaoType, GeneralDaoPlugin::PluginRegistarTable<DaoType>>(
-            signer, table, action_delay, &global.proposal_cap);
+        GeneralDaoProposal::propose<DaoType, GeneralDaoPlugin::PluginProposalRegisterTable<DaoType>>(
+            proposal_signer,
+            Option::extract(&mut table_wrapper.table),
+            action_delay,
+            &global.proposal_cap);
     }
 
     public fun do_cast_vote<DaoType: copy + drop + store>(signer: &signer,
                                                           proposer_address: address,
                                                           proposal_id: u64,
-                                                          agree: bool) {
-    }
+                                                          agree: bool) {}
 
-    public fun do_execute_proposal<DaoType: copy + drop + store>(proposal_broker: address,
-                                                                 proposal_id: u64) {
-        let table =
-            GeneralDaoProposal::extract_proposal_action<
+
+    /// Exctract plugin data
+    public fun extract_plugin<DaoType: copy + drop + store,
+                              PluginT>(proposal_broker: address, proposal_id: u64): PluginT
+    acquires DaoPluginTableWrapper {
+        let wrapper = borrow_global_mut<DaoPluginTableWrapper<DaoType>>(proposal_broker);
+        if (Option::is_none(&wrapper.table)) {
+            let action = GeneralDaoProposal::extract_proposal_action<
                 DaoType,
-                GeneralDaoPlugin::PluginRegistarTable<DaoType>>(proposal_broker, proposal_id);
+                GeneralDaoPlugin::PluginProposalRegisterTable<DaoType>>(
+                proposal_broker,
+                proposal_id);
+            Option::fill(&mut wrapper.table, action);
+        };
 
-        let plugin_data = GeneralDaoPlugin::remove_from_table<
-            DaoType,
-            GenenralDaoPluginSendToken::Plugin<DaoType, STC::STC>>(proposal_broker, &mut table);
-        GenenralDaoPluginSendToken::execute<DaoType, STC::STC>(plugin_data);
-    }
-
-
-    public fun genesis_account(): address {
-        @0x1
+        let table = Option::borrow_mut(&mut wrapper.table);
+        GeneralDaoPlugin::remove_from_table<DaoType, PluginT>(proposal_broker, table)
     }
 }
 }

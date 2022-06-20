@@ -5,6 +5,7 @@ module GeneralDao {
     use StarcoinFramework::GeneralDaoAccount;
     use StarcoinFramework::Signer;
     use StarcoinFramework::Errors;
+    use StarcoinFramework::GeneralDaoAccount::exists_with_cap;
 
     const GUARD_STATE_INIT: u8 = 1;
     const GUARD_STATE_PLUGIN_ADDED: u8 = 2;
@@ -72,6 +73,20 @@ module GeneralDao {
     : &GeneralDaoAccount::SignerCapability acquires Dao {
         let dao = borrow_global<Dao<DaoType>>(dao_creator);
         &dao.signer_cap
+    }
+
+    public fun is_dao_account<DaoType>(broker: address): bool {
+        exists<Dao<DaoType>>(broker)
+    }
+
+    public fun is_dao_genesis_account<DaoType>(broker: address): bool {
+        exists<DaoGlobal<DaoType>>(broker)
+    }
+
+    /// Query genesis broker for DAO
+    public fun query_genesis_broker<DaoType>(broker: address): address acquires Dao {
+        let dao = borrow_global_mut<Dao<DaoType>>(broker);
+        dao.genesis_broker
     }
 }
 }
