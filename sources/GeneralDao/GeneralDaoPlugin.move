@@ -86,7 +86,7 @@ module GeneralDaoPlugin {
     public fun check_plugin_table_completed<DaoType>(
         delegate_signer: &GeneralDaoAccount::SignerCapability,
         proposal_table: &PluginProposalRegisterTable<DaoType>): bool {
-        let dao_table  = borrow_mut_with_cap<PluginDaoRegister<DaoType>>(delegate_signer);
+        let dao_table = borrow_mut_with_cap<PluginDaoRegister<DaoType>>(delegate_signer);
 
         let i = 0;
         let len = Vector::length(&dao_table.table);
@@ -116,9 +116,7 @@ module GeneralDaoPlugin {
             borrow_with_cap<PluginProposalRegisterBindInfo<DaoType, PluginT>>(delegate_signer);
 
         // Add to registered data table
-        Vector::push_back(&mut table.table, PluginRegisterItem{
-            name: *&register.name,
-        });
+        Vector::push_back(&mut table.table, *&register.name);
 
         move_to(proposal_signer, Plugin<DaoType, PluginT>{
             name: register.name,
@@ -128,7 +126,8 @@ module GeneralDaoPlugin {
 
     /// After execution, the plugin name must be removed from copied table
     public fun remove_from_table<DaoType, PluginT>(proposal_creator: address,
-                                                   table: &mut PluginProposalRegisterTable<DaoType>): PluginT acquires Plugin {
+                                                   table: &mut PluginProposalRegisterTable<DaoType>)
+    : PluginT acquires Plugin {
         let Plugin<DaoType, PluginT>{
             name,
             plugin,
