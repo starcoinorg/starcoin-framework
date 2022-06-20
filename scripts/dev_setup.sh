@@ -149,26 +149,30 @@ function install_toolchain {
   fi
 }
 
-function install_mpm {
-   echo "Installing mpm"
-  VERSION="$(mpm --version || true)"
-    if [ -n "$VERSION" ]; then
-  	  if [[ "${BATCH_MODE}" == "false" ]]; then
-        echo "mpm is already installed, version: $VERSION"
-      fi
-    else
 
-      if [[ $(uname -s) == "Darwin" ]]; then
-        mpm_file="mpm-macos-latest";
+function install_mpm {
+  echo "Installing mpm"
+  VERSION="$(mpm --version || true)"
+  if [ -n "$VERSION" ]; then
+    if [[ "${BATCH_MODE}" == "false" ]]; then
+      echo "mpm is already installed, version: $VERSION"
+    fi
+  else
+    if [[ $(uname -s) == "Darwin" ]]; then
+      mpm_file="mpm-macos-latest";
+    else
+      if [[ $(lsb_release -r | cut -f 2) == '18.04' ]]; then
+        mpm_file="mpm-ubuntu-18.04";
       else
         mpm_file="mpm-ubuntu-latest";
       fi
-      curl -sL -o "${INSTALL_DIR}${mpm_file}.zip" "https://github.com/starcoinorg/starcoin/releases/download/${MPM_VERSION}/${mpm_file}.zip"
-      unzip -q "${INSTALL_DIR}${mpm_file}.zip" -d "${INSTALL_DIR}"
-      mv "${INSTALL_DIR}${mpm_file}/mpm" "${INSTALL_DIR}mpm"
-      chmod +x "${INSTALL_DIR}mpm"
-      rmdir "${INSTALL_DIR}${mpm_file}"
     fi
+    curl -sL -o "${INSTALL_DIR}${mpm_file}.zip" "https://github.com/starcoinorg/starcoin/releases/download/${MPM_VERSION}/${mpm_file}.zip"
+    unzip -q "${INSTALL_DIR}${mpm_file}.zip" -d "${INSTALL_DIR}"
+    mv "${INSTALL_DIR}${mpm_file}/mpm" "${INSTALL_DIR}mpm"
+    chmod +x "${INSTALL_DIR}mpm"
+    rmdir "${INSTALL_DIR}${mpm_file}"
+  fi
 }
 
 function install_dotnet {
@@ -384,31 +388,51 @@ fi
 
 PACKAGE_MANAGER=
 if [[ "$(uname)" == "Linux" ]]; then
-	if command -v yum &> /dev/null; then
-		PACKAGE_MANAGER="yum"
-	elif command -v apt-get &> /dev/null; then
-		PACKAGE_MANAGER="apt-get"
-	elif command -v pacman &> /dev/null; then
-		PACKAGE_MANAGER="pacman"
-  elif command -v apk &>/dev/null; then
-		PACKAGE_MANAGER="apk"
-  elif command -v dnf &>/dev/null; then
-    echo "WARNING: dnf package manager support is experimental"
-    PACKAGE_MANAGER="dnf"
-	else
-		echo "Unable to find supported package manager (yum, apt-get, dnf, or pacman). Abort"
-		exit 1
-	fi
+  # check for default package manager for linux
+  if [[ -f /etc/redhat-release ]]; then
+    # use yum for redhat-releases by default
+    if command -v yum &>/dev/null; then
+      PACKAGE_MANAGER="yum"
+    elif command -v dnf &>/dev/null; then
+      # dnf is the updated default since Red Hat Enterprise Linux 8, CentOS 8, Fedora 22, and any distros based on these
+      echo "WARNING: dnf package manager support is experimental"
+      PACKAGE_MANAGER="dnf"
+    fi
+  elif [[ -f /etc/debian_version ]] && command -v apt-get &>/dev/null; then
+    PACKAGE_MANAGER="apt-get"
+  elif [[ -f /etc/arch-release ]] && command -v pacman &>/dev/null; then
+    PACKAGE_MANAGER="pacman"
+  elif [[ -f /etc/alpine-release ]] && command -v apk &>/dev/null; then
+    PACKAGE_MANAGER="apk"
+  fi
+  # if no default OS specific PACKAGE_MANAGER detected, just pick one that's installed (as best effort)
+  if [[ -z $PACKAGE_MANAGER ]]; then
+    if command -v yum &>/dev/null; then
+      PACKAGE_MANAGER="yum"
+    elif command -v apt-get &>/dev/null; then
+      PACKAGE_MANAGER="apt-get"
+    elif command -v pacman &>/dev/null; then
+      PACKAGE_MANAGER="pacman"
+    elif command -v apk &>/dev/null; then
+      PACKAGE_MANAGER="apk"
+    elif command -v dnf &>/dev/null; then
+      echo "WARNING: dnf package manager support is experimental"
+      PACKAGE_MANAGER="dnf"
+    else
+      echo "Unable to find supported package manager (yum, apt-get, dnf, or pacman). Abort"
+      exit 1
+    fi
+  fi
 elif [[ "$(uname)" == "Darwin" ]]; then
-	if command -v brew &>/dev/null; then
-		PACKAGE_MANAGER="brew"
-	else
-		echo "Missing package manager Homebrew (https://brew.sh/). Abort"
-		exit 1
-	fi
+  if command -v brew &>/dev/null; then
+    PACKAGE_MANAGER="brew"
+  else
+    echo "Missing package manager Homebrew (https://brew.sh/). Abort"
+    exit 1
+  fi
 else
-	echo "Unknown OS. Abort."
-	exit 1
+  echo "Unknown OS. Abort."
+  exit 1
 fi
 
 if [[ "$BATCH_MODE" == "false" ]]; then
