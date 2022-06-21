@@ -13,7 +13,7 @@ module MultiPluginsDao {
     }
 
     public(script) fun create_dao(signer: signer, genesis_broker: address, name: vector<u8>) {
-        // add plugins
+        // Add plugins plan.
         GeneralDaoBasisTemplate::bind_plugin_name_with_type<
             SendTokenType,
             GenenralDaoPluginSendToken::Plugin<SendTokenType, STC>>(
@@ -24,8 +24,15 @@ module MultiPluginsDao {
         GeneralDaoBasisTemplate::create_dao<SendTokenType>(&signer, genesis_broker, &name);
     }
 
+    public(script) fun cast_vote(signer: signer,
+                                 proposer_broker: address,
+                                 proposal_id: u64,
+                                 agree: bool) {
+        GeneralDaoBasisTemplate::do_cast_vote<SendTokenType>(&signer, proposer_broker, proposal_id, agree);
+    }
+
     public(script) fun propose(signer: signer, dao_broker: address, action_delay: u64) {
-        // add plugins
+        // Add plugins data..
         GeneralDaoBasisTemplate::add_plugin_data<SendTokenType, GenenralDaoPluginSendToken::Plugin<SendTokenType, STC>>(
             &signer, dao_broker, GenenralDaoPluginSendToken::create_plugin<SendTokenType, STC>(@0x1, Token::zero<STC>()));
 
