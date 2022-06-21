@@ -49,9 +49,17 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::Hash`](Hash.md#0x1_Hash)
 -  [`0x1::IdentifierNFT`](NFT.md#0x1_IdentifierNFT)
 -  [`0x1::IdentifierNFTScripts`](NFT.md#0x1_IdentifierNFTScripts)
+-  [`0x1::InstallPluginProposalPlugin`](InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin)
 -  [`0x1::LanguageVersion`](LanguageVersion.md#0x1_LanguageVersion)
 -  [`0x1::Math`](Math.md#0x1_Math)
+<<<<<<< HEAD
+<<<<<<< HEAD
 -  [`0x1::MemberJoinPlugin`](MemberJoinPlugin.md#0x1_MemberJoinPlugin)
+=======
+>>>>>>> e660e8f (update build)
+=======
+-  [`0x1::MemberProposalPlugin`](MemberProposalPlugin.md#0x1_MemberProposalPlugin)
+>>>>>>> e004e16 (update build)
 -  [`0x1::MerkleNFTDistributor`](MerkleNFT.md#0x1_MerkleNFTDistributor)
 -  [`0x1::MerkleProof`](MerkleNFT.md#0x1_MerkleProof)
 -  [`0x1::MintDaoProposal`](MintDaoProposal.md#0x1_MintDaoProposal)

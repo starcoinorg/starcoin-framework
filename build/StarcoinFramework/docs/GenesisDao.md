@@ -15,13 +15,22 @@
 -  [Resource `DaoNFTUpdateCapHolder`](#0x1_GenesisDao_DaoNFTUpdateCapHolder)
 -  [Struct `CapType`](#0x1_GenesisDao_CapType)
 -  [Struct `DaoRootCap`](#0x1_GenesisDao_DaoRootCap)
+-  [Struct `DaoInstallPluginCap`](#0x1_GenesisDao_DaoInstallPluginCap)
 -  [Struct `DaoUpgradeModuleCap`](#0x1_GenesisDao_DaoUpgradeModuleCap)
 -  [Struct `DaoWithdrawTokenCap`](#0x1_GenesisDao_DaoWithdrawTokenCap)
 -  [Struct `DaoWithdrawNFTCap`](#0x1_GenesisDao_DaoWithdrawNFTCap)
 -  [Struct `DaoStorageCap`](#0x1_GenesisDao_DaoStorageCap)
 -  [Struct `DaoMemberCap`](#0x1_GenesisDao_DaoMemberCap)
 -  [Struct `DaoProposalCap`](#0x1_GenesisDao_DaoProposalCap)
+<<<<<<< HEAD
 -  [Resource `DaoRootCapHolder`](#0x1_GenesisDao_DaoRootCapHolder)
+<<<<<<< HEAD
+=======
+-  [Resource `KeyHolder`](#0x1_GenesisDao_KeyHolder)
+-  [Resource `KeyHolders`](#0x1_GenesisDao_KeyHolders)
+>>>>>>> e660e8f (update build)
+=======
+>>>>>>> 0d9d4e0 (update build files)
 -  [Resource `InstalledPluginInfo`](#0x1_GenesisDao_InstalledPluginInfo)
 -  [Struct `DaoMember`](#0x1_GenesisDao_DaoMember)
 -  [Struct `DaoMemberBody`](#0x1_GenesisDao_DaoMemberBody)
@@ -31,21 +40,37 @@
 -  [Struct `Proposal`](#0x1_GenesisDao_Proposal)
 -  [Struct `ProposalAction`](#0x1_GenesisDao_ProposalAction)
 -  [Struct `ProposalInfo`](#0x1_GenesisDao_ProposalInfo)
--  [Resource `MyProposals`](#0x1_GenesisDao_MyProposals)
 -  [Resource `GlobalProposals`](#0x1_GenesisDao_GlobalProposals)
+-  [Resource `ProposalActions`](#0x1_GenesisDao_ProposalActions)
 -  [Struct `Vote`](#0x1_GenesisDao_Vote)
 -  [Resource `MyVotes`](#0x1_GenesisDao_MyVotes)
 -  [Constants](#@Constants_0)
+-  [Function `install_plugin_cap_type`](#0x1_GenesisDao_install_plugin_cap_type)
 -  [Function `upgrade_module_cap_type`](#0x1_GenesisDao_upgrade_module_cap_type)
 -  [Function `withdraw_token_cap_type`](#0x1_GenesisDao_withdraw_token_cap_type)
 -  [Function `withdraw_nft_cap_type`](#0x1_GenesisDao_withdraw_nft_cap_type)
 -  [Function `storage_cap_type`](#0x1_GenesisDao_storage_cap_type)
 -  [Function `member_cap_type`](#0x1_GenesisDao_member_cap_type)
+<<<<<<< HEAD
 -  [Function `proposal_cap_type`](#0x1_GenesisDao_proposal_cap_type)
 -  [Function `all_caps`](#0x1_GenesisDao_all_caps)
 -  [Function `create_dao`](#0x1_GenesisDao_create_dao)
 -  [Function `upgrade_to_dao`](#0x1_GenesisDao_upgrade_to_dao)
+<<<<<<< HEAD
+=======
+-  [Function `all_caps`](#0x1_GenesisDao_all_caps)
+-  [Function `create_dao`](#0x1_GenesisDao_create_dao)
+-  [Function `upgrade_to_dao`](#0x1_GenesisDao_upgrade_to_dao)
+-  [Function `extract_dao_root_cap`](#0x1_GenesisDao_extract_dao_root_cap)
+-  [Function `grant_cap`](#0x1_GenesisDao_grant_cap)
+-  [Function `grant_caps`](#0x1_GenesisDao_grant_caps)
+>>>>>>> e660e8f (update build)
+=======
+-  [Function `install_plugin_with_root_cap`](#0x1_GenesisDao_install_plugin_with_root_cap)
+>>>>>>> e004e16 (update build)
 -  [Function `install_plugin`](#0x1_GenesisDao_install_plugin)
+-  [Function `do_install_plugin`](#0x1_GenesisDao_do_install_plugin)
+-  [Function `burn_root_cap`](#0x1_GenesisDao_burn_root_cap)
 -  [Function `save`](#0x1_GenesisDao_save)
 -  [Function `take`](#0x1_GenesisDao_take)
 -  [Function `withdraw_token`](#0x1_GenesisDao_withdraw_token)
@@ -55,10 +80,20 @@
 -  [Function `revoke_member`](#0x1_GenesisDao_revoke_member)
 -  [Function `update_member_sbt`](#0x1_GenesisDao_update_member_sbt)
 -  [Function `is_member`](#0x1_GenesisDao_is_member)
+<<<<<<< HEAD
 -  [Function `validate_cap`](#0x1_GenesisDao_validate_cap)
+-  [Function `acquire_install_plugin_cap`](#0x1_GenesisDao_acquire_install_plugin_cap)
 -  [Function `acquire_withdraw_token_cap`](#0x1_GenesisDao_acquire_withdraw_token_cap)
 -  [Function `acquire_storage_cap`](#0x1_GenesisDao_acquire_storage_cap)
+-  [Function `acquire_member_cap`](#0x1_GenesisDao_acquire_member_cap)
 -  [Function `acquire_proposal_cap`](#0x1_GenesisDao_acquire_proposal_cap)
+=======
+-  [Function `validate_key_holder_cap`](#0x1_GenesisDao_validate_key_holder_cap)
+-  [Function `validate_plugin_cap`](#0x1_GenesisDao_validate_plugin_cap)
+-  [Function `acquire_withdraw_token_cap_for_holder`](#0x1_GenesisDao_acquire_withdraw_token_cap_for_holder)
+-  [Function `acquire_withdraw_token_cap_for_plugin`](#0x1_GenesisDao_acquire_withdraw_token_cap_for_plugin)
+-  [Function `acquire_storage_cap_for_plugin`](#0x1_GenesisDao_acquire_storage_cap_for_plugin)
+>>>>>>> e660e8f (update build)
 -  [Function `choice_yes`](#0x1_GenesisDao_choice_yes)
 -  [Function `choice_no`](#0x1_GenesisDao_choice_no)
 -  [Function `choice_no_with_veto`](#0x1_GenesisDao_choice_no_with_veto)
@@ -70,16 +105,20 @@
 -  [Function `min_action_delay`](#0x1_GenesisDao_min_action_delay)
 -  [Function `generate_next_proposal_id`](#0x1_GenesisDao_generate_next_proposal_id)
 -  [Function `quorum_votes`](#0x1_GenesisDao_quorum_votes)
+-  [Function `min_proposal_deposit`](#0x1_GenesisDao_min_proposal_deposit)
 -  [Function `cast_vote`](#0x1_GenesisDao_cast_vote)
 -  [Function `change_vote`](#0x1_GenesisDao_change_vote)
 -  [Function `revoke_vote`](#0x1_GenesisDao_revoke_vote)
--  [Function `extract_proposal_action`](#0x1_GenesisDao_extract_proposal_action)
+-  [Function `execute_proposal`](#0x1_GenesisDao_execute_proposal)
+-  [Function `take_proposal_action`](#0x1_GenesisDao_take_proposal_action)
+-  [Function `find_action`](#0x1_GenesisDao_find_action)
 -  [Function `has_voted`](#0x1_GenesisDao_has_voted)
 -  [Function `do_cast_vote`](#0x1_GenesisDao_do_cast_vote)
 -  [Function `get_vote`](#0x1_GenesisDao_get_vote)
 -  [Function `proposal_state`](#0x1_GenesisDao_proposal_state)
--  [Function `get_proposal_mut`](#0x1_GenesisDao_get_proposal_mut)
--  [Function `get_proposal`](#0x1_GenesisDao_get_proposal)
+-  [Function `borrow_proposal_mut`](#0x1_GenesisDao_borrow_proposal_mut)
+-  [Function `borrow_proposal`](#0x1_GenesisDao_borrow_proposal)
+-  [Function `proposal`](#0x1_GenesisDao_proposal)
 -  [Function `remove_element`](#0x1_GenesisDao_remove_element)
 -  [Function `add_element`](#0x1_GenesisDao_add_element)
 -  [Function `dao_signer`](#0x1_GenesisDao_dao_signer)
@@ -363,10 +402,37 @@ A type describing a capability.
 
 ## Struct `DaoRootCap`
 
-RootCap only have one instance, and can not been <code>drop</code>
+RootCap only have one instance, and can not been <code>drop</code> and <code>store</code>
 
 
-<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt; <b>has</b> store
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt;
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>dummy_field: bool</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_DaoInstallPluginCap"></a>
+
+## Struct `DaoInstallPluginCap`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoInstallPluginCap">DaoInstallPluginCap</a>&lt;DaoT, PluginT&gt; <b>has</b> drop
 </code></pre>
 
 
@@ -393,7 +459,11 @@ RootCap only have one instance, and can not been <code>drop</code>
 
 
 
+<<<<<<< HEAD
 <pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoUpgradeModuleCap">DaoUpgradeModuleCap</a>&lt;DaoT, PluginT&gt; <b>has</b> drop
+=======
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoUpgradeModuleCap">DaoUpgradeModuleCap</a>&lt;DaoT&gt; <b>has</b> drop
+>>>>>>> e660e8f (update build)
 </code></pre>
 
 
@@ -420,7 +490,11 @@ RootCap only have one instance, and can not been <code>drop</code>
 
 
 
+<<<<<<< HEAD
 <pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">DaoWithdrawTokenCap</a>&lt;DaoT, PluginT&gt; <b>has</b> drop
+=======
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">DaoWithdrawTokenCap</a>&lt;DaoT&gt; <b>has</b> drop
+>>>>>>> e660e8f (update build)
 </code></pre>
 
 
@@ -447,7 +521,11 @@ RootCap only have one instance, and can not been <code>drop</code>
 
 
 
+<<<<<<< HEAD
 <pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawNFTCap">DaoWithdrawNFTCap</a>&lt;DaoT, PluginT&gt; <b>has</b> drop
+=======
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawNFTCap">DaoWithdrawNFTCap</a>&lt;DaoT&gt; <b>has</b> drop
+>>>>>>> e660e8f (update build)
 </code></pre>
 
 
@@ -501,7 +579,11 @@ RootCap only have one instance, and can not been <code>drop</code>
 
 
 
+<<<<<<< HEAD
 <pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt; <b>has</b> drop
+=======
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT&gt; <b>has</b> drop
+>>>>>>> e660e8f (update build)
 </code></pre>
 
 
@@ -528,7 +610,7 @@ RootCap only have one instance, and can not been <code>drop</code>
 
 
 
-<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">DaoProposalCap</a>&lt;DaoT, ActionT&gt; <b>has</b> drop
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">DaoProposalCap</a>&lt;DaoT, PluginT&gt; <b>has</b> drop
 </code></pre>
 
 
@@ -549,6 +631,7 @@ RootCap only have one instance, and can not been <code>drop</code>
 
 </details>
 
+<<<<<<< HEAD
 <a name="0x1_GenesisDao_DaoRootCapHolder"></a>
 
 ## Resource `DaoRootCapHolder`
@@ -576,6 +659,74 @@ RootCap only have one instance, and can not been <code>drop</code>
 
 </details>
 
+<<<<<<< HEAD
+=======
+<a name="0x1_GenesisDao_KeyHolder"></a>
+
+## Resource `KeyHolder`
+
+Grant Dao capabilites to a account
+This resource save to the holder's account
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_KeyHolder">KeyHolder</a>&lt;DaoT&gt; <b>has</b> key
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>dao_address: <b>address</b></code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">GenesisDao::CapType</a>&gt;</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_KeyHolders"></a>
+
+## Resource `KeyHolders`
+
+Record which accounts are the KeyHolder
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_KeyHolders">KeyHolders</a> <b>has</b> key
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>holders: vector&lt;<b>address</b>&gt;</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+>>>>>>> e660e8f (update build)
+=======
+>>>>>>> 0d9d4e0 (update build files)
 <a name="0x1_GenesisDao_InstalledPluginInfo"></a>
 
 ## Resource `InstalledPluginInfo`
@@ -746,9 +897,10 @@ The Dao member NFT Body, hold the SBT token
 ## Struct `Proposal`
 
 Proposal data struct.
+review: it is safe to has <code><b>copy</b></code> and <code>drop</code>?
 
 
-<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a> <b>has</b> store
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a> <b>has</b> <b>copy</b>, drop, store
 </code></pre>
 
 
@@ -810,7 +962,7 @@ Proposal data struct.
 <code>block_number: u64</code>
 </dt>
 <dd>
- The block number when submit proposal
+ the block number when submit proposal
 </dd>
 <dt>
 <code>state_root: vector&lt;u8&gt;</code>
@@ -839,6 +991,12 @@ Proposal data struct.
 
 
 <dl>
+<dt>
+<code>proposal_id: u64</code>
+</dt>
+<dd>
+ id of the proposal
+</dd>
 <dt>
 <code>deposit: <a href="Token.md#0x1_Token_Token">Token::Token</a>&lt;<a href="STC.md#0x1_STC_STC">STC::STC</a>&gt;</code>
 </dt>
@@ -884,34 +1042,6 @@ Same as Proposal but has copy and drop
 
 </details>
 
-<a name="0x1_GenesisDao_MyProposals"></a>
-
-## Resource `MyProposals`
-
-Every proposer keep a vector<ProposalAction<ActionT>> for per Dao, per Action
-
-
-<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_MyProposals">MyProposals</a>&lt;DaoT, ActionT&gt; <b>has</b> key
-</code></pre>
-
-
-
-<details>
-<summary>Fields</summary>
-
-
-<dl>
-<dt>
-<code>proposals: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalAction">GenesisDao::ProposalAction</a>&lt;ActionT&gt;&gt;</code>
-</dt>
-<dd>
-
-</dd>
-</dl>
-
-
-</details>
-
 <a name="0x1_GenesisDao_GlobalProposals"></a>
 
 ## Resource `GlobalProposals`
@@ -932,6 +1062,34 @@ Replace with Table when support Table.
 <dl>
 <dt>
 <code>proposals: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_Proposal">GenesisDao::Proposal</a>&gt;</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_ProposalActions"></a>
+
+## Resource `ProposalActions`
+
+Every ActionT keep a vector in the Dao account
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>&lt;ActionT&gt; <b>has</b> key
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>actions: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalAction">GenesisDao::ProposalAction</a>&lt;ActionT&gt;&gt;</code>
 </dt>
 <dd>
 
@@ -1216,6 +1374,29 @@ voting choice: 1:yes, 2:no, 3: no_with_veto, 4:abstain
 
 
 
+<a name="0x1_GenesisDao_install_plugin_cap_type"></a>
+
+## Function `install_plugin_cap_type`
+
+Creates a install plugin capability type.
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_install_plugin_cap_type">install_plugin_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">GenesisDao::CapType</a>
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_install_plugin_cap_type">install_plugin_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 0 } }
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_GenesisDao_upgrade_module_cap_type"></a>
 
 ## Function `upgrade_module_cap_type`
@@ -1232,7 +1413,7 @@ Creates a upgrade module capability type.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_upgrade_module_cap_type">upgrade_module_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 0 } }
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_upgrade_module_cap_type">upgrade_module_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 1 } }
 </code></pre>
 
 
@@ -1255,7 +1436,7 @@ Creates a withdraw Token capability type.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_withdraw_token_cap_type">withdraw_token_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 1 } }
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_withdraw_token_cap_type">withdraw_token_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 2 } }
 </code></pre>
 
 
@@ -1278,7 +1459,7 @@ Creates a withdraw NFT capability type.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_withdraw_nft_cap_type">withdraw_nft_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 2 } }
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_withdraw_nft_cap_type">withdraw_nft_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 3 } }
 </code></pre>
 
 
@@ -1301,7 +1482,7 @@ Crates a write data to Dao account capability type.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_storage_cap_type">storage_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 3 } }
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_storage_cap_type">storage_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 4 } }
 </code></pre>
 
 
@@ -1325,13 +1506,14 @@ This cap can issue Dao member NFT or update member's SBT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_member_cap_type">member_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 4 } }
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_member_cap_type">member_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 5 } }
 </code></pre>
 
 
 
 </details>
 
+<<<<<<< HEAD
 <a name="0x1_GenesisDao_proposal_cap_type"></a>
 
 ## Function `proposal_cap_type`
@@ -1347,13 +1529,15 @@ This cap can issue Dao member NFT or update member's SBT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_cap_type">proposal_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 5 } }
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_cap_type">proposal_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 6 } }
 </code></pre>
 
 
 
 </details>
 
+=======
+>>>>>>> e660e8f (update build)
 <a name="0x1_GenesisDao_all_caps"></a>
 
 ## Function `all_caps`
@@ -1371,11 +1555,15 @@ This cap can issue Dao member NFT or update member's SBT
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_all_caps">all_caps</a>(): vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>&gt;{
     <b>let</b> caps = <a href="Vector.md#0x1_Vector_singleton">Vector::singleton</a>(<a href="GenesisDao.md#0x1_GenesisDao_upgrade_module_cap_type">upgrade_module_cap_type</a>());
+    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> caps, <a href="GenesisDao.md#0x1_GenesisDao_install_plugin_cap_type">install_plugin_cap_type</a>());
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> caps, <a href="GenesisDao.md#0x1_GenesisDao_withdraw_token_cap_type">withdraw_token_cap_type</a>());
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> caps, <a href="GenesisDao.md#0x1_GenesisDao_withdraw_nft_cap_type">withdraw_nft_cap_type</a>());
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> caps, <a href="GenesisDao.md#0x1_GenesisDao_storage_cap_type">storage_cap_type</a>());
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> caps, <a href="GenesisDao.md#0x1_GenesisDao_member_cap_type">member_cap_type</a>());
+<<<<<<< HEAD
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> caps, <a href="GenesisDao.md#0x1_GenesisDao_proposal_cap_type">proposal_cap_type</a>());
+=======
+>>>>>>> e660e8f (update build)
     caps
 }
 </code></pre>
@@ -1475,14 +1663,27 @@ Create a dao with a exists Dao account
 
 </details>
 
-<a name="0x1_GenesisDao_install_plugin"></a>
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<a name="0x1_GenesisDao_extract_dao_root_cap"></a>
 
-## Function `install_plugin`
+## Function `extract_dao_root_cap`
 
-Install PluginT to Dao and grant the capabilites
+Extract DaoRootCap from Gov Plugin module
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_install_plugin">install_plugin</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">GenesisDao::DaoRootCap</a>&lt;DaoT&gt;, granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">GenesisDao::CapType</a>&gt;)
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_extract_dao_root_cap">extract_dao_root_cap</a>&lt;DaoT, GovPluginT&gt;(_access_key: &GovPluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">GenesisDao::DaoRootCap</a>&lt;DaoT&gt;
+=======
+<a name="0x1_GenesisDao_install_plugin_with_root_cap"></a>
+
+## Function `install_plugin_with_root_cap`
+
+Install ToInstallPluginT to Dao and grant the capabilites
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_install_plugin_with_root_cap">install_plugin_with_root_cap</a>&lt;DaoT: store, ToInstallPluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">GenesisDao::DaoRootCap</a>&lt;DaoT&gt;, granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">GenesisDao::CapType</a>&gt;)
+>>>>>>> e004e16 (update build)
 </code></pre>
 
 
@@ -1491,14 +1692,161 @@ Install PluginT to Dao and grant the capabilites
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_install_plugin">install_plugin</a>&lt;DaoT:store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt;, granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>&gt;) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
+<<<<<<< HEAD
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_extract_dao_root_cap">extract_dao_root_cap</a>&lt;DaoT, GovPluginT&gt;(_access_key: &GovPluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCapHolder">DaoRootCapHolder</a>{
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+    //TODO check the <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCapHolder">DaoRootCapHolder</a> <b>exists</b>
+    <b>let</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCapHolder">DaoRootCapHolder</a>{ cap } = <b>move_from</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoRootCapHolder">DaoRootCapHolder</a>&lt;DaoT, GovPluginT&gt;&gt;(dao_address);
+    cap
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_install_plugin_with_root_cap">install_plugin_with_root_cap</a>&lt;DaoT:store, ToInstallPluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt;, granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>&gt;) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
+    <a href="GenesisDao.md#0x1_GenesisDao_do_install_plugin">do_install_plugin</a>&lt;DaoT, ToInstallPluginT&gt;(granted_caps);
+>>>>>>> e004e16 (update build)
+}
+</code></pre>
+
+
+
+</details>
+
+<<<<<<< HEAD
+<a name="0x1_GenesisDao_grant_cap"></a>
+
+## Function `grant_cap`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_cap">grant_cap</a>&lt;DaoT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">GenesisDao::DaoRootCap</a>&lt;DaoT&gt;, to_signer: &signer, granted_cap: <a href="GenesisDao.md#0x1_GenesisDao_CapType">GenesisDao::CapType</a>)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_cap">grant_cap</a>&lt;DaoT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt;, to_signer: &signer, granted_cap: <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_KeyHolder">KeyHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_KeyHolders">KeyHolders</a>{
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+    <b>let</b> to_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(to_signer);
+    <b>if</b> (<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_KeyHolder">KeyHolder</a>&lt;DaoT&gt;&gt;(to_addr)){
+        <b>let</b> holder = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_KeyHolder">KeyHolder</a>&lt;DaoT&gt;&gt;(to_addr);
+        <a href="GenesisDao.md#0x1_GenesisDao_add_element">add_element</a>(&<b>mut</b> holder.granted_caps, granted_cap);
+    }<b>else</b>{
+        <b>move_to</b>(to_signer, <a href="GenesisDao.md#0x1_GenesisDao_KeyHolder">KeyHolder</a>&lt;DaoT&gt;{
+            dao_address,
+            granted_caps:<a href="Vector.md#0x1_Vector_singleton">Vector::singleton</a>(granted_cap),
+        });
+    };
+    //TODO add limit <b>to</b> holders length.
+    <b>let</b> holders = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_KeyHolders">KeyHolders</a>&gt;(dao_address);
+    <a href="GenesisDao.md#0x1_GenesisDao_add_element">add_element</a>(&<b>mut</b> holders.holders, to_addr);
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_grant_caps"></a>
+
+## Function `grant_caps`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_caps">grant_caps</a>&lt;DaoT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">GenesisDao::DaoRootCap</a>&lt;DaoT&gt;, _to_signer: &signer, _granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">GenesisDao::CapType</a>&gt;)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_caps">grant_caps</a>&lt;DaoT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt;, _to_signer: &signer, _granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>&gt;){
+    //TODO implement batch grant
+}
+</code></pre>
+
+
+
+</details>
+
+>>>>>>> e660e8f (update build)
+=======
+>>>>>>> e004e16 (update build)
+<a name="0x1_GenesisDao_install_plugin"></a>
+
+## Function `install_plugin`
+
+Install plugin with DaoInstallPluginCap
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_install_plugin">install_plugin</a>&lt;DaoT: store, PluginT, ToInstallPluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoInstallPluginCap">GenesisDao::DaoInstallPluginCap</a>&lt;DaoT, PluginT&gt;, granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">GenesisDao::CapType</a>&gt;)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_install_plugin">install_plugin</a>&lt;DaoT:store, PluginT, ToInstallPluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoInstallPluginCap">DaoInstallPluginCap</a>&lt;DaoT, PluginT&gt;, granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>&gt;) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
+    <a href="GenesisDao.md#0x1_GenesisDao_do_install_plugin">do_install_plugin</a>&lt;DaoT, ToInstallPluginT&gt;(granted_caps);
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_do_install_plugin"></a>
+
+## Function `do_install_plugin`
+
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_install_plugin">do_install_plugin</a>&lt;DaoT: store, ToInstallPluginT&gt;(granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">GenesisDao::CapType</a>&gt;)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_install_plugin">do_install_plugin</a>&lt;DaoT:store, ToInstallPluginT&gt;(granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>&gt;) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
     //TODO check no repeat item in granted_caps
     <b>let</b> dao_signer = <a href="GenesisDao.md#0x1_GenesisDao_dao_signer">dao_signer</a>&lt;DaoT&gt;();
     //TODO error code
-    <b>assert</b>!(!<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>&lt;PluginT&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&dao_signer)), 1);
-    <b>move_to</b>(&dao_signer, <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>&lt;PluginT&gt;{
+    <b>assert</b>!(!<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>&lt;ToInstallPluginT&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&dao_signer)), 1);
+    <b>move_to</b>(&dao_signer, <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>&lt;ToInstallPluginT&gt;{
         granted_caps,
     });
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_burn_root_cap"></a>
+
+## Function `burn_root_cap`
+
+Burn the root cap after init the Dao
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_burn_root_cap">burn_root_cap</a>&lt;DaoT&gt;(cap: <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">GenesisDao::DaoRootCap</a>&lt;DaoT&gt;)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_burn_root_cap">burn_root_cap</a>&lt;DaoT&gt;(cap: <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt;){
+    <b>let</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>{} = cap;
 }
 </code></pre>
 
@@ -1567,7 +1915,11 @@ Install PluginT to Dao and grant the capabilites
 
 
 
+<<<<<<< HEAD
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_withdraw_token">withdraw_token</a>&lt;DaoT: store, PluginT, TokenT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">GenesisDao::DaoWithdrawTokenCap</a>&lt;DaoT, PluginT&gt;, amount: u128): <a href="Token.md#0x1_Token_Token">Token::Token</a>&lt;TokenT&gt;
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_withdraw_token">withdraw_token</a>&lt;DaoT: store, TokenT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">GenesisDao::DaoWithdrawTokenCap</a>&lt;DaoT&gt;, amount: u128): <a href="Token.md#0x1_Token_Token">Token::Token</a>&lt;TokenT&gt;
+>>>>>>> e660e8f (update build)
 </code></pre>
 
 
@@ -1576,7 +1928,11 @@ Install PluginT to Dao and grant the capabilites
 <summary>Implementation</summary>
 
 
+<<<<<<< HEAD
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_withdraw_token">withdraw_token</a>&lt;DaoT:store, PluginT, TokenT:store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">DaoWithdrawTokenCap</a>&lt;DaoT, PluginT&gt;, amount: u128): <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_withdraw_token">withdraw_token</a>&lt;DaoT:store, TokenT:store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">DaoWithdrawTokenCap</a>&lt;DaoT&gt;, amount: u128): <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
+>>>>>>> e660e8f (update build)
     <b>let</b> dao_signer = <a href="GenesisDao.md#0x1_GenesisDao_dao_signer">dao_signer</a>&lt;DaoT&gt;();
     //we should extract the WithdrawCapability from account, and invoke the withdraw_with_cap ?
     <a href="Account.md#0x1_Account_withdraw">Account::withdraw</a>&lt;TokenT&gt;(&dao_signer, amount)
@@ -1619,7 +1975,11 @@ Install PluginT to Dao and grant the capabilites
 Join Dao and get a membership
 
 
+<<<<<<< HEAD
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_join_member">join_member</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">GenesisDao::DaoMemberCap</a>&lt;DaoT, PluginT&gt;, to_address: <b>address</b>, init_sbt: u128)
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_join_member">join_member</a>&lt;DaoT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">GenesisDao::DaoMemberCap</a>&lt;DaoT&gt;, to_signer: &signer, init_sbt: u128)
+>>>>>>> e660e8f (update build)
 </code></pre>
 
 
@@ -1628,7 +1988,12 @@ Join Dao and get a membership
 <summary>Implementation</summary>
 
 
+<<<<<<< HEAD
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_join_member">join_member</a>&lt;DaoT:store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, to_address: <b>address</b>, init_sbt: u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTMintCapHolder">DaoNFTMintCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_join_member">join_member</a>&lt;DaoT:store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT&gt;, to_signer: &signer, init_sbt: u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTMintCapHolder">DaoNFTMintCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
+    <b>let</b> to_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(to_signer);
+>>>>>>> e660e8f (update build)
     //TODO error code
     <b>assert</b>!(!<a href="GenesisDao.md#0x1_GenesisDao_is_member">is_member</a>&lt;DaoT&gt;(to_address), 11);
 
@@ -1651,7 +2016,11 @@ Join Dao and get a membership
     <b>let</b> nft_mint_cap = &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoNFTMintCapHolder">DaoNFTMintCapHolder</a>&lt;DaoT&gt;&gt;(dao_address).cap;
 
     <b>let</b> nft = <a href="NFT.md#0x1_NFT_mint_with_cap_v2">NFT::mint_with_cap_v2</a>(dao_address, nft_mint_cap, basemeta, meta, body);
+<<<<<<< HEAD
     <a href="NFT.md#0x1_IdentifierNFT_grant_to">IdentifierNFT::grant_to</a>(nft_mint_cap, to_address, nft);
+=======
+    <a href="NFT.md#0x1_IdentifierNFT_grant">IdentifierNFT::grant</a>(nft_mint_cap, to_signer, nft);
+>>>>>>> e660e8f (update build)
 }
 </code></pre>
 
@@ -1693,7 +2062,11 @@ Member quit Dao by self
 Revoke membership with cap
 
 
+<<<<<<< HEAD
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_revoke_member">revoke_member</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">GenesisDao::DaoMemberCap</a>&lt;DaoT, PluginT&gt;, _member_addr: <b>address</b>)
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_revoke_member">revoke_member</a>&lt;DaoT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">GenesisDao::DaoMemberCap</a>&lt;DaoT&gt;, _member_addr: <b>address</b>)
+>>>>>>> e660e8f (update build)
 </code></pre>
 
 
@@ -1702,7 +2075,11 @@ Revoke membership with cap
 <summary>Implementation</summary>
 
 
+<<<<<<< HEAD
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_revoke_member">revoke_member</a>&lt;DaoT:store,PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, _member_addr: <b>address</b>){
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_revoke_member">revoke_member</a>&lt;DaoT:store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT&gt;, _member_addr: <b>address</b>){
+>>>>>>> e660e8f (update build)
     //revoke <a href="NFT.md#0x1_IdentifierNFT">IdentifierNFT</a>
     //burn <a href="NFT.md#0x1_NFT">NFT</a>
     //burn SBT <a href="Token.md#0x1_Token">Token</a>
@@ -1719,7 +2096,11 @@ Revoke membership with cap
 
 
 
+<<<<<<< HEAD
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_update_member_sbt">update_member_sbt</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">GenesisDao::DaoMemberCap</a>&lt;DaoT, PluginT&gt;, _member_addr: <b>address</b>, _new_amount: u128)
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_update_member_sbt">update_member_sbt</a>&lt;DaoT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">GenesisDao::DaoMemberCap</a>&lt;DaoT&gt;, _member_addr: <b>address</b>, _new_amount: u128)
+>>>>>>> e660e8f (update build)
 </code></pre>
 
 
@@ -1728,7 +2109,11 @@ Revoke membership with cap
 <summary>Implementation</summary>
 
 
+<<<<<<< HEAD
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_update_member_sbt">update_member_sbt</a>&lt;DaoT:store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, _member_addr: <b>address</b>, _new_amount: u128){
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_update_member_sbt">update_member_sbt</a>&lt;DaoT:store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT&gt;, _member_addr: <b>address</b>, _new_amount: u128){
+>>>>>>> e660e8f (update build)
     //borrow <b>mut</b> the <a href="NFT.md#0x1_NFT">NFT</a>
     // compare sbt and new_amount
     // mint more sbt token or burn sbt token
@@ -1764,6 +2149,7 @@ Check the <code>member_addr</code> account is a member of DaoT
 
 </details>
 
+<<<<<<< HEAD
 <a name="0x1_GenesisDao_validate_cap"></a>
 
 ## Function `validate_cap`
@@ -1771,6 +2157,14 @@ Check the <code>member_addr</code> account is a member of DaoT
 
 
 <pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT: store, PluginT&gt;(cap: <a href="GenesisDao.md#0x1_GenesisDao_CapType">GenesisDao::CapType</a>)
+=======
+<a name="0x1_GenesisDao_validate_key_holder_cap"></a>
+
+## Function `validate_key_holder_cap`
+
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_validate_key_holder_cap">validate_key_holder_cap</a>&lt;DaoT: store&gt;(requester: &signer, cap: <a href="GenesisDao.md#0x1_GenesisDao_CapType">GenesisDao::CapType</a>)
 </code></pre>
 
 
@@ -1779,7 +2173,43 @@ Check the <code>member_addr</code> account is a member of DaoT
 <summary>Implementation</summary>
 
 
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_validate_key_holder_cap">validate_key_holder_cap</a>&lt;DaoT:store&gt;(requester: &signer, cap: <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_KeyHolder">KeyHolder</a>{
+    <b>let</b> addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(requester);
+    <b>if</b> (<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_KeyHolder">KeyHolder</a>&lt;DaoT&gt;&gt;(addr)) {
+        // The signer is a key holder. Check it's granted capabilities.
+        <b>let</b> holder = <b>borrow_global</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_KeyHolder">KeyHolder</a>&lt;DaoT&gt;&gt;(addr);
+        <b>assert</b>!(<a href="Vector.md#0x1_Vector_contains">Vector::contains</a>(&holder.granted_caps, &cap), <a href="Errors.md#0x1_Errors_requires_capability">Errors::requires_capability</a>(<a href="GenesisDao.md#0x1_GenesisDao_E_NO_GRANTED">E_NO_GRANTED</a>));
+    } <b>else</b> {
+        <b>abort</b>(<a href="Errors.md#0x1_Errors_requires_capability">Errors::requires_capability</a>(<a href="GenesisDao.md#0x1_GenesisDao_E_NO_GRANTED">E_NO_GRANTED</a>))
+    }
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_validate_plugin_cap"></a>
+
+## Function `validate_plugin_cap`
+
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_validate_plugin_cap">validate_plugin_cap</a>&lt;DaoT: store, PluginT&gt;(cap: <a href="GenesisDao.md#0x1_GenesisDao_CapType">GenesisDao::CapType</a>)
+>>>>>>> e660e8f (update build)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<<<<<<< HEAD
 <pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT: store, PluginT&gt;(cap: <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+=======
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_validate_plugin_cap">validate_plugin_cap</a>&lt;DaoT: store, PluginT&gt;(cap: <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+>>>>>>> e660e8f (update build)
     <b>let</b> addr = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
     <b>if</b> (<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>&lt;PluginT&gt;&gt;(addr)) {
         <b>let</b> plugin_info = <b>borrow_global</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>&lt;PluginT&gt;&gt;(addr);
@@ -1794,6 +2224,35 @@ Check the <code>member_addr</code> account is a member of DaoT
 
 </details>
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<a name="0x1_GenesisDao_acquire_install_plugin_cap"></a>
+
+## Function `acquire_install_plugin_cap`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_install_plugin_cap">acquire_install_plugin_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoInstallPluginCap">GenesisDao::DaoInstallPluginCap</a>&lt;DaoT, PluginT&gt;
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_install_plugin_cap">acquire_install_plugin_cap</a>&lt;DaoT:store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoInstallPluginCap">DaoInstallPluginCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+    <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_install_plugin_cap_type">install_plugin_cap_type</a>());
+    <a href="GenesisDao.md#0x1_GenesisDao_DaoInstallPluginCap">DaoInstallPluginCap</a>&lt;DaoT, PluginT&gt;{}
+}
+</code></pre>
+
+
+
+</details>
+
+>>>>>>> e004e16 (update build)
 <a name="0x1_GenesisDao_acquire_withdraw_token_cap"></a>
 
 ## Function `acquire_withdraw_token_cap`
@@ -1802,7 +2261,21 @@ Acquires the capability of withdraw Token from Dao for Plugin. The Plugin with a
 _witness parameter ensure the invoke is from the PluginT module.
 
 
+<<<<<<< HEAD
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_withdraw_token_cap">acquire_withdraw_token_cap</a>&lt;DaoT: store, PluginT: drop&gt;(_witness: PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">GenesisDao::DaoWithdrawTokenCap</a>&lt;DaoT, PluginT&gt;
+=======
+<a name="0x1_GenesisDao_acquire_withdraw_token_cap_for_holder"></a>
+
+## Function `acquire_withdraw_token_cap_for_holder`
+
+Acquires the capability of withdraw Token from Dao for KeyHolder. The passed signer must be the KeyHolder with appropriate capabilities.
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_withdraw_token_cap_for_holder">acquire_withdraw_token_cap_for_holder</a>&lt;DaoT: store&gt;(requester: &signer): <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">GenesisDao::DaoWithdrawTokenCap</a>&lt;DaoT&gt;
+>>>>>>> e660e8f (update build)
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_withdraw_token_cap">acquire_withdraw_token_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">GenesisDao::DaoWithdrawTokenCap</a>&lt;DaoT, PluginT&gt;
+>>>>>>> 0d9d4e0 (update build files)
 </code></pre>
 
 
@@ -1811,9 +2284,19 @@ _witness parameter ensure the invoke is from the PluginT module.
 <summary>Implementation</summary>
 
 
+<<<<<<< HEAD
+<<<<<<< HEAD
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_withdraw_token_cap">acquire_withdraw_token_cap</a>&lt;DaoT:store, PluginT: drop&gt;(_witness: PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">DaoWithdrawTokenCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_withdraw_token_cap">acquire_withdraw_token_cap</a>&lt;DaoT:store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">DaoWithdrawTokenCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+>>>>>>> 0d9d4e0 (update build files)
     <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_withdraw_token_cap_type">withdraw_token_cap_type</a>());
     <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">DaoWithdrawTokenCap</a>&lt;DaoT, PluginT&gt;{}
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_withdraw_token_cap_for_holder">acquire_withdraw_token_cap_for_holder</a>&lt;DaoT:store&gt;(requester: &signer): <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">DaoWithdrawTokenCap</a>&lt;DaoT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_KeyHolder">KeyHolder</a>{
+    <a href="GenesisDao.md#0x1_GenesisDao_validate_key_holder_cap">validate_key_holder_cap</a>&lt;DaoT&gt;(requester, <a href="GenesisDao.md#0x1_GenesisDao_withdraw_token_cap_type">withdraw_token_cap_type</a>());
+    <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">DaoWithdrawTokenCap</a>&lt;DaoT&gt;{}
+>>>>>>> e660e8f (update build)
 }
 </code></pre>
 
@@ -1821,6 +2304,7 @@ _witness parameter ensure the invoke is from the PluginT module.
 
 </details>
 
+<<<<<<< HEAD
 <a name="0x1_GenesisDao_acquire_storage_cap"></a>
 
 ## Function `acquire_storage_cap`
@@ -1828,7 +2312,22 @@ _witness parameter ensure the invoke is from the PluginT module.
 Storage cap only suppport acquire from plugin
 
 
+<<<<<<< HEAD
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_storage_cap">acquire_storage_cap</a>&lt;DaoT: store, PluginT: drop&gt;(_witness: PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoStorageCap">GenesisDao::DaoStorageCap</a>&lt;DaoT, PluginT&gt;
+=======
+<a name="0x1_GenesisDao_acquire_withdraw_token_cap_for_plugin"></a>
+
+## Function `acquire_withdraw_token_cap_for_plugin`
+
+Acquires the capability of withdraw Token from Dao for Plugin. The Plugin with appropriate capabilities.
+_access_key parameter ensure the invoke is from the PluginT module.
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_withdraw_token_cap_for_plugin">acquire_withdraw_token_cap_for_plugin</a>&lt;DaoT: store, PluginT: drop&gt;(_access_key: PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">GenesisDao::DaoWithdrawTokenCap</a>&lt;DaoT&gt;
+>>>>>>> e660e8f (update build)
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_storage_cap">acquire_storage_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoStorageCap">GenesisDao::DaoStorageCap</a>&lt;DaoT, PluginT&gt;
+>>>>>>> 0d9d4e0 (update build files)
 </code></pre>
 
 
@@ -1837,9 +2336,19 @@ Storage cap only suppport acquire from plugin
 <summary>Implementation</summary>
 
 
+<<<<<<< HEAD
+<<<<<<< HEAD
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_storage_cap">acquire_storage_cap</a>&lt;DaoT:store, PluginT: drop&gt;(_witness: PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoStorageCap">DaoStorageCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_storage_cap">acquire_storage_cap</a>&lt;DaoT:store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoStorageCap">DaoStorageCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+>>>>>>> 0d9d4e0 (update build files)
     <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_storage_cap_type">storage_cap_type</a>());
     <a href="GenesisDao.md#0x1_GenesisDao_DaoStorageCap">DaoStorageCap</a>&lt;DaoT, PluginT&gt;{}
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_withdraw_token_cap_for_plugin">acquire_withdraw_token_cap_for_plugin</a>&lt;DaoT:store, PluginT: drop&gt;(_access_key: PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">DaoWithdrawTokenCap</a>&lt;DaoT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+    <a href="GenesisDao.md#0x1_GenesisDao_validate_plugin_cap">validate_plugin_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_withdraw_token_cap_type">withdraw_token_cap_type</a>());
+    <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">DaoWithdrawTokenCap</a>&lt;DaoT&gt;{}
+>>>>>>> e660e8f (update build)
 }
 </code></pre>
 
@@ -1847,13 +2356,16 @@ Storage cap only suppport acquire from plugin
 
 </details>
 
-<a name="0x1_GenesisDao_acquire_proposal_cap"></a>
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<a name="0x1_GenesisDao_acquire_member_cap"></a>
 
-## Function `acquire_proposal_cap`
+## Function `acquire_member_cap`
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_proposal_cap">acquire_proposal_cap</a>&lt;DaoT: store, PluginT: drop&gt;(_witness: PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">GenesisDao::DaoProposalCap</a>&lt;DaoT, PluginT&gt;
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_member_cap">acquire_member_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">GenesisDao::DaoMemberCap</a>&lt;DaoT, PluginT&gt;
 </code></pre>
 
 
@@ -1862,9 +2374,59 @@ Storage cap only suppport acquire from plugin
 <summary>Implementation</summary>
 
 
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_member_cap">acquire_member_cap</a>&lt;DaoT:store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+    <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_member_cap_type">member_cap_type</a>());
+    <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;{}
+}
+</code></pre>
+
+
+
+</details>
+
+>>>>>>> 0d9d4e0 (update build files)
+<a name="0x1_GenesisDao_acquire_proposal_cap"></a>
+
+## Function `acquire_proposal_cap`
+
+
+
+<<<<<<< HEAD
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_proposal_cap">acquire_proposal_cap</a>&lt;DaoT: store, PluginT: drop&gt;(_witness: PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">GenesisDao::DaoProposalCap</a>&lt;DaoT, PluginT&gt;
+=======
+<a name="0x1_GenesisDao_acquire_storage_cap_for_plugin"></a>
+
+## Function `acquire_storage_cap_for_plugin`
+
+Storage cap only suppport acquire from plugin
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_storage_cap_for_plugin">acquire_storage_cap_for_plugin</a>&lt;DaoT: store, PluginT: drop&gt;(_access_key: PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoStorageCap">GenesisDao::DaoStorageCap</a>&lt;DaoT, PluginT&gt;
+>>>>>>> e660e8f (update build)
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_proposal_cap">acquire_proposal_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">GenesisDao::DaoProposalCap</a>&lt;DaoT, PluginT&gt;
+>>>>>>> 0d9d4e0 (update build files)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<<<<<<< HEAD
+<<<<<<< HEAD
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_proposal_cap">acquire_proposal_cap</a>&lt;DaoT:store, PluginT: drop&gt;(_witness: PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">DaoProposalCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_proposal_cap">acquire_proposal_cap</a>&lt;DaoT:store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">DaoProposalCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+>>>>>>> 0d9d4e0 (update build files)
     <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_proposal_cap_type">proposal_cap_type</a>());
     <a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">DaoProposalCap</a>&lt;DaoT, PluginT&gt;{}
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_storage_cap_for_plugin">acquire_storage_cap_for_plugin</a>&lt;DaoT:store, PluginT: drop&gt;(_access_key: PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoStorageCap">DaoStorageCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+    <a href="GenesisDao.md#0x1_GenesisDao_validate_plugin_cap">validate_plugin_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_storage_cap_type">storage_cap_type</a>());
+    <a href="GenesisDao.md#0x1_GenesisDao_DaoStorageCap">DaoStorageCap</a>&lt;DaoT, PluginT&gt;{}
+>>>>>>> e660e8f (update build)
 }
 </code></pre>
 
@@ -1966,7 +2528,15 @@ Storage cap only suppport acquire from plugin
 
 
 
+<<<<<<< HEAD
+<<<<<<< HEAD
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_create_proposal">create_proposal</a>&lt;DaoT: store, ActionT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">GenesisDao::DaoProposalCap</a>&lt;DaoT, ActionT&gt;, sender: &signer, action: ActionT, action_delay: u64)
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_create_proposal">create_proposal</a>&lt;DaoT: store, ActionT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">GenesisDao::DaoProposalCap</a>&lt;DaoT, ActionT&gt;, sender: &signer, deposit: <a href="Token.md#0x1_Token_Token">Token::Token</a>&lt;<a href="STC.md#0x1_STC_STC">STC::STC</a>&gt;, action: ActionT, action_delay: u64)
+>>>>>>> e660e8f (update build)
+=======
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_create_proposal">create_proposal</a>&lt;DaoT: store, PluginT, ActionT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">GenesisDao::DaoProposalCap</a>&lt;DaoT, PluginT&gt;, sender: &signer, action: ActionT, action_delay: u64): u64
+>>>>>>> 0d9d4e0 (update build files)
 </code></pre>
 
 
@@ -1975,12 +2545,16 @@ Storage cap only suppport acquire from plugin
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_create_proposal">create_proposal</a>&lt;DaoT: store, ActionT: store&gt;(
-    _cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">DaoProposalCap</a>&lt;DaoT, ActionT&gt;,
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_create_proposal">create_proposal</a>&lt;DaoT: store, PluginT, ActionT: store&gt;(
+    _cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">DaoProposalCap</a>&lt;DaoT, PluginT&gt;,
     sender: &signer,
+<<<<<<< HEAD
+=======
+    deposit: <a href="Token.md#0x1_Token">Token</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;,
+>>>>>>> e660e8f (update build)
     action: ActionT,
     action_delay: u64,
-) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a> {
+): u64 <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a> {
 
     <b>if</b> (action_delay == 0) {
         action_delay = <a href="GenesisDao.md#0x1_GenesisDao_min_action_delay">min_action_delay</a>&lt;DaoT&gt;();
@@ -1988,9 +2562,12 @@ Storage cap only suppport acquire from plugin
         //TODO error code
         <b>assert</b>!(action_delay &gt;= <a href="GenesisDao.md#0x1_GenesisDao_min_action_delay">min_action_delay</a>&lt;DaoT&gt;(), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(1));
     };
+<<<<<<< HEAD
     //TODO load from config
-    <b>let</b> min_proposal_deposit = 1000;
+    <b>let</b> min_proposal_deposit = <a href="GenesisDao.md#0x1_GenesisDao_min_proposal_deposit">min_proposal_deposit</a>&lt;DaoT&gt;();
     <b>let</b> deposit = <a href="Account.md#0x1_Account_withdraw">Account::withdraw</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(sender, min_proposal_deposit);
+=======
+>>>>>>> e660e8f (update build)
 
     <b>let</b> proposal_id = <a href="GenesisDao.md#0x1_GenesisDao_generate_next_proposal_id">generate_next_proposal_id</a>&lt;DaoT&gt;();
     <b>let</b> proposer = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
@@ -2018,18 +2595,30 @@ Storage cap only suppport acquire from plugin
         state_root,
     };
     <b>let</b> proposal_action = <a href="GenesisDao.md#0x1_GenesisDao_ProposalAction">ProposalAction</a>{
+        proposal_id,
         deposit,
         action,
     };
-    <b>let</b> proposals = <a href="Vector.md#0x1_Vector_singleton">Vector::singleton</a>(proposal_action);
-    //TODO check <a href="GenesisDao.md#0x1_GenesisDao_MyProposals">MyProposals</a> is <b>exists</b>
-    <b>move_to</b>(sender, <a href="GenesisDao.md#0x1_GenesisDao_MyProposals">MyProposals</a>&lt;DaoT, ActionT&gt;{
-        proposals,
-    });
-    <b>let</b> global_proposals = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(<a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;());
+
+    <b>let</b> dao_signer = <a href="GenesisDao.md#0x1_GenesisDao_dao_signer">dao_signer</a>&lt;DaoT&gt;();
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+
+    <b>let</b> actions = <a href="Vector.md#0x1_Vector_singleton">Vector::singleton</a>(proposal_action);
+    //TODO check <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a> is <b>exists</b>
+    <b>if</b>(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>&lt;ActionT&gt;&gt;(dao_address)){
+        //TODO add limit <b>to</b> max action before support Table.
+        <b>let</b> current_actions = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>&lt;ActionT&gt;&gt;(dao_address);
+        <a href="Vector.md#0x1_Vector_append">Vector::append</a>(&<b>mut</b> current_actions.actions, actions);
+    }<b>else</b>{
+        <b>move_to</b>(&dao_signer, <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>&lt;ActionT&gt;{
+            actions,
+        });
+    };
+    <b>let</b> global_proposals = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
     //TODO add limit <b>to</b> max proposal before support Table
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> global_proposals.proposals, proposal);
     //TODO trigger event
+    proposal_id
 }
 </code></pre>
 
@@ -2187,6 +2776,30 @@ Storage cap only suppport acquire from plugin
 
 </details>
 
+<a name="0x1_GenesisDao_min_proposal_deposit"></a>
+
+## Function `min_proposal_deposit`
+
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_min_proposal_deposit">min_proposal_deposit</a>&lt;DaoT&gt;(): u128
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_min_proposal_deposit">min_proposal_deposit</a>&lt;DaoT&gt;(): u128{
+    0
+}
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_GenesisDao_cast_vote"></a>
 
 ## Function `cast_vote`
@@ -2210,7 +2823,7 @@ Storage cap only suppport acquire from plugin
 )  <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>{
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
     <b>let</b> proposals = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
-    <b>let</b> proposal = <a href="GenesisDao.md#0x1_GenesisDao_get_proposal_mut">get_proposal_mut</a>(proposals, proposal_id);
+    <b>let</b> proposal = <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal_mut">borrow_proposal_mut</a>(proposals, proposal_id);
 
     {
         <b>let</b> state = <a href="GenesisDao.md#0x1_GenesisDao_proposal_state">proposal_state</a>(proposal);
@@ -2261,7 +2874,7 @@ Storage cap only suppport acquire from plugin
 Just change vote choice, the weight do not change.
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_change_vote">change_vote</a>&lt;DaoT: <b>copy</b>, drop, store&gt;(_sender: &signer, _proposal_id: u64, _choice: <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">GenesisDao::VotingChoice</a>)
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_change_vote">change_vote</a>&lt;DaoT&gt;(_sender: &signer, _proposal_id: u64, _choice: <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">GenesisDao::VotingChoice</a>)
 </code></pre>
 
 
@@ -2270,7 +2883,7 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_change_vote">change_vote</a>&lt;DaoT: <b>copy</b> + drop + store&gt;(
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_change_vote">change_vote</a>&lt;DaoT&gt;(
     _sender: &signer,
     _proposal_id: u64,
     _choice: <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>,
@@ -2289,7 +2902,7 @@ Just change vote choice, the weight do not change.
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_revoke_vote">revoke_vote</a>&lt;DaoT: <b>copy</b>, drop, store&gt;(_sender: &signer, _proposal_id: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_revoke_vote">revoke_vote</a>&lt;DaoT&gt;(_sender: &signer, _proposal_id: u64)
 </code></pre>
 
 
@@ -2298,7 +2911,7 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_revoke_vote">revoke_vote</a>&lt;DaoT: <b>copy</b> + drop + store&gt;(
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_revoke_vote">revoke_vote</a>&lt;DaoT&gt;(
     _sender: &signer,
     _proposal_id: u64,
 ){
@@ -2310,13 +2923,13 @@ Just change vote choice, the weight do not change.
 
 </details>
 
-<a name="0x1_GenesisDao_extract_proposal_action"></a>
+<a name="0x1_GenesisDao_execute_proposal"></a>
 
-## Function `extract_proposal_action`
+## Function `execute_proposal`
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_extract_proposal_action">extract_proposal_action</a>&lt;DaoT: <b>copy</b>, drop, store, ActionT: <b>copy</b>, drop, store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">GenesisDao::DaoProposalCap</a>&lt;DaoT, ActionT&gt;, _proposal_id: u64): ActionT
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_execute_proposal">execute_proposal</a>&lt;DaoT, PluginT, ActionT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">GenesisDao::DaoProposalCap</a>&lt;DaoT, PluginT&gt;, _sender: &signer, proposal_id: u64): ActionT
 </code></pre>
 
 
@@ -2325,20 +2938,90 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_extract_proposal_action">extract_proposal_action</a>&lt;DaoT: <b>copy</b> + drop + store, ActionT: <b>copy</b> + drop + store&gt;(
-    _cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">DaoProposalCap</a>&lt;DaoT, ActionT&gt;,
-    _proposal_id: u64,
-): ActionT {
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_execute_proposal">execute_proposal</a>&lt;DaoT, PluginT, ActionT: store&gt;(
+    _cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">DaoProposalCap</a>&lt;DaoT, PluginT&gt;,
+    _sender: &signer,
+    proposal_id: u64,
+): ActionT <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a> {
     // Only executable proposal's action can be extracted.
     // <b>assert</b>!(
     //     <a href="GenesisDao.md#0x1_GenesisDao_proposal_state">proposal_state</a>&lt;DaoT&gt;(proposer_address, proposal_id) == <a href="GenesisDao.md#0x1_GenesisDao_EXECUTABLE">EXECUTABLE</a>,
     //     <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_STATE_INVALID">ERR_PROPOSAL_STATE_INVALID</a>),
     // );
-    //<b>let</b> proposal = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a>&lt;TokenT, ActionT&gt;&gt;(proposer_address);
-    //<b>let</b> action: ActionT = <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> proposal.action);
-    //TODO borrow MyProposal from proposer
-    // Find <a href="GenesisDao.md#0x1_GenesisDao_ProposalAction">ProposalAction</a> by proposal_id
-    <b>abort</b> 0
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+    //TODO error code
+    <b>assert</b>!(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>&lt;ActionT&gt;&gt;(dao_address), 0);
+
+    <a href="GenesisDao.md#0x1_GenesisDao_take_proposal_action">take_proposal_action</a>(dao_address, proposal_id)
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_take_proposal_action"></a>
+
+## Function `take_proposal_action`
+
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_take_proposal_action">take_proposal_action</a>&lt;ActionT: store&gt;(dao_address: <b>address</b>, proposal_id: u64): ActionT
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_take_proposal_action">take_proposal_action</a>&lt;ActionT: store&gt;(dao_address: <b>address</b>, proposal_id: u64): ActionT <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>{
+    <b>let</b> actions = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>&lt;ActionT&gt;&gt;(dao_address);
+    <b>let</b> index_opt = <a href="GenesisDao.md#0x1_GenesisDao_find_action">find_action</a>(&actions.actions, proposal_id);
+    //TODO error code.
+    <b>assert</b>!(<a href="Option.md#0x1_Option_is_some">Option::is_some</a>(&index_opt), 1);
+
+    <b>let</b> global_proposals = <b>borrow_global</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
+    <b>let</b> proposal = <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal">borrow_proposal</a>(global_proposals, proposal_id);
+
+    <b>let</b> index = <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> index_opt);
+    <b>let</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalAction">ProposalAction</a>{ proposal_id:_, deposit, action} = <a href="Vector.md#0x1_Vector_remove">Vector::remove</a>(&<b>mut</b> actions.actions, index);
+    //TODO check the proposal state and do deposit or burn.
+    <a href="Account.md#0x1_Account_deposit">Account::deposit</a>(proposal.proposer, deposit);
+    action
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_find_action"></a>
+
+## Function `find_action`
+
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_find_action">find_action</a>&lt;ActionT: store&gt;(actions: &vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalAction">GenesisDao::ProposalAction</a>&lt;ActionT&gt;&gt;, proposal_id: u64): <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;u64&gt;
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_find_action">find_action</a>&lt;ActionT: store&gt;(actions: &vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalAction">ProposalAction</a>&lt;ActionT&gt;&gt;, proposal_id: u64): <a href="Option.md#0x1_Option">Option</a>&lt;u64&gt;{
+    <b>let</b> i = 0;
+    <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(actions);
+    <b>while</b>(i &lt; len){
+        <b>let</b> action = <a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(actions, i);
+        <b>if</b>(action.proposal_id == proposal_id){
+            <b>return</b> <a href="Option.md#0x1_Option_some">Option::some</a>(i)
+        };
+        i = i + 1;
+    };
+    <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u64&gt;()
 }
 </code></pre>
 
@@ -2452,13 +3135,13 @@ Just change vote choice, the weight do not change.
 
 </details>
 
-<a name="0x1_GenesisDao_get_proposal_mut"></a>
+<a name="0x1_GenesisDao_borrow_proposal_mut"></a>
 
-## Function `get_proposal_mut`
+## Function `borrow_proposal_mut`
 
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_get_proposal_mut">get_proposal_mut</a>(_proposals: &<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GenesisDao::GlobalProposals</a>, _proposal_id: u64): &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Proposal">GenesisDao::Proposal</a>
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal_mut">borrow_proposal_mut</a>(_proposals: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GenesisDao::GlobalProposals</a>, _proposal_id: u64): &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Proposal">GenesisDao::Proposal</a>
 </code></pre>
 
 
@@ -2467,7 +3150,7 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_get_proposal_mut">get_proposal_mut</a>(_proposals: &<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, _proposal_id: u64): &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a>{
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal_mut">borrow_proposal_mut</a>(_proposals: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, _proposal_id: u64): &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a>{
     //TODO
     <b>abort</b> 0
 }
@@ -2477,13 +3160,13 @@ Just change vote choice, the weight do not change.
 
 </details>
 
-<a name="0x1_GenesisDao_get_proposal"></a>
+<a name="0x1_GenesisDao_borrow_proposal"></a>
 
-## Function `get_proposal`
+## Function `borrow_proposal`
 
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_get_proposal">get_proposal</a>(_proposals: &<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GenesisDao::GlobalProposals</a>, _proposal_id: u64): &<a href="GenesisDao.md#0x1_GenesisDao_Proposal">GenesisDao::Proposal</a>
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal">borrow_proposal</a>(proposals: &<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GenesisDao::GlobalProposals</a>, proposal_id: u64): &<a href="GenesisDao.md#0x1_GenesisDao_Proposal">GenesisDao::Proposal</a>
 </code></pre>
 
 
@@ -2492,9 +3175,45 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_get_proposal">get_proposal</a>(_proposals: &<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, _proposal_id: u64): &<a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a> {
-    //TODO find proposal by proposal_id from GlobalProposalss
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal">borrow_proposal</a>(proposals: &<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, proposal_id: u64): &<a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a> {
+    <b>let</b> i = 0;
+    <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&proposals.proposals);
+    <b>while</b>(i &lt; len){
+        <b>let</b> proposal = <a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&proposals.proposals, i);
+        <b>if</b>(proposal.id == proposal_id){
+            <b>return</b> proposal
+        };
+        i = i + 1;
+    };
+    //TODO error code
     <b>abort</b> 0
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_proposal"></a>
+
+## Function `proposal`
+
+Return a copy of Proposal
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal">proposal</a>&lt;DaoT&gt;(proposal_id: u64): <a href="GenesisDao.md#0x1_GenesisDao_Proposal">GenesisDao::Proposal</a>
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal">proposal</a>&lt;DaoT&gt;(proposal_id: u64): <a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a> <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>{
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+    <b>let</b> global_proposals = <b>borrow_global</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
+    *<a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal">borrow_proposal</a>(global_proposals, proposal_id)
 }
 </code></pre>
 
