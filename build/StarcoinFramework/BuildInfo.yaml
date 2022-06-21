@@ -58,6 +58,9 @@ compiled_package_info:
       name: Dao
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: DaoAccount
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: DaoVoteScripts
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -113,6 +116,9 @@ compiled_package_info:
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: Math
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: MemberJoinPlugin
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: MerkleNFTDistributor
@@ -256,9 +262,9 @@ compiled_package_info:
   build_flags:
     dev_mode: false
     test_mode: false
-    generate_docs: true
-    generate_abis: true
+    generate_docs: false
+    generate_abis: false
     install_dir: ~
-    force_recompilation: true
+    force_recompilation: false
     additional_named_addresses: {}
 dependencies: []

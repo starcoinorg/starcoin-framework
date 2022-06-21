@@ -37,6 +37,11 @@ module StarcoinFramework::DaoAccount{
         move_to(&sender, cap);
     }
 
+    public fun extract_dao_account_cap(sender: &signer): DaoAccountCapability acquires DaoAccountCapability{
+        //TODO check
+        move_from<DaoAccountCapability>(Signer::address_of(sender))
+    }
+
     /// Upgrade `sender` account to Dao account
     public fun upgrade_to_dao(sender: signer): DaoAccountCapability {
         //TODO assert sender not Dao
