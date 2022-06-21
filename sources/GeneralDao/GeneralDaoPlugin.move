@@ -6,7 +6,6 @@ module GeneralDaoPlugin {
     use StarcoinFramework::Vector;
     use StarcoinFramework::GeneralDaoAccount::{borrow_with_cap, borrow_mut_with_cap, move_to_with_cap, exists_with_cap};
     use StarcoinFramework::Errors;
-    use StarcoinFramework::GeneralDaoProposal::plugin;
 
 
     const ERROR_PLUGIN_EXISTS: u64 = 101;

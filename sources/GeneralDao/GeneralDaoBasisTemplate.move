@@ -186,7 +186,6 @@ module MultiPluginsDao {
             dao_broker,
             GenenralDaoPluginSendToken::create_plugin<SendTokenType, STC>(@0x1, Token::zero<STC>()),
         );
-
         GeneralDaoBasisTemplate::propose<SendTokenType>(&signer, dao_broker, action_delay);
     }
 
