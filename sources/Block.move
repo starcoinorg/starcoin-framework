@@ -6,6 +6,8 @@ module Block {
     use StarcoinFramework::Signer;
     use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Errors;
+    use StarcoinFramework::Vector;
+    use StarcoinFramework::Option;
 
     spec module {
         pragma verify;
@@ -34,7 +36,28 @@ module Block {
         uncles: u64,
     }
 
-    const EBLOCK_NUMBER_MISMATCH: u64 = 17;
+    //
+    struct Checkpoint has copy,drop,store{
+        //number of the  block
+        block_number: u64,
+        //Hash of the block
+        block_hash: vector<u8>,
+        //State root of the block
+        state_root: Option::Option<vector<u8>>,
+    }
+
+    //
+    struct Checkpoints has key{
+        //all checkpoints
+        checkpoints: vector<Checkpoint>,
+        index:u64,
+    }
+
+    const EBLOCK_NUMBER_MISMATCH  : u64 = 17;
+    const ERROR_NO_HAVE_CHECKPOINT: u64 = 18;
+    const ERROR_NOT_BLOCK_HEADER  : u64 = 19;
+    const CHECKPOINT_LENGTHR      : u64 = 60;
+    const BLOCK_HEADER_LENGTH     : u64 = 247;
 
     /// This can only be invoked by the GENESIS_ACCOUNT at genesis
     public fun initialize(account: &signer, parent_hash: vector<u8>) {
@@ -115,6 +138,119 @@ module Block {
 
     spec schema AbortsIfBlockMetadataNotExist {
         aborts_if !exists<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
+    }
+
+    public fun checkpoints_init(account: &signer){
+        let i = 0;
+        let checkpoints = Vector::empty<Checkpoint>();
+        while( i < CHECKPOINT_LENGTHR){
+            Vector::push_back<Checkpoint>(&mut checkpoints,Checkpoint {
+                block_number: 0,
+                block_hash  : Vector::empty<u8>(),
+                state_root  : Option::none<vector<u8>>(),
+            });
+            i = i + 1;
+        };
+        move_to<Checkpoints>(
+            account,
+            Checkpoints {
+               checkpoints: checkpoints,
+               index: 0
+            });
+    }
+
+    spec checkpoints_init {
+        aborts_if exists<Checkpoints>(CoreAddresses::GENESIS_ADDRESS());
+    }
+
+    public fun checkpoint(account: &signer) acquires BlockMetadata, Checkpoints{
+        CoreAddresses::assert_genesis_address(account);
+        let parent_block_number = get_current_block_number() - 1;
+        let parent_block_hash   = get_parent_hash();
+        
+        let checkpoints = borrow_global_mut<Checkpoints>(CoreAddresses::GENESIS_ADDRESS());
+        checkpoints.index =  if( checkpoints.index + 1 >= CHECKPOINT_LENGTHR ){
+            0 
+        }else{
+            checkpoints.index + 1
+        };
+
+        let checkpoint = Vector::borrow_mut<Checkpoint>(&mut checkpoints.checkpoints , checkpoints.index);
+        checkpoint.block_number = parent_block_number; 
+        checkpoint.block_hash   = parent_block_hash;
+        checkpoint.state_root   = Option::none<vector<u8>>();
+    }
+
+    public fun latest_state_root():(u64,vector<u8>) acquires  Checkpoints{
+        let checkpoints = borrow_global<Checkpoints>(CoreAddresses::GENESIS_ADDRESS());
+        let len = Vector::length<Checkpoint>(&checkpoints.checkpoints);
+        let i = if(checkpoints.index == 0){
+            len
+        }else{
+            checkpoints.index - 1
+        };
+        while( i != checkpoints.index){
+            if( Option::is_some<vector<u8>>(&Vector::borrow(&checkpoints.checkpoints, i).state_root)) {
+                return (Vector::borrow(&checkpoints.checkpoints, i).block_number, *&Vector::borrow(&checkpoints.checkpoints, i).block_hash)
+            };
+
+            i = if( i == 0 ){
+                len
+            }else{
+                i - 1
+            };
+        };
+        abort Errors::invalid_state(ERROR_NO_HAVE_CHECKPOINT)
+    }
+
+    
+    public fun update_state_root(account: &signer, header:vector<u8>) acquires  Checkpoints{
+        CoreAddresses::assert_genesis_address(account);
+        header = x"20b82a2c11f2df62bf87c2933d0281e5fe47ea94d5f0049eec1485b682df29529abf17ac7d79010000000000000000000000000000000000000000000000000001002043609d52fdf8e4a253c62dfe127d33c77e1fb4afdefb306d46ec42e21b9103ae20414343554d554c41544f525f504c414345484f4c4445525f48415348000000002061125a3ab755b993d72accfea741f8537104db8e022098154f3a66d5c23e828d00000000000000000000000000000000000000000000000000000000000000000000000000b1ec37207564db97ee270a6c1f2f73fbf517dc0777a6119b7460b7eae2890d1ce504537b010000000000000000";
+        
+        assert!(Vector::length<u8>(&header) == BLOCK_HEADER_LENGTH , Errors::invalid_argument(ERROR_NOT_BLOCK_HEADER));
+        let i = 1 ;
+        let block_hash = Vector::empty<u8>(); 
+        while(i < 33){
+            Vector::push_back<u8>(&mut block_hash , *Vector::borrow<u8>(&header , i));
+            i = i + 1;
+        };
+        i = 41 ;
+        let number_vec = Vector::empty<u8>(); 
+        while(i < 49){
+            Vector::push_back<u8>(&mut number_vec , *Vector::borrow<u8>(&header , i));
+            i = i + 1;
+        };
+        let state_root = Vector::empty<u8>(); 
+        i = 133;
+        while(i < 165){
+            Vector::push_back<u8>(&mut state_root , *Vector::borrow<u8>(&header , i));
+            i = i + 1;
+        };
+        
+        let checkpoints = borrow_global_mut<Checkpoints>(CoreAddresses::GENESIS_ADDRESS());
+        let len = Vector::length<Checkpoint>(&checkpoints.checkpoints);
+        let i = if(checkpoints.index == 0){
+            len
+        }else{
+            checkpoints.index - 1
+        };
+        while( i != checkpoints.index){
+            if( &Vector::borrow(&mut checkpoints.checkpoints, i).block_hash == &block_hash ) {
+                Vector::borrow_mut(&mut checkpoints.checkpoints, i).block_number = 1;
+                let stro = &mut Vector::borrow_mut(&mut checkpoints.checkpoints, i).state_root;
+
+                *Option::borrow_mut<vector<u8>>( stro) = state_root;
+                return
+            };
+
+            i = if( i == 0 ){
+                len
+            }else{
+                i - 1
+            };
+        };
+        abort Errors::invalid_state(ERROR_NO_HAVE_CHECKPOINT)
     }
 }
 }
