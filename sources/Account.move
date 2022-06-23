@@ -47,6 +47,13 @@ module Account {
 
         /// Event handle for accept_token event
         accept_token_events: Event::EventHandle<AcceptTokenEvent>,
+        /// Event handle for rotate_authentication_key event
+        rotate_auth_key_events: Event::EventHandle<RotateAuthKeyEvent>,
+        /// Event handle for extract_withdraw_capability event
+        extract_withdraw_cap_events: Event::EventHandle<ExtractWithdrawCapEvent>,
+        /// Event handle for signer delegated event
+        signer_delegate_events: Event::EventHandle<SignerDelegateEvent>,
+
         /// The current sequence number.
         /// Incremented by one each time a transaction is submitted
         sequence_number: u64,
@@ -93,6 +100,19 @@ module Account {
     /// Message for accept token events
     struct AcceptTokenEvent has drop, store {
         token_code: Token::TokenCode,
+    }
+
+    /// Message for rotate_authentication_key events
+    struct RotateAuthKeyEvent has drop, store {
+        new_auth_key: vector<u8>,
+    }
+
+    /// Message for extract_withdraw_capability events
+    struct ExtractWithdrawCapEvent has drop, store {
+    }
+
+    //// Message for SignerDelegate events
+    struct SignerDelegateEvent has drop, store {
     }
 
     // SignerDelegated can only be stored under address, not in other structs.
@@ -150,6 +170,12 @@ module Account {
             rotate_authentication_key_with_capability(&key_rotation_capability, CONTRACT_ACCOUNT_AUTH_KEY_PLACEHOLDER);
             destroy_key_rotation_capability(key_rotation_capability);
             move_to(signer, SignerDelegated {});
+
+            let account_ref = borrow_global_mut<Account>(Signer::address_of(signer));
+            Event::emit_event<SignerDelegateEvent>(
+                &mut account_ref.signer_delegate_events,
+                SignerDelegateEvent {}
+            );
         };
 
         let signer_cap = SignerCapability {addr: signer_addr };
@@ -248,6 +274,9 @@ module Account {
               withdraw_events: Event::new_event_handle<WithdrawEvent>(new_account),
               deposit_events: Event::new_event_handle<DepositEvent>(new_account),
               accept_token_events: Event::new_event_handle<AcceptTokenEvent>(new_account),
+              rotate_auth_key_events: Event::new_event_handle<RotateAuthKeyEvent>(new_account),
+              extract_withdraw_cap_events: Event::new_event_handle<ExtractWithdrawCapEvent>(new_account),
+              signer_delegate_events: Event::new_event_handle<SignerDelegateEvent>(new_account),
               sequence_number: 0,
         });
         move_to(new_account, AutoAcceptToken{enable: true});
@@ -483,6 +512,10 @@ module Account {
         // Abort if we already extracted the unique withdraw capability for this account.
         assert!(!delegated_withdraw_capability(sender_addr), Errors::invalid_state(EWITHDRAWAL_CAPABILITY_ALREADY_EXTRACTED));
         let account = borrow_global_mut<Account>(sender_addr);
+        Event::emit_event<ExtractWithdrawCapEvent>(
+            &mut account.extract_withdraw_cap_events,
+            ExtractWithdrawCapEvent {}
+        );
         Option::extract(&mut account.withdrawal_capability)
     }
 
@@ -682,8 +715,16 @@ module Account {
 
     public(script) fun rotate_authentication_key(account: signer, new_key: vector<u8>) acquires Account {
         let key_rotation_capability = extract_key_rotation_capability(&account);
-        rotate_authentication_key_with_capability(&key_rotation_capability, new_key);
+        rotate_authentication_key_with_capability(&key_rotation_capability, copy new_key);
         restore_key_rotation_capability(key_rotation_capability);
+
+        let account_ref = borrow_global_mut<Account>(Signer::address_of(&account));
+        Event::emit_event<RotateAuthKeyEvent>(
+            &mut account_ref.rotate_auth_key_events,
+            RotateAuthKeyEvent {
+                new_auth_key: new_key,
+            }
+        );
     }
 
     spec rotate_authentication_key {
