@@ -105,11 +105,7 @@ module StarcoinFramework::GenesisDao{
 
     struct DaoMemberCap<phantom DaoT, phantom PluginT> has drop{}
 
-    struct DaoProposalCap<phantom DaoT, phantom ActionT> has drop{}
-
-    struct DaoRootCapHolder<phantom DaoT, phantom GovPluginT> has key{
-        cap: DaoRootCap<DaoT>,
-    }
+    struct DaoProposalCap<phantom DaoT, phantom PluginT> has drop{}
 
     /// The info for Dao installed Plugin
     struct InstalledPluginInfo<phantom PluginT> has key{
@@ -295,18 +291,23 @@ module StarcoinFramework::GenesisDao{
 
     /// Acquires the capability of withdraw Token from Dao for Plugin. The Plugin with appropriate capabilities. 
     /// _witness parameter ensure the invoke is from the PluginT module.
-    public fun acquire_withdraw_token_cap<DaoT:store, PluginT: drop>(_witness: PluginT): DaoWithdrawTokenCap<DaoT, PluginT> acquires InstalledPluginInfo{
+    public fun acquire_withdraw_token_cap<DaoT:store, PluginT>(_witness: &PluginT): DaoWithdrawTokenCap<DaoT, PluginT> acquires InstalledPluginInfo{
         validate_cap<DaoT, PluginT>(withdraw_token_cap_type());
         DaoWithdrawTokenCap<DaoT, PluginT>{}
     }
 
     /// Storage cap only suppport acquire from plugin
-    public fun acquire_storage_cap<DaoT:store, PluginT: drop>(_witness: PluginT): DaoStorageCap<DaoT, PluginT> acquires InstalledPluginInfo{
+    public fun acquire_storage_cap<DaoT:store, PluginT>(_witness: &PluginT): DaoStorageCap<DaoT, PluginT> acquires InstalledPluginInfo{
         validate_cap<DaoT, PluginT>(storage_cap_type());
         DaoStorageCap<DaoT, PluginT>{}
     }
 
-    public fun acquire_proposal_cap<DaoT:store, PluginT: drop>(_witness: PluginT): DaoProposalCap<DaoT, PluginT> acquires InstalledPluginInfo{
+    public fun acquire_member_cap<DaoT:store, PluginT>(_witness: &PluginT): DaoMemberCap<DaoT, PluginT> acquires InstalledPluginInfo{
+        validate_cap<DaoT, PluginT>(member_cap_type());
+        DaoMemberCap<DaoT, PluginT>{}
+    }
+
+    public fun acquire_proposal_cap<DaoT:store, PluginT>(_witness: &PluginT): DaoProposalCap<DaoT, PluginT> acquires InstalledPluginInfo{
         validate_cap<DaoT, PluginT>(proposal_cap_type());
         DaoProposalCap<DaoT, PluginT>{}
     }
@@ -342,7 +343,8 @@ module StarcoinFramework::GenesisDao{
     public fun choice_abstain(): VotingChoice{VotingChoice{choice: VOTING_CHOICE_ABSTAIN}}
 
     /// Proposal data struct.
-    struct Proposal has store {
+    /// review: it is safe to has `copy` and `drop`?
+    struct Proposal has store, copy, drop {
         /// id of the proposal
         id: u64,
         /// creator of the proposal
@@ -359,13 +361,15 @@ module StarcoinFramework::GenesisDao{
         action_delay: u64,
         /// how many votes to reach to make the proposal pass.
         quorum_votes: u128,
-        /// The block number when submit proposal 
+        /// the block number when submit proposal 
         block_number: u64,
         /// the state root of the block which has the block_number 
         state_root: vector<u8>,
     }
 
     struct ProposalAction<Action: store> has store{
+        /// id of the proposal
+        proposal_id: u64,
         //To prevent spam, proposals must be submitted with a deposit
         //TODO should support custom Token?
         deposit: Token<STC>,
@@ -377,16 +381,16 @@ module StarcoinFramework::GenesisDao{
     struct ProposalInfo has store, copy, drop {
        //TODO add fieldds
     }
-
-    /// Every proposer keep a vector<ProposalAction<ActionT>> for per Dao, per Action
-    struct MyProposals<phantom DaoT, ActionT> has key{
-        proposals: vector<ProposalAction<ActionT>>,
-    }
-
+   
     /// Keep a global proposal record for query proposal by id.
     /// Replace with Table when support Table.
     struct GlobalProposals has key {
         proposals: vector<Proposal>,
+    }
+
+    /// Every ActionT keep a vector in the Dao account
+    struct ProposalActions<ActionT> has key{
+        actions: vector<ProposalAction<ActionT>>,
     }
 
     /// User vote info.
@@ -404,12 +408,12 @@ module StarcoinFramework::GenesisDao{
         votes: vector<Vote>,
     }
 
-    public fun create_proposal<DaoT: store, ActionT: store>(
-        _cap: &DaoProposalCap<DaoT, ActionT>,
+    public fun create_proposal<DaoT: store, PluginT, ActionT: store>(
+        _cap: &DaoProposalCap<DaoT, PluginT>,
         sender: &signer, 
         action: ActionT,
         action_delay: u64,
-    ) acquires GlobalProposals {
+    ): u64 acquires GlobalProposals, DaoAccountCapHolder, ProposalActions {
         
         if (action_delay == 0) {
             action_delay = min_action_delay<DaoT>();
@@ -418,7 +422,7 @@ module StarcoinFramework::GenesisDao{
             assert!(action_delay >= min_action_delay<DaoT>(), Errors::invalid_argument(1));
         };
         //TODO load from config
-        let min_proposal_deposit = 1000;
+        let min_proposal_deposit = min_proposal_deposit<DaoT>();
         let deposit = Account::withdraw<STC>(sender, min_proposal_deposit);
 
         let proposal_id = generate_next_proposal_id<DaoT>();
@@ -447,18 +451,30 @@ module StarcoinFramework::GenesisDao{
             state_root,
         };
         let proposal_action = ProposalAction{
+            proposal_id,
             deposit,
             action,
         };
-        let proposals = Vector::singleton(proposal_action);
-        //TODO check MyProposals is exists
-        move_to(sender, MyProposals<DaoT, ActionT>{
-            proposals,
-        });
-        let global_proposals = borrow_global_mut<GlobalProposals>(dao_address<DaoT>());
+
+        let dao_signer = dao_signer<DaoT>();
+        let dao_address = dao_address<DaoT>();
+
+        let actions = Vector::singleton(proposal_action);
+        //TODO check ProposalActions is exists
+        if(exists<ProposalActions<ActionT>>(dao_address)){
+            //TODO add limit to max action before support Table.
+            let current_actions = borrow_global_mut<ProposalActions<ActionT>>(dao_address);
+            Vector::append(&mut current_actions.actions, actions);
+        }else{
+            move_to(&dao_signer, ProposalActions<ActionT>{
+                actions,
+            });
+        };
+        let global_proposals = borrow_global_mut<GlobalProposals>(dao_address);
         //TODO add limit to max proposal before support Table
         Vector::push_back(&mut global_proposals.proposals, proposal);
         //TODO trigger event
+        proposal_id
     }
 
     fun block_number_and_state_root():(u64, vector<u8>){
@@ -491,6 +507,10 @@ module StarcoinFramework::GenesisDao{
         0
     }
 
+    fun min_proposal_deposit<DaoT>(): u128{
+        0
+    }
+
     public fun cast_vote<DaoT: copy + drop + store>(
         sender: &signer,
         proposal_id: u64,
@@ -499,7 +519,7 @@ module StarcoinFramework::GenesisDao{
     )  acquires GlobalProposals, MyVotes{
         let dao_address = dao_address<DaoT>();
         let proposals = borrow_global_mut<GlobalProposals>(dao_address);
-        let proposal = get_proposal_mut(proposals, proposal_id);
+        let proposal = borrow_proposal_mut(proposals, proposal_id);
 
         {
             let state = proposal_state(proposal);
@@ -539,7 +559,7 @@ module StarcoinFramework::GenesisDao{
     }
 
     /// Just change vote choice, the weight do not change.
-    public fun change_vote<DaoT: copy + drop + store>(
+    public fun change_vote<DaoT>(
         _sender: &signer,
         _proposal_id: u64,
         _choice: VotingChoice,
@@ -547,27 +567,58 @@ module StarcoinFramework::GenesisDao{
         //TODO
     }
 
-    public fun revoke_vote<DaoT: copy + drop + store>(
+    public fun revoke_vote<DaoT>(
         _sender: &signer,
         _proposal_id: u64,
     ){
         //TODO
     }
 
-    public fun extract_proposal_action<DaoT: copy + drop + store, ActionT: copy + drop + store>(
-        _cap: &DaoProposalCap<DaoT, ActionT>,
-        _proposal_id: u64,
-    ): ActionT {
+    // Execute the proposal and return the action.
+    public fun execute_proposal<DaoT, PluginT, ActionT: store>(
+        _cap: &DaoProposalCap<DaoT, PluginT>,
+        _sender: &signer,
+        proposal_id: u64,
+    ): ActionT acquires ProposalActions, GlobalProposals {
         // Only executable proposal's action can be extracted.
         // assert!(
         //     proposal_state<DaoT>(proposer_address, proposal_id) == EXECUTABLE,
         //     Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID),
         // );
-        //let proposal = borrow_global_mut<Proposal<TokenT, ActionT>>(proposer_address);
-        //let action: ActionT = Option::extract(&mut proposal.action);
-        //TODO borrow MyProposal from proposer
-        // Find ProposalAction by proposal_id 
-        abort 0
+        let dao_address = dao_address<DaoT>();
+        //TODO error code
+        assert!(exists<ProposalActions<ActionT>>(dao_address), 0);
+        
+        take_proposal_action(dao_address, proposal_id)
+    }
+
+    fun take_proposal_action<ActionT: store>(dao_address: address, proposal_id: u64): ActionT acquires ProposalActions, GlobalProposals{
+        let actions = borrow_global_mut<ProposalActions<ActionT>>(dao_address);
+        let index_opt = find_action(&actions.actions, proposal_id);
+        //TODO error code.
+        assert!(Option::is_some(&index_opt), 1);
+
+        let global_proposals = borrow_global<GlobalProposals>(dao_address);
+        let proposal = borrow_proposal(global_proposals, proposal_id);
+        
+        let index = Option::extract(&mut index_opt);
+        let ProposalAction{ proposal_id:_, deposit, action} = Vector::remove(&mut actions.actions, index);
+        //TODO check the proposal state and do deposit or burn.
+        Account::deposit(proposal.proposer, deposit);
+        action
+    }
+
+    fun find_action<ActionT: store>(actions: &vector<ProposalAction<ActionT>>, proposal_id: u64): Option<u64>{
+        let i = 0;
+        let len = Vector::length(actions);
+        while(i < len){
+            let action = Vector::borrow(actions, i);
+            if(action.proposal_id == proposal_id){
+                return Option::some(i)
+            };
+            i = i + 1;
+        };
+        Option::none<u64>()
     } 
 
     fun has_voted<DaoT>(sender: address, proposal_id: u64): bool acquires MyVotes{
@@ -596,15 +647,31 @@ module StarcoinFramework::GenesisDao{
         0
     }
 
-    fun get_proposal_mut(_proposals: &GlobalProposals, _proposal_id: u64): &mut Proposal{
+    fun borrow_proposal_mut(_proposals: &mut GlobalProposals, _proposal_id: u64): &mut Proposal{
         //TODO
         abort 0
     }
 
-    fun get_proposal(_proposals: &GlobalProposals, _proposal_id: u64): &Proposal {
-        //TODO find proposal by proposal_id from GlobalProposalss
+    fun borrow_proposal(proposals: &GlobalProposals, proposal_id: u64): &Proposal {
+        let i = 0;
+        let len = Vector::length(&proposals.proposals);
+        while(i < len){
+            let proposal = Vector::borrow(&proposals.proposals, i);
+            if(proposal.id == proposal_id){
+                return proposal
+            };
+            i = i + 1;
+        };
+        //TODO error code 
         abort 0
     }
+
+    ///Return a copy of Proposal
+    public fun proposal<DaoT>(proposal_id: u64): Proposal acquires GlobalProposals{
+        let dao_address = dao_address<DaoT>();
+        let global_proposals = borrow_global<GlobalProposals>(dao_address);
+        *borrow_proposal(global_proposals, proposal_id)
+    } 
 
     /// Helpers
     /// ---------------------------------------------------
