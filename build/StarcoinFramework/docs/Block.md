@@ -588,21 +588,13 @@ Call at block prologue
 <pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_latest_state_root">latest_state_root</a>():(u64,vector&lt;u8&gt;) <b>acquires</b>  <a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a>{
     <b>let</b> checkpoints = <b>borrow_global</b>&lt;<a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
     <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>&lt;<a href="Block.md#0x1_Block_Checkpoint">Checkpoint</a>&gt;(&checkpoints.checkpoints);
-    <b>let</b> i = <b>if</b>(checkpoints.index == 0){
-        len
-    }<b>else</b>{
-        checkpoints.index - 1
-    };
-    <b>while</b>( i != checkpoints.index){
-        <b>if</b>( <a href="Option.md#0x1_Option_is_some">Option::is_some</a>&lt;vector&lt;u8&gt;&gt;(&<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&checkpoints.checkpoints, i).state_root)) {
-            <b>return</b> (<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&checkpoints.checkpoints, i).block_number, *&<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&checkpoints.checkpoints, i).block_hash)
+    <b>let</b> i = checkpoints.index ;
+    <b>while</b>( i &lt;  len + checkpoints.index){
+        <b>if</b>( <a href="Option.md#0x1_Option_is_some">Option::is_some</a>&lt;vector&lt;u8&gt;&gt;(&<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&checkpoints.checkpoints, i % len).state_root)) {
+            <b>return</b> (<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&checkpoints.checkpoints, i % len).block_number, *&<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&checkpoints.checkpoints, i % len).block_hash)
         };
 
-        i = <b>if</b>( i == 0 ){
-            len
-        }<b>else</b>{
-            i - 1
-        };
+        i = i + 1;
     };
     <b>abort</b> <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="Block.md#0x1_Block_ERROR_NO_HAVE_CHECKPOINT">ERROR_NO_HAVE_CHECKPOINT</a>)
 }
@@ -629,7 +621,7 @@ Call at block prologue
 
 <pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_update_state_root">update_state_root</a>(account: &signer, header:vector&lt;u8&gt;) <b>acquires</b>  <a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a>{
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
-    header = x"20b82a2c11f2df62bf87c2933d0281e5fe47ea94d5f0049eec1485b682df29529abf17ac7d79010000000000000000000000000000000000000000000000000001002043609d52fdf8e4a253c62dfe127d33c77e1fb4afdefb306d46ec42e21b9103ae20414343554d554c41544f525f504c414345484f4c4445525f48415348000000002061125a3ab755b993d72accfea741f8537104db8e022098154f3a66d5c23e828d00000000000000000000000000000000000000000000000000000000000000000000000000b1ec37207564db97ee270a6c1f2f73fbf517dc0777a6119b7460b7eae2890d1ce504537b010000000000000000";
+    // header = x"20b82a2c11f2df62bf87c2933d0281e5fe47ea94d5f0049eec1485b682df29529abf17ac7d79010000000000000000000000000000000000000000000000000001002043609d52fdf8e4a253c62dfe127d33c77e1fb4afdefb306d46ec42e21b9103ae20414343554d554c41544f525f504c414345484f4c4445525f48415348000000002061125a3ab755b993d72accfea741f8537104db8e022098154f3a66d5c23e828d00000000000000000000000000000000000000000000000000000000000000000000000000b1ec37207564db97ee270a6c1f2f73fbf517dc0777a6119b7460b7eae2890d1ce504537b010000000000000000";
 
     <b>assert</b>!(<a href="Vector.md#0x1_Vector_length">Vector::length</a>&lt;u8&gt;(&header) == <a href="Block.md#0x1_Block_BLOCK_HEADER_LENGTH">BLOCK_HEADER_LENGTH</a> , <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Block.md#0x1_Block_ERROR_NOT_BLOCK_HEADER">ERROR_NOT_BLOCK_HEADER</a>));
     <b>let</b> i = 1 ;
@@ -644,6 +636,16 @@ Call at block prologue
         <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>&lt;u8&gt;(&<b>mut</b> number_vec , *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>&lt;u8&gt;(&header , i));
         i = i + 1;
     };
+    <b>let</b> number: u128 = 0;
+    <b>let</b> offset  = 0;
+    <b>let</b> i = 0;
+    <b>while</b> (i &lt; 8) {
+        <b>let</b> byte = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&number_vec, offset + i);
+        <b>let</b> s = (i <b>as</b> u8) * 8;
+        number = number + ((byte <b>as</b> u128) &lt;&lt; s);
+        i = i + 1;
+    };
+
     <b>let</b> state_root = <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>&lt;u8&gt;();
     i = 133;
     <b>while</b>(i &lt; 165){
@@ -653,26 +655,16 @@ Call at block prologue
 
     <b>let</b> checkpoints = <b>borrow_global_mut</b>&lt;<a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
     <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>&lt;<a href="Block.md#0x1_Block_Checkpoint">Checkpoint</a>&gt;(&checkpoints.checkpoints);
-    <b>let</b> i = <b>if</b>(checkpoints.index == 0){
-        len
-    }<b>else</b>{
-        checkpoints.index - 1
-    };
-    <b>while</b>( i != checkpoints.index){
-        <b>if</b>( &<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&<b>mut</b> checkpoints.checkpoints, i).block_hash == &block_hash ) {
-            <a href="Vector.md#0x1_Vector_borrow_mut">Vector::borrow_mut</a>(&<b>mut</b> checkpoints.checkpoints, i).block_number = 1;
-            <b>let</b> stro = &<b>mut</b> <a href="Vector.md#0x1_Vector_borrow_mut">Vector::borrow_mut</a>(&<b>mut</b> checkpoints.checkpoints, i).state_root;
-
-            *<a href="Option.md#0x1_Option_borrow_mut">Option::borrow_mut</a>&lt;vector&lt;u8&gt;&gt;( stro) = state_root;
+    <b>let</b> i = checkpoints.index ;
+    <b>while</b>( i &lt;  len + checkpoints.index){
+        <b>if</b>( &<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&<b>mut</b> checkpoints.checkpoints, i % len).block_hash == &block_hash ) {
+            <a href="Vector.md#0x1_Vector_borrow_mut">Vector::borrow_mut</a>(&<b>mut</b> checkpoints.checkpoints, i % len).block_number = (number <b>as</b> u64 );
+            *<a href="Option.md#0x1_Option_borrow_mut">Option::borrow_mut</a>&lt;vector&lt;u8&gt;&gt;( &<b>mut</b> <a href="Vector.md#0x1_Vector_borrow_mut">Vector::borrow_mut</a>(&<b>mut</b> checkpoints.checkpoints, i % len).state_root) = state_root;
             <b>return</b>
         };
-
-        i = <b>if</b>( i == 0 ){
-            len
-        }<b>else</b>{
-            i - 1
-        };
+        i = i + 1 ;
     };
+
     <b>abort</b> <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="Block.md#0x1_Block_ERROR_NO_HAVE_CHECKPOINT">ERROR_NO_HAVE_CHECKPOINT</a>)
 }
 </code></pre>
