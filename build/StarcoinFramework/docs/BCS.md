@@ -171,6 +171,18 @@ Return the address of key bytes
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_BCS_deserialize_bytes_vector"></a>
 
 ## Function `deserialize_bytes_vector`
@@ -198,6 +210,18 @@ Return the address of key bytes
     };
     (vec, new_offset)
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -237,6 +261,18 @@ Return the address of key bytes
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_BCS_deserialize_u128_vector"></a>
 
 ## Function `deserialize_u128_vector`
@@ -264,6 +300,18 @@ Return the address of key bytes
     };
     (vec, new_offset)
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -300,6 +348,18 @@ Return the address of key bytes
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_BCS_deserialize_address"></a>
 
 ## Function `deserialize_address`
@@ -325,6 +385,18 @@ Return the address of key bytes
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_BCS_deserialize_16_bytes"></a>
 
 ## Function `deserialize_16_bytes`
@@ -344,6 +416,18 @@ Return the address of key bytes
     <b>let</b> content = <a href="BCS.md#0x1_BCS_get_n_bytes">get_n_bytes</a>(input, offset, 16);
     (content, offset + 16)
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -376,6 +460,18 @@ Return the address of key bytes
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_BCS_deserialize_u128"></a>
 
 ## Function `deserialize_u128`
@@ -395,6 +491,18 @@ Return the address of key bytes
     <b>let</b> u = <a href="BCS.md#0x1_BCS_get_n_bytes_as_u128">get_n_bytes_as_u128</a>(input, offset, 16);
     (u, offset + 16)
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -426,6 +534,18 @@ Return the address of key bytes
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_BCS_deserialize_u32"></a>
 
 ## Function `deserialize_u32`
@@ -445,6 +565,18 @@ Return the address of key bytes
     <b>let</b> u = <a href="BCS.md#0x1_BCS_get_n_bytes_as_u128">get_n_bytes_as_u128</a>(input, offset, 4);
     ((u <b>as</b> u64), offset + 4)
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -476,6 +608,18 @@ Return the address of key bytes
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_BCS_deserialize_u8"></a>
 
 ## Function `deserialize_u8`
@@ -495,6 +639,18 @@ Return the address of key bytes
     <b>let</b> u = <a href="BCS.md#0x1_BCS_get_byte">get_byte</a>(input, offset);
     (u, offset + 1)
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -525,6 +681,18 @@ Return the address of key bytes
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_BCS_deserialize_len"></a>
 
 ## Function `deserialize_len`
@@ -543,6 +711,18 @@ Return the address of key bytes
 <pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_deserialize_len">deserialize_len</a>(input: &vector&lt;u8&gt;, offset: u64): (u64, u64) {
     <a href="BCS.md#0x1_BCS_deserialize_uleb128_as_u32">deserialize_uleb128_as_u32</a>(input, offset)
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -574,6 +754,18 @@ Return the address of key bytes
         <b>abort</b> <a href="BCS.md#0x1_BCS_ERR_UNEXPECTED_BOOL_VALUE">ERR_UNEXPECTED_BOOL_VALUE</a>
     }
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -623,6 +815,18 @@ Return the address of key bytes
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_BCS_get_byte"></a>
 
 ## Function `get_byte`
@@ -642,6 +846,18 @@ Return the address of key bytes
     <b>assert</b>!(((offset + 1) &lt;= <a href="Vector.md#0x1_Vector_length">Vector::length</a>(input)) && (offset &lt; offset + 1), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="BCS.md#0x1_BCS_ERR_INPUT_NOT_LARGE_ENOUGH">ERR_INPUT_NOT_LARGE_ENOUGH</a>));
     *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(input, offset)
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -674,6 +890,18 @@ Return the address of key bytes
     };
     content
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -713,6 +941,18 @@ Return the address of key bytes
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_BCS_serialize_u32_as_uleb128"></a>
 
 ## Function `serialize_u32_as_uleb128`
@@ -737,6 +977,18 @@ Return the address of key bytes
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> output, (value <b>as</b> u8));
     output
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
