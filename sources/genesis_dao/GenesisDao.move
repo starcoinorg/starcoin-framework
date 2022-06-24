@@ -64,26 +64,30 @@ module StarcoinFramework::GenesisDao{
     /// A type describing a capability. 
     struct CapType has copy, drop, store { code: u8 }
 
+    /// Creates a install plugin capability type.
+    public fun install_plugin_cap_type(): CapType { CapType{ code : 0 } }
+
     /// Creates a upgrade module capability type.
-    public fun upgrade_module_cap_type(): CapType { CapType{ code : 0 } }
+    public fun upgrade_module_cap_type(): CapType { CapType{ code : 1 } }
 
     /// Creates a withdraw Token capability type.
-    public fun withdraw_token_cap_type(): CapType { CapType{ code : 1 } }
+    public fun withdraw_token_cap_type(): CapType { CapType{ code : 2 } }
 
     /// Creates a withdraw NFT capability type.
-    public fun withdraw_nft_cap_type(): CapType { CapType{ code : 2 } }
+    public fun withdraw_nft_cap_type(): CapType { CapType{ code : 3 } }
 
     /// Crates a write data to Dao account capability type.
-    public fun storage_cap_type(): CapType { CapType{ code : 3 } }
+    public fun storage_cap_type(): CapType { CapType{ code : 4 } }
 
     /// Crates a member capability type.
     /// This cap can issue Dao member NFT or update member's SBT
-    public fun member_cap_type(): CapType { CapType{ code : 4 } }
+    public fun member_cap_type(): CapType { CapType{ code : 5 } }
 
-    public fun proposal_cap_type(): CapType { CapType{ code : 5 } }
+    public fun proposal_cap_type(): CapType { CapType{ code : 6 } }
 
     public fun all_caps(): vector<CapType>{
         let caps = Vector::singleton(upgrade_module_cap_type());
+        Vector::push_back(&mut caps, install_plugin_cap_type());
         Vector::push_back(&mut caps, withdraw_token_cap_type());
         Vector::push_back(&mut caps, withdraw_nft_cap_type());
         Vector::push_back(&mut caps, storage_cap_type());
@@ -92,8 +96,10 @@ module StarcoinFramework::GenesisDao{
         caps
     }
 
-    /// RootCap only have one instance, and can not been `drop`
-    struct DaoRootCap<phantom DaoT> has store {}
+    /// RootCap only have one instance, and can not been `drop` and `store`
+    struct DaoRootCap<phantom DaoT> {}
+
+    struct DaoInstallPluginCap<phantom DaoT, phantom PluginT> has drop{}
 
     struct DaoUpgradeModuleCap<phantom DaoT, phantom PluginT> has drop{}
   
@@ -175,17 +181,30 @@ module StarcoinFramework::GenesisDao{
         create_dao<DaoT>(cap, name, ext)
     }
   
-    ///  Install PluginT to Dao and grant the capabilites
-    public fun install_plugin<DaoT:store, PluginT>(_cap: &DaoRootCap<DaoT>, granted_caps: vector<CapType>) acquires DaoAccountCapHolder{
+    ///  Install ToInstallPluginT to Dao and grant the capabilites
+    public fun install_plugin_with_root_cap<DaoT:store, ToInstallPluginT>(_cap: &DaoRootCap<DaoT>, granted_caps: vector<CapType>) acquires DaoAccountCapHolder{
+        do_install_plugin<DaoT, ToInstallPluginT>(granted_caps);
+    }
+
+    /// Install plugin with DaoInstallPluginCap
+    public fun install_plugin<DaoT:store, PluginT, ToInstallPluginT>(_cap: &DaoInstallPluginCap<DaoT, PluginT>, granted_caps: vector<CapType>) acquires DaoAccountCapHolder{
+        do_install_plugin<DaoT, ToInstallPluginT>(granted_caps);
+    }
+
+    fun do_install_plugin<DaoT:store, ToInstallPluginT>(granted_caps: vector<CapType>) acquires DaoAccountCapHolder{
         //TODO check no repeat item in granted_caps
         let dao_signer = dao_signer<DaoT>();
         //TODO error code
-        assert!(!exists<InstalledPluginInfo<PluginT>>(Signer::address_of(&dao_signer)), 1);
-        move_to(&dao_signer, InstalledPluginInfo<PluginT>{
+        assert!(!exists<InstalledPluginInfo<ToInstallPluginT>>(Signer::address_of(&dao_signer)), 1);
+        move_to(&dao_signer, InstalledPluginInfo<ToInstallPluginT>{
             granted_caps,
         });
     }
 
+    /// Burn the root cap after init the Dao
+    public fun burn_root_cap<DaoT>(cap: DaoRootCap<DaoT>){
+        let DaoRootCap{} = cap;
+    }
 
     // Capability support function
 
@@ -287,6 +306,11 @@ module StarcoinFramework::GenesisDao{
         } else {
             abort(Errors::requires_capability(E_NO_GRANTED))
         }
+    }
+
+    public fun acquire_install_plugin_cap<DaoT:store, PluginT>(_witness: &PluginT): DaoInstallPluginCap<DaoT, PluginT> acquires InstalledPluginInfo{
+        validate_cap<DaoT, PluginT>(install_plugin_cap_type());
+        DaoInstallPluginCap<DaoT, PluginT>{}
     }
 
     /// Acquires the capability of withdraw Token from Dao for Plugin. The Plugin with appropriate capabilities. 
