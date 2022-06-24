@@ -47,6 +47,7 @@ module Account {
 
         /// Event handle for accept_token event
         accept_token_events: Event::EventHandle<AcceptTokenEvent>,
+
         /// The current sequence number.
         /// Incremented by one each time a transaction is submitted
         sequence_number: u64,
@@ -104,6 +105,31 @@ module Account {
     // Resource marking whether the account enable auto-accept-token feature.
     struct AutoAcceptToken has key { enable: bool }
 
+    /// Message for rotate_authentication_key events
+    struct RotateAuthKeyEvent has drop, store {
+        account_address: address,
+        new_auth_key: vector<u8>,
+    }
+
+    /// Message for extract_withdraw_capability events
+    struct ExtractWithdrawCapEvent has drop, store {
+        account_address: address,
+    }
+
+    /// Message for SignerDelegate events
+    struct SignerDelegateEvent has drop, store {
+        account_address: address
+    }
+
+    struct EventStore has key {
+        /// Event handle for rotate_authentication_key event
+        rotate_auth_key_events: Event::EventHandle<RotateAuthKeyEvent>,
+        /// Event handle for extract_withdraw_capability event
+        extract_withdraw_cap_events: Event::EventHandle<ExtractWithdrawCapEvent>,
+        /// Event handle for signer delegated event
+        signer_delegate_events: Event::EventHandle<SignerDelegateEvent>,
+    }
+
     const MAX_U64: u128 = 18446744073709551615;
 
     const EPROLOGUE_ACCOUNT_DOES_NOT_EXIST: u64 = 0;
@@ -140,7 +166,7 @@ module Account {
     /// A one-way action, once SignerCapability is removed from signer, the address cannot send txns anymore.
     /// This function can only called once by signer.
     public fun remove_signer_capability(signer: &signer): SignerCapability
-    acquires Account {
+    acquires Account, EventStore {
         let signer_addr = Signer::address_of(signer);
         assert!(!is_signer_delegated(signer_addr), Errors::invalid_state(ERR_SIGNER_ALREADY_DELEGATED));
 
@@ -150,6 +176,15 @@ module Account {
             rotate_authentication_key_with_capability(&key_rotation_capability, CONTRACT_ACCOUNT_AUTH_KEY_PLACEHOLDER);
             destroy_key_rotation_capability(key_rotation_capability);
             move_to(signer, SignerDelegated {});
+
+            make_event_store_if_not_exist(signer);
+            let event_store = borrow_global_mut<EventStore>(signer_addr);
+            Event::emit_event<SignerDelegateEvent>(
+                &mut event_store.signer_delegate_events,
+                SignerDelegateEvent {
+                    account_address: signer_addr    
+                }
+            );
         };
 
         let signer_cap = SignerCapability {addr: signer_addr };
@@ -251,6 +286,11 @@ module Account {
               sequence_number: 0,
         });
         move_to(new_account, AutoAcceptToken{enable: true});
+        move_to(new_account, EventStore {
+              rotate_auth_key_events: Event::new_event_handle<RotateAuthKeyEvent>(new_account),
+              extract_withdraw_cap_events: Event::new_event_handle<ExtractWithdrawCapEvent>(new_account),
+              signer_delegate_events: Event::new_event_handle<SignerDelegateEvent>(new_account),
+        });
     }
 
     spec make_account {
@@ -284,7 +324,7 @@ module Account {
     }
 
     /// Generate an new address and create a new account, then delegate the account and return the new account address and `SignerCapability`
-    public fun create_delegate_account(sender: &signer) : (address, SignerCapability) acquires Balance, Account {
+    public fun create_delegate_account(sender: &signer) : (address, SignerCapability) acquires Balance, Account, EventStore {
         let sender_address = Signer::address_of(sender);
         let sequence_number = Self::sequence_number(sender_address);
         // use stc balance as part of seed, just for new address more random.
@@ -478,10 +518,19 @@ module Account {
     /// Return a unique capability granting permission to withdraw from the sender's account balance.
     public fun extract_withdraw_capability(
         sender: &signer
-    ): WithdrawCapability acquires Account {
+    ): WithdrawCapability acquires Account, EventStore {
         let sender_addr = Signer::address_of(sender);
         // Abort if we already extracted the unique withdraw capability for this account.
         assert!(!delegated_withdraw_capability(sender_addr), Errors::invalid_state(EWITHDRAWAL_CAPABILITY_ALREADY_EXTRACTED));
+
+        make_event_store_if_not_exist(sender);
+        let event_store = borrow_global_mut<EventStore>(sender_addr);
+        Event::emit_event<ExtractWithdrawCapEvent>(
+            &mut event_store.extract_withdraw_cap_events,
+            ExtractWithdrawCapEvent {
+                account_address: sender_addr,
+            }
+        );
         let account = borrow_global_mut<Account>(sender_addr);
         Option::extract(&mut account.withdrawal_capability)
     }
@@ -680,10 +729,21 @@ module Account {
         aborts_if !exists<Account>(cap.account_address);
     }
 
-    public(script) fun rotate_authentication_key(account: signer, new_key: vector<u8>) acquires Account {
+    public(script) fun rotate_authentication_key(account: signer, new_key: vector<u8>) acquires Account, EventStore {
         let key_rotation_capability = extract_key_rotation_capability(&account);
-        rotate_authentication_key_with_capability(&key_rotation_capability, new_key);
+        rotate_authentication_key_with_capability(&key_rotation_capability, copy new_key);
         restore_key_rotation_capability(key_rotation_capability);
+
+        make_event_store_if_not_exist(&account);
+        let signer_addr = Signer::address_of(&account);
+        let event_store = borrow_global_mut<EventStore>(signer_addr);
+        Event::emit_event<RotateAuthKeyEvent>(
+            &mut event_store.rotate_auth_key_events,
+            RotateAuthKeyEvent {
+                account_address: signer_addr,
+                new_auth_key: new_key,
+            }
+        );
     }
 
     spec rotate_authentication_key {
@@ -1038,6 +1098,17 @@ module Account {
         let addr = Signer::address_of(account);
         aborts_if !exists<Balance<TokenType>>(addr);
         ensures !exists<Balance<TokenType>>(addr);
+    }
+
+    /// Make a event store if it's not exist.
+    fun make_event_store_if_not_exist(account: &signer) {
+        if (!exists<EventStore>(Signer::address_of(account))) {
+            move_to(account, EventStore {
+              rotate_auth_key_events: Event::new_event_handle<RotateAuthKeyEvent>(account),
+              extract_withdraw_cap_events: Event::new_event_handle<ExtractWithdrawCapEvent>(account),
+              signer_delegate_events: Event::new_event_handle<SignerDelegateEvent>(account),
+            })
+        };
     }
 }
 
