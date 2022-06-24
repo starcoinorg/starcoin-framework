@@ -44,6 +44,9 @@ module BCS {
         };
         (vec, new_offset)
     }
+    spec deserialize_option_bytes_vector {
+        pragma verify = false;
+    }
 
     public fun deserialize_bytes_vector(input: &vector<u8>, offset: u64): (vector<vector<u8>>, u64) {
         let (len, new_offset) = deserialize_len(input, offset);
@@ -58,6 +61,10 @@ module BCS {
         (vec, new_offset)
     }
 
+    spec deserialize_bytes_vector {
+        pragma verify = false;
+    }
+
     #[test]
     public fun test_deserialize_bytes_array() {
         let hello = b"hello";
@@ -67,7 +74,7 @@ module BCS {
         Vector::push_back(&mut hello_world, world);
         let bs = BCS::to_bytes<vector<vector<u8>>>(&hello_world);
         let (r, _) =  deserialize_bytes_vector(&bs, 0);
-        assert!(hello_world == r, 111);
+        assert!(hello_world == r, 1001);
     }
 
     public fun deserialize_u64_vector(input: &vector<u8>, offset: u64): (vector<u64>, u64) {
@@ -83,6 +90,10 @@ module BCS {
         (vec, new_offset)
     }
 
+    spec deserialize_u64_vector {
+        pragma verify = false;
+    }
+
     public fun deserialize_u128_vector(input: &vector<u8>, offset: u64): (vector<u128>, u64) {
         let (len, new_offset) = deserialize_len(input, offset);
         let i = 0;
@@ -96,6 +107,10 @@ module BCS {
         (vec, new_offset)
     }
 
+    spec deserialize_u128_vector {
+        pragma verify = false;
+    }
+
     #[test]
     public fun test_deserialize_u128_array() {
         let hello:u128 = 1111111;
@@ -105,7 +120,7 @@ module BCS {
         Vector::push_back(&mut hello_world, world);
         let bs = BCS::to_bytes<vector<u128>>(&hello_world);
         let (r, _) =  deserialize_u128_vector(&bs, 0);
-        assert!(hello_world == r, 111);
+        assert!(hello_world == r, 1002);
     }
 
     public fun deserialize_option_bytes(input: &vector<u8>, offset: u64): (Option::Option<vector<u8>>, u64) {
@@ -118,9 +133,17 @@ module BCS {
         }
     }
 
+    spec deserialize_option_bytes {
+        pragma verify = false;
+    }
+
     public fun deserialize_address(input: &vector<u8>, offset: u64): (address, u64) {
         let (content, new_offset) = deserialize_16_bytes(input, offset);
         (BCS::to_address(content), new_offset)
+    }
+
+    spec deserialize_address {
+        pragma verify = false;
     }
 
     #[test]
@@ -128,13 +151,17 @@ module BCS {
         let addr = @0x18351d311d32201149a4df2a9fc2db8a;
         let bs = BCS::to_bytes<address>(&addr);
         let (r, offset) =  deserialize_address(&bs, 0);
-        assert!(addr == r, 111);
-        assert!(offset == 16, 111);
+        assert!(addr == r, 1003);
+        assert!(offset == 16, 1004);
     }
 
     public fun deserialize_16_bytes(input: &vector<u8>, offset: u64): (vector<u8>, u64) {
         let content = get_n_bytes(input, offset, 16);
         (content, offset + 16)
+    }
+
+    spec deserialize_16_bytes {
+        pragma verify = false;
     }
 
     public fun deserialize_bytes(input: &vector<u8>, offset: u64): (vector<u8>, u64) {
@@ -143,17 +170,25 @@ module BCS {
         (content, new_offset + len)
     }
 
+    spec deserialize_bytes {
+        pragma verify = false;
+    }
+
     #[test]
     public fun test_deserialize_bytes() {
         let hello = b"hello world";
         let bs = BCS::to_bytes<vector<u8>>(&hello);
         let (r, _) =  deserialize_bytes(&bs, 0);
-        assert!(hello == r, 111);
+        assert!(hello == r, 1005);
     }
 
     public fun deserialize_u128(input: &vector<u8>, offset: u64): (u128, u64) {
         let u = get_n_bytes_as_u128(input, offset, 16);
         (u, offset + 16)
+    }
+
+    spec deserialize_u128 {
+        pragma verify = false;
     }
 
     #[test]
@@ -162,8 +197,8 @@ module BCS {
         let u: u128 = max_int128;
         let bs = BCS::to_bytes<u128>(&u);
         let (r, offset) =  deserialize_u128(&bs, 0);
-        assert!(u == r, 111);
-        assert!(offset == 16, 111);
+        assert!(u == r, 1006);
+        assert!(offset == 16, 1007);
     }
 
 
@@ -172,18 +207,26 @@ module BCS {
         ((u as u64), offset + 8)
     }
 
+    spec deserialize_u64 {
+        pragma verify = false;
+    }
+
     #[test]
     fun test_deserialize_u64() {
         let u: u64 = 12811111111111;
         let bs = BCS::to_bytes<u64>(&u);
         let (r, offset) =  deserialize_u64(&bs, 0);
-        assert!(u == r, 111);
-        assert!(offset == 8, 111);
+        assert!(u == r, 1008);
+        assert!(offset == 8, 1009);
     }
 
     public fun deserialize_u32(input: &vector<u8>, offset: u64): (u64, u64) {
         let u = get_n_bytes_as_u128(input, offset, 4);
         ((u as u64), offset + 4)
+    }
+
+    spec deserialize_u32 {
+        pragma verify = false;
     }
 
     #[test]
@@ -192,8 +235,8 @@ module BCS {
         let bs = BCS::to_bytes<u64>(&u);
         let (r, offset) =  deserialize_u32(&bs, 0);
         _ = r;
-        assert!(u == r, 111);
-        assert!(offset == 4, 111);
+        assert!(u == r, 1010);
+        assert!(offset == 4, 1011);
     }
 
     public fun deserialize_u16(input: &vector<u8>, offset: u64): (u64, u64) {
@@ -201,9 +244,17 @@ module BCS {
         ((u as u64), offset + 2)
     }
 
+    spec deserialize_u16 {
+        pragma verify = false;
+    }
+
     public fun deserialize_u8(input: &vector<u8>, offset: u64): (u8, u64) {
         let u = get_byte(input, offset);
         (u, offset + 1)
+    }
+
+    spec deserialize_u8 {
+        pragma verify = false;
     }
 
     #[test]
@@ -211,16 +262,24 @@ module BCS {
         let u: u8 = 128;
         let bs = BCS::to_bytes<u8>(&u);
         let (r, offset) =  deserialize_u8(&bs, 0);
-        assert!(u == r, 111);
-        assert!(offset == 1, 111);
+        assert!(u == r, 1012);
+        assert!(offset == 1, 1013);
     }
 
     public fun deserialize_option_tag(input: &vector<u8>, offset: u64): (bool, u64) {
         deserialize_bool(input, offset)
     }
 
+    spec deserialize_option_tag {
+        pragma verify = false;
+    }
+
     public fun deserialize_len(input: &vector<u8>, offset: u64): (u64, u64) {
         deserialize_uleb128_as_u32(input, offset)
+    }
+
+    spec deserialize_len {
+        pragma verify = false;
     }
 
     public fun deserialize_bool(input: &vector<u8>, offset: u64): (bool, u64) {
@@ -234,17 +293,21 @@ module BCS {
         }
     }
 
+    spec deserialize_bool {
+        pragma verify = false;
+    }
+
     #[test]
     public fun test_deserialize_bool() {
         let t = true;
         let bs = BCS::to_bytes<bool>(&t);
         let (d, _) =  deserialize_bool(&bs, 0);
-        assert!(d, 111);
+        assert!(d, 1014);
 
         let f = false;
         bs = BCS::to_bytes<bool>(&f);
         (d, _) =  deserialize_bool(&bs, 0);
-        assert!(!d, 111);
+        assert!(!d, 1015);
     }
 
     public fun deserialize_uleb128_as_u32(input: &vector<u8>, offset: u64): (u64, u64) {
@@ -270,9 +333,17 @@ module BCS {
         abort ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32
     }
 
+    spec deserialize_uleb128_as_u32 {
+        pragma verify = false;
+    }
+
     fun get_byte(input: &vector<u8>, offset: u64): u8 {
         assert!(((offset + 1) <= Vector::length(input)) && (offset < offset + 1), Errors::invalid_state(ERR_INPUT_NOT_LARGE_ENOUGH));
         *Vector::borrow(input, offset)
+    }
+
+    spec get_byte {
+        pragma verify = false;
     }
 
     fun get_n_bytes(input: &vector<u8>, offset: u64, n: u64): vector<u8> {
@@ -285,6 +356,10 @@ module BCS {
             i = i + 1;
         };
         content
+    }
+
+    spec get_n_bytes {
+        pragma verify = false;
     }
 
     fun get_n_bytes_as_u128(input: &vector<u8>, offset: u64, n: u64): u128 {
@@ -300,34 +375,21 @@ module BCS {
         number
     }
 
-    
-
-
-
-
-
-    
-
-
-    
-
-    
-
-
-
-    
+    spec get_n_bytes_as_u128 {
+        pragma verify = false;
+    }
 
     #[test]
     public fun test_deserialize_uleb128_as_u32() {
         let i: u64 = 0x7F;
         let bs = serialize_u32_as_uleb128(i);
         let (len, _) =  deserialize_uleb128_as_u32(&bs, 0);
-        assert!(len == i, 111);
+        assert!(len == i, 1016);
 
         let i2: u64 = 0x8F;
         let bs2 = serialize_u32_as_uleb128(i2);
         (len, _) =  deserialize_uleb128_as_u32(&bs2, 0);
-        assert!(len == i2, 111);
+        assert!(len == i2, 1017);
     }
 
 
@@ -337,7 +399,7 @@ module BCS {
 
         let bs = serialize_u32_as_uleb128(max_int);
         let (len, _) =  deserialize_uleb128_as_u32(&bs, 0);
-        assert!(len == max_int, 111);
+        assert!(len == max_int, 1018);
     }
 
     #[test]
@@ -359,6 +421,10 @@ module BCS {
         };
         Vector::push_back(&mut output, (value as u8));
         output
+    }
+
+    spec serialize_u32_as_uleb128 {
+        pragma verify = false;
     }
 
 }
