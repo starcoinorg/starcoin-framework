@@ -8,7 +8,6 @@ Serialization). BCS is the binary encoding for Move resources and other non-modu
 published on-chain.
 
 
-<<<<<<< HEAD
 -  [Constants](#@Constants_0)
 -  [Function `to_bytes`](#0x1_BCS_to_bytes)
 -  [Function `to_address`](#0x1_BCS_to_address)
@@ -90,14 +89,6 @@ published on-chain.
 
 <pre><code><b>const</b> <a href="BCS.md#0x1_BCS_INTEGER32_MAX_VALUE">INTEGER32_MAX_VALUE</a>: u64 = 2147483647;
 </code></pre>
-=======
--  [Function `to_bytes`](#0x1_BCS_to_bytes)
--  [Function `to_address`](#0x1_BCS_to_address)
--  [Module Specification](#@Module_Specification_0)
-
-
-<pre><code></code></pre>
->>>>>>> e660e8f (update build)
 
 
 
@@ -147,7 +138,6 @@ Return the address of key bytes
 
 </details>
 
-<<<<<<< HEAD
 <a name="0x1_BCS_deserialize_option_bytes_vector"></a>
 
 ## Function `deserialize_option_bytes_vector`
@@ -1006,9 +996,6 @@ Return the address of key bytes
 </details>
 
 <a name="@Module_Specification_1"></a>
-=======
-<a name="@Module_Specification_0"></a>
->>>>>>> e660e8f (update build)
 
 ## Module Specification
 

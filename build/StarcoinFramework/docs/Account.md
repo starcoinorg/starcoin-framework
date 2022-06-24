@@ -16,13 +16,10 @@ The module for the account resource that governs every account
 -  [Resource `SignerDelegated`](#0x1_Account_SignerDelegated)
 -  [Struct `SignerCapability`](#0x1_Account_SignerCapability)
 -  [Resource `AutoAcceptToken`](#0x1_Account_AutoAcceptToken)
-<<<<<<< HEAD
 -  [Struct `RotateAuthKeyEvent`](#0x1_Account_RotateAuthKeyEvent)
 -  [Struct `ExtractWithdrawCapEvent`](#0x1_Account_ExtractWithdrawCapEvent)
 -  [Struct `SignerDelegateEvent`](#0x1_Account_SignerDelegateEvent)
 -  [Resource `EventStore`](#0x1_Account_EventStore)
-=======
->>>>>>> e660e8f (update build)
 -  [Constants](#@Constants_0)
 -  [Function `remove_signer_capability`](#0x1_Account_remove_signer_capability)
 -  [Function `create_signer_with_cap`](#0x1_Account_create_signer_with_cap)
@@ -81,10 +78,7 @@ The module for the account resource that governs every account
 -  [Function `txn_epilogue`](#0x1_Account_txn_epilogue)
 -  [Function `txn_epilogue_v2`](#0x1_Account_txn_epilogue_v2)
 -  [Function `remove_zero_balance`](#0x1_Account_remove_zero_balance)
-<<<<<<< HEAD
 -  [Function `make_event_store_if_not_exist`](#0x1_Account_make_event_store_if_not_exist)
-=======
->>>>>>> e660e8f (update build)
 -  [Module Specification](#@Module_Specification_1)
 
 
@@ -457,7 +451,6 @@ Message for accept token events
 
 </details>
 
-<<<<<<< HEAD
 <a name="0x1_Account_RotateAuthKeyEvent"></a>
 
 ## Struct `RotateAuthKeyEvent`
@@ -587,8 +580,6 @@ Message for SignerDelegate events
 
 </details>
 
-=======
->>>>>>> e660e8f (update build)
 <a name="@Constants_0"></a>
 
 ## Constants
@@ -811,11 +802,7 @@ This function can only called once by signer.
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_remove_signer_capability">remove_signer_capability</a>(signer: &signer): <a href="Account.md#0x1_Account_SignerCapability">SignerCapability</a>
-<<<<<<< HEAD
 <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_EventStore">EventStore</a> {
-=======
-<b>acquires</b> <a href="Account.md#0x1_Account">Account</a> {
->>>>>>> e660e8f (update build)
     <b>let</b> signer_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(signer);
     <b>assert</b>!(!<a href="Account.md#0x1_Account_is_signer_delegated">is_signer_delegated</a>(signer_addr), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="Account.md#0x1_Account_ERR_SIGNER_ALREADY_DELEGATED">ERR_SIGNER_ALREADY_DELEGATED</a>));
 
@@ -825,7 +812,6 @@ This function can only called once by signer.
         <a href="Account.md#0x1_Account_rotate_authentication_key_with_capability">rotate_authentication_key_with_capability</a>(&key_rotation_capability, <a href="Account.md#0x1_Account_CONTRACT_ACCOUNT_AUTH_KEY_PLACEHOLDER">CONTRACT_ACCOUNT_AUTH_KEY_PLACEHOLDER</a>);
         <a href="Account.md#0x1_Account_destroy_key_rotation_capability">destroy_key_rotation_capability</a>(key_rotation_capability);
         <b>move_to</b>(signer, <a href="Account.md#0x1_Account_SignerDelegated">SignerDelegated</a> {});
-<<<<<<< HEAD
 
         <a href="Account.md#0x1_Account_make_event_store_if_not_exist">make_event_store_if_not_exist</a>(signer);
         <b>let</b> event_store = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_EventStore">EventStore</a>&gt;(signer_addr);
@@ -835,8 +821,6 @@ This function can only called once by signer.
                 account_address: signer_addr
             }
         );
-=======
->>>>>>> e660e8f (update build)
     };
 
     <b>let</b> signer_cap = <a href="Account.md#0x1_Account_SignerCapability">SignerCapability</a> {addr: signer_addr };
@@ -1149,14 +1133,11 @@ reserved address for the MoveVM.
           sequence_number: 0,
     });
     <b>move_to</b>(new_account, <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a>{enable: <b>true</b>});
-<<<<<<< HEAD
     <b>move_to</b>(new_account, <a href="Account.md#0x1_Account_EventStore">EventStore</a> {
           rotate_auth_key_events: <a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="Account.md#0x1_Account_RotateAuthKeyEvent">RotateAuthKeyEvent</a>&gt;(new_account),
           extract_withdraw_cap_events: <a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="Account.md#0x1_Account_ExtractWithdrawCapEvent">ExtractWithdrawCapEvent</a>&gt;(new_account),
           signer_delegate_events: <a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="Account.md#0x1_Account_SignerDelegateEvent">SignerDelegateEvent</a>&gt;(new_account),
     });
-=======
->>>>>>> e660e8f (update build)
 }
 </code></pre>
 
@@ -1294,11 +1275,7 @@ Generate an new address and create a new account, then delegate the account and 
 <summary>Implementation</summary>
 
 
-<<<<<<< HEAD
 <pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_create_delegate_account">create_delegate_account</a>(sender: &signer) : (<b>address</b>, <a href="Account.md#0x1_Account_SignerCapability">SignerCapability</a>) <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_EventStore">EventStore</a> {
-=======
-<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_create_delegate_account">create_delegate_account</a>(sender: &signer) : (<b>address</b>, <a href="Account.md#0x1_Account_SignerCapability">SignerCapability</a>) <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account">Account</a> {
->>>>>>> e660e8f (update build)
     <b>let</b> sender_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
     <b>let</b> sequence_number = <a href="Account.md#0x1_Account_sequence_number">Self::sequence_number</a>(sender_address);
     // <b>use</b> stc balance <b>as</b> part of seed, just for new <b>address</b> more random.
@@ -1779,7 +1756,6 @@ Return a unique capability granting permission to withdraw from the sender's acc
 
 <pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_extract_withdraw_capability">extract_withdraw_capability</a>(
     sender: &signer
-<<<<<<< HEAD
 ): <a href="Account.md#0x1_Account_WithdrawCapability">WithdrawCapability</a> <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_EventStore">EventStore</a> {
     <b>let</b> sender_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
     // Abort <b>if</b> we already extracted the unique withdraw capability for this account.
@@ -1793,12 +1769,6 @@ Return a unique capability granting permission to withdraw from the sender's acc
             account_address: sender_addr,
         }
     );
-=======
-): <a href="Account.md#0x1_Account_WithdrawCapability">WithdrawCapability</a> <b>acquires</b> <a href="Account.md#0x1_Account">Account</a> {
-    <b>let</b> sender_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
-    // Abort <b>if</b> we already extracted the unique withdraw capability for this account.
-    <b>assert</b>!(!<a href="Account.md#0x1_Account_delegated_withdraw_capability">delegated_withdraw_capability</a>(sender_addr), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="Account.md#0x1_Account_EWITHDRAWAL_CAPABILITY_ALREADY_EXTRACTED">EWITHDRAWAL_CAPABILITY_ALREADY_EXTRACTED</a>));
->>>>>>> e660e8f (update build)
     <b>let</b> account = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account">Account</a>&gt;(sender_addr);
     <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> account.withdrawal_capability)
 }
@@ -2305,7 +2275,6 @@ Return the key rotation capability to the account it originally came from
 <summary>Implementation</summary>
 
 
-<<<<<<< HEAD
 <pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_rotate_authentication_key">rotate_authentication_key</a>(account: signer, new_key: vector&lt;u8&gt;) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_EventStore">EventStore</a> {
     <b>let</b> key_rotation_capability = <a href="Account.md#0x1_Account_extract_key_rotation_capability">extract_key_rotation_capability</a>(&account);
     <a href="Account.md#0x1_Account_rotate_authentication_key_with_capability">rotate_authentication_key_with_capability</a>(&key_rotation_capability, <b>copy</b> new_key);
@@ -2321,12 +2290,6 @@ Return the key rotation capability to the account it originally came from
             new_auth_key: new_key,
         }
     );
-=======
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_rotate_authentication_key">rotate_authentication_key</a>(account: signer, new_key: vector&lt;u8&gt;) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a> {
-    <b>let</b> key_rotation_capability = <a href="Account.md#0x1_Account_extract_key_rotation_capability">extract_key_rotation_capability</a>(&account);
-    <a href="Account.md#0x1_Account_rotate_authentication_key_with_capability">rotate_authentication_key_with_capability</a>(&key_rotation_capability, new_key);
-    <a href="Account.md#0x1_Account_restore_key_rotation_capability">restore_key_rotation_capability</a>(key_rotation_capability);
->>>>>>> e660e8f (update build)
 }
 </code></pre>
 
@@ -3282,7 +3245,6 @@ Remove zero Balance
 
 </details>
 
-<<<<<<< HEAD
 <a name="0x1_Account_make_event_store_if_not_exist"></a>
 
 ## Function `make_event_store_if_not_exist`
@@ -3314,8 +3276,6 @@ Make a event store if it's not exist.
 
 </details>
 
-=======
->>>>>>> e660e8f (update build)
 <a name="@Module_Specification_1"></a>
 
 ## Module Specification
