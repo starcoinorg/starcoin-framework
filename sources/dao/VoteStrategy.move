@@ -11,7 +11,7 @@ module StarcoinFramework::VoteStrategy{
     }
 
     struct SBTStrategy<phantom DaoT: store> has Key {
-        stragegy_name: vector<u8>,
+        strategy_name: vector<u8>,
     //    0x6E9B83ADaA64f901048AE4bEAD8A1016/1/0x8c109349c6bd91411d6bc962e080c4a3::TokenSwapFarmBoost::UserInfo<0x00000000000000000000000000000001::STC::STC,0x8c109349c6bd91411d6bc962e080c4a3::STAR::STAR>
 //        access_path: vector<u8>,
     // access_path_suffix = user_address + access_path_suffix
@@ -23,7 +23,7 @@ module StarcoinFramework::VoteStrategy{
 
 
     struct BalanceStrategy<phantom DaoT: store> has Key {
-        stragegy_name: vector<u8>,
+        strategy_name: vector<u8>, //need by unique
         //        module_address: address,
 //        module_name: vector<u8>,
 //        struct_name: vector<u8>,
@@ -39,13 +39,13 @@ module StarcoinFramework::VoteStrategy{
 
     // TODO extend to List to support multi stragegies for a DAO ?
     struct StrategyMapping<phantom DaoT: store> has key {
-        stragegy_name: vector<u8>,
+        strategy_name: vector<u8>,
         access_path_suffix: vector<u8>, //  /1/0x8c109349c6bd91411d6bc962e080c4a3::TokenSwapFarmBoost::UserInfo<0x00000000000000000000000000000001::STC::STC,0x8c109349c6bd91411d6bc962e080c4a3::STAR::STAR>
         offset: u64, //sbt token deserialize offset in state bcs value
         weight_factor: u128, // How to abstract into a function ? default 1
     }
 
-    public fun install_vote_strategy_plugin<DaoT: copy + drop + store>(cap: &VoteStrategyPluginCapability, installer: &signer, stragegy_name: vector<u8>, access_path_suffix:vector<u8>, offset: u64, weight_factor: u128){
+    public fun install_vote_strategy_plugin<DaoT: copy + drop + store>(cap: &VoteStrategyPluginCapability, installer: &signer, strategy_name: vector<u8>, access_path_suffix:vector<u8>, offset: u64, weight_factor: u128){
         //TODO get dao_singer cap
         let dao_signer;
         let dao_addr = Signer::address_of(dao_signer);
@@ -55,7 +55,7 @@ module StarcoinFramework::VoteStrategy{
         //TODO check vote strategy template
 
         let strategy = StrategyMapping{
-            stragegy_name,
+            strategy_name,
             access_path_suffix,
             offset,
             weight_factor,
@@ -66,7 +66,7 @@ module StarcoinFramework::VoteStrategy{
 //        let dao_addr = Signer::address_of(dao_signer);
         let dao_addr = DaoRegistry::dao_address<DaoT>();
         let StrategyMapping {
-            stragegy_name: _,
+            strategy_name: _,
             access_path_suffix: _,
             offset: _,
             weight_factor: _,
@@ -76,8 +76,8 @@ module StarcoinFramework::VoteStrategy{
 
     public fun get_vote_strategy_plugin<DaoT: copy + drop + store>():(vector<u8>, vector<u8>, u64, u128) acquires StrategyMapping{
         let dao_addr = DaoRegistry::dao_address<DaoT>();
-        let stragegy_mapping = borrow_global<StrategyMapping<DaoT>>(dao_addr);
-        (*&stragegy_mapping.stragegy_name, *&stragegy_mapping.access_path_suffix, stragegy_mapping.offset, stragegy_mapping.weight_factor)
+        let strategy_mapping = borrow_global<StrategyMapping<DaoT>>(dao_addr);
+        (*&strategy_mapping.strategy_name, *&strategy_mapping.access_path_suffix, strategy_mapping.offset, strategy_mapping.weight_factor)
     }
 
 
@@ -86,10 +86,10 @@ module StarcoinFramework::VoteStrategy{
         //TODO how to verify state ?
 
         let dao_addr = DaoRegistry::dao_address<DaoT>();
-        let stragegy_mapping = borrow_global<StrategyMapping<DaoT>>(dao_addr);
+        let strategy_mapping = borrow_global<StrategyMapping<DaoT>>(dao_addr);
 
         //TODO check state with access_path_suffix ?
-        let offset = stragegy_mapping.offset;
+        let offset = strategy_mapping.offset;
 
         let (value, _) = BCSDeserializer::deserialize_u128(state, offset);
 
