@@ -206,7 +206,8 @@ module BCSDeserializerTest {
 
 
     #[test]
-    public fun test_deserialize_state() {
+    public fun test_from_deserialize_state_for_vestar_value() {
+//      {"json":{"boost_factor":250,"locked_vetoken":{"token":{"value":47945205478}},"user_amount":0},"raw":"0xfa00000000000000e6c6c1290b000000000000000000000000000000000000000000000000000000"}
         let bs = x"fa0000000000000038bc7e1800000000000000000000000000000000000000000000000000000000";
         Debug::print<vector<u8>>(&bs);
 
@@ -220,5 +221,32 @@ module BCSDeserializerTest {
         Debug::print(&r);
         Debug::print<u64>(&offset);
     }
+
+    #[test]
+    //TODO
+    public fun test_from_deserialize_state_for_sbt_value() {
+        //      {"json":{"boost_factor":250,"locked_vetoken":{"token":{"value":47945205478}},"user_amount":0},"raw":"0xfa00000000000000e6c6c1290b000000000000000000000000000000000000000000000000000000"}
+        let bs = x"fa0000000000000038bc7e1800000000000000000000000000000000000000000000000000000000";
+        Debug::print<vector<u8>>(&bs);
+        let offset = 0;
+
+        let (r, offset) = BCSDeserializer::deserialize_u128(&bs, offset);
+        Debug::print(&r);
+        Debug::print<u64>(&offset);
+    }
+
+    #[test]
+    public fun test_deserialize_state_for_balance() {
+//      {"json":{"token":{"value":40350083678552}},"raw":"0x588167bcb22400000000000000000000"}
+        let bs = x"588167bcb22400000000000000000000";
+        Debug::print<vector<u8>>(&bs);
+        let offset = 0;
+
+        let (balance, offset) = BCSDeserializer::deserialize_u128(&bs, offset);
+        Debug::print(&balance);
+        Debug::print<u64>(&offset);
+    }
+
+
 }
 }

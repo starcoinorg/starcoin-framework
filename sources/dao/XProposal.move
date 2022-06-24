@@ -11,6 +11,7 @@ module XProposal {
     use StarcoinFramework::XDaoConfig;
     use StarcoinFramework::DaoRegistry;
     use StarcoinFramework::StarcoinVerifier;
+    use StarcoinFramework::VoteStrategy;
 
 
     struct ProposalCapability has key {
@@ -79,9 +80,9 @@ module XProposal {
     /// Strategy
     /// DAO 1.0 support: balance strategy and sbt of weighted strategy
     /// TODO abstract strategy template and strategy instance
-    const STRATEGY_BALANCE: u8 = 1;
-    const STRATEGY_BALANCE_WITH_MIN: u8 = 2;
-    const STRATEGY_SBT_OF_WEIGHTED: u8 = 3;
+    const STRATEGY_SBT: u8 = 1; //for sbt
+    const STRATEGY_BALANCE: u8 = 2; //for token balance
+    const STRATEGY_BALANCE_WITH_MIN: u8 = 3;
     const STRATEGY_BALANCE_OF_WEIGHTED: u8 = 4; //TODO
     const STRATEGY_NFT: u8 = 5;
 
@@ -342,7 +343,7 @@ module XProposal {
         proposal_id: u64,
 //        stake: Token::Token<DaoT> ,
 //        agree: bool,
-        vote_amount: u128,
+//        vote_amount: u128,
         choice: u8,
         _cap: &ProposalCapability,
 
@@ -366,8 +367,11 @@ module XProposal {
         let state_proof = StarcoinVerifier::new_state_proof_from_proof(account_proof_leaf, account_proof_siblings, account_state, account_state_proof_leaf, account_state_proof_siblings);
         let verify = StarcoinVerifier::verify_resource_state_proof(&state_proof, &state_root, user_address, &resource_struct_tag, &state);
         assert!(verify, Errors::invalid_state(ERR_STATE_PROOF_VERIFY_INVALID));
+        //TODO verify state_proof according to proposal snapshot blcok number and state root
 
         //TODO decode token value from account_state
+        let vote_amount = VoteStrategy::get_voting_power<DaoT>(user_address, &state_root, &state);
+        let vote_weight = vote_amount;
 
         let proposal = borrow_global_mut<Proposal<DaoT, ActionT>>(proposer_address);
         assert!(proposal.id == proposal_id, Errors::invalid_argument(ERR_PROPOSAL_ID_MISMATCH));

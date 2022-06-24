@@ -65,6 +65,10 @@ module StarcoinFramework::GenesisDao{
     /// This cap can issue Dao member NFT or update member's SBT
     public fun member_cap_type(): CapType { CapType{ code : 4 } }
 
+    /// Crates a vote strategy capability type.
+    /// This cap can update Dao vote strategy
+    public fun update_vote_strategy_cap_type(): CapType { CapType{ code : 5 } }
+
 
     struct DaoRootCap<phantom DaoT> has drop {}
 
