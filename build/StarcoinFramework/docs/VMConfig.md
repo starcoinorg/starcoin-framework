@@ -487,6 +487,22 @@ The  <code><a href="VMConfig.md#0x1_VMConfig_GasCost">GasCost</a></code> tracks:
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="VMConfig.md#0x1_VMConfig_new_gas_cost">new_gas_cost</a>(20, 1));
     // <a href="Vector.md#0x1_Vector_reverse">Vector::reverse</a> 32
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="VMConfig.md#0x1_VMConfig_new_gas_cost">new_gas_cost</a>(10, 1));
+    // <a href="Table.md#0x1_Table_new_table_handle">Table::new_table_handle</a> 33
+    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="VMConfig.md#0x1_VMConfig_new_gas_cost">new_gas_cost</a>(4, 1));
+    // <a href="Table.md#0x1_Table_add_box">Table::add_box</a> 34
+    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="VMConfig.md#0x1_VMConfig_new_gas_cost">new_gas_cost</a>(4, 1));
+    // <a href="Table.md#0x1_Table_borrow_box">Table::borrow_box</a> 35
+    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="VMConfig.md#0x1_VMConfig_new_gas_cost">new_gas_cost</a>(10, 1));
+    // <a href="Table.md#0x1_Table_borrow_box_mut">Table::borrow_box_mut</a> 36
+    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="VMConfig.md#0x1_VMConfig_new_gas_cost">new_gas_cost</a>(10, 1));
+    // <a href="Table.md#0x1_Table_remove_box">Table::remove_box</a> 37
+    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="VMConfig.md#0x1_VMConfig_new_gas_cost">new_gas_cost</a>(8, 1));
+    // <a href="Table.md#0x1_Table_contains_box">Table::contains_box</a> 38
+    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="VMConfig.md#0x1_VMConfig_new_gas_cost">new_gas_cost</a>(40, 1));
+    // <a href="Table.md#0x1_Table_destroy_empty_box">Table::destroy_empty_box</a> 39
+    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="VMConfig.md#0x1_VMConfig_new_gas_cost">new_gas_cost</a>(20, 1));
+    // <a href="Table.md#0x1_Table_drop_unchecked_box">Table::drop_unchecked_box</a> 40
+    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="VMConfig.md#0x1_VMConfig_new_gas_cost">new_gas_cost</a>(0, 1));
 
     table
 }
