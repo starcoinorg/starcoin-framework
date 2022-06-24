@@ -107,14 +107,19 @@ module Account {
 
     /// Message for rotate_authentication_key events
     struct RotateAuthKeyEvent has drop, store {
+        account_address: address,
         new_auth_key: vector<u8>,
     }
 
     /// Message for extract_withdraw_capability events
-    struct ExtractWithdrawCapEvent has drop, store {}
+    struct ExtractWithdrawCapEvent has drop, store {
+        account_address: address,
+    }
 
     /// Message for SignerDelegate events
-    struct SignerDelegateEvent has drop, store {}
+    struct SignerDelegateEvent has drop, store {
+        account_address: address
+    }
 
     struct EventStore has key {
         /// Event handle for rotate_authentication_key event
@@ -173,10 +178,12 @@ module Account {
             move_to(signer, SignerDelegated {});
 
             make_event_store_if_not_exist(signer);
-            let event_store = borrow_global_mut<EventStore>(Signer::address_of(signer));
+            let event_store = borrow_global_mut<EventStore>(signer_addr);
             Event::emit_event<SignerDelegateEvent>(
                 &mut event_store.signer_delegate_events,
-                SignerDelegateEvent {}
+                SignerDelegateEvent {
+                    account_address: signer_addr    
+                }
             );
         };
 
@@ -520,7 +527,9 @@ module Account {
         let event_store = borrow_global_mut<EventStore>(sender_addr);
         Event::emit_event<ExtractWithdrawCapEvent>(
             &mut event_store.extract_withdraw_cap_events,
-            ExtractWithdrawCapEvent {}
+            ExtractWithdrawCapEvent {
+                account_address: sender_addr,
+            }
         );
         let account = borrow_global_mut<Account>(sender_addr);
         Option::extract(&mut account.withdrawal_capability)
@@ -726,10 +735,12 @@ module Account {
         restore_key_rotation_capability(key_rotation_capability);
 
         make_event_store_if_not_exist(&account);
-        let event_store = borrow_global_mut<EventStore>(Signer::address_of(&account));
+        let signer_addr = Signer::address_of(&account);
+        let event_store = borrow_global_mut<EventStore>(signer_addr);
         Event::emit_event<RotateAuthKeyEvent>(
             &mut event_store.rotate_auth_key_events,
             RotateAuthKeyEvent {
+                account_address: signer_addr,
                 new_auth_key: new_key,
             }
         );

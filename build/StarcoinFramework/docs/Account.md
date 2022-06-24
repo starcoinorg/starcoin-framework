@@ -469,6 +469,12 @@ Message for rotate_authentication_key events
 
 <dl>
 <dt>
+<code>account_address: <b>address</b></code>
+</dt>
+<dd>
+
+</dd>
+<dt>
 <code>new_auth_key: vector&lt;u8&gt;</code>
 </dt>
 <dd>
@@ -497,7 +503,7 @@ Message for extract_withdraw_capability events
 
 <dl>
 <dt>
-<code>dummy_field: bool</code>
+<code>account_address: <b>address</b></code>
 </dt>
 <dd>
 
@@ -525,7 +531,7 @@ Message for SignerDelegate events
 
 <dl>
 <dt>
-<code>dummy_field: bool</code>
+<code>account_address: <b>address</b></code>
 </dt>
 <dd>
 
@@ -808,10 +814,12 @@ This function can only called once by signer.
         <b>move_to</b>(signer, <a href="Account.md#0x1_Account_SignerDelegated">SignerDelegated</a> {});
 
         <a href="Account.md#0x1_Account_make_event_store_if_not_exist">make_event_store_if_not_exist</a>(signer);
-        <b>let</b> event_store = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_EventStore">EventStore</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(signer));
+        <b>let</b> event_store = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_EventStore">EventStore</a>&gt;(signer_addr);
         <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>&lt;<a href="Account.md#0x1_Account_SignerDelegateEvent">SignerDelegateEvent</a>&gt;(
             &<b>mut</b> event_store.signer_delegate_events,
-            <a href="Account.md#0x1_Account_SignerDelegateEvent">SignerDelegateEvent</a> {}
+            <a href="Account.md#0x1_Account_SignerDelegateEvent">SignerDelegateEvent</a> {
+                account_address: signer_addr
+            }
         );
     };
 
@@ -1757,7 +1765,9 @@ Return a unique capability granting permission to withdraw from the sender's acc
     <b>let</b> event_store = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_EventStore">EventStore</a>&gt;(sender_addr);
     <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>&lt;<a href="Account.md#0x1_Account_ExtractWithdrawCapEvent">ExtractWithdrawCapEvent</a>&gt;(
         &<b>mut</b> event_store.extract_withdraw_cap_events,
-        <a href="Account.md#0x1_Account_ExtractWithdrawCapEvent">ExtractWithdrawCapEvent</a> {}
+        <a href="Account.md#0x1_Account_ExtractWithdrawCapEvent">ExtractWithdrawCapEvent</a> {
+            account_address: sender_addr,
+        }
     );
     <b>let</b> account = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account">Account</a>&gt;(sender_addr);
     <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> account.withdrawal_capability)
@@ -2271,10 +2281,12 @@ Return the key rotation capability to the account it originally came from
     <a href="Account.md#0x1_Account_restore_key_rotation_capability">restore_key_rotation_capability</a>(key_rotation_capability);
 
     <a href="Account.md#0x1_Account_make_event_store_if_not_exist">make_event_store_if_not_exist</a>(&account);
-    <b>let</b> event_store = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_EventStore">EventStore</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&account));
+    <b>let</b> signer_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&account);
+    <b>let</b> event_store = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_EventStore">EventStore</a>&gt;(signer_addr);
     <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>&lt;<a href="Account.md#0x1_Account_RotateAuthKeyEvent">RotateAuthKeyEvent</a>&gt;(
         &<b>mut</b> event_store.rotate_auth_key_events,
         <a href="Account.md#0x1_Account_RotateAuthKeyEvent">RotateAuthKeyEvent</a> {
+            account_address: signer_addr,
             new_auth_key: new_key,
         }
     );
