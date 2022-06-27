@@ -172,6 +172,9 @@ compiled_package_info:
       name: RewardConfig
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: Ring
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: SIP_2
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -252,7 +255,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 22DB5B43ABD816BCCD6014917A9DB55B19DBFE214599FA3466F3F05C56DC1F44
+  source_digest: 518A52D1B88C7DFDB43096C894126C9DDE5500BD8853ECE01F1A09A3EF2CBE8D
   build_flags:
     dev_mode: false
     test_mode: false
