@@ -21,6 +21,9 @@ module StarcoinFramework::VoteStrategy{
         weight_factor: u128, // How to abstract into a function ?  default 1
     }
 
+//    0x8c109349c6bd91411d6bc962e080c4a3::TokenSwapFarmBoost::UserInfo<0x00000000000000000000000000000001::STC::STC, 0x8c109349c6bd91411d6bc962e080c4a3::STAR::STAR>
+//
+//    {"json":{"boost_factor":250,"locked_vetoken":{"token":{"value":47945205478}},"user_amount":0},"raw":"0xfa00000000000000e6c6c1290b000000000000000000000000000000000000000000000000000000"}
 
     struct BalanceStrategy<phantom DaoT: store> has Key {
         strategy_name: vector<u8>, //need by unique
