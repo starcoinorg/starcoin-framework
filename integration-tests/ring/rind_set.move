@@ -12,12 +12,12 @@ fun main() {
 
     assert!(Ring::length<u64>(&ring) == 5, 1001);
     let i = 0;
-    while(i < 5){
+    while(i < 6){
         Ring::push<u64>(&mut ring , i);
         i = i + 1;
     };
 
-    assert!(*Option::borrow<u64>(Ring::borrow<u64>(&ring, 0)) == 0, 1002);
+    assert!(*Option::borrow<u64>(Ring::borrow<u64>(&ring, 0)) == 5, 1002);
     assert!(*Option::borrow<u64>(Ring::borrow<u64>(&ring, 1)) == 1, 1003);
     assert!(*Option::borrow<u64>(Ring::borrow<u64>(&ring, 2)) == 2, 1004);
     assert!(*Option::borrow<u64>(Ring::borrow<u64>(&ring, 3)) == 3, 1005);
