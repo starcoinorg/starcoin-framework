@@ -232,17 +232,6 @@ module StarcoinFramework::GenesisDao {
         item
     }
 
-    public fun borrow<DaoT: store, PluginT, V: store>(_cap: &DaoStorageCap<DaoT, PluginT>): &V acquires StorageItem {
-        let dao_address = dao_address<DaoT>();
-        //TODO check exists
-        &borrow_global<StorageItem<PluginT, V>>(dao_address).item
-    }
-
-    public fun borrow_mut<DaoT: store, PluginT, V: store>(_cap: &DaoStorageCap<DaoT, PluginT>): &mut V acquires StorageItem {
-        let dao_address = dao_address<DaoT>();
-        //TODO check exists
-        &mut borrow_global_mut<StorageItem<PluginT, V>>(dao_address).item
-    }
 
     public fun withdraw_token<DaoT: store, PluginT, TokenT: store>(_cap: &DaoWithdrawTokenCap<DaoT, PluginT>, amount: u128): Token<TokenT> acquires DaoAccountCapHolder {
         let dao_signer = dao_signer<DaoT>();

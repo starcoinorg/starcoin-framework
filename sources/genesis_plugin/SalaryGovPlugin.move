@@ -90,11 +90,16 @@ module SalaryGovPlugin {
 
         let storage_cap =
             GenesisDao::acquire_storage_cap<DaoT, SalaryGovPlugin>(&witness);
-        let config = GenesisDao::borrow<DaoT, SalaryGovPlugin, SalaryConfig<DaoT, TokenT>>(&storage_cap);
+
+        // TODO: Need implementing borrow function
+        let SalaryConfig<DaoT, TokenT> {period} = GenesisDao::take<DaoT, SalaryGovPlugin, SalaryConfig<DaoT, TokenT>>(&storage_cap);
+        GenesisDao::save(&storage_cap, SalaryConfig<DaoT, TokenT> {
+            period,
+        });
 
         //assert!(now_seconds() - receive.last_receive_time > config.period,
         //    Errors::invalid_state(ERR_PLUGIN_RECEIVE_TIME_NOT_REACHED))
-        sbt * ((Timestamp::now_seconds() - receive.last_receive_time) as u128) / (config.period as u128)
+        sbt * ((Timestamp::now_seconds() - receive.last_receive_time) as u128) / (period as u128)
     }
 
 
