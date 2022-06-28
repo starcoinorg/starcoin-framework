@@ -13,6 +13,7 @@ module StarcoinFramework::GenesisDao{
     use StarcoinFramework::Option::{Self, Option};
     use StarcoinFramework::STC::{STC};
     use StarcoinFramework::Timestamp;
+    use StarcoinFramework::Config;
 
     const E_NO_GRANTED: u64 = 1;
     const ERR_REPEAT_ELEMENT: u64 = 100;
@@ -46,6 +47,22 @@ module StarcoinFramework::GenesisDao{
         ext: DaoT,
     }
 
+     /// Configuration of the DAO.
+    struct DaoConfig has copy, drop, store {
+         /// after proposal created, how long use should wait before he can vote (in milliseconds)
+        voting_delay: u64,
+        /// how long the voting window is (in milliseconds).
+        voting_period: u64,
+        /// the quorum rate to agree on the proposal.
+        /// if 50% votes needed, then the voting_quorum_rate should be 50.
+        /// it should between (0, 100].
+        voting_quorum_rate: u8,
+        /// how long the proposal should wait before it can be executed (in milliseconds).
+        min_action_delay: u64,
+        /// how many STC should be deposited to create a proposal.
+        min_proposal_deposit: u128,
+    }
+
     struct DaoAccountCapHolder has key{
         cap: DaoAccountCap,
     }
@@ -70,6 +87,10 @@ module StarcoinFramework::GenesisDao{
         cap: NFT::UpdateCapability<DaoMember<DaoT>>,
     }
 
+    struct DaoConfigModifyCapHolder has key{
+        cap: Config::ModifyConfigCapability<DaoConfig>
+    }
+
     /// A type describing a capability. 
     struct CapType has copy, drop, store { code: u8 }
 
@@ -79,26 +100,30 @@ module StarcoinFramework::GenesisDao{
     /// Creates a upgrade module capability type.
     public fun upgrade_module_cap_type(): CapType { CapType{ code : 1 } }
 
+    /// Creates a modify dao config capability type.
+    public fun modify_config_cap_type(): CapType { CapType{ code : 2 } }
+
     /// Creates a withdraw Token capability type.
-    public fun withdraw_token_cap_type(): CapType { CapType{ code : 2 } }
+    public fun withdraw_token_cap_type(): CapType { CapType{ code : 3 } }
 
     /// Creates a withdraw NFT capability type.
-    public fun withdraw_nft_cap_type(): CapType { CapType{ code : 3 } }
+    public fun withdraw_nft_cap_type(): CapType { CapType{ code : 4 } }
 
     /// Creates a write data to Dao account capability type.
-    public fun storage_cap_type(): CapType { CapType{ code : 4 } }
+    public fun storage_cap_type(): CapType { CapType{ code : 5 } }
 
     /// Creates a member capability type.
     /// This cap can issue Dao member NFT or update member's SBT
-    public fun member_cap_type(): CapType { CapType{ code : 5 } }
+    public fun member_cap_type(): CapType { CapType{ code : 6 } }
 
     /// Creates a vote capability type.
-    public fun proposal_cap_type(): CapType { CapType{ code : 6 } }
+    public fun proposal_cap_type(): CapType { CapType{ code : 7 } }
 
     /// Creates all capability types.
     public fun all_caps(): vector<CapType>{
-        let caps = Vector::singleton(upgrade_module_cap_type());
-        Vector::push_back(&mut caps, install_plugin_cap_type());
+        let caps = Vector::singleton(install_plugin_cap_type());
+        Vector::push_back(&mut caps, upgrade_module_cap_type());
+        Vector::push_back(&mut caps, modify_config_cap_type());
         Vector::push_back(&mut caps, withdraw_token_cap_type());
         Vector::push_back(&mut caps, withdraw_nft_cap_type());
         Vector::push_back(&mut caps, storage_cap_type());
@@ -113,6 +138,8 @@ module StarcoinFramework::GenesisDao{
     struct DaoInstallPluginCap<phantom DaoT, phantom PluginT> has drop{}
 
     struct DaoUpgradeModuleCap<phantom DaoT, phantom PluginT> has drop{}
+
+    struct DaoModifyConfigCap<phantom DaoT, phantom PluginT> has drop{}
   
     struct DaoWithdrawTokenCap<phantom DaoT, phantom PluginT> has drop{}
 
@@ -141,7 +168,7 @@ module StarcoinFramework::GenesisDao{
     }
 
     /// Create a dao with a exists Dao account
-    public fun create_dao<DaoT: store>(cap: DaoAccountCap, name: vector<u8>, ext: DaoT): DaoRootCap<DaoT> {
+    public fun create_dao<DaoT: store>(cap: DaoAccountCap, name: vector<u8>, ext: DaoT, config: DaoConfig): DaoRootCap<DaoT> {
         let dao_signer = DaoAccount::dao_signer(&cap);
 
         let dao_address = Signer::address_of(&dao_signer);
@@ -194,13 +221,17 @@ module StarcoinFramework::GenesisDao{
             cap: nft_update_cap,
         });
         
+        let config_modify_cap = Config::publish_new_config_with_capability(&dao_signer, config);
+        move_to(&dao_signer, DaoConfigModifyCapHolder{
+            cap: config_modify_cap,
+        });
         DaoRootCap<DaoT>{}
     }
   
     // Upgrade account to Dao account and create Dao
-    public fun upgrade_to_dao<DaoT: store>(sender:signer, name: vector<u8>, ext: DaoT): DaoRootCap<DaoT> {
+    public fun upgrade_to_dao<DaoT: store>(sender:signer, name: vector<u8>, ext: DaoT, config: DaoConfig): DaoRootCap<DaoT> {
         let cap = DaoAccount::upgrade_to_dao(sender);
-        create_dao<DaoT>(cap, name, ext)
+        create_dao<DaoT>(cap, name, ext, config)
     }
 
     /// Burn the root cap after init the Dao
@@ -396,6 +427,13 @@ module StarcoinFramework::GenesisDao{
     public fun acquire_upgrade_module_cap<DaoT:store, PluginT>(_witness: &PluginT): DaoUpgradeModuleCap<DaoT, PluginT> acquires InstalledPluginInfo{
         validate_cap<DaoT, PluginT>(upgrade_module_cap_type());
         DaoUpgradeModuleCap<DaoT, PluginT>{}
+    }
+
+    /// Acquire the modify config capability
+    /// _witness parameter ensures that the caller is the module which define PluginT
+    public fun acquire_modify_config_cap<DaoT:store, PluginT>(_witness: &PluginT): DaoModifyConfigCap<DaoT, PluginT> acquires InstalledPluginInfo{
+        validate_cap<DaoT, PluginT>(modify_config_cap_type());
+        DaoModifyConfigCap<DaoT, PluginT>{}
     }
 
     /// Acquires the withdraw Token capability 
@@ -603,36 +641,12 @@ module StarcoinFramework::GenesisDao{
         (0, Vector::empty())
     }
 
-    fun voting_period<DaoT>():u64{
-        //TODO
-        0
-    }
-
-    fun voting_delay<DaoT>():u64{
-        //TODO
-        0
-    }
-
-    fun min_action_delay<DaoT>(): u64{
-        //TODO
-        0
-    }
-
     fun generate_next_proposal_id<DaoT>(): u64{
         //TODO
         0
     }
 
-    fun quorum_votes<DaoT>(): u128{
-        //TODO we need get the 
-        0
-    }
-
-    fun min_proposal_deposit<DaoT>(): u128{
-        0
-    }
-
-    public fun cast_vote<DaoT: copy + drop + store>(
+    public fun cast_vote<DaoT: store>(
         sender: &signer,
         proposal_id: u64,
         sbt_proof: vector<u8>,
@@ -792,7 +806,124 @@ module StarcoinFramework::GenesisDao{
         let dao_address = dao_address<DaoT>();
         let global_proposals = borrow_global<GlobalProposals>(dao_address);
         *borrow_proposal(global_proposals, proposal_id)
-    } 
+    }
+
+
+    /// DaoConfig
+    /// ---------------------------------------------------
+
+      /// create a dao config
+    public fun new_dao_config(
+        voting_delay: u64,
+        voting_period: u64,
+        voting_quorum_rate: u8,
+        min_action_delay: u64,
+        min_proposal_deposit: u128,
+    ): DaoConfig{
+        assert!(voting_delay > 0, Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID));
+        assert!(voting_period > 0, Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID));
+        assert!(
+            voting_quorum_rate > 0 && voting_quorum_rate <= 100,
+            Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID),
+        );
+        assert!(min_action_delay > 0, Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID));
+        DaoConfig { voting_delay, voting_period, voting_quorum_rate, min_action_delay, min_proposal_deposit }
+    }
+
+    /// get default voting delay of the DAO.
+    public fun voting_delay<DaoT: store>(): u64 {
+        get_config<DaoT>().voting_delay
+    }
+
+    /// get the default voting period of the DAO.
+    public fun voting_period<DaoT: store>(): u64 {
+        get_config<DaoT>().voting_period
+    }
+
+    /// Quorum votes to make proposal pass.
+    public fun quorum_votes<DaoT: store>(): u128 {
+        let market_cap = Token::market_cap<DaoT>();
+        let rate = voting_quorum_rate<DaoT>();
+        let rate = (rate as u128);
+        market_cap * rate / 100
+    }
+    
+    /// Get the quorum rate in percent.
+    public fun voting_quorum_rate<DaoT: store>(): u8 {
+        get_config<DaoT>().voting_quorum_rate
+    }
+
+    /// Get the min action delay of the DAO.
+    public fun min_action_delay<DaoT: store>(): u64 {
+        get_config<DaoT>().min_action_delay
+    }
+
+    /// Get the min proposal deposit of the DAO.
+    fun min_proposal_deposit<DaoT: store>(): u128{
+        get_config<DaoT>().min_proposal_deposit
+    }
+
+    fun get_config<DaoT: store>(): DaoConfig {
+        let dao_address= dao_address<DaoT>();
+        Config::get_by_address<DaoConfig>(dao_address)
+    }
+
+    /// Update function, modify dao config.
+    public fun modify_dao_config<DaoT: store, PluginT>(
+        _cap: &mut DaoModifyConfigCap<DaoT, PluginT>,
+        new_config: DaoConfig,
+    ) acquires DaoConfigModifyCapHolder {
+        let modify_config_cap = &mut borrow_global_mut<DaoConfigModifyCapHolder>(
+            dao_address<DaoT>(),
+        ).cap;
+        //assert!(Config::account_address(cap) == Token::token_address<TokenT>(), Errors::invalid_argument(ERR_NOT_AUTHORIZED));
+        Config::set_with_capability<DaoConfig>(modify_config_cap, new_config);
+    }
+
+    /// set voting delay
+    public fun set_voting_delay(
+        config: &mut DaoConfig,
+        value: u64,
+    ) {
+        assert!(value > 0, Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID));
+        config.voting_delay = value;
+    }
+
+    /// set voting period
+    public fun set_voting_period<DaoT: store>(
+        config: &mut DaoConfig,
+        value: u64,
+    ) {
+        assert!(value > 0, Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID));
+        config.voting_period = value;
+    }
+
+    /// set voting quorum rate
+    public fun set_voting_quorum_rate<DaoT: store>(
+        config: &mut DaoConfig,
+        value: u8,
+    ) {
+        assert!(value <= 100 && value > 0, Errors::invalid_argument(ERR_QUORUM_RATE_INVALID));
+        config.voting_quorum_rate = value;
+    }
+
+    /// set min action delay
+    public fun set_min_action_delay<DaoT: store>(
+        config: &mut DaoConfig,
+        value: u64,
+    ) {
+        assert!(value > 0, Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID));
+        config.min_action_delay = value;
+    }
+
+    /// set min action delay
+    public fun set_min_proposal_deposit<DaoT: store>(
+        config: &mut DaoConfig,
+        value: u128,
+    ) {
+        config.min_proposal_deposit = value;
+    }
+
 
     /// Helpers
     /// ---------------------------------------------------
