@@ -15,9 +15,9 @@
 -  [Function `new_sparse_merkle_proof`](#0x1_StarcoinVerifier_new_sparse_merkle_proof)
 -  [Function `new_smt_node`](#0x1_StarcoinVerifier_new_smt_node)
 -  [Function `empty_smt_node`](#0x1_StarcoinVerifier_empty_smt_node)
--  [Function `verify_resource_state_proof`](#0x1_StarcoinVerifier_verify_resource_state_proof)
--  [Function `verify_sm_proof_by_key_value`](#0x1_StarcoinVerifier_verify_sm_proof_by_key_value)
--  [Function `compute_sm_root_by_path_and_node_hash`](#0x1_StarcoinVerifier_compute_sm_root_by_path_and_node_hash)
+-  [Function `verify_state_proof`](#0x1_StarcoinVerifier_verify_state_proof)
+-  [Function `verify_smp`](#0x1_StarcoinVerifier_verify_smp)
+-  [Function `compute_smp_root_by_path_and_node_hash`](#0x1_StarcoinVerifier_compute_smp_root_by_path_and_node_hash)
 -  [Function `placeholder`](#0x1_StarcoinVerifier_placeholder)
 -  [Function `create_literal_hash`](#0x1_StarcoinVerifier_create_literal_hash)
 -  [Function `hash_key`](#0x1_StarcoinVerifier_hash_key)
@@ -395,13 +395,13 @@
 
 </details>
 
-<a name="0x1_StarcoinVerifier_verify_resource_state_proof"></a>
+<a name="0x1_StarcoinVerifier_verify_state_proof"></a>
 
-## Function `verify_resource_state_proof`
+## Function `verify_state_proof`
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_resource_state_proof">verify_resource_state_proof</a>(state_proof: &<a href="StarcoinVerifier.md#0x1_StarcoinVerifier_StateProof">StarcoinVerifier::StateProof</a>, state_root: &vector&lt;u8&gt;, account_address: <b>address</b>, resource_struct_tag: &vector&lt;u8&gt;, state: &vector&lt;u8&gt;): bool
+<pre><code><b>public</b> <b>fun</b> <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_state_proof">verify_state_proof</a>(state_proof: &<a href="StarcoinVerifier.md#0x1_StarcoinVerifier_StateProof">StarcoinVerifier::StateProof</a>, state_root: &vector&lt;u8&gt;, account_address: <b>address</b>, resource_struct_tag: &vector&lt;u8&gt;, state: &vector&lt;u8&gt;): bool
 </code></pre>
 
 
@@ -410,7 +410,7 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_resource_state_proof">verify_resource_state_proof</a>(state_proof: &<a href="StarcoinVerifier.md#0x1_StarcoinVerifier_StateProof">StateProof</a>, state_root: &vector&lt;u8&gt;,
+<pre><code><b>public</b> <b>fun</b> <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_state_proof">verify_state_proof</a>(state_proof: &<a href="StarcoinVerifier.md#0x1_StarcoinVerifier_StateProof">StateProof</a>, state_root: &vector&lt;u8&gt;,
                                        account_address: <b>address</b>, resource_struct_tag: &vector&lt;u8&gt;,
                                        state: &vector&lt;u8&gt;): bool {
     <b>let</b> accountState: <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_AccountState">AccountState</a> = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_bcs_deserialize_account_state">bcs_deserialize_account_state</a>(&state_proof.account_state);
@@ -418,7 +418,7 @@
 
     // First, verify state for storage root.
     <b>let</b> storageRoot = <a href="Option.md#0x1_Option_borrow">Option::borrow</a>(<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&accountState.storage_roots, <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_ACCOUNT_STORAGE_INDEX_RESOURCE">ACCOUNT_STORAGE_INDEX_RESOURCE</a>));
-    <b>let</b> ok: bool = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_sm_proof_by_key_value">verify_sm_proof_by_key_value</a>(&state_proof.proof.siblings,
+    <b>let</b> ok: bool = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_smp">verify_smp</a>(&state_proof.proof.siblings,
         &state_proof.proof.leaf,
         storageRoot,
         resource_struct_tag, // resource <b>struct</b> tag <a href="BCS.md#0x1_BCS">BCS</a> serialized <b>as</b> key
@@ -428,7 +428,7 @@
     };
 
     // Then, verify account state for <b>global</b> state root.
-    ok = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_sm_proof_by_key_value">verify_sm_proof_by_key_value</a>(&state_proof.account_proof.siblings,
+    ok = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_smp">verify_smp</a>(&state_proof.account_proof.siblings,
         &state_proof.account_proof.leaf,
         state_root,
         &<a href="BCS.md#0x1_BCS_to_bytes">BCS::to_bytes</a>&lt;<b>address</b>&gt;(&account_address), // account <b>address</b> <b>as</b> key
@@ -442,14 +442,14 @@
 
 </details>
 
-<a name="0x1_StarcoinVerifier_verify_sm_proof_by_key_value"></a>
+<a name="0x1_StarcoinVerifier_verify_smp"></a>
 
-## Function `verify_sm_proof_by_key_value`
+## Function `verify_smp`
 
 Verify sparse merkle proof by key and value.
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_sm_proof_by_key_value">verify_sm_proof_by_key_value</a>(side_nodes: &vector&lt;vector&lt;u8&gt;&gt;, leaf_data: &<a href="StarcoinVerifier.md#0x1_StarcoinVerifier_SMTNode">StarcoinVerifier::SMTNode</a>, expected_root: &vector&lt;u8&gt;, key: &vector&lt;u8&gt;, value: &vector&lt;u8&gt;): bool
+<pre><code><b>public</b> <b>fun</b> <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_smp">verify_smp</a>(sibling_nodes: &vector&lt;vector&lt;u8&gt;&gt;, leaf_data: &<a href="StarcoinVerifier.md#0x1_StarcoinVerifier_SMTNode">StarcoinVerifier::SMTNode</a>, expected_root: &vector&lt;u8&gt;, key: &vector&lt;u8&gt;, value: &vector&lt;u8&gt;): bool
 </code></pre>
 
 
@@ -458,7 +458,7 @@ Verify sparse merkle proof by key and value.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_sm_proof_by_key_value">verify_sm_proof_by_key_value</a>(side_nodes: &vector&lt;vector&lt;u8&gt;&gt;, leaf_data: &<a href="StarcoinVerifier.md#0x1_StarcoinVerifier_SMTNode">SMTNode</a>, expected_root: &vector&lt;u8&gt;, key: &vector&lt;u8&gt;, value: &vector&lt;u8&gt;): bool {
+<pre><code><b>public</b> <b>fun</b> <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_smp">verify_smp</a>(sibling_nodes: &vector&lt;vector&lt;u8&gt;&gt;, leaf_data: &<a href="StarcoinVerifier.md#0x1_StarcoinVerifier_SMTNode">SMTNode</a>, expected_root: &vector&lt;u8&gt;, key: &vector&lt;u8&gt;, value: &vector&lt;u8&gt;): bool {
     <b>let</b> path = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_hash_key">hash_key</a>(key);
     <b>let</b> current_hash: vector&lt;u8&gt;;
     <b>if</b> (*value == <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_DEFAULT_VALUE">DEFAULT_VALUE</a>) {
@@ -469,7 +469,7 @@ Verify sparse merkle proof by key and value.
             <b>if</b> (*&leaf_data.hash1 == *&path) {
                 <b>return</b> <b>false</b>
             };
-            <b>if</b> (!(<a href="StarcoinVerifier.md#0x1_StarcoinVerifier_count_common_prefix">count_common_prefix</a>(&leaf_data.hash1, &path) &gt;= <a href="Vector.md#0x1_Vector_length">Vector::length</a>(side_nodes))) {
+            <b>if</b> (!(<a href="StarcoinVerifier.md#0x1_StarcoinVerifier_count_common_prefix">count_common_prefix</a>(&leaf_data.hash1, &path) &gt;= <a href="Vector.md#0x1_Vector_length">Vector::length</a>(sibling_nodes))) {
                 <b>return</b> <b>false</b>
             };
             current_hash = <a href="StarcoinVerifier.md#0x1_StructuredHash_hash">StructuredHash::hash</a>(<a href="StarcoinVerifier.md#0x1_StarcoinVerifier_SPARSE_MERKLE_LEAF_NODE">SPARSE_MERKLE_LEAF_NODE</a>, leaf_data);
@@ -489,7 +489,7 @@ Verify sparse merkle proof by key and value.
         current_hash = <a href="StarcoinVerifier.md#0x1_StructuredHash_hash">StructuredHash::hash</a>(<a href="StarcoinVerifier.md#0x1_StarcoinVerifier_SPARSE_MERKLE_LEAF_NODE">SPARSE_MERKLE_LEAF_NODE</a>, leaf_data);
     };
 
-    current_hash = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_compute_sm_root_by_path_and_node_hash">compute_sm_root_by_path_and_node_hash</a>(side_nodes, &path, &current_hash);
+    current_hash = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_compute_smp_root_by_path_and_node_hash">compute_smp_root_by_path_and_node_hash</a>(sibling_nodes, &path, &current_hash);
     current_hash == *expected_root
 }
 </code></pre>
@@ -498,13 +498,13 @@ Verify sparse merkle proof by key and value.
 
 </details>
 
-<a name="0x1_StarcoinVerifier_compute_sm_root_by_path_and_node_hash"></a>
+<a name="0x1_StarcoinVerifier_compute_smp_root_by_path_and_node_hash"></a>
 
-## Function `compute_sm_root_by_path_and_node_hash`
+## Function `compute_smp_root_by_path_and_node_hash`
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_compute_sm_root_by_path_and_node_hash">compute_sm_root_by_path_and_node_hash</a>(side_nodes: &vector&lt;vector&lt;u8&gt;&gt;, path: &vector&lt;u8&gt;, node_hash: &vector&lt;u8&gt;): vector&lt;u8&gt;
+<pre><code><b>public</b> <b>fun</b> <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_compute_smp_root_by_path_and_node_hash">compute_smp_root_by_path_and_node_hash</a>(sibling_nodes: &vector&lt;vector&lt;u8&gt;&gt;, path: &vector&lt;u8&gt;, node_hash: &vector&lt;u8&gt;): vector&lt;u8&gt;
 </code></pre>
 
 
@@ -513,12 +513,12 @@ Verify sparse merkle proof by key and value.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_compute_sm_root_by_path_and_node_hash">compute_sm_root_by_path_and_node_hash</a>(side_nodes: &vector&lt;vector&lt;u8&gt;&gt;, path: &vector&lt;u8&gt;, node_hash: &vector&lt;u8&gt;): vector&lt;u8&gt; {
+<pre><code><b>public</b> <b>fun</b> <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_compute_smp_root_by_path_and_node_hash">compute_smp_root_by_path_and_node_hash</a>(sibling_nodes: &vector&lt;vector&lt;u8&gt;&gt;, path: &vector&lt;u8&gt;, node_hash: &vector&lt;u8&gt;): vector&lt;u8&gt; {
     <b>let</b> current_hash = *node_hash;
     <b>let</b> i = 0;
-    <b>let</b> proof_length = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(side_nodes);
+    <b>let</b> proof_length = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(sibling_nodes);
     <b>while</b> (i &lt; proof_length) {
-        <b>let</b> sibling = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(side_nodes, i);
+        <b>let</b> sibling = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(sibling_nodes, i);
         <b>let</b> bit = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_get_bit_at_from_msb">get_bit_at_from_msb</a>(path, proof_length - i - 1);
         <b>let</b> internal_node = <b>if</b> (bit) {
             <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_SMTNode">SMTNode</a>{ hash1: sibling, hash2: current_hash }
