@@ -46,10 +46,11 @@
 -  [Function `all_caps`](#0x1_GenesisDao_all_caps)
 -  [Function `create_dao`](#0x1_GenesisDao_create_dao)
 -  [Function `upgrade_to_dao`](#0x1_GenesisDao_upgrade_to_dao)
+-  [Function `burn_root_cap`](#0x1_GenesisDao_burn_root_cap)
 -  [Function `install_plugin_with_root_cap`](#0x1_GenesisDao_install_plugin_with_root_cap)
 -  [Function `install_plugin`](#0x1_GenesisDao_install_plugin)
 -  [Function `do_install_plugin`](#0x1_GenesisDao_do_install_plugin)
--  [Function `burn_root_cap`](#0x1_GenesisDao_burn_root_cap)
+-  [Function `submit_upgrade_plan`](#0x1_GenesisDao_submit_upgrade_plan)
 -  [Function `save`](#0x1_GenesisDao_save)
 -  [Function `take`](#0x1_GenesisDao_take)
 -  [Function `withdraw_token`](#0x1_GenesisDao_withdraw_token)
@@ -63,7 +64,9 @@
 -  [Function `is_member`](#0x1_GenesisDao_is_member)
 -  [Function `validate_cap`](#0x1_GenesisDao_validate_cap)
 -  [Function `acquire_install_plugin_cap`](#0x1_GenesisDao_acquire_install_plugin_cap)
+-  [Function `acquire_upgrade_module_cap`](#0x1_GenesisDao_acquire_upgrade_module_cap)
 -  [Function `acquire_withdraw_token_cap`](#0x1_GenesisDao_acquire_withdraw_token_cap)
+-  [Function `acquire_withdraw_nft_cap`](#0x1_GenesisDao_acquire_withdraw_nft_cap)
 -  [Function `acquire_storage_cap`](#0x1_GenesisDao_acquire_storage_cap)
 -  [Function `acquire_member_cap`](#0x1_GenesisDao_acquire_member_cap)
 -  [Function `acquire_proposal_cap`](#0x1_GenesisDao_acquire_proposal_cap)
@@ -1594,6 +1597,31 @@ Create a dao with a exists Dao account
 
 </details>
 
+<a name="0x1_GenesisDao_burn_root_cap"></a>
+
+## Function `burn_root_cap`
+
+Burn the root cap after init the Dao
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_burn_root_cap">burn_root_cap</a>&lt;DaoT&gt;(cap: <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">GenesisDao::DaoRootCap</a>&lt;DaoT&gt;)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_burn_root_cap">burn_root_cap</a>&lt;DaoT&gt;(cap: <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt;){
+    <b>let</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>{} = cap;
+}
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_GenesisDao_install_plugin_with_root_cap"></a>
 
 ## Function `install_plugin_with_root_cap`
@@ -1673,14 +1701,14 @@ Install plugin with DaoInstallPluginCap
 
 </details>
 
-<a name="0x1_GenesisDao_burn_root_cap"></a>
+<a name="0x1_GenesisDao_submit_upgrade_plan"></a>
 
-## Function `burn_root_cap`
+## Function `submit_upgrade_plan`
 
-Burn the root cap after init the Dao
+Submit upgrade module plan
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_burn_root_cap">burn_root_cap</a>&lt;DaoT&gt;(cap: <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">GenesisDao::DaoRootCap</a>&lt;DaoT&gt;)
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_submit_upgrade_plan">submit_upgrade_plan</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoUpgradeModuleCap">GenesisDao::DaoUpgradeModuleCap</a>&lt;DaoT, PluginT&gt;, package_hash: vector&lt;u8&gt;, version: u64, enforced: bool)
 </code></pre>
 
 
@@ -1689,8 +1717,9 @@ Burn the root cap after init the Dao
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_burn_root_cap">burn_root_cap</a>&lt;DaoT&gt;(cap: <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt;){
-    <b>let</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>{} = cap;
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_submit_upgrade_plan">submit_upgrade_plan</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoUpgradeModuleCap">DaoUpgradeModuleCap</a>&lt;DaoT, PluginT&gt;, package_hash: vector&lt;u8&gt;, version:u64, enforced: bool) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
+   <b>let</b> dao_account_cap = &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>&gt;(<a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;()).cap;
+   <a href="DaoAccount.md#0x1_DaoAccount_submit_upgrade_plan">DaoAccount::submit_upgrade_plan</a>(dao_account_cap, package_hash, version, enforced);
 }
 </code></pre>
 
@@ -1947,6 +1976,7 @@ Revoke membership with cap
 
 ## Function `increase_member_sbt`
 
+Increment the member SBT
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_increase_member_sbt">increase_member_sbt</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">GenesisDao::DaoMemberCap</a>&lt;DaoT, PluginT&gt;, member_addr: <b>address</b>, amount: u128)
@@ -1982,6 +2012,7 @@ Revoke membership with cap
 
 ## Function `decrease_member_sbt`
 
+Decrement the member SBT
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_decrease_member_sbt">decrease_member_sbt</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">GenesisDao::DaoMemberCap</a>&lt;DaoT, PluginT&gt;, member_addr: <b>address</b>, amount: u128)
@@ -2072,6 +2103,8 @@ Check the <code>member_addr</code> account is a member of DaoT
 
 ## Function `acquire_install_plugin_cap`
 
+Acquire the installed plugin capability
+_witness parameter ensures that the caller is the module which define PluginT
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_install_plugin_cap">acquire_install_plugin_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoInstallPluginCap">GenesisDao::DaoInstallPluginCap</a>&lt;DaoT, PluginT&gt;
@@ -2093,12 +2126,39 @@ Check the <code>member_addr</code> account is a member of DaoT
 
 </details>
 
+<a name="0x1_GenesisDao_acquire_upgrade_module_cap"></a>
+
+## Function `acquire_upgrade_module_cap`
+
+Acquire the upgrade module capability
+_witness parameter ensures that the caller is the module which define PluginT
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_upgrade_module_cap">acquire_upgrade_module_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoUpgradeModuleCap">GenesisDao::DaoUpgradeModuleCap</a>&lt;DaoT, PluginT&gt;
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_upgrade_module_cap">acquire_upgrade_module_cap</a>&lt;DaoT:store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoUpgradeModuleCap">DaoUpgradeModuleCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+    <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_upgrade_module_cap_type">upgrade_module_cap_type</a>());
+    <a href="GenesisDao.md#0x1_GenesisDao_DaoUpgradeModuleCap">DaoUpgradeModuleCap</a>&lt;DaoT, PluginT&gt;{}
+}
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_GenesisDao_acquire_withdraw_token_cap"></a>
 
 ## Function `acquire_withdraw_token_cap`
 
-Acquires the capability of withdraw Token from Dao for Plugin. The Plugin with appropriate capabilities.
-_witness parameter ensure the invoke is from the PluginT module.
+Acquires the withdraw Token capability
+_witness parameter ensures that the caller is the module which define PluginT
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_withdraw_token_cap">acquire_withdraw_token_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">GenesisDao::DaoWithdrawTokenCap</a>&lt;DaoT, PluginT&gt;
@@ -2120,11 +2180,39 @@ _witness parameter ensure the invoke is from the PluginT module.
 
 </details>
 
+<a name="0x1_GenesisDao_acquire_withdraw_nft_cap"></a>
+
+## Function `acquire_withdraw_nft_cap`
+
+Acquires the withdraw NFT capability
+_witness parameter ensures that the caller is the module which define PluginT
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_withdraw_nft_cap">acquire_withdraw_nft_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawNFTCap">GenesisDao::DaoWithdrawNFTCap</a>&lt;DaoT, PluginT&gt;
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_withdraw_nft_cap">acquire_withdraw_nft_cap</a>&lt;DaoT:store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawNFTCap">DaoWithdrawNFTCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+    <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_withdraw_nft_cap_type">withdraw_nft_cap_type</a>());
+    <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawNFTCap">DaoWithdrawNFTCap</a>&lt;DaoT, PluginT&gt;{}
+}
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_GenesisDao_acquire_storage_cap"></a>
 
 ## Function `acquire_storage_cap`
 
-Storage cap only suppport acquire from plugin
+Acquires the storage capability
+_witness parameter ensures that the caller is the module which define PluginT
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_storage_cap">acquire_storage_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoStorageCap">GenesisDao::DaoStorageCap</a>&lt;DaoT, PluginT&gt;
@@ -2150,6 +2238,8 @@ Storage cap only suppport acquire from plugin
 
 ## Function `acquire_member_cap`
 
+Acquires the membership capability
+_witness parameter ensures that the caller is the module which define PluginT
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_member_cap">acquire_member_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">GenesisDao::DaoMemberCap</a>&lt;DaoT, PluginT&gt;
@@ -2175,6 +2265,8 @@ Storage cap only suppport acquire from plugin
 
 ## Function `acquire_proposal_cap`
 
+Acquire the proposql capability
+_witness parameter ensures that the caller is the module which define PluginT
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_proposal_cap">acquire_proposal_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">GenesisDao::DaoProposalCap</a>&lt;DaoT, PluginT&gt;

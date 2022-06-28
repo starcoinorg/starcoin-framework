@@ -202,7 +202,15 @@ module StarcoinFramework::GenesisDao{
         let cap = DaoAccount::upgrade_to_dao(sender);
         create_dao<DaoT>(cap, name, ext)
     }
+
+    /// Burn the root cap after init the Dao
+    public fun burn_root_cap<DaoT>(cap: DaoRootCap<DaoT>){
+        let DaoRootCap{} = cap;
+    }
   
+    // Capability support function
+
+
     /// Install ToInstallPluginT to Dao and grant the capabilites
     public fun install_plugin_with_root_cap<DaoT:store, ToInstallPluginT>(_cap: &DaoRootCap<DaoT>, granted_caps: vector<CapType>) acquires DaoAccountCapHolder{
         do_install_plugin<DaoT, ToInstallPluginT>(granted_caps);
@@ -222,12 +230,13 @@ module StarcoinFramework::GenesisDao{
         });
     }
 
-    /// Burn the root cap after init the Dao
-    public fun burn_root_cap<DaoT>(cap: DaoRootCap<DaoT>){
-        let DaoRootCap{} = cap;
-    }
+    // ModuleUpgrade functions
 
-    // Capability support function
+    /// Submit upgrade module plan
+     public fun submit_upgrade_plan<DaoT: store, PluginT>(_cap: &DaoUpgradeModuleCap<DaoT, PluginT>, package_hash: vector<u8>, version:u64, enforced: bool) acquires DaoAccountCapHolder{
+        let dao_account_cap = &mut borrow_global_mut<DaoAccountCapHolder>(dao_address<DaoT>()).cap;
+        DaoAccount::submit_upgrade_plan(dao_account_cap, package_hash, version, enforced);
+     }
 
     // Storage capability function
 
@@ -326,6 +335,7 @@ module StarcoinFramework::GenesisDao{
         Token::burn_with_capability(token_burn_cap, sbt);
     }
 
+    /// Increment the member SBT
     public fun increase_member_sbt<DaoT:store, PluginT>(_cap: &DaoMemberCap<DaoT, PluginT>, member_addr: address, amount: u128) acquires DaoNFTUpdateCapHolder, DaoTokenMintCapHolder {
         assert!(is_member<DaoT>(member_addr), Errors::already_published(ERR_NOT_MEMBER));
         let dao_address = dao_address<DaoT>();
@@ -341,6 +351,7 @@ module StarcoinFramework::GenesisDao{
         IdentifierNFT::return_back(borrow_nft);
     }
 
+    /// Decrement the member SBT
     public fun decrease_member_sbt<DaoT:store, PluginT>(_cap: &DaoMemberCap<DaoT, PluginT>, member_addr: address, amount: u128) acquires DaoNFTUpdateCapHolder, DaoTokenBurnCapHolder {
         assert!(is_member<DaoT>(member_addr), Errors::already_published(ERR_NOT_MEMBER));
         let dao_address = dao_address<DaoT>();
@@ -360,8 +371,6 @@ module StarcoinFramework::GenesisDao{
     public fun is_member<DaoT: store>(member_addr: address): bool{
         IdentifierNFT::owns<DaoMember<DaoT>, DaoMemberBody<DaoT>>(member_addr)
     }
-
-    //TODO implement more function
     
     // Acquiring Capabilities
 
@@ -375,29 +384,50 @@ module StarcoinFramework::GenesisDao{
         }
     }
 
+    /// Acquire the installed plugin capability
+    /// _witness parameter ensures that the caller is the module which define PluginT
     public fun acquire_install_plugin_cap<DaoT:store, PluginT>(_witness: &PluginT): DaoInstallPluginCap<DaoT, PluginT> acquires InstalledPluginInfo{
         validate_cap<DaoT, PluginT>(install_plugin_cap_type());
         DaoInstallPluginCap<DaoT, PluginT>{}
     }
 
-    /// Acquires the capability of withdraw Token from Dao for Plugin. The Plugin with appropriate capabilities. 
-    /// _witness parameter ensure the invoke is from the PluginT module.
+    /// Acquire the upgrade module capability
+    /// _witness parameter ensures that the caller is the module which define PluginT
+    public fun acquire_upgrade_module_cap<DaoT:store, PluginT>(_witness: &PluginT): DaoUpgradeModuleCap<DaoT, PluginT> acquires InstalledPluginInfo{
+        validate_cap<DaoT, PluginT>(upgrade_module_cap_type());
+        DaoUpgradeModuleCap<DaoT, PluginT>{}
+    }
+
+    /// Acquires the withdraw Token capability 
+    /// _witness parameter ensures that the caller is the module which define PluginT
     public fun acquire_withdraw_token_cap<DaoT:store, PluginT>(_witness: &PluginT): DaoWithdrawTokenCap<DaoT, PluginT> acquires InstalledPluginInfo{
         validate_cap<DaoT, PluginT>(withdraw_token_cap_type());
         DaoWithdrawTokenCap<DaoT, PluginT>{}
     }
 
-    /// Storage cap only suppport acquire from plugin
+    /// Acquires the withdraw NFT capability
+    /// _witness parameter ensures that the caller is the module which define PluginT
+    public fun acquire_withdraw_nft_cap<DaoT:store, PluginT>(_witness: &PluginT): DaoWithdrawNFTCap<DaoT, PluginT> acquires InstalledPluginInfo{
+        validate_cap<DaoT, PluginT>(withdraw_nft_cap_type());
+        DaoWithdrawNFTCap<DaoT, PluginT>{}
+    }
+
+    /// Acquires the storage capability
+    /// _witness parameter ensures that the caller is the module which define PluginT
     public fun acquire_storage_cap<DaoT:store, PluginT>(_witness: &PluginT): DaoStorageCap<DaoT, PluginT> acquires InstalledPluginInfo{
         validate_cap<DaoT, PluginT>(storage_cap_type());
         DaoStorageCap<DaoT, PluginT>{}
     }
 
+    /// Acquires the membership capability
+    /// _witness parameter ensures that the caller is the module which define PluginT
     public fun acquire_member_cap<DaoT:store, PluginT>(_witness: &PluginT): DaoMemberCap<DaoT, PluginT> acquires InstalledPluginInfo{
         validate_cap<DaoT, PluginT>(member_cap_type());
         DaoMemberCap<DaoT, PluginT>{}
     }
 
+    /// Acquire the proposql capability
+    /// _witness parameter ensures that the caller is the module which define PluginT
     public fun acquire_proposal_cap<DaoT:store, PluginT>(_witness: &PluginT): DaoProposalCap<DaoT, PluginT> acquires InstalledPluginInfo{
         validate_cap<DaoT, PluginT>(proposal_cap_type());
         DaoProposalCap<DaoT, PluginT>{}
