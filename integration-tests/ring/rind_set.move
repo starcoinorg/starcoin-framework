@@ -8,16 +8,16 @@ use StarcoinFramework::Ring;
 use StarcoinFramework::Option;
 
 fun main() {
-    let ring = Ring::create_with_length<u64>(5);
+    let ring = Ring::create_with_capacity<u64>(5);
 
-    assert!(Ring::length<u64>(&ring) == 5, 1001);
+    assert!(Ring::capacity<u64>(&ring) == 5, 1001);
     let i = 0;
     while(i < 6){
         Ring::push<u64>(&mut ring , i);
         i = i + 1;
     };
 
-    assert!(*Option::borrow<u64>(Ring::borrow<u64>(&ring, 0)) == 5, 1002);
+    assert!(*Option::borrow<u64>(Ring::borrow<u64>(&ring, 5)) == 5, 1002);
     assert!(*Option::borrow<u64>(Ring::borrow<u64>(&ring, 1)) == 1, 1003);
     assert!(*Option::borrow<u64>(Ring::borrow<u64>(&ring, 2)) == 2, 1004);
     assert!(*Option::borrow<u64>(Ring::borrow<u64>(&ring, 3)) == 3, 1005);

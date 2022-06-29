@@ -6,9 +6,9 @@
 script {
 use StarcoinFramework::Ring;
 fun main() {
-    let ring = Ring::create_with_length<u64>(5);
+    let ring = Ring::create_with_capacity<u64>(5);
 
-    assert!(Ring::length<u64>(&ring) == 5, 1001);
+    assert!(Ring::capacity<u64>(&ring) == 5, 1001);
 
     _ = Ring::destroy<u64>( ring );
 }

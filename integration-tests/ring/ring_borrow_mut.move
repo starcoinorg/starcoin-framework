@@ -8,9 +8,9 @@ use StarcoinFramework::Ring;
 use StarcoinFramework::Option;
 
 fun main() {
-    let ring = Ring::create_with_length<u64>(5);
+    let ring = Ring::create_with_capacity<u64>(5);
 
-    assert!(Ring::length<u64>(&ring) == 5, 1001);
+    assert!(Ring::capacity<u64>(&ring) == 5, 1001);
     let i = 0;
     while(i < 5){
         let op_e = Ring::borrow_mut<u64>(&mut ring, i) ;
