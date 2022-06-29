@@ -19,7 +19,8 @@ The capacity is fixed at creation time, and the accessible index is constantly g
 -  [Function `destroy`](#0x1_Ring_destroy)
 
 
-<pre><code><b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
+<pre><code><b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
+<b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
 <b>use</b> <a href="Vector.md#0x1_Vector">0x1::Vector</a>;
 </code></pre>
 
@@ -74,16 +75,7 @@ The capacity is fixed at creation time, and the accessible index is constantly g
 The index into the vector is out of bounds
 
 
-<pre><code><b>const</b> <a href="Ring.md#0x1_Ring_ERROR_RING_INDEX_OUT_OF_BOUNDS">ERROR_RING_INDEX_OUT_OF_BOUNDS</a>: u64 = 10011;
-</code></pre>
-
-
-
-<a name="0x1_Ring_ERROR_RING_IS_EMPTY"></a>
-
-
-
-<pre><code><b>const</b> <a href="Ring.md#0x1_Ring_ERROR_RING_IS_EMPTY">ERROR_RING_IS_EMPTY</a>: u64 = 10010;
+<pre><code><b>const</b> <a href="Ring.md#0x1_Ring_ERROR_RING_INDEX_OUT_OF_BOUNDS">ERROR_RING_INDEX_OUT_OF_BOUNDS</a>: u64 = 101;
 </code></pre>
 
 
@@ -274,10 +266,10 @@ Return a reference to the <code>i</code>th element in the Ring <code>r</code>.
 <pre><code><b>public</b> <b>fun</b> <a href="Ring.md#0x1_Ring_borrow">borrow</a>&lt;Element&gt;(r:& <a href="Ring.md#0x1_Ring">Ring</a>&lt;Element&gt;, i: u64):&<a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;Element&gt;{
     <b>let</b> len = <a href="Ring.md#0x1_Ring_capacity">capacity</a>&lt;Element&gt;(r);
     <b>if</b>( r.external_index &gt; len - 1) {
-        <b>assert</b>!( i &gt;= r.external_index - len && i &lt; r.external_index , <a href="Ring.md#0x1_Ring_ERROR_RING_INDEX_OUT_OF_BOUNDS">ERROR_RING_INDEX_OUT_OF_BOUNDS</a>);
+        <b>assert</b>!( i &gt;= r.external_index - len && i &lt; r.external_index , <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Ring.md#0x1_Ring_ERROR_RING_INDEX_OUT_OF_BOUNDS">ERROR_RING_INDEX_OUT_OF_BOUNDS</a>));
         <a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&r.data, i % len)
     }<b>else</b> {
-        <b>assert</b>!( i &lt; len , <a href="Ring.md#0x1_Ring_ERROR_RING_INDEX_OUT_OF_BOUNDS">ERROR_RING_INDEX_OUT_OF_BOUNDS</a>);
+        <b>assert</b>!( i &lt; len , <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Ring.md#0x1_Ring_ERROR_RING_INDEX_OUT_OF_BOUNDS">ERROR_RING_INDEX_OUT_OF_BOUNDS</a>));
         <a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&r.data, i )
     }
 }
@@ -318,10 +310,10 @@ Return a mutable reference to the <code>i</code>th element in the Ring <code>r</
 <pre><code><b>public</b> <b>fun</b> <a href="Ring.md#0x1_Ring_borrow_mut">borrow_mut</a>&lt;Element&gt;(r: &<b>mut</b> <a href="Ring.md#0x1_Ring">Ring</a>&lt;Element&gt;, i: u64):&<b>mut</b> <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;Element&gt;{
     <b>let</b> len = <a href="Ring.md#0x1_Ring_capacity">capacity</a>&lt;Element&gt;(r);
     <b>if</b>( r.external_index &gt; len - 1) {
-        <b>assert</b>!( i &gt;= r.external_index - len && i &lt; r.external_index , <a href="Ring.md#0x1_Ring_ERROR_RING_INDEX_OUT_OF_BOUNDS">ERROR_RING_INDEX_OUT_OF_BOUNDS</a>);
+        <b>assert</b>!( i &gt;= r.external_index - len && i &lt; r.external_index , <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Ring.md#0x1_Ring_ERROR_RING_INDEX_OUT_OF_BOUNDS">ERROR_RING_INDEX_OUT_OF_BOUNDS</a>));
         <a href="Vector.md#0x1_Vector_borrow_mut">Vector::borrow_mut</a>(&<b>mut</b> r.data, i % len)
     }<b>else</b> {
-        <b>assert</b>!( i &lt; len , <a href="Ring.md#0x1_Ring_ERROR_RING_INDEX_OUT_OF_BOUNDS">ERROR_RING_INDEX_OUT_OF_BOUNDS</a>);
+        <b>assert</b>!( i &lt; len , <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Ring.md#0x1_Ring_ERROR_RING_INDEX_OUT_OF_BOUNDS">ERROR_RING_INDEX_OUT_OF_BOUNDS</a>));
         <a href="Vector.md#0x1_Vector_borrow_mut">Vector::borrow_mut</a>(&<b>mut</b> r.data, i )
     }
 

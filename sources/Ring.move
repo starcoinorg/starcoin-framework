@@ -6,10 +6,11 @@ module Ring {
 
     use StarcoinFramework::Vector;
     use StarcoinFramework::Option;
+    use StarcoinFramework::Errors;
 
 
     /// The index into the vector is out of bounds
-    const ERROR_RING_INDEX_OUT_OF_BOUNDS:u64 = 10011;
+    const ERROR_RING_INDEX_OUT_OF_BOUNDS:u64 = 101;
 
     struct Ring<Element> has store{
         data            : vector<Option::Option<Element>>,
@@ -76,10 +77,10 @@ module Ring {
     public fun borrow<Element>(r:& Ring<Element>, i: u64):&Option::Option<Element>{
         let len = capacity<Element>(r);
         if( r.external_index > len - 1) {
-            assert!( i >= r.external_index - len && i < r.external_index , ERROR_RING_INDEX_OUT_OF_BOUNDS);
+            assert!( i >= r.external_index - len && i < r.external_index , Errors::invalid_argument(ERROR_RING_INDEX_OUT_OF_BOUNDS));
             Vector::borrow(&r.data, i % len)
         }else {
-            assert!( i < len , ERROR_RING_INDEX_OUT_OF_BOUNDS);
+            assert!( i < len , Errors::invalid_argument(ERROR_RING_INDEX_OUT_OF_BOUNDS));
             Vector::borrow(&r.data, i )
         }
     }
@@ -92,10 +93,10 @@ module Ring {
     public fun borrow_mut<Element>(r: &mut Ring<Element>, i: u64):&mut Option::Option<Element>{
         let len = capacity<Element>(r);
         if( r.external_index > len - 1) {
-            assert!( i >= r.external_index - len && i < r.external_index , ERROR_RING_INDEX_OUT_OF_BOUNDS);
+            assert!( i >= r.external_index - len && i < r.external_index , Errors::invalid_argument(ERROR_RING_INDEX_OUT_OF_BOUNDS));
             Vector::borrow_mut(&mut r.data, i % len)
         }else {
-            assert!( i < len , ERROR_RING_INDEX_OUT_OF_BOUNDS);
+            assert!( i < len , Errors::invalid_argument(ERROR_RING_INDEX_OUT_OF_BOUNDS));
             Vector::borrow_mut(&mut r.data, i )
         }
         
