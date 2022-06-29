@@ -215,7 +215,7 @@
 Configuration of the DAO.
 
 
-<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a> <b>has</b> <b>copy</b>, drop, store
+<pre><code><b>struct</b> <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a> <b>has</b> <b>copy</b>, drop, store
 </code></pre>
 
 
@@ -896,7 +896,7 @@ Proposal data struct.
 review: it is safe to has <code><b>copy</b></code> and <code>drop</code>?
 
 
-<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a> <b>has</b> <b>copy</b>, drop, store
+<pre><code><b>struct</b> <a href="Proposal.md#0x1_Proposal">Proposal</a> <b>has</b> <b>copy</b>, drop, store
 </code></pre>
 
 
@@ -1658,7 +1658,7 @@ Create a dao with a exists Dao account
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_create_dao">create_dao</a>&lt;DaoT: store&gt;(cap: DaoAccountCap, name: vector&lt;u8&gt;, ext: DaoT, config: <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>): <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt; {
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_create_dao">create_dao</a>&lt;DaoT: store&gt;(cap: DaoAccountCap, name: vector&lt;u8&gt;, ext: DaoT, config: <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>): <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt; {
     <b>let</b> dao_signer = <a href="DaoAccount.md#0x1_DaoAccount_dao_signer">DaoAccount::dao_signer</a>(&cap);
 
     <b>let</b> dao_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&dao_signer);
@@ -1738,7 +1738,7 @@ Create a dao with a exists Dao account
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_upgrade_to_dao">upgrade_to_dao</a>&lt;DaoT: store&gt;(sender:signer, name: vector&lt;u8&gt;, ext: DaoT, config: <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>): <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt; {
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_upgrade_to_dao">upgrade_to_dao</a>&lt;DaoT: store&gt;(sender:signer, name: vector&lt;u8&gt;, ext: DaoT, config: <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>): <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt; {
     <b>let</b> cap = <a href="DaoAccount.md#0x1_DaoAccount_upgrade_to_dao">DaoAccount::upgrade_to_dao</a>(sender);
     <a href="GenesisDao.md#0x1_GenesisDao_create_dao">create_dao</a>&lt;DaoT&gt;(cap, name, ext, config)
 }
@@ -2599,7 +2599,7 @@ _witness parameter ensures that the caller is the module which define PluginT
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> votes, 0u128);
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> votes, 0u128);
 
-    <b>let</b> proposal = <a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a> {
+    <b>let</b> proposal = <a href="Proposal.md#0x1_Proposal">Proposal</a> {
         id: proposal_id,
         proposer,
         start_time,
@@ -2967,7 +2967,7 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_cast_vote">do_cast_vote</a>(proposal: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a>, vote: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Vote">Vote</a>){
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_cast_vote">do_cast_vote</a>(proposal: &<b>mut</b> <a href="Proposal.md#0x1_Proposal">Proposal</a>, vote: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Vote">Vote</a>){
     <b>let</b> weight = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&proposal.votes, (vote.choice <b>as</b> u64));
     <b>let</b> total_weight = <a href="Vector.md#0x1_Vector_borrow_mut">Vector::borrow_mut</a>(&<b>mut</b> proposal.votes, (vote.choice <b>as</b> u64));
     *total_weight = weight + vote.weight;
@@ -3018,7 +3018,7 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_state">proposal_state</a>(_proposal: &<a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a>):u8 {
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_state">proposal_state</a>(_proposal: &<a href="Proposal.md#0x1_Proposal">Proposal</a>):u8 {
     //TOOD
     0
 }
@@ -3043,7 +3043,7 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal_mut">borrow_proposal_mut</a>(_proposals: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, _proposal_id: u64): &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a>{
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal_mut">borrow_proposal_mut</a>(_proposals: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, _proposal_id: u64): &<b>mut</b> <a href="Proposal.md#0x1_Proposal">Proposal</a>{
     //TODO
     <b>abort</b> 0
 }
@@ -3068,7 +3068,7 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal">borrow_proposal</a>(proposals: &<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, proposal_id: u64): &<a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a> {
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal">borrow_proposal</a>(proposals: &<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, proposal_id: u64): &<a href="Proposal.md#0x1_Proposal">Proposal</a> {
     <b>let</b> i = 0;
     <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&proposals.proposals);
     <b>while</b>(i &lt; len){
@@ -3103,7 +3103,7 @@ Return a copy of Proposal
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal">proposal</a>&lt;DaoT&gt;(proposal_id: u64): <a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a> <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal">proposal</a>&lt;DaoT&gt;(proposal_id: u64): <a href="Proposal.md#0x1_Proposal">Proposal</a> <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>{
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
     <b>let</b> global_proposals = <b>borrow_global</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
     *<a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal">borrow_proposal</a>(global_proposals, proposal_id)
@@ -3138,7 +3138,7 @@ create a dao config
     voting_quorum_rate: u8,
     min_action_delay: u64,
     min_proposal_deposit: u128,
-): <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>{
+): <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>{
     <b>assert</b>!(voting_delay &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>));
     <b>assert</b>!(voting_period &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>));
     <b>assert</b>!(
@@ -3146,7 +3146,7 @@ create a dao config
         <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>),
     );
     <b>assert</b>!(min_action_delay &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>));
-    <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a> { voting_delay, voting_period, voting_quorum_rate, min_action_delay, min_proposal_deposit }
+    <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a> { voting_delay, voting_period, voting_quorum_rate, min_action_delay, min_proposal_deposit }
 }
 </code></pre>
 
@@ -3322,9 +3322,9 @@ Get the min proposal deposit of the DAO.
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_get_config">get_config</a>&lt;DaoT: store&gt;(): <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a> {
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_get_config">get_config</a>&lt;DaoT: store&gt;(): <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a> {
     <b>let</b> dao_address= <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
-    <a href="Config.md#0x1_Config_get_by_address">Config::get_by_address</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>&gt;(dao_address)
+    <a href="Config.md#0x1_Config_get_by_address">Config::get_by_address</a>&lt;<a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>&gt;(dao_address)
 }
 </code></pre>
 
@@ -3350,13 +3350,13 @@ Update function, modify dao config.
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_modify_dao_config">modify_dao_config</a>&lt;DaoT: store, PluginT&gt;(
     _cap: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoModifyConfigCap">DaoModifyConfigCap</a>&lt;DaoT, PluginT&gt;,
-    new_config: <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>,
+    new_config: <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>,
 ) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoConfigModifyCapHolder">DaoConfigModifyCapHolder</a> {
     <b>let</b> modify_config_cap = &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoConfigModifyCapHolder">DaoConfigModifyCapHolder</a>&gt;(
         <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;(),
     ).cap;
     //<b>assert</b>!(<a href="Config.md#0x1_Config_account_address">Config::account_address</a>(cap) == <a href="Token.md#0x1_Token_token_address">Token::token_address</a>&lt;TokenT&gt;(), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_AUTHORIZED">ERR_NOT_AUTHORIZED</a>));
-    <a href="Config.md#0x1_Config_set_with_capability">Config::set_with_capability</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>&gt;(modify_config_cap, new_config);
+    <a href="Config.md#0x1_Config_set_with_capability">Config::set_with_capability</a>&lt;<a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>&gt;(modify_config_cap, new_config);
 }
 </code></pre>
 
@@ -3381,7 +3381,7 @@ set voting delay
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_set_voting_delay">set_voting_delay</a>(
-    config: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>,
+    config: &<b>mut</b> <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>,
     value: u64,
 ) {
     <b>assert</b>!(value &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>));
@@ -3410,7 +3410,7 @@ set voting period
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_set_voting_period">set_voting_period</a>&lt;DaoT: store&gt;(
-    config: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>,
+    config: &<b>mut</b> <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>,
     value: u64,
 ) {
     <b>assert</b>!(value &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>));
@@ -3439,7 +3439,7 @@ set voting quorum rate
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_set_voting_quorum_rate">set_voting_quorum_rate</a>&lt;DaoT: store&gt;(
-    config: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>,
+    config: &<b>mut</b> <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>,
     value: u8,
 ) {
     <b>assert</b>!(value &lt;= 100 && value &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_QUORUM_RATE_INVALID">ERR_QUORUM_RATE_INVALID</a>));
@@ -3468,7 +3468,7 @@ set min action delay
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_set_min_action_delay">set_min_action_delay</a>&lt;DaoT: store&gt;(
-    config: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>,
+    config: &<b>mut</b> <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>,
     value: u64,
 ) {
     <b>assert</b>!(value &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>));
@@ -3497,7 +3497,7 @@ set min action delay
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_set_min_proposal_deposit">set_min_proposal_deposit</a>&lt;DaoT: store&gt;(
-    config: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>,
+    config: &<b>mut</b> <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>,
     value: u128,
 ) {
     config.min_proposal_deposit = value;

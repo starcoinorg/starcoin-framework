@@ -88,7 +88,7 @@ module StarcoinFramework::VoteStrategy{
 
 
     /// read snapshot vote value from state
-    public fun get_voting_power<DaoT: copy + drop + store>(_sender: address, _state_root: &vector<u8>, state: &vector<u8>) : u128 acquires StrategyMapping{
+    public fun get_voting_power<DaoT: store>(_sender: address, _state_root: &vector<u8>, state: &vector<u8>) : u128 acquires StrategyMapping{
         //TODO how to verify state ?
 
         let dao_addr = DaoRegistry::dao_address<DaoT>();
