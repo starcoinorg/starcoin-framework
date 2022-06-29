@@ -7,10 +7,11 @@ module XProposal {
     use StarcoinFramework::Event;
     use StarcoinFramework::Errors;
     use StarcoinFramework::Block;
+    use StarcoinFramework::Vector;
 
     use StarcoinFramework::XDaoConfig;
     use StarcoinFramework::DaoRegistry;
-    use StarcoinFramework::StarcoinVerifier;
+    use StarcoinFramework::StarcoinVerifier::{Self, StateProof};
     use StarcoinFramework::VoteStrategy;
 
 
@@ -334,6 +335,42 @@ module XProposal {
 //
 //    }
 
+    public fun new_state_proof_from_proof(account_proof_leaf: vector<vector<u8>>,
+                                      account_proof_siblings: vector<vector<u8>>,
+                                      account_state: vector<u8>,
+                                      account_state_proof_leaf: vector<vector<u8>>,
+                                      account_state_proof_siblings: vector<vector<u8>>): StateProof{
+        let (account_proof_leaf_hash1, account_proof_leaf_hash2) = (Vector::empty(), Vector::empty());
+        let (account_state_proof_leaf_hash1, account_state_proof_leaf_hash2) = (Vector::empty(), Vector::empty());
+
+        if (Vector::length(&account_proof_leaf) >= 2){
+            account_proof_leaf_hash1 = *Vector::borrow(&account_proof_leaf, 0);
+            account_proof_leaf_hash2 = *Vector::borrow(&account_proof_leaf, 1);
+        };
+        if (Vector::length(&account_state_proof_leaf) >= 2){
+            account_state_proof_leaf_hash1 = *Vector::borrow(&account_state_proof_leaf, 0);
+            account_state_proof_leaf_hash2 = *Vector::borrow(&account_state_proof_leaf, 1);
+        };
+        let proof = StarcoinVerifier::new_state_proof(
+            StarcoinVerifier::new_sparse_merkle_proof(
+                account_proof_siblings,
+                StarcoinVerifier::new_smt_node(
+                    account_proof_leaf_hash1,
+                    account_proof_leaf_hash2,
+                ),
+            ),
+            account_state,
+            StarcoinVerifier::new_sparse_merkle_proof(
+                account_state_proof_siblings,
+                StarcoinVerifier::new_smt_node(
+                    account_state_proof_leaf_hash1,
+                    account_state_proof_leaf_hash2,
+                ),
+            ),
+        );
+        proof
+    }
+
     /// votes for a proposal.
     /// User can only vote once, then the stake is locked,
     /// The voting power depends on the strategy of the proposal configuration and the user's token amount at the time of the snapshot
@@ -364,14 +401,14 @@ module XProposal {
 
         // verify snapshot state proof
         let user_address = Signer::address_of(signer);
-        let state_proof = StarcoinVerifier::new_state_proof_from_proof(account_proof_leaf, account_proof_siblings, account_state, account_state_proof_leaf, account_state_proof_siblings);
-        let verify = StarcoinVerifier::verify_resource_state_proof(&state_proof, &state_root, user_address, &resource_struct_tag, &state);
+        let state_proof = new_state_proof_from_proof(account_proof_leaf, account_proof_siblings, account_state, account_state_proof_leaf, account_state_proof_siblings);
+        let verify = StarcoinVerifier::verify_state_proof(&state_proof, &state_root, user_address, &resource_struct_tag, &state);
         assert!(verify, Errors::invalid_state(ERR_STATE_PROOF_VERIFY_INVALID));
         //TODO verify state_proof according to proposal snapshot blcok number and state root
 
         //TODO decode token value from account_state
         let vote_amount = VoteStrategy::get_voting_power<DaoT>(user_address, &state_root, &state);
-        let vote_weight = vote_amount;
+        let _vote_weight = vote_amount;
 
         let proposal = borrow_global_mut<Proposal<DaoT, ActionT>>(proposer_address);
         assert!(proposal.id == proposal_id, Errors::invalid_argument(ERR_PROPOSAL_ID_MISMATCH));

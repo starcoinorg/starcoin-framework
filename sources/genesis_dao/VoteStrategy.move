@@ -1,8 +1,10 @@
 module StarcoinFramework::VoteStrategy{
-    use StarcoinFramework::GenesisDao::{Self,  ProposalPluginCapability};
+//    use StarcoinFramework::GenesisDao::{Self,  ProposalPluginCapability};
     use StarcoinFramework::DaoRegistry;
-    use StarcoinFramework::BCSDeserializer;
+    use StarcoinFramework::BCS;
     use StarcoinFramework::Signer;
+    #[test_only]
+    use StarcoinFramework::Debug;
 
     const ERR_VOTING_STRATEGY_MAPPING_EXIST: u64 = 1451;
 
@@ -10,7 +12,7 @@ module StarcoinFramework::VoteStrategy{
     struct VoteStrategyPluginCapability has key{
     }
 
-    struct SBTStrategy<phantom DaoT: store> has Key {
+    struct SBTStrategy<phantom DaoT: store> has key {
         strategy_name: vector<u8>,
     //    0x6E9B83ADaA64f901048AE4bEAD8A1016/1/0x8c109349c6bd91411d6bc962e080c4a3::TokenSwapFarmBoost::UserInfo<0x00000000000000000000000000000001::STC::STC,0x8c109349c6bd91411d6bc962e080c4a3::STAR::STAR>
 //        access_path: vector<u8>,
@@ -25,7 +27,7 @@ module StarcoinFramework::VoteStrategy{
 //
 //    {"json":{"boost_factor":250,"locked_vetoken":{"token":{"value":47945205478}},"user_amount":0},"raw":"0xfa00000000000000e6c6c1290b000000000000000000000000000000000000000000000000000000"}
 
-    struct BalanceStrategy<phantom DaoT: store> has Key {
+    struct BalanceStrategy<phantom DaoT: store> has key {
         strategy_name: vector<u8>, //need by unique
         //        module_address: address,
 //        module_name: vector<u8>,
@@ -41,31 +43,32 @@ module StarcoinFramework::VoteStrategy{
 
 
     // TODO extend to List to support multi stragegies for a DAO ?
-    struct StrategyMapping<phantom DaoT: store> has key {
+    struct  StrategyMapping<phantom DaoT: store> has key {
         strategy_name: vector<u8>,
         access_path_suffix: vector<u8>, //  /1/0x8c109349c6bd91411d6bc962e080c4a3::TokenSwapFarmBoost::UserInfo<0x00000000000000000000000000000001::STC::STC,0x8c109349c6bd91411d6bc962e080c4a3::STAR::STAR>
         offset: u64, //sbt token deserialize offset in state bcs value
         weight_factor: u128, // How to abstract into a function ? default 1
     }
 
-    public fun install_vote_strategy_plugin<DaoT: copy + drop + store>(cap: &VoteStrategyPluginCapability, installer: &signer, strategy_name: vector<u8>, access_path_suffix:vector<u8>, offset: u64, weight_factor: u128){
+    public fun install_vote_strategy_plugin<DaoT: copy + drop + store>(_cap: &VoteStrategyPluginCapability, installer: &signer, strategy_name: vector<u8>, access_path_suffix:vector<u8>, offset: u64, weight_factor: u128){
         //TODO get dao_singer cap
-        let dao_signer;
+        let dao_signer = installer;
         let dao_addr = Signer::address_of(dao_signer);
         //TODO support multi stragegies for a DAO ?
         assert!(exists<StrategyMapping<DaoT>>(dao_addr), ERR_VOTING_STRATEGY_MAPPING_EXIST);
 
         //TODO check vote strategy template
 
-        let strategy = StrategyMapping{
+        let strategy = StrategyMapping<DaoT>{
             strategy_name,
             access_path_suffix,
             offset,
             weight_factor,
         };
+        move_to(dao_signer, strategy);
     }
 
-    public fun uninstall_vote_strategy_plugin<DaoT: copy + drop + store>(cap: &VoteStrategyPluginCapability, uninstaller: &signer){
+    public fun uninstall_vote_strategy_plugin<DaoT: copy + drop + store>(_cap: &VoteStrategyPluginCapability, _uninstaller: &signer) acquires StrategyMapping {
 //        let dao_addr = Signer::address_of(dao_signer);
         let dao_addr = DaoRegistry::dao_address<DaoT>();
         let StrategyMapping {
@@ -73,7 +76,7 @@ module StarcoinFramework::VoteStrategy{
             access_path_suffix: _,
             offset: _,
             weight_factor: _,
-        } = move_from<StrategyMapping<DaoT>(dao_addr);
+        } = move_from<StrategyMapping<DaoT>>(dao_addr);
     }
 
 
@@ -85,7 +88,7 @@ module StarcoinFramework::VoteStrategy{
 
 
     /// read snapshot vote value from state
-    public fun get_voting_power<DaoT: copy + drop + store>(sender: address, state_root: &vector<u8>, state: &vector<u8>) : u128 acquires StrategyMapping{
+    public fun get_voting_power<DaoT: copy + drop + store>(_sender: address, _state_root: &vector<u8>, state: &vector<u8>) : u128 acquires StrategyMapping{
         //TODO how to verify state ?
 
         let dao_addr = DaoRegistry::dao_address<DaoT>();
@@ -94,10 +97,52 @@ module StarcoinFramework::VoteStrategy{
         //TODO check state with access_path_suffix ?
         let offset = strategy_mapping.offset;
 
-        let (value, _) = BCSDeserializer::deserialize_u128(state, offset);
+        let (value, _) = BCS::deserialize_u128(state, offset);
 
         //TODO calculate weight_factor
         value
+    }
+
+    #[test]
+    public fun test_from_deserialize_state_for_vestar_value() {
+        //      {"json":{"boost_factor":250,"locked_vetoken":{"token":{"value":47945205478}},"user_amount":0},"raw":"0xfa00000000000000e6c6c1290b000000000000000000000000000000000000000000000000000000"}
+        let bs = x"fa0000000000000038bc7e1800000000000000000000000000000000000000000000000000000000";
+        Debug::print<vector<u8>>(&bs);
+
+        let (r, offset) = BCS::deserialize_u64(&bs, 0);
+        Debug::print(&r);
+        Debug::print<u64>(&offset);
+        let (r, offset) = BCS::deserialize_u128(&bs, offset);
+        Debug::print(&r);
+        Debug::print<u64>(&offset);
+        let (r, offset) = BCS::deserialize_u128(&bs, offset);
+        Debug::print(&r);
+        Debug::print<u64>(&offset);
+    }
+
+    #[test]
+    //TODO
+    public fun test_from_deserialize_state_for_sbt_value() {
+        //      {"json":{"boost_factor":250,"locked_vetoken":{"token":{"value":47945205478}},"user_amount":0},"raw":"0xfa00000000000000e6c6c1290b000000000000000000000000000000000000000000000000000000"}
+        let bs = x"fa0000000000000038bc7e1800000000000000000000000000000000000000000000000000000000";
+        Debug::print<vector<u8>>(&bs);
+        let offset = 0;
+
+        let (r, offset) = BCS::deserialize_u128(&bs, offset);
+        Debug::print(&r);
+        Debug::print<u64>(&offset);
+    }
+
+    #[test]
+    public fun test_deserialize_state_for_balance() {
+        //      {"json":{"token":{"value":40350083678552}},"raw":"0x588167bcb22400000000000000000000"}
+        let bs = x"588167bcb22400000000000000000000";
+        Debug::print<vector<u8>>(&bs);
+        let offset = 0;
+
+        let (balance, offset) = BCS::deserialize_u128(&bs, offset);
+        Debug::print(&balance);
+        Debug::print<u64>(&offset);
     }
 
 }
