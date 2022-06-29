@@ -193,6 +193,9 @@ compiled_package_info:
       name: RewardConfig
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: Ring
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: SIP_2
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
