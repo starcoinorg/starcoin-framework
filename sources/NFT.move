@@ -556,13 +556,14 @@ module NFT {
 /// The NFT can not been transfer by owner.
 module IdentifierNFT {
     use StarcoinFramework::Option::{Self, Option};
-    use StarcoinFramework::NFT::{Self, NFT, MintCapability, BurnCapability};
+    use StarcoinFramework::NFT::{Self, NFT, MintCapability, BurnCapability, UpdateCapability};
     use StarcoinFramework::Signer;
     use StarcoinFramework::Errors;
 
     const ERR_NFT_EXISTS: u64 = 101;
     const ERR_NFT_NOT_EXISTS: u64 = 102;
     const ERR_NFT_NOT_ACCEPT: u64 = 103;
+    const ERR_BORROW_ADDR_NOT_SAME: u64 = 104;
 
     spec module {
         pragma verify = false;
@@ -570,6 +571,12 @@ module IdentifierNFT {
 
     struct IdentifierNFT<NFTMeta: copy + store + drop, NFTBody: store> has key {
         nft: Option<NFT<NFTMeta, NFTBody>>,
+    }
+    
+    //Used when borrowing or returning NFT, note: there is no drop ability, it must be returned after borrowing
+    struct BorrowNFT<NFTMeta: copy + store + drop, NFTBody: store>  {
+        nft: NFT<NFTMeta, NFTBody>,
+        addr:address
     }
 
     /// Check the `owner` is prepared with IdentifierNFT for accept the NFT<NFTMeta, NFTBody>
@@ -630,6 +637,51 @@ module IdentifierNFT {
         assert!(Option::is_some(&id_nft.nft), Errors::not_published(ERR_NFT_NOT_EXISTS));
         let IdentifierNFT { nft } = id_nft;
         Option::destroy_some(nft)
+    }
+
+    /// borrow_out the NFT<NFTMeta, NFTBody> from owner.
+    public fun borrow_out<NFTMeta: copy + store + drop, NFTBody: store>(
+        _cap: &mut UpdateCapability<NFTMeta>, 
+        owner: address
+    ):  BorrowNFT<NFTMeta, NFTBody>  acquires IdentifierNFT {
+        assert!(exists<IdentifierNFT<NFTMeta, NFTBody>>(owner), Errors::not_published(ERR_NFT_NOT_EXISTS));
+
+        let id_nft = borrow_global_mut<IdentifierNFT<NFTMeta, NFTBody>>(owner);
+        assert!(Option::is_some(&id_nft.nft), Errors::not_published(ERR_NFT_NOT_EXISTS));
+
+        let  nft = Option::extract(&mut id_nft.nft);
+
+        BorrowNFT{ 
+            nft : nft,
+            addr: owner
+        }
+    }
+
+    /// return_back the NFT<NFTMeta, NFTBody>  to  owner.
+    public fun return_back<NFTMeta: copy + store + drop, NFTBody: store>(
+        borrownft: BorrowNFT<NFTMeta, NFTBody>, 
+    )  acquires IdentifierNFT {
+
+        let BorrowNFT{
+            nft: nft,
+            addr: owner
+        } = borrownft ;
+        assert!(exists<IdentifierNFT<NFTMeta, NFTBody>>(owner), Errors::not_published(ERR_NFT_NOT_EXISTS));
+        let id_nft = borrow_global_mut<IdentifierNFT<NFTMeta, NFTBody>>(owner);
+    
+        Option::fill(&mut id_nft.nft , nft)
+    }
+
+    public fun borrow_nft<NFTMeta: copy + store + drop, NFTBody: store>(
+        borrownft:&BorrowNFT<NFTMeta, NFTBody>
+    ) : & NFT<NFTMeta, NFTBody> {
+       & borrownft.nft
+    }
+
+    public fun borrow_nft_mut <NFTMeta: copy + store + drop, NFTBody: store>(
+        borrownft:&mut BorrowNFT<NFTMeta, NFTBody>
+    ) : &mut NFT<NFTMeta, NFTBody> {
+       &mut borrownft.nft
     }
 
     /// Check `owner` is owns the IdentifierNFT<NFTMeta, NFTBody>

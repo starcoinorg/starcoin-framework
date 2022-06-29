@@ -58,6 +58,12 @@ compiled_package_info:
       name: Dao
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: DaoAccount
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: DaoRegistry
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: DaoVoteScripts
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -91,6 +97,9 @@ compiled_package_info:
       name: Genesis
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: GenesisDao
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: GenesisNFT
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -109,10 +118,16 @@ compiled_package_info:
       name: IdentifierNFTScripts
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: InstallPluginProposalPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: LanguageVersion
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: Math
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: MemberProposalPlugin
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: MerkleNFTDistributor
@@ -196,7 +211,13 @@ compiled_package_info:
       name: Signer
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: StarcoinVerifier
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: StdlibUpgradeScripts
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: StructuredHash
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: Timestamp
@@ -247,12 +268,18 @@ compiled_package_info:
       name: Version
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: VoteUtil
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: XDao
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: YieldFarming
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: E9144252A3E50D7727A1E1A0DD76494580D66DD68C46C9625CC1042087A4D5BE
+  source_digest: A5A04C26FC21C486FDEB34644DA266B0947D6550F33D6EE31F242F13F5BD297C
   build_flags:
     dev_mode: false
     test_mode: false
