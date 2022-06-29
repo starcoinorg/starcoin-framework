@@ -12,16 +12,31 @@ module StarcoinFramework::VoteStrategy{
     struct VoteStrategyPluginCapability has key{
     }
 
+    //    https://stcscan.io/barnard/address/0x6bfb460477adf9dd0455d3de2fc7f211/resources
+    //    0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>, 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>>
+    //    {"json":{"nft":{"vec":[{"base_meta":{"description":"0x","image":"0x","image_data":"0x69616d67655f64617461","name":"0x64616f313031"},"body":{"sbt":{"value":100}},"creator":"0x6bfb460477adf9dd0455d3de2fc7f211","id":1,"type_meta":{"id":1111}}]}},"raw":"0x016bfb460477adf9dd0455d3de2fc7f21101000000000000000664616f313031000a69616d67655f6461746100570400000000000064000000000000000000000000000000"}
     struct SBTStrategy<phantom DaoT: store> has key {
         strategy_name: vector<u8>,
-    //    0x6E9B83ADaA64f901048AE4bEAD8A1016/1/0x8c109349c6bd91411d6bc962e080c4a3::TokenSwapFarmBoost::UserInfo<0x00000000000000000000000000000001::STC::STC,0x8c109349c6bd91411d6bc962e080c4a3::STAR::STAR>
-//        access_path: vector<u8>,
-    // access_path_suffix = user_address + access_path_suffix
+        //    0x6E9B83ADaA64f901048AE4bEAD8A1016/1/0x8c109349c6bd91411d6bc962e080c4a3::TokenSwapFarmBoost::UserInfo<0x00000000000000000000000000000001::STC::STC,0x8c109349c6bd91411d6bc962e080c4a3::STAR::STAR>
+        //        access_path: vector<u8>,
+        // access_path_suffix = user_address + access_path_suffix
         access_path_suffix: vector<u8>, //  /1/0x8c109349c6bd91411d6bc962e080c4a3::TokenSwapFarmBoost::UserInfo<0x00000000000000000000000000000001::STC::STC,0x8c109349c6bd91411d6bc962e080c4a3::STAR::STAR>
         //            state: vector<u8>,
         offset: u64, //sbt token deserialize offset in state bcs value
         weight_factor: u128, // How to abstract into a function ?  default 1
     }
+
+    // veSTAR value
+    //    struct SBTStrategy<phantom DaoT: store> has Key {
+    //        strategy_name: vector<u8>,
+    //        //    0x6E9B83ADaA64f901048AE4bEAD8A1016/1/0x8c109349c6bd91411d6bc962e080c4a3::TokenSwapFarmBoost::UserInfo<0x00000000000000000000000000000001::STC::STC,0x8c109349c6bd91411d6bc962e080c4a3::STAR::STAR>
+    //        //        access_path: vector<u8>,
+    //        // access_path_suffix = user_address + access_path_suffix
+    //        access_path_suffix: vector<u8>, //  /1/0x8c109349c6bd91411d6bc962e080c4a3::TokenSwapFarmBoost::UserInfo<0x00000000000000000000000000000001::STC::STC,0x8c109349c6bd91411d6bc962e080c4a3::STAR::STAR>
+    //        //            state: vector<u8>,
+    //        offset: u64, //sbt token deserialize offset in state bcs value
+    //        weight_factor: u128, // How to abstract into a function ?  default 1
+    //    }
 
 //    0x8c109349c6bd91411d6bc962e080c4a3::TokenSwapFarmBoost::UserInfo<0x00000000000000000000000000000001::STC::STC, 0x8c109349c6bd91411d6bc962e080c4a3::STAR::STAR>
 //
