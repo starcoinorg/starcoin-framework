@@ -67,7 +67,7 @@ this is a demo Dao, this module should generate by template
 sender should create a DaoAccount before call this entry function.
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="XDao.md#0x1_XDao_create_dao">create_dao</a>(sender: signer)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="XDao.md#0x1_XDao_create_dao">create_dao</a>(sender: signer, voting_delay: u64, voting_period: u64, voting_quorum_rate: u8, min_action_delay: u64, min_proposal_deposit: u128)
 </code></pre>
 
 
@@ -76,11 +76,22 @@ sender should create a DaoAccount before call this entry function.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="XDao.md#0x1_XDao_create_dao">create_dao</a>(sender: signer){
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="XDao.md#0x1_XDao_create_dao">create_dao</a>(sender: signer, voting_delay: u64,
+    voting_period: u64,
+    voting_quorum_rate: u8,
+    min_action_delay: u64,
+    min_proposal_deposit: u128,){
     //TODO check dao account <b>address</b> equals <b>module</b> <b>address</b>.
     <b>let</b> dao_account_cap = <a href="DaoAccount.md#0x1_DaoAccount_extract_dao_account_cap">DaoAccount::extract_dao_account_cap</a>(&sender);
     //<b>let</b> dao_signer = <a href="DaoAccount.md#0x1_DaoAccount_dao_signer">DaoAccount::dao_signer</a>(&dao_account_cap);
-    <b>let</b> dao_root_cap = <a href="GenesisDao.md#0x1_GenesisDao_create_dao">GenesisDao::create_dao</a>&lt;<a href="XDao.md#0x1_XDao_X">X</a>&gt;(dao_account_cap, *&<a href="XDao.md#0x1_XDao_NAME">NAME</a>, <a href="XDao.md#0x1_XDao_X">X</a>{});
+    <b>let</b> config = <a href="GenesisDao.md#0x1_GenesisDao_new_dao_config">GenesisDao::new_dao_config</a>(
+        voting_delay,
+        voting_period,
+        voting_quorum_rate,
+        min_action_delay,
+        min_proposal_deposit,
+    );
+    <b>let</b> dao_root_cap = <a href="GenesisDao.md#0x1_GenesisDao_create_dao">GenesisDao::create_dao</a>&lt;<a href="XDao.md#0x1_XDao_X">X</a>&gt;(dao_account_cap, *&<a href="XDao.md#0x1_XDao_NAME">NAME</a>, <a href="XDao.md#0x1_XDao_X">X</a>{}, config);
 
     <a href="GenesisDao.md#0x1_GenesisDao_install_plugin_with_root_cap">GenesisDao::install_plugin_with_root_cap</a>&lt;<a href="XDao.md#0x1_XDao_X">X</a>, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">InstallPluginProposalPlugin</a>&gt;(&dao_root_cap, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_required_caps">InstallPluginProposalPlugin::required_caps</a>());
     <a href="GenesisDao.md#0x1_GenesisDao_install_plugin_with_root_cap">GenesisDao::install_plugin_with_root_cap</a>&lt;<a href="XDao.md#0x1_XDao_X">X</a>, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>&gt;(&dao_root_cap, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_required_caps">MemberProposalPlugin::required_caps</a>());

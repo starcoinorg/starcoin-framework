@@ -6,7 +6,8 @@
 
 
 -  [Resource `DaoAccount`](#0x1_DaoAccount_DaoAccount)
--  [Resource `DaoAccountCapability`](#0x1_DaoAccount_DaoAccountCapability)
+-  [Resource `DaoAccountCap`](#0x1_DaoAccount_DaoAccountCap)
+-  [Constants](#@Constants_0)
 -  [Function `create_account`](#0x1_DaoAccount_create_account)
 -  [Function `create_account_entry`](#0x1_DaoAccount_create_account_entry)
 -  [Function `extract_dao_account_cap`](#0x1_DaoAccount_extract_dao_account_cap)
@@ -14,9 +15,11 @@
 -  [Function `dao_signer`](#0x1_DaoAccount_dao_signer)
 -  [Function `submit_upgrade_plan`](#0x1_DaoAccount_submit_upgrade_plan)
 -  [Function `submit_upgrade_plan_entry`](#0x1_DaoAccount_submit_upgrade_plan_entry)
+-  [Module Specification](#@Module_Specification_1)
 
 
 <pre><code><b>use</b> <a href="Account.md#0x1_Account">0x1::Account</a>;
+<b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
 <b>use</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager">0x1::PackageTxnManager</a>;
 <b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
@@ -58,14 +61,14 @@ DaoAccount
 
 </details>
 
-<a name="0x1_DaoAccount_DaoAccountCapability"></a>
+<a name="0x1_DaoAccount_DaoAccountCap"></a>
 
-## Resource `DaoAccountCapability`
+## Resource `DaoAccountCap`
 
 This capability can control the Dao account
 
 
-<pre><code><b>struct</b> <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccountCapability</a> <b>has</b> store, key
+<pre><code><b>struct</b> <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a> <b>has</b> store, key
 </code></pre>
 
 
@@ -86,15 +89,29 @@ This capability can control the Dao account
 
 </details>
 
+<a name="@Constants_0"></a>
+
+## Constants
+
+
+<a name="0x1_DaoAccount_ERR_ACCOUNT_CAP_NOT_EXISTS"></a>
+
+
+
+<pre><code><b>const</b> <a href="DaoAccount.md#0x1_DaoAccount_ERR_ACCOUNT_CAP_NOT_EXISTS">ERR_ACCOUNT_CAP_NOT_EXISTS</a>: u64 = 100;
+</code></pre>
+
+
+
 <a name="0x1_DaoAccount_create_account"></a>
 
 ## Function `create_account`
 
-Create a new Dao Account and return DaoAccountCapability
-Dao Account is a delegate account, the <code>creator</code> has the <code><a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccountCapability</a></code>
+Create a new Dao Account and return DaoAccountCap
+Dao Account is a delegate account, the <code>creator</code> has the <code><a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a></code>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_create_account">create_account</a>(creator: &signer): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccount::DaoAccountCapability</a>
+<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_create_account">create_account</a>(creator: &signer): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccount::DaoAccountCap</a>
 </code></pre>
 
 
@@ -103,7 +120,7 @@ Dao Account is a delegate account, the <code>creator</code> has the <code><a hre
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_create_account">create_account</a>(creator: &signer): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccountCapability</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_create_account">create_account</a>(creator: &signer): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a> {
     <b>let</b> (dao_address, signer_cap) = <a href="Account.md#0x1_Account_create_delegate_account">Account::create_delegate_account</a>(creator);
     <b>let</b> dao_signer = <a href="Account.md#0x1_Account_create_signer_with_cap">Account::create_signer_with_cap</a>(&signer_cap);
 
@@ -112,7 +129,7 @@ Dao Account is a delegate account, the <code>creator</code> has the <code><a hre
         dao_address,
         signer_cap: signer_cap,
     });
-    <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccountCapability</a>{
+    <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a>{
         dao_address
     }
 }
@@ -126,7 +143,7 @@ Dao Account is a delegate account, the <code>creator</code> has the <code><a hre
 
 ## Function `create_account_entry`
 
-Entry function for create dao account, the <code><a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccountCapability</a></code> save to the <code>creator</code> account
+Entry function for create dao account, the <code><a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a></code> save to the <code>creator</code> account
 
 
 <pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_create_account_entry">create_account_entry</a>(sender: signer)
@@ -154,7 +171,7 @@ Entry function for create dao account, the <code><a href="DaoAccount.md#0x1_DaoA
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_extract_dao_account_cap">extract_dao_account_cap</a>(sender: &signer): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccount::DaoAccountCapability</a>
+<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_extract_dao_account_cap">extract_dao_account_cap</a>(sender: &signer): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccount::DaoAccountCap</a>
 </code></pre>
 
 
@@ -163,9 +180,10 @@ Entry function for create dao account, the <code><a href="DaoAccount.md#0x1_DaoA
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_extract_dao_account_cap">extract_dao_account_cap</a>(sender: &signer): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccountCapability</a> <b>acquires</b> <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccountCapability</a>{
-    //TODO check
-    <b>move_from</b>&lt;<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccountCapability</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender))
+<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_extract_dao_account_cap">extract_dao_account_cap</a>(sender: &signer): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a> <b>acquires</b> <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a> {
+    <b>let</b> sender_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
+    <b>assert</b>!(<b>exists</b>&lt;<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a>&gt;(sender_addr), <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="DaoAccount.md#0x1_DaoAccount_ERR_ACCOUNT_CAP_NOT_EXISTS">ERR_ACCOUNT_CAP_NOT_EXISTS</a>));
+    <b>move_from</b>&lt;<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a>&gt;(sender_addr)
 }
 </code></pre>
 
@@ -180,7 +198,7 @@ Entry function for create dao account, the <code><a href="DaoAccount.md#0x1_DaoA
 Upgrade <code>sender</code> account to Dao account
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_upgrade_to_dao">upgrade_to_dao</a>(sender: signer): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccount::DaoAccountCapability</a>
+<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_upgrade_to_dao">upgrade_to_dao</a>(sender: signer): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccount::DaoAccountCap</a>
 </code></pre>
 
 
@@ -189,7 +207,7 @@ Upgrade <code>sender</code> account to Dao account
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_upgrade_to_dao">upgrade_to_dao</a>(sender: signer): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccountCapability</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_upgrade_to_dao">upgrade_to_dao</a>(sender: signer): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a> {
     //TODO <b>assert</b> sender not <a href="Dao.md#0x1_Dao">Dao</a>
     <b>let</b> signer_cap = <a href="Account.md#0x1_Account_remove_signer_capability">Account::remove_signer_capability</a>(&sender);
     //TODO check the account upgrade_strategy
@@ -199,7 +217,7 @@ Upgrade <code>sender</code> account to Dao account
         dao_address,
         signer_cap: signer_cap,
     });
-    <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccountCapability</a>{
+    <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a>{
         dao_address
     }
 }
@@ -213,10 +231,10 @@ Upgrade <code>sender</code> account to Dao account
 
 ## Function `dao_signer`
 
-Provide a function to create signer with <code><a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccountCapability</a></code>
+Provide a function to create signer with <code><a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a></code>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_dao_signer">dao_signer</a>(cap: &<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccount::DaoAccountCapability</a>): signer
+<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_dao_signer">dao_signer</a>(cap: &<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccount::DaoAccountCap</a>): signer
 </code></pre>
 
 
@@ -225,7 +243,7 @@ Provide a function to create signer with <code><a href="DaoAccount.md#0x1_DaoAcc
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_dao_signer">dao_signer</a>(cap: &<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccountCapability</a>): signer <b>acquires</b> <a href="DaoAccount.md#0x1_DaoAccount">DaoAccount</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_dao_signer">dao_signer</a>(cap: &<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a>): signer <b>acquires</b> <a href="DaoAccount.md#0x1_DaoAccount">DaoAccount</a> {
     <b>let</b> signer_cap = &<b>borrow_global</b>&lt;<a href="DaoAccount.md#0x1_DaoAccount">DaoAccount</a>&gt;(cap.dao_address).signer_cap;
     <a href="Account.md#0x1_Account_create_signer_with_cap">Account::create_signer_with_cap</a>(signer_cap)
 }
@@ -240,10 +258,10 @@ Provide a function to create signer with <code><a href="DaoAccount.md#0x1_DaoAcc
 ## Function `submit_upgrade_plan`
 
 Sumbit upgrade plan for the Dao account
-This function is a shortcut for create signer with DaoAccountCapability and invoke <code><a href="PackageTxnManager.md#0x1_PackageTxnManager_submit_upgrade_plan_v2">PackageTxnManager::submit_upgrade_plan_v2</a></code>
+This function is a shortcut for create signer with DaoAccountCap and invoke <code><a href="PackageTxnManager.md#0x1_PackageTxnManager_submit_upgrade_plan_v2">PackageTxnManager::submit_upgrade_plan_v2</a></code>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_submit_upgrade_plan">submit_upgrade_plan</a>(cap: &<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccount::DaoAccountCapability</a>, package_hash: vector&lt;u8&gt;, version: u64, enforced: bool)
+<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_submit_upgrade_plan">submit_upgrade_plan</a>(cap: &<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccount::DaoAccountCap</a>, package_hash: vector&lt;u8&gt;, version: u64, enforced: bool)
 </code></pre>
 
 
@@ -252,7 +270,7 @@ This function is a shortcut for create signer with DaoAccountCapability and invo
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_submit_upgrade_plan">submit_upgrade_plan</a>(cap: &<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccountCapability</a>, package_hash: vector&lt;u8&gt;, version:u64, enforced: bool) <b>acquires</b> <a href="DaoAccount.md#0x1_DaoAccount">DaoAccount</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_submit_upgrade_plan">submit_upgrade_plan</a>(cap: &<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a>, package_hash: vector&lt;u8&gt;, version:u64, enforced: bool) <b>acquires</b> <a href="DaoAccount.md#0x1_DaoAccount">DaoAccount</a>{
     <b>let</b> dao_signer = <a href="DaoAccount.md#0x1_DaoAccount_dao_signer">dao_signer</a>(cap);
     <a href="PackageTxnManager.md#0x1_PackageTxnManager_submit_upgrade_plan_v2">PackageTxnManager::submit_upgrade_plan_v2</a>(&dao_signer, package_hash, version, enforced);
 }
@@ -266,7 +284,7 @@ This function is a shortcut for create signer with DaoAccountCapability and invo
 
 ## Function `submit_upgrade_plan_entry`
 
-Sumbit upgrade plan for the Dao account, sender must hold the <code><a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccountCapability</a></code>
+Sumbit upgrade plan for the Dao account, sender must hold the <code><a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a></code>
 
 
 <pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_submit_upgrade_plan_entry">submit_upgrade_plan_entry</a>(sender: signer, package_hash: vector&lt;u8&gt;, version: u64, enforced: bool)
@@ -278,9 +296,9 @@ Sumbit upgrade plan for the Dao account, sender must hold the <code><a href="Dao
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_submit_upgrade_plan_entry">submit_upgrade_plan_entry</a>(sender: signer, package_hash: vector&lt;u8&gt;, version:u64, enforced: bool) <b>acquires</b> <a href="DaoAccount.md#0x1_DaoAccount">DaoAccount</a>, <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccountCapability</a>{
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_submit_upgrade_plan_entry">submit_upgrade_plan_entry</a>(sender: signer, package_hash: vector&lt;u8&gt;, version:u64, enforced: bool) <b>acquires</b> <a href="DaoAccount.md#0x1_DaoAccount">DaoAccount</a>, <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a>{
     <b>let</b> addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&sender);
-    <b>let</b> cap = <b>borrow_global</b>&lt;<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCapability">DaoAccountCapability</a>&gt;(addr);
+    <b>let</b> cap = <b>borrow_global</b>&lt;<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a>&gt;(addr);
     <a href="DaoAccount.md#0x1_DaoAccount_submit_upgrade_plan">submit_upgrade_plan</a>(cap, package_hash, version, enforced)
 }
 </code></pre>
@@ -288,3 +306,13 @@ Sumbit upgrade plan for the Dao account, sender must hold the <code><a href="Dao
 
 
 </details>
+
+<a name="@Module_Specification_1"></a>
+
+## Module Specification
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+<b>pragma</b> aborts_if_is_strict = <b>true</b>;
+</code></pre>
