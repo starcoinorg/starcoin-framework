@@ -1,7 +1,7 @@
 address StarcoinFramework {
 
-///A ring-shaped container that can hold any type, indexed from 0
-///The capacity is fixed at creation time, and the accessible index is constantly growing
+/// A ring-shaped container that can hold any type, indexed from 0
+/// The capacity is fixed at creation time, and the accessible index is constantly growing
 module Ring {
 
     use StarcoinFramework::Vector;
