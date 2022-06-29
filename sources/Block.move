@@ -8,6 +8,9 @@ module Block {
     use StarcoinFramework::Errors;
     use StarcoinFramework::Vector;
     use StarcoinFramework::Option;
+    use StarcoinFramework::Ring;
+    use StarcoinFramework::BCS;
+    use StarcoinFramework::Hash;
 
     spec module {
         pragma verify;
@@ -49,8 +52,8 @@ module Block {
     //
     struct Checkpoints has key{
         //all checkpoints
-        checkpoints: vector<Checkpoint>,
-        index:u64,
+        checkpoints : Ring::Ring<Checkpoint>,
+        index       : u64
     }
 
     const EBLOCK_NUMBER_MISMATCH  : u64 = 17;
@@ -141,105 +144,119 @@ module Block {
     }
 
     public fun checkpoints_init(account: &signer){
-        let i = 0;
-        let checkpoints = Vector::empty<Checkpoint>();
-        while( i < CHECKPOINT_LENGTHR){
-            Vector::push_back<Checkpoint>(&mut checkpoints,Checkpoint {
-                block_number: 0,
-                block_hash  : Vector::empty<u8>(),
-                state_root  : Option::none<vector<u8>>(),
-            });
-            i = i + 1;
-        };
+        let checkpoints = Ring::create_with_capacity<Checkpoint>(CHECKPOINT_LENGTHR);
         move_to<Checkpoints>(
             account,
             Checkpoints {
-               checkpoints: checkpoints,
-               index: 0
-            });
+               checkpoints  : checkpoints,
+               index        : 0
+        });
     }
 
     spec checkpoints_init {
         aborts_if exists<Checkpoints>(CoreAddresses::GENESIS_ADDRESS());
     }
 
-    public fun checkpoint(account: &signer) acquires BlockMetadata, Checkpoints{
-        CoreAddresses::assert_genesis_address(account);
+    public fun checkpoint() acquires BlockMetadata, Checkpoints{
         let parent_block_number = get_current_block_number() - 1;
         let parent_block_hash   = get_parent_hash();
         
         let checkpoints = borrow_global_mut<Checkpoints>(CoreAddresses::GENESIS_ADDRESS());
-        checkpoints.index =  if( checkpoints.index + 1 >= CHECKPOINT_LENGTHR ){
-            0 
-        }else{
-            checkpoints.index + 1
-        };
+        checkpoints.index = checkpoints.index + 1;
 
-        let checkpoint = Vector::borrow_mut<Checkpoint>(&mut checkpoints.checkpoints , checkpoints.index);
-        checkpoint.block_number = parent_block_number; 
-        checkpoint.block_hash   = parent_block_hash;
-        checkpoint.state_root   = Option::none<vector<u8>>();
+        let op_checkpoint = Ring::push<Checkpoint>(&mut checkpoints.checkpoints, Checkpoint {
+                                                                block_number: parent_block_number,
+                                                                block_hash: parent_block_hash,
+                                                                state_root: Option::none<vector<u8>>(),
+                                                            } );
+        if(Option::is_some(&op_checkpoint)){
+            Option::destroy_some(op_checkpoint);
+        }else{
+            Option::destroy_none(op_checkpoint);
+        }
+        
     }
 
     public fun latest_state_root():(u64,vector<u8>) acquires  Checkpoints{
         let checkpoints = borrow_global<Checkpoints>(CoreAddresses::GENESIS_ADDRESS());
-        let len = Vector::length<Checkpoint>(&checkpoints.checkpoints);
+        let len = Ring::capacity<Checkpoint>(&checkpoints.checkpoints);
         let i = checkpoints.index ;
-        while( i <  len + checkpoints.index){
-            if( Option::is_some<vector<u8>>(&Vector::borrow(&checkpoints.checkpoints, i % len).state_root)) {
-                return (Vector::borrow(&checkpoints.checkpoints, i % len).block_number, *&Vector::borrow(&checkpoints.checkpoints, i % len).block_hash)
+        
+        if( i < len - 1){
+            let j = 0;
+            while(j <= i){
+                let op_checkpoint = Ring::borrow(&checkpoints.checkpoints, j);
+                if( Option::is_some(op_checkpoint) && Option::is_some(&Option::borrow(op_checkpoint).state_root) ) {
+                    return (Option::borrow(op_checkpoint).block_number, *&Option::borrow(op_checkpoint).block_hash)
+                };
+                j = j + 1;
             };
-
-            i = i + 1;
+        }else{
+            let j = i - ( len - 1);
+            while( j < i ){
+                let op_checkpoint = Ring::borrow(&checkpoints.checkpoints, j);
+                if( Option::is_some(op_checkpoint) && Option::is_some(&Option::borrow(op_checkpoint).state_root) ) {
+                    return (Option::borrow(op_checkpoint).block_number, *&Option::borrow(op_checkpoint).block_hash)
+                };
+                j = j + 1;
+            };
         };
+        
         abort Errors::invalid_state(ERROR_NO_HAVE_CHECKPOINT)
     }
 
-    
-    public fun update_state_root(account: &signer, header:vector<u8>) acquires  Checkpoints{
-        CoreAddresses::assert_genesis_address(account);
-        // header = x"20b82a2c11f2df62bf87c2933d0281e5fe47ea94d5f0049eec1485b682df29529abf17ac7d79010000000000000000000000000000000000000000000000000001002043609d52fdf8e4a253c62dfe127d33c77e1fb4afdefb306d46ec42e21b9103ae20414343554d554c41544f525f504c414345484f4c4445525f48415348000000002061125a3ab755b993d72accfea741f8537104db8e022098154f3a66d5c23e828d00000000000000000000000000000000000000000000000000000000000000000000000000b1ec37207564db97ee270a6c1f2f73fbf517dc0777a6119b7460b7eae2890d1ce504537b010000000000000000";
+    public fun update_state_root(header: vector<u8>)acquires  Checkpoints {
+        let prefix = b"STARCOIN::BlockHeader";
+        let prefix = Hash::sha3_256(prefix);
         
-        assert!(Vector::length<u8>(&header) == BLOCK_HEADER_LENGTH , Errors::invalid_argument(ERROR_NOT_BLOCK_HEADER));
-        let i = 1 ;
-        let block_hash = Vector::empty<u8>(); 
-        while(i < 33){
-            Vector::push_back<u8>(&mut block_hash , *Vector::borrow<u8>(&header , i));
-            i = i + 1;
-        };
-        i = 41 ;
-        let number_vec = Vector::empty<u8>(); 
-        while(i < 49){
-            Vector::push_back<u8>(&mut number_vec , *Vector::borrow<u8>(&header , i));
-            i = i + 1;
-        };
-        let number: u128 = 0;
-        let offset  = 0;
-        let i = 0;
-        while (i < 8) {
-            let byte = *Vector::borrow(&number_vec, offset + i);
-            let s = (i as u8) * 8;
-            number = number + ((byte as u128) << s);
-            i = i + 1;
-        };
 
-        let state_root = Vector::empty<u8>(); 
-        i = 133;
-        while(i < 165){
-            Vector::push_back<u8>(&mut state_root , *Vector::borrow<u8>(&header , i));
-            i = i + 1;
-        };
-        
+        let (_parent_hash,new_offset) = BCS::deserialize_bytes(&header,0);
+        let (_timestamp,new_offset) = BCS::deserialize_u64(&header,new_offset);
+        let (number,new_offset) = BCS::deserialize_u64(&header,new_offset);
+        let (_author,new_offset) = BCS::deserialize_address(&header,new_offset);
+        let (_author_auth_key,new_offset) = BCS::deserialize_option_bytes_vector(&header,new_offset);
+        let (_txn_accumulator_root,new_offset) = BCS::deserialize_bytes(&header,new_offset);
+        let (_block_accumulator_root,new_offset) = BCS::deserialize_bytes(&header,new_offset);
+        let (state_root,new_offset) = BCS::deserialize_bytes(&header,new_offset);
+        let (_gas_used,new_offset) = BCS::deserialize_u64(&header,new_offset);
+        let (_difficultyfirst,new_offset) = BCS::deserialize_u128(&header,new_offset);
+        let (_difficultylast,new_offset) = BCS::deserialize_u128(&header,new_offset);
+        let (_body_hash,new_offset) = BCS::deserialize_bytes(&header,new_offset);
+        let (_chain_id,new_offset) = BCS::deserialize_u8(&header,new_offset);
+        let (_nonce,new_offset) = BCS::deserialize_u32(&header,new_offset);
+        let (_extra1,new_offset) = BCS::deserialize_u8(&header,new_offset);
+        let (_extra2,new_offset) = BCS::deserialize_u8(&header,new_offset);
+        let (_extra3,new_offset) = BCS::deserialize_u8(&header,new_offset);
+        let (_extra4,_new_offset) = BCS::deserialize_u8(&header,new_offset);
+    
+        Vector::append(&mut prefix,header);
+        let block_hash = Hash::sha3_256(prefix);
         let checkpoints = borrow_global_mut<Checkpoints>(CoreAddresses::GENESIS_ADDRESS());
-        let len = Vector::length<Checkpoint>(&checkpoints.checkpoints);
+        let len = Ring::capacity<Checkpoint>(&checkpoints.checkpoints);
         let i = checkpoints.index ;
-        while( i <  len + checkpoints.index){
-            if( &Vector::borrow(&mut checkpoints.checkpoints, i % len).block_hash == &block_hash ) {
-                Vector::borrow_mut(&mut checkpoints.checkpoints, i % len).block_number = (number as u64 );
-                *Option::borrow_mut<vector<u8>>( &mut Vector::borrow_mut(&mut checkpoints.checkpoints, i % len).state_root) = state_root;
-                return
+        
+        if( i < len - 1){
+            let j = 0;
+            while(j <= i){
+                let op_checkpoint = Ring::borrow_mut(&mut checkpoints.checkpoints, j);
+                if( Option::is_some(op_checkpoint) && &Option::borrow(op_checkpoint).block_hash == &block_hash) {
+                    Option::borrow_mut<Checkpoint>(op_checkpoint).block_number = number ;
+                    *Option::borrow_mut(&mut Option::borrow_mut<Checkpoint>(op_checkpoint).state_root )= state_root;
+                    break
+                };
+                j = j + 1;
             };
-            i = i + 1 ; 
+        }else{
+            let j = i - ( len - 1);
+            while( j < i ){
+                let op_checkpoint = Ring::borrow_mut(&mut checkpoints.checkpoints, j);
+                if( Option::is_some(op_checkpoint) && &Option::borrow(op_checkpoint).block_hash == &block_hash) {
+                    Option::borrow_mut<Checkpoint>(op_checkpoint).block_number = number ;
+                    *Option::borrow_mut(&mut Option::borrow_mut<Checkpoint>(op_checkpoint).state_root )= state_root;
+                    break
+                };
+                j = j + 1;
+            };
         };
         
         abort Errors::invalid_state(ERROR_NO_HAVE_CHECKPOINT)
