@@ -211,7 +211,13 @@ compiled_package_info:
       name: Signer
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: StarcoinVerifier
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: StdlibUpgradeScripts
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: StructuredHash
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: Timestamp
