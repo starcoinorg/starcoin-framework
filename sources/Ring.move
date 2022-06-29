@@ -7,7 +7,7 @@ module Ring {
     use StarcoinFramework::Vector;
     use StarcoinFramework::Option;
 
-    const ERROR_RING_IS_EMPTY :u64 = 10010;
+
     /// The index into the vector is out of bounds
     const ERROR_RING_INDEX_OUT_OF_BOUNDS:u64 = 10011;
 
