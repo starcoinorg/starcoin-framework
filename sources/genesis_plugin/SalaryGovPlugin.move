@@ -108,17 +108,16 @@ module SalaryGovPlugin {
         assert!(GenesisDao::is_member<DaoT>(member), Errors::invalid_state(ERR_PLUGIN_USER_NOT_MEMBER));
 
         let amount = compute_salary_amount<DaoT, TokenT>(member);
+        //assert!(now_seconds() - receive.last_receive_time > config.period,
+        //    Errors::invalid_state(ERR_PLUGIN_RECEIVE_TIME_NOT_REACHED))
         receive_with_amount<DaoT, TokenT>(member, amount);
     }
 
     fun compute_salary_amount<DaoT: store, TokenT>(member: address): u128 acquires SalaryReceive {
-        let witness = SalaryGovPlugin{};
-        let member_cap =
-            GenesisDao::acquire_member_cap<DaoT, SalaryGovPlugin>(&witness);
-        let sbt = GenesisDao::query_sbt<DaoT, SalaryGovPlugin>(&member_cap, member);
-
+        let sbt_amount = GenesisDao::query_sbt<DaoT, SalaryGovPlugin>(member);
         let receive = borrow_global<SalaryReceive<DaoT, TokenT>>(member);
 
+        let witness = SalaryGovPlugin{};
         let storage_cap =
             GenesisDao::acquire_storage_cap<DaoT, SalaryGovPlugin>(&witness);
 
@@ -130,9 +129,7 @@ module SalaryGovPlugin {
             period,
         });
 
-        //assert!(now_seconds() - receive.last_receive_time > config.period,
-        //    Errors::invalid_state(ERR_PLUGIN_RECEIVE_TIME_NOT_REACHED))
-        sbt * ((Timestamp::now_seconds() - receive.last_receive_time) as u128) / (period as u128)
+        sbt_amount * ((Timestamp::now_seconds() - receive.last_receive_time) as u128) / (period as u128)
     }
 
     /// Calling by member that receive salary
