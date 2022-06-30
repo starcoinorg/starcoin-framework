@@ -62,7 +62,7 @@ module Block {
     const ERROR_NOT_BLOCK_HEADER  : u64 = 19;
     const ERROR_INTERVAL_TOO_LITTLE: u64 = 20;
     
-    const CHECKPOINT_LENGTHR      : u64 = 60;
+    const CHECKPOINT_LENGTH       : u64 = 60;
     const BLOCK_HEADER_LENGTH     : u64 = 247;
     const BLOCK_INTERVAL_NUMBER   : u64 = 5;
 
@@ -150,7 +150,7 @@ module Block {
     public fun checkpoints_init(account: &signer){
         CoreAddresses::assert_genesis_address(account);
         
-        let checkpoints = Ring::create_with_capacity<Checkpoint>(CHECKPOINT_LENGTHR);
+        let checkpoints = Ring::create_with_capacity<Checkpoint>(CHECKPOINT_LENGTH);
         move_to<Checkpoints>(
             account,
             Checkpoints {
@@ -193,28 +193,20 @@ module Block {
     public fun latest_state_root():(u64,vector<u8>) acquires  Checkpoints{
         let checkpoints = borrow_global<Checkpoints>(CoreAddresses::GENESIS_ADDRESS());
         let len = Ring::capacity<Checkpoint>(&checkpoints.checkpoints);
-        let i = checkpoints.index ;
-        
-        if( i < len - 1){
-            let j = 0;
-            while(j <= i){
-                let op_checkpoint = Ring::borrow(&checkpoints.checkpoints, j);
-                if( Option::is_some(op_checkpoint) && Option::is_some(&Option::borrow(op_checkpoint).state_root) ) {
-                    let state_root = Option::borrow(&Option::borrow(op_checkpoint).state_root);
-                    return (Option::borrow(op_checkpoint).block_number, *state_root)
-                };
-                j = j + 1;
-            };
+        let j = if(checkpoints.index < len - 1){
+            checkpoints.index 
         }else{
-            let j = i - ( len - 1);
-            while( j < i ){
-                let op_checkpoint = Ring::borrow(&checkpoints.checkpoints, j);
-                if( Option::is_some(op_checkpoint) && Option::is_some(&Option::borrow(op_checkpoint).state_root) ) {
-                    let state_root = Option::borrow(&Option::borrow(op_checkpoint).state_root);
-                    return (Option::borrow(op_checkpoint).block_number, *state_root)
-                };
-                j = j + 1;
+            len
+        };
+        let i = checkpoints.index;
+        while( j > 0){
+            let op_checkpoint = Ring::borrow(&checkpoints.checkpoints, i - 1 );
+            if( Option::is_some(op_checkpoint) && Option::is_some(&Option::borrow(op_checkpoint).state_root) ) {
+                let state_root = Option::borrow(&Option::borrow(op_checkpoint).state_root);
+                return (Option::borrow(op_checkpoint).block_number, *state_root)
             };
+            j = j - 1;
+            i = i - 1; 
         };
         
         abort Errors::invalid_state(ERROR_NO_HAVE_CHECKPOINT)
@@ -251,41 +243,27 @@ module Block {
         let block_hash = Hash::sha3_256(prefix);
         let checkpoints = borrow_global_mut<Checkpoints>(CoreAddresses::GENESIS_ADDRESS());
         let len = Ring::capacity<Checkpoint>(&checkpoints.checkpoints);
-        let i = checkpoints.index ;
-        
-        if( i < len - 1){
-            let j = 0;
-            while(j <= i){
-                let op_checkpoint = Ring::borrow_mut(&mut checkpoints.checkpoints, j);
-            
-                if( Option::is_some(op_checkpoint) && &Option::borrow(op_checkpoint).block_hash == &block_hash && Option::borrow_mut<Checkpoint>(op_checkpoint).block_number == number) {
-                    
-                    let op_state_root = &mut Option::borrow_mut<Checkpoint>(op_checkpoint).state_root;
-                    if(Option::is_some(op_state_root)){
-                        Option::swap(op_state_root, state_root);
-                    }else{
-                        Option::fill(op_state_root, state_root);
-                    };
-                    return
-                };
-                j = j + 1;
-            };
+        let j = if(checkpoints.index < len - 1){
+            checkpoints.index 
         }else{
-            let j = i - ( len - 1);
-            while( j < i ){
-                let op_checkpoint = Ring::borrow_mut(&mut checkpoints.checkpoints, j);
-                if( Option::is_some(op_checkpoint) && &Option::borrow(op_checkpoint).block_hash == &block_hash) {
-                    Option::borrow_mut<Checkpoint>(op_checkpoint).block_number = number ;
-                    let op_state_root = &mut Option::borrow_mut<Checkpoint>(op_checkpoint).state_root;
-                    if(Option::is_some(op_state_root)){
-                        Option::swap(op_state_root, state_root);
-                    }else{
-                        Option::fill(op_state_root, state_root);
-                    };
-                    return
+            len
+        };
+        let i = checkpoints.index;
+        while( j > 0){
+            let op_checkpoint = Ring::borrow_mut(&mut checkpoints.checkpoints, i - 1);
+            
+            if( Option::is_some(op_checkpoint) && &Option::borrow(op_checkpoint).block_hash == &block_hash && Option::borrow_mut<Checkpoint>(op_checkpoint).block_number == number) {
+                
+                let op_state_root = &mut Option::borrow_mut<Checkpoint>(op_checkpoint).state_root;
+                if(Option::is_some(op_state_root)){
+                    Option::swap(op_state_root, state_root);
+                }else{
+                    Option::fill(op_state_root, state_root);
                 };
-                j = j + 1;
+                return
             };
+            j = j - 1;
+            i = i - 1;
         };
         
         abort Errors::invalid_state(ERROR_NO_HAVE_CHECKPOINT)
@@ -354,41 +332,27 @@ module Block {
         let block_hash = Hash::sha3_256(prefix);
 
         let len = Ring::capacity<Checkpoint>(&checkpoints.checkpoints);
-        let i = checkpoints.index ;
-        
-        if( i < len - 1){
-            let j = 0;
-            while(j <= i){
-                let op_checkpoint = Ring::borrow_mut(&mut checkpoints.checkpoints, j);
-            
-                if( Option::is_some(op_checkpoint) && &Option::borrow(op_checkpoint).block_hash == &block_hash && Option::borrow_mut<Checkpoint>(op_checkpoint).block_number == number) {
-                    
-                    let op_state_root = &mut Option::borrow_mut<Checkpoint>(op_checkpoint).state_root;
-                    if(Option::is_some(op_state_root)){
-                        Option::swap(op_state_root, state_root);
-                    }else{
-                        Option::fill(op_state_root, state_root);
-                    };
-                    return
-                };
-                j = j + 1;
-            };
+        let j = if(checkpoints.index < len - 1){
+            checkpoints.index 
         }else{
-            let j = i - ( len - 1);
-            while( j < i ){
-                let op_checkpoint = Ring::borrow_mut(&mut checkpoints.checkpoints, j);
-                if( Option::is_some(op_checkpoint) && &Option::borrow(op_checkpoint).block_hash == &block_hash) {
-                    Option::borrow_mut<Checkpoint>(op_checkpoint).block_number = number ;
-                    let op_state_root = &mut Option::borrow_mut<Checkpoint>(op_checkpoint).state_root;
-                    if(Option::is_some(op_state_root)){
-                        Option::swap(op_state_root, state_root);
-                    }else{
-                        Option::fill(op_state_root, state_root);
-                    };
-                    return
+            len
+        };
+        let i = checkpoints.index;
+        while( j > 0){
+            let op_checkpoint = Ring::borrow_mut(&mut checkpoints.checkpoints, i - 1);
+            
+            if( Option::is_some(op_checkpoint) && &Option::borrow(op_checkpoint).block_hash == &block_hash && Option::borrow_mut<Checkpoint>(op_checkpoint).block_number == number) {
+                
+                let op_state_root = &mut Option::borrow_mut<Checkpoint>(op_checkpoint).state_root;
+                if(Option::is_some(op_state_root)){
+                    Option::swap(op_state_root, state_root);
+                }else{
+                    Option::fill(op_state_root, state_root);
                 };
-                j = j + 1;
+                return
             };
+            j = j - 1;
+            i = i - 1;
         };
         
         abort Errors::invalid_state(ERROR_NO_HAVE_CHECKPOINT)
@@ -399,7 +363,7 @@ module Block {
     }
 
     #[test]
-    fun latest_state_root_test(){
+    fun test_latest_state_root(){
         let header = x"20b82a2c11f2df62bf87c2933d0281e5fe47ea94d5f0049eec1485b682df29529abf17ac7d79010000000000000000000000000000000000000000000000000001002043609d52fdf8e4a253c62dfe127d33c77e1fb4afdefb306d46ec42e21b9103ae20414343554d554c41544f525f504c414345484f4c4445525f48415348000000002061125a3ab755b993d72accfea741f8537104db8e022098154f3a66d5c23e828d00000000000000000000000000000000000000000000000000000000000000000000000000b1ec37207564db97ee270a6c1f2f73fbf517dc0777a6119b7460b7eae2890d1ce504537b010000000000000000";
 
         let checkpoints = Checkpoints {
@@ -428,28 +392,20 @@ module Block {
     #[only_test]
     fun latest_state_root_test_function(checkpoints: &Checkpoints):(u64,vector<u8>){
         let len = Ring::capacity<Checkpoint>(&checkpoints.checkpoints);
-        let i = checkpoints.index ;
-        
-        if( i < len - 1){
-            let j = 0;
-            while(j <= i){
-                let op_checkpoint = Ring::borrow(&checkpoints.checkpoints, j);
-                if( Option::is_some(op_checkpoint) && Option::is_some(&Option::borrow(op_checkpoint).state_root) ) {
-                    let state_root = Option::borrow(&Option::borrow(op_checkpoint).state_root);
-                    return (Option::borrow(op_checkpoint).block_number, *state_root)
-                };
-                j = j + 1;
-            };
+        let j = if(checkpoints.index < len - 1){
+            checkpoints.index 
         }else{
-            let j = i - ( len - 1);
-            while( j < i ){
-                let op_checkpoint = Ring::borrow(&checkpoints.checkpoints, j);
-                if( Option::is_some(op_checkpoint) && Option::is_some(&Option::borrow(op_checkpoint).state_root) ) {
-                    let state_root = Option::borrow(&Option::borrow(op_checkpoint).state_root);
-                    return (Option::borrow(op_checkpoint).block_number, *state_root)
-                };
-                j = j + 1;
+            len
+        };
+        let i = checkpoints.index;
+        while( j > 0){
+            let op_checkpoint = Ring::borrow(&checkpoints.checkpoints, i - 1 );
+            if( Option::is_some(op_checkpoint) && Option::is_some(&Option::borrow(op_checkpoint).state_root) ) {
+                let state_root = Option::borrow(&Option::borrow(op_checkpoint).state_root);
+                return (Option::borrow(op_checkpoint).block_number, *state_root)
             };
+            j = j - 1;
+            i = i - 1; 
         };
         
         abort Errors::invalid_state(ERROR_NO_HAVE_CHECKPOINT)
@@ -458,7 +414,7 @@ module Block {
     spec latest_state_root_test_function {
         pragma verify = false;
     }
-    
+
     #[test]
     fun checkpoint_test(){
         let checkpoints = Checkpoints {
