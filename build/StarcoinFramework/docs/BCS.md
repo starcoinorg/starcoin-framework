@@ -880,7 +880,8 @@ Return the address of key bytes
 
 
 <pre><code><b>fun</b> <a href="BCS.md#0x1_BCS_get_n_bytes">get_n_bytes</a>(input: &vector&lt;u8&gt;, offset: u64, n: u64): vector&lt;u8&gt; {
-    <b>assert</b>!(((offset + n) &lt;= <a href="Vector.md#0x1_Vector_length">Vector::length</a>(input)) && (offset &lt; offset + n), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="BCS.md#0x1_BCS_ERR_INPUT_NOT_LARGE_ENOUGH">ERR_INPUT_NOT_LARGE_ENOUGH</a>));
+    // n will be zero when vector is empty
+    <b>assert</b>!(((offset + n) &lt;= <a href="Vector.md#0x1_Vector_length">Vector::length</a>(input)) && (offset &lt;= offset + n), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="BCS.md#0x1_BCS_ERR_INPUT_NOT_LARGE_ENOUGH">ERR_INPUT_NOT_LARGE_ENOUGH</a>));
     <b>let</b> i = 0;
     <b>let</b> content = <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>&lt;u8&gt;();
     <b>while</b> (i &lt; n) {
