@@ -201,6 +201,12 @@ Events emitted when new block generated.
 <dd>
 
 </dd>
+<dt>
+<code>last_number: u64</code>
+</dt>
+<dd>
+
+</dd>
 </dl>
 
 
@@ -220,6 +226,15 @@ Events emitted when new block generated.
 
 
 
+<a name="0x1_Block_BLOCK_INTERVAL_NUMBER"></a>
+
+
+
+<pre><code><b>const</b> <a href="Block.md#0x1_Block_BLOCK_INTERVAL_NUMBER">BLOCK_INTERVAL_NUMBER</a>: u64 = 5;
+</code></pre>
+
+
+
 <a name="0x1_Block_CHECKPOINT_LENGTHR"></a>
 
 
@@ -234,6 +249,15 @@ Events emitted when new block generated.
 
 
 <pre><code><b>const</b> <a href="Block.md#0x1_Block_EBLOCK_NUMBER_MISMATCH">EBLOCK_NUMBER_MISMATCH</a>: u64 = 17;
+</code></pre>
+
+
+
+<a name="0x1_Block_ERROR_INTERVAL_TOO_LITTLE"></a>
+
+
+
+<pre><code><b>const</b> <a href="Block.md#0x1_Block_ERROR_INTERVAL_TOO_LITTLE">ERROR_INTERVAL_TOO_LITTLE</a>: u64 = 20;
 </code></pre>
 
 
@@ -500,12 +524,15 @@ Call at block prologue
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_checkpoints_init">checkpoints_init</a>(account: &signer){
+    <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
+
     <b>let</b> checkpoints = <a href="Ring.md#0x1_Ring_create_with_capacity">Ring::create_with_capacity</a>&lt;<a href="Block.md#0x1_Block_Checkpoint">Checkpoint</a>&gt;(<a href="Block.md#0x1_Block_CHECKPOINT_LENGTHR">CHECKPOINT_LENGTHR</a>);
     <b>move_to</b>&lt;<a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a>&gt;(
         account,
         <a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a> {
            checkpoints  : checkpoints,
-           index        : 0
+           index        : 0,
+           last_number  : 0,
     });
 }
 </code></pre>
@@ -519,7 +546,7 @@ Call at block prologue
 
 
 
-<pre><code><b>aborts_if</b> <b>exists</b>&lt;<a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -546,8 +573,10 @@ Call at block prologue
     <b>let</b> parent_block_hash   = <a href="Block.md#0x1_Block_get_parent_hash">get_parent_hash</a>();
 
     <b>let</b> checkpoints = <b>borrow_global_mut</b>&lt;<a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
-    checkpoints.index = checkpoints.index + 1;
+    <b>assert</b>!(checkpoints.last_number + <a href="Block.md#0x1_Block_BLOCK_INTERVAL_NUMBER">BLOCK_INTERVAL_NUMBER</a> &lt;= parent_block_number || checkpoints.last_number == 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Block.md#0x1_Block_ERROR_INTERVAL_TOO_LITTLE">ERROR_INTERVAL_TOO_LITTLE</a>));
 
+    checkpoints.index = checkpoints.index + 1;
+    checkpoints.last_number = parent_block_number;
     <b>let</b> op_checkpoint = <a href="Ring.md#0x1_Ring_push">Ring::push</a>&lt;<a href="Block.md#0x1_Block_Checkpoint">Checkpoint</a>&gt;(&<b>mut</b> checkpoints.checkpoints, <a href="Block.md#0x1_Block_Checkpoint">Checkpoint</a> {
                                                             block_number: parent_block_number,
                                                             block_hash: parent_block_hash,
@@ -560,6 +589,18 @@ Call at block prologue
     }
 
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -614,6 +655,18 @@ Call at block prologue
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Block_update_state_root"></a>
 
 ## Function `update_state_root`
@@ -630,10 +683,8 @@ Call at block prologue
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_update_state_root">update_state_root</a>(header: vector&lt;u8&gt;)<b>acquires</b>  <a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a> {
-    //header = x"20b82a2c11f2df62bf87c2933d0281e5fe47ea94d5f0049eec1485b682df29529abf17ac7d79010000000000000000000000000000000000000000000000000001002043609d52fdf8e4a253c62dfe127d33c77e1fb4afdefb306d46ec42e21b9103ae20414343554d554c41544f525f504c414345484f4c4445525f48415348000000002061125a3ab755b993d72accfea741f8537104db8e022098154f3a66d5c23e828d00000000000000000000000000000000000000000000000000000000000000000000000000b1ec37207564db97ee270a6c1f2f73fbf517dc0777a6119b7460b7eae2890d1ce504537b010000000000000000";
     <b>let</b> prefix = b"STARCOIN::BlockHeader";
     <b>let</b> prefix = <a href="Hash.md#0x1_Hash_sha3_256">Hash::sha3_256</a>(prefix);
-
 
     <b>let</b> (_parent_hash,new_offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes">BCS::deserialize_bytes</a>(&header,0);
     <b>let</b> (_timestamp,new_offset) = <a href="BCS.md#0x1_BCS_deserialize_u64">BCS::deserialize_u64</a>(&header,new_offset);
@@ -686,6 +737,18 @@ Call at block prologue
 
     <b>abort</b> <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="Block.md#0x1_Block_ERROR_NO_HAVE_CHECKPOINT">ERROR_NO_HAVE_CHECKPOINT</a>)
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 

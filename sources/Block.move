@@ -53,14 +53,18 @@ module Block {
     struct Checkpoints has key{
         //all checkpoints
         checkpoints : Ring::Ring<Checkpoint>,
-        index       : u64
+        index       : u64,
+        last_number : u64,
     }
 
     const EBLOCK_NUMBER_MISMATCH  : u64 = 17;
     const ERROR_NO_HAVE_CHECKPOINT: u64 = 18;
     const ERROR_NOT_BLOCK_HEADER  : u64 = 19;
+    const ERROR_INTERVAL_TOO_LITTLE: u64 = 20;
+    
     const CHECKPOINT_LENGTHR      : u64 = 60;
     const BLOCK_HEADER_LENGTH     : u64 = 247;
+    const BLOCK_INTERVAL_NUMBER   : u64 = 5;
 
     /// This can only be invoked by the GENESIS_ACCOUNT at genesis
     public fun initialize(account: &signer, parent_hash: vector<u8>) {
@@ -144,17 +148,20 @@ module Block {
     }
 
     public fun checkpoints_init(account: &signer){
+        CoreAddresses::assert_genesis_address(account);
+        
         let checkpoints = Ring::create_with_capacity<Checkpoint>(CHECKPOINT_LENGTHR);
         move_to<Checkpoints>(
             account,
             Checkpoints {
                checkpoints  : checkpoints,
-               index        : 0
+               index        : 0,
+               last_number  : 0,
         });
     }
 
     spec checkpoints_init {
-        aborts_if exists<Checkpoints>(CoreAddresses::GENESIS_ADDRESS());
+        pragma verify = false;
     }
 
     public fun checkpoint() acquires BlockMetadata, Checkpoints{
@@ -162,8 +169,10 @@ module Block {
         let parent_block_hash   = get_parent_hash();
         
         let checkpoints = borrow_global_mut<Checkpoints>(CoreAddresses::GENESIS_ADDRESS());
-        checkpoints.index = checkpoints.index + 1;
+        assert!(checkpoints.last_number + BLOCK_INTERVAL_NUMBER <= parent_block_number || checkpoints.last_number == 0, Errors::invalid_argument(ERROR_INTERVAL_TOO_LITTLE));
 
+        checkpoints.index = checkpoints.index + 1;
+        checkpoints.last_number = parent_block_number;
         let op_checkpoint = Ring::push<Checkpoint>(&mut checkpoints.checkpoints, Checkpoint {
                                                                 block_number: parent_block_number,
                                                                 block_hash: parent_block_hash,
@@ -175,6 +184,10 @@ module Block {
             Option::destroy_none(op_checkpoint);
         }
         
+    }
+
+    spec checkpoint {
+        pragma verify = false;
     }
 
     public fun latest_state_root():(u64,vector<u8>) acquires  Checkpoints{
@@ -205,11 +218,14 @@ module Block {
         abort Errors::invalid_state(ERROR_NO_HAVE_CHECKPOINT)
     }
 
+    spec latest_state_root {
+        pragma verify = false;
+    }
+
     public fun update_state_root(header: vector<u8>)acquires  Checkpoints {
         let prefix = b"STARCOIN::BlockHeader";
         let prefix = Hash::sha3_256(prefix);
         
-
         let (_parent_hash,new_offset) = BCS::deserialize_bytes(&header,0);
         let (_timestamp,new_offset) = BCS::deserialize_u64(&header,new_offset);
         let (number,new_offset) = BCS::deserialize_u64(&header,new_offset);
@@ -260,6 +276,10 @@ module Block {
         };
         
         abort Errors::invalid_state(ERROR_NO_HAVE_CHECKPOINT)
+    }
+
+    spec update_state_root {
+        pragma verify = false;
     }
 }
 }
