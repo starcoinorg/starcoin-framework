@@ -467,14 +467,6 @@ module CheckpointScript {
         pragma verify = false;
     }
 
-    public (script) fun latest_state_root(_account: signer){
-        Block::latest_state_root();
-    }
-
-    spec latest_state_root {
-        pragma verify = false;
-    }
-
     public (script) fun update_state_root(_account: signer , header: vector<u8>){
         Block::update_state_root(header);
     }

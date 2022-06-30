@@ -5,7 +5,6 @@
 
 
 
--  [Function `checkpoint`](#0x1_CheckpointScript_checkpoint)
 -  [Function `latest_state_root`](#0x1_CheckpointScript_latest_state_root)
 -  [Function `update_state_root`](#0x1_CheckpointScript_update_state_root)
 
@@ -14,42 +13,6 @@
 </code></pre>
 
 
-
-<a name="0x1_CheckpointScript_checkpoint"></a>
-
-## Function `checkpoint`
-
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Block.md#0x1_CheckpointScript_checkpoint">checkpoint</a>(_account: signer)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="Block.md#0x1_CheckpointScript_checkpoint">checkpoint</a>(_account: signer){
-    <a href="Block.md#0x1_Block_checkpoint">Block::checkpoint</a>();
-}
-</code></pre>
-
-
-
-</details>
-
-<details>
-<summary>Specification</summary>
-
-
-
-<pre><code><b>pragma</b> verify = <b>false</b>;
-</code></pre>
-
-
-
-</details>
 
 <a name="0x1_CheckpointScript_latest_state_root"></a>
 
