@@ -281,5 +281,63 @@ module Block {
     spec update_state_root {
         pragma verify = false;
     }
+
+    #[test]
+    fun header_test(){
+        let prefix = b"STARCOIN::BlockHeader";
+        let prefix = Hash::sha3_256(prefix);
+        let header = x"20b82a2c11f2df62bf87c2933d0281e5fe47ea94d5f0049eec1485b682df29529abf17ac7d79010000000000000000000000000000000000000000000000000001002043609d52fdf8e4a253c62dfe127d33c77e1fb4afdefb306d46ec42e21b9103ae20414343554d554c41544f525f504c414345484f4c4445525f48415348000000002061125a3ab755b993d72accfea741f8537104db8e022098154f3a66d5c23e828d00000000000000000000000000000000000000000000000000000000000000000000000000b1ec37207564db97ee270a6c1f2f73fbf517dc0777a6119b7460b7eae2890d1ce504537b010000000000000000";
+        let (_parent_hash,new_offset) = BCS::deserialize_bytes(&header,0);
+        let (_timestamp,new_offset) = BCS::deserialize_u64(&header,new_offset);
+        let (number,new_offset) = BCS::deserialize_u64(&header,new_offset);
+        let (_author,new_offset) = BCS::deserialize_address(&header,new_offset);
+        let (_author_auth_key,new_offset) = BCS::deserialize_option_bytes_vector(&header,new_offset);
+        let (_txn_accumulator_root,new_offset) = BCS::deserialize_bytes(&header,new_offset);
+        let (_block_accumulator_root,new_offset) = BCS::deserialize_bytes(&header,new_offset);
+        let (state_root,new_offset) = BCS::deserialize_bytes(&header,new_offset);
+        let (_gas_used,new_offset) = BCS::deserialize_u64(&header,new_offset);
+        let (_difficultyfirst,new_offset) = BCS::deserialize_u128(&header,new_offset);
+        let (_difficultylast,new_offset) = BCS::deserialize_u128(&header,new_offset);
+        let (_body_hash,new_offset) = BCS::deserialize_bytes(&header,new_offset);
+        let (_chain_id,new_offset) = BCS::deserialize_u8(&header,new_offset);
+        let (_nonce,new_offset) = BCS::deserialize_u32(&header,new_offset);
+        let (_extra1,new_offset) = BCS::deserialize_u8(&header,new_offset);
+        let (_extra2,new_offset) = BCS::deserialize_u8(&header,new_offset);
+        let (_extra3,new_offset) = BCS::deserialize_u8(&header,new_offset);
+        let (_extra4,_new_offset) = BCS::deserialize_u8(&header,new_offset);
+    
+        Vector::append(&mut prefix,header);
+        let block_hash = Hash::sha3_256(prefix);
+        assert!(block_hash == x"80848150abee7e9a3bfe9542a019eb0b8b01f124b63b011f9c338fdb935c417d" ,1001);
+        assert!(number == 0,1002);
+        assert!(state_root == x"61125a3ab755b993d72accfea741f8537104db8e022098154f3a66d5c23e828d",1003);
+    }
+}
+module CheckpointScript {
+    use StarcoinFramework::Block;
+
+    public (script) fun checkpoint(_account: signer){
+        Block::checkpoint();
+    }
+    
+    spec checkpoint {
+        pragma verify = false;
+    }
+
+    public (script) fun latest_state_root(_account: signer){
+        Block::latest_state_root();
+    }
+
+    spec latest_state_root {
+        pragma verify = false;
+    }
+
+    public (script) fun update_state_root(_account: signer , header: vector<u8>){
+        Block::update_state_root(header);
+    }
+
+    spec update_state_root {
+        pragma verify = false;
+    }
 }
 }
