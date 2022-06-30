@@ -80,9 +80,9 @@ module SalaryGovPlugin {
         } = move_from<SalaryReceive<DaoT, TokenT>>(member);
     }
 
-    public fun add_sbt<DaoT: store, TokenT: store>(sender: &signer, member: address, amount: u128)
+    public(script) fun add_sbt<DaoT: store, TokenT: store>(sender: signer, member: address, amount: u128)
     acquires SalaryReceive {
-        assert_boss<DaoT>(sender);
+        assert_boss<DaoT>(&sender);
         assert!(GenesisDao::is_member<DaoT>(member), Errors::invalid_state(ERR_PLUGIN_USER_NOT_MEMBER));
 
         receive_with_amount<DaoT, TokenT>(member, compute_salary_amount<DaoT, TokenT>(member));
@@ -92,9 +92,9 @@ module SalaryGovPlugin {
         GenesisDao::increase_member_sbt(&cap, member, amount);
     }
 
-    public fun remove_sbt<DaoT: store, TokenT: store>(sender: &signer, member: address, amount: u128)
+    public(script) fun remove_sbt<DaoT: store, TokenT: store>(sender: signer, member: address, amount: u128)
     acquires SalaryReceive {
-        assert_boss<DaoT>(sender);
+        assert_boss<DaoT>(&sender);
         assert!(GenesisDao::is_member<DaoT>(member), Errors::invalid_state(ERR_PLUGIN_USER_NOT_MEMBER));
 
         receive_with_amount<DaoT, TokenT>(member, compute_salary_amount<DaoT, TokenT>(member));
@@ -104,7 +104,7 @@ module SalaryGovPlugin {
         GenesisDao::increase_member_sbt(&cap, member, amount);
     }
 
-    public fun receive<DaoT: store, TokenT: store>(member: address) acquires SalaryReceive {
+    public(script) fun receive<DaoT: store, TokenT: store>(member: address) acquires SalaryReceive {
         assert!(GenesisDao::is_member<DaoT>(member), Errors::invalid_state(ERR_PLUGIN_USER_NOT_MEMBER));
 
         let amount = compute_salary_amount<DaoT, TokenT>(member);
@@ -147,23 +147,23 @@ module SalaryGovPlugin {
     }
 
     /// Create proposal for specific admin account
-    public fun create_boss_elect_proposal<DaoT: store>(sender: &signer, action_delay: u64) {
+    public(script) fun create_boss_elect_proposal<DaoT: store>(sender: signer, action_delay: u64) {
         let witness = SalaryGovPlugin{};
 
         let cap = GenesisDao::acquire_proposal_cap<DaoT, SalaryGovPlugin>(&witness);
         let action = BossProposalAction<DaoT>{
-            boss: Signer::address_of(sender)
+            boss: Signer::address_of(&sender)
         };
-        GenesisDao::create_proposal(&cap, sender, action, action_delay);
+        GenesisDao::create_proposal(&cap, &sender, action, action_delay);
     }
 
-    public fun execute_proposal<DaoT: store>(sender: &signer, proposal_id: u64) {
+    public(script) fun execute_proposal<DaoT: store>(sender: signer, proposal_id: u64) {
         let witness = SalaryGovPlugin{};
         let proposal_cap = GenesisDao::acquire_proposal_cap<DaoT, SalaryGovPlugin>(&witness);
         let BossProposalAction<DaoT>{ boss } =
-            GenesisDao::execute_proposal<DaoT, SalaryGovPlugin, BossProposalAction<DaoT>>(&proposal_cap, sender, proposal_id);
-        assert!(boss == Signer::address_of(sender), Errors::invalid_state(ERR_PLUGIN_USER_NOT_PRIVILEGE));
-        move_to(sender, PluginBossCap<DaoT>{})
+            GenesisDao::execute_proposal<DaoT, SalaryGovPlugin, BossProposalAction<DaoT>>(&proposal_cap, &sender, proposal_id);
+        assert!(boss == Signer::address_of(&sender), Errors::invalid_state(ERR_PLUGIN_USER_NOT_PRIVILEGE));
+        move_to(&sender, PluginBossCap<DaoT>{})
     }
 
     fun assert_boss<DaoT: store>(signer: &signer) {
