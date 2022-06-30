@@ -24,7 +24,7 @@ module SalaryGovPlugin {
         last_receive_time: u64,
     }
 
-    struct ProposalAction<phantom DaoT> has key, store {
+    struct BossProposalAction<phantom DaoT> has key, store {
         boss: address,
     }
 
@@ -154,17 +154,17 @@ module SalaryGovPlugin {
         let witness = SalaryGovPlugin{};
 
         let cap = GenesisDao::acquire_proposal_cap<DaoT, SalaryGovPlugin>(&witness);
-        let action = ProposalAction<DaoT>{
+        let action = BossProposalAction<DaoT>{
             boss: Signer::address_of(sender)
         };
         GenesisDao::create_proposal(&cap, sender, action, action_delay);
     }
 
-    public fun execute_proposal<DaoT: store, ToInstallPluginT>(sender: &signer, proposal_id: u64) {
+    public fun execute_proposal<DaoT: store>(sender: &signer, proposal_id: u64) {
         let witness = SalaryGovPlugin{};
         let proposal_cap = GenesisDao::acquire_proposal_cap<DaoT, SalaryGovPlugin>(&witness);
-        let ProposalAction<DaoT>{ boss } =
-            GenesisDao::execute_proposal<DaoT, SalaryGovPlugin, ProposalAction<DaoT>>(&proposal_cap, sender, proposal_id);
+        let BossProposalAction<DaoT>{ boss } =
+            GenesisDao::execute_proposal<DaoT, SalaryGovPlugin, BossProposalAction<DaoT>>(&proposal_cap, sender, proposal_id);
         assert!(boss == Signer::address_of(sender), Errors::invalid_state(ERR_PLUGIN_USER_NOT_PRIVILEGE));
         move_to(sender, PluginBossCap<DaoT>{})
     }
