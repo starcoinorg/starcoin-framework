@@ -398,6 +398,22 @@ module StarcoinFramework::GenesisDao{
         IdentifierNFT::return_back(borrow_nft);
     }
 
+    /// Query amount of the member SBT
+    public fun query_sbt<DaoT: store, PluginT>(_cap: &DaoMemberCap<DaoT, PluginT>, member_addr: address)
+    : u128 acquires DaoNFTUpdateCapHolder {
+        assert!(is_member<DaoT>(member_addr), Errors::already_published(ERR_NOT_MEMBER));
+        let dao_address = dao_address<DaoT>();
+
+        let nft_update_cap = &mut borrow_global_mut<DaoNFTUpdateCapHolder<DaoT>>(dao_address).cap;
+        let borrow_nft = IdentifierNFT::borrow_out<DaoMember<DaoT>, DaoMemberBody<DaoT>>(nft_update_cap, member_addr);
+        let nft = IdentifierNFT::borrow_nft_mut(&mut borrow_nft);
+        let body = NFT::borrow_body_mut_with_cap(nft_update_cap, nft);
+
+        let result = Token::value(&body.sbt);
+        IdentifierNFT::return_back(borrow_nft);
+        result
+    }
+
     /// Check the `member_addr` account is a member of DaoT
     public fun is_member<DaoT: store>(member_addr: address): bool{
         IdentifierNFT::owns<DaoMember<DaoT>, DaoMemberBody<DaoT>>(member_addr)

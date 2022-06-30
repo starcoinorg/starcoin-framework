@@ -1,5 +1,5 @@
 ///this is a demo Dao, this module should generate by template
-module StarcoinFramework::XDao{
+module StarcoinFramework::XDao {
     use StarcoinFramework::DaoAccount;
     use StarcoinFramework::GenesisDao;
     use StarcoinFramework::MemberProposalPlugin::{Self, MemberProposalPlugin};
