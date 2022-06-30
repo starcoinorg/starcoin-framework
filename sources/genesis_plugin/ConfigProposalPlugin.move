@@ -2,7 +2,6 @@
 module StarcoinFramework::ConfigProposalPlugin {
     use StarcoinFramework::GenesisDao::{Self, CapType};
     use StarcoinFramework::Vector;
-    use StarcoinFramework::Config;
 
     struct ConfigProposalPlugin has drop {}
 
@@ -11,7 +10,9 @@ module StarcoinFramework::ConfigProposalPlugin {
     }
 
     public fun required_caps(): vector<CapType> {
-        Vector::singleton(GenesisDao::proposal_cap_type())
+        let caps = Vector::singleton(GenesisDao::proposal_cap_type());
+        Vector::push_back(&mut caps, GenesisDao::modify_config_cap_type());
+        caps
     }
 
     public fun create_proposal<DaoT: store, ConfigT: store>(sender: signer, action_delay: u64, config: ConfigT) {
@@ -28,11 +29,15 @@ module StarcoinFramework::ConfigProposalPlugin {
 
     public(script) fun execute_proposal<DaoT: store, ConfigT: copy + drop + store>(sender: signer, proposal_id: u64) {
         let witness = ConfigProposalPlugin{};
-        let proposal_cap = GenesisDao::acquire_proposal_cap<DaoT, ConfigProposalPlugin>(&witness);
+        let proposal_cap =
+            GenesisDao::acquire_proposal_cap<DaoT, ConfigProposalPlugin>(&witness);
+        let modify_config_cap =
+            GenesisDao::acquire_modify_config_cap<DaoT, ConfigProposalPlugin>(&witness);
+
         let ConfigProposalAction<ConfigT>{ config } = GenesisDao::execute_proposal<
             DaoT,
             ConfigProposalPlugin,
             ConfigProposalAction<ConfigT>>(&proposal_cap, &sender, proposal_id);
-        Config::publish_new_config<ConfigT>(&sender, config);
+        GenesisDao::set_custom_config<DaoT, ConfigProposalPlugin, ConfigT>(&mut modify_config_cap, config);
     }
 }
