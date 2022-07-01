@@ -32,6 +32,22 @@ published on-chain.
 -  [Function `get_n_bytes`](#0x1_BCS_get_n_bytes)
 -  [Function `get_n_bytes_as_u128`](#0x1_BCS_get_n_bytes_as_u128)
 -  [Function `serialize_u32_as_uleb128`](#0x1_BCS_serialize_u32_as_uleb128)
+-  [Function `skip_option_bytes_vector`](#0x1_BCS_skip_option_bytes_vector)
+-  [Function `skip_option_bytes`](#0x1_BCS_skip_option_bytes)
+-  [Function `skip_bytes_vector`](#0x1_BCS_skip_bytes_vector)
+-  [Function `skip_bytes`](#0x1_BCS_skip_bytes)
+-  [Function `skip_n_bytes`](#0x1_BCS_skip_n_bytes)
+-  [Function `skip_u64_vector`](#0x1_BCS_skip_u64_vector)
+-  [Function `skip_u128_vector`](#0x1_BCS_skip_u128_vector)
+-  [Function `skip_u256`](#0x1_BCS_skip_u256)
+-  [Function `skip_u128`](#0x1_BCS_skip_u128)
+-  [Function `skip_u64`](#0x1_BCS_skip_u64)
+-  [Function `skip_u32`](#0x1_BCS_skip_u32)
+-  [Function `skip_u16`](#0x1_BCS_skip_u16)
+-  [Function `skip_address`](#0x1_BCS_skip_address)
+-  [Function `skip_bool`](#0x1_BCS_skip_bool)
+-  [Function `can_skip`](#0x1_BCS_can_skip)
+-  [Function `skip_uleb128_as_u32`](#0x1_BCS_skip_uleb128_as_u32)
 -  [Module Specification](#@Module_Specification_1)
 
 
@@ -976,6 +992,630 @@ Return the address of key bytes
     };
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> output, (value <b>as</b> u8));
     output
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_option_bytes_vector"></a>
+
+## Function `skip_option_bytes_vector`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_option_bytes_vector">skip_option_bytes_vector</a>(input: &vector&lt;u8&gt;, offset: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_option_bytes_vector">skip_option_bytes_vector</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
+    <b>let</b> (len, new_offset) = <a href="BCS.md#0x1_BCS_deserialize_len">deserialize_len</a>(input, offset);
+    <b>let</b> i = 0;
+    <b>while</b> (i &lt; len) {
+        new_offset = <a href="BCS.md#0x1_BCS_skip_option_bytes">skip_option_bytes</a>(input, new_offset);
+        i = i + 1;
+    };
+    new_offset
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_option_bytes"></a>
+
+## Function `skip_option_bytes`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_option_bytes">skip_option_bytes</a>(input: &vector&lt;u8&gt;, offset: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_option_bytes">skip_option_bytes</a>(input: &vector&lt;u8&gt;, offset: u64):  u64 {
+    <b>let</b> (tag, new_offset) = <a href="BCS.md#0x1_BCS_deserialize_option_tag">deserialize_option_tag</a>(input, offset);
+    <b>if</b> (!tag) {
+        new_offset
+    } <b>else</b> {
+        <a href="BCS.md#0x1_BCS_skip_bytes">skip_bytes</a>(input, new_offset)
+    }
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_bytes_vector"></a>
+
+## Function `skip_bytes_vector`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_bytes_vector">skip_bytes_vector</a>(input: &vector&lt;u8&gt;, offset: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_bytes_vector">skip_bytes_vector</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
+    <b>let</b> (len, new_offset) = <a href="BCS.md#0x1_BCS_deserialize_len">deserialize_len</a>(input, offset);
+    <b>let</b> i = 0;
+    <b>while</b> (i &lt; len) {
+        new_offset = <a href="BCS.md#0x1_BCS_skip_bytes">skip_bytes</a>(input, new_offset);
+        i = i + 1;
+    };
+    new_offset
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_bytes"></a>
+
+## Function `skip_bytes`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_bytes">skip_bytes</a>(input: &vector&lt;u8&gt;, offset: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_bytes">skip_bytes</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
+    <b>let</b> (len, new_offset) = <a href="BCS.md#0x1_BCS_deserialize_len">deserialize_len</a>(input, offset);
+    new_offset + len
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_n_bytes"></a>
+
+## Function `skip_n_bytes`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_n_bytes">skip_n_bytes</a>(input: &vector&lt;u8&gt;, offset: u64, n: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_n_bytes">skip_n_bytes</a>(input: &vector&lt;u8&gt;, offset: u64, n:u64): u64 {
+    <a href="BCS.md#0x1_BCS_can_skip">can_skip</a>(input, offset, n );
+    offset + n
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_u64_vector"></a>
+
+## Function `skip_u64_vector`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u64_vector">skip_u64_vector</a>(input: &vector&lt;u8&gt;, offset: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u64_vector">skip_u64_vector</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
+    <b>let</b> (len, new_offset) = <a href="BCS.md#0x1_BCS_deserialize_len">deserialize_len</a>(input, offset);
+    <a href="BCS.md#0x1_BCS_can_skip">can_skip</a>(input, new_offset, len * 8);
+    new_offset + len * 8
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_u128_vector"></a>
+
+## Function `skip_u128_vector`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u128_vector">skip_u128_vector</a>(input: &vector&lt;u8&gt;, offset: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u128_vector">skip_u128_vector</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
+    <b>let</b> (len, new_offset) = <a href="BCS.md#0x1_BCS_deserialize_len">deserialize_len</a>(input, offset);
+    <a href="BCS.md#0x1_BCS_can_skip">can_skip</a>(input, new_offset, len * 16);
+    new_offset + len * 16
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_u256"></a>
+
+## Function `skip_u256`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u256">skip_u256</a>(input: &vector&lt;u8&gt;, offset: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u256">skip_u256</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
+    <a href="BCS.md#0x1_BCS_can_skip">can_skip</a>(input, offset, 32 );
+    offset + 32
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_u128"></a>
+
+## Function `skip_u128`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u128">skip_u128</a>(input: &vector&lt;u8&gt;, offset: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u128">skip_u128</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
+    <a href="BCS.md#0x1_BCS_can_skip">can_skip</a>(input, offset, 16 );
+    offset + 16
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_u64"></a>
+
+## Function `skip_u64`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u64">skip_u64</a>(input: &vector&lt;u8&gt;, offset: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u64">skip_u64</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
+    <a href="BCS.md#0x1_BCS_can_skip">can_skip</a>(input, offset, 8 );
+    offset + 8
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_u32"></a>
+
+## Function `skip_u32`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u32">skip_u32</a>(input: &vector&lt;u8&gt;, offset: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u32">skip_u32</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
+    <a href="BCS.md#0x1_BCS_can_skip">can_skip</a>(input, offset, 4 );
+    offset + 4
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_u16"></a>
+
+## Function `skip_u16`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u16">skip_u16</a>(input: &vector&lt;u8&gt;, offset: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u16">skip_u16</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
+    <a href="BCS.md#0x1_BCS_can_skip">can_skip</a>(input, offset, 2 );
+    offset + 2
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_address"></a>
+
+## Function `skip_address`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_address">skip_address</a>(input: &vector&lt;u8&gt;, offset: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_address">skip_address</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
+    <a href="BCS.md#0x1_BCS_skip_n_bytes">skip_n_bytes</a>(input, offset, 16)
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_bool"></a>
+
+## Function `skip_bool`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_bool">skip_bool</a>(input: &vector&lt;u8&gt;, offset: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_bool">skip_bool</a>(input: &vector&lt;u8&gt;, offset: u64):  u64{
+    <a href="BCS.md#0x1_BCS_can_skip">can_skip</a>(input, offset, 1);
+    offset + 1
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_can_skip"></a>
+
+## Function `can_skip`
+
+
+
+<pre><code><b>fun</b> <a href="BCS.md#0x1_BCS_can_skip">can_skip</a>(input: &vector&lt;u8&gt;, offset: u64, n: u64)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>fun</b> <a href="BCS.md#0x1_BCS_can_skip">can_skip</a>(input: &vector&lt;u8&gt;, offset: u64, n: u64){
+    <b>assert</b>!(((offset + n) &lt;= <a href="Vector.md#0x1_Vector_length">Vector::length</a>(input)) && (offset &lt; offset + n), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="BCS.md#0x1_BCS_ERR_INPUT_NOT_LARGE_ENOUGH">ERR_INPUT_NOT_LARGE_ENOUGH</a>));
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_uleb128_as_u32"></a>
+
+## Function `skip_uleb128_as_u32`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_uleb128_as_u32">skip_uleb128_as_u32</a>(input: &vector&lt;u8&gt;, offset: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_uleb128_as_u32">skip_uleb128_as_u32</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
+    <b>let</b> value: u64 = 0;
+    <b>let</b> shift = 0;
+    <b>let</b> new_offset = offset;
+    <b>while</b> (shift &lt; 32) {
+        <b>let</b> x = <a href="BCS.md#0x1_BCS_get_byte">get_byte</a>(input, new_offset);
+        new_offset = new_offset + 1;
+        <b>let</b> digit: u8 = x & 0x7F;
+        value = value | (digit <b>as</b> u64) &lt;&lt; shift;
+        <b>if</b> ((value &lt; 0) || (value &gt; <a href="BCS.md#0x1_BCS_INTEGER32_MAX_VALUE">INTEGER32_MAX_VALUE</a>)) {
+            <b>abort</b> <a href="BCS.md#0x1_BCS_ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32">ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32</a>
+        };
+        <b>if</b> (digit == x) {
+            <b>if</b> (shift &gt; 0 && digit == 0) {
+                <b>abort</b> <a href="BCS.md#0x1_BCS_ERR_INVALID_ULEB128_NUMBER_UNEXPECTED_ZERO_DIGIT">ERR_INVALID_ULEB128_NUMBER_UNEXPECTED_ZERO_DIGIT</a>
+            };
+            <b>return</b> new_offset
+        };
+        shift = shift + 7
+    };
+    <b>abort</b> <a href="BCS.md#0x1_BCS_ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32">ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32</a>
 }
 </code></pre>
 
