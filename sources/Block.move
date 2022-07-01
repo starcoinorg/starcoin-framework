@@ -169,7 +169,7 @@ module Block {
         let parent_block_hash   = get_parent_hash();
         
         let checkpoints = borrow_global_mut<Checkpoints>(CoreAddresses::GENESIS_ADDRESS());
-        checkpoint_base(checkpoints, parent_block_number, parent_block_hash);
+        base_checkpoint(checkpoints, parent_block_number, parent_block_hash);
         
     }
 
@@ -177,7 +177,7 @@ module Block {
         pragma verify = false;
     }
 
-    fun checkpoint_base(checkpoints: &mut Checkpoints, parent_block_number: u64, parent_block_hash:vector<u8>){
+    fun base_checkpoint(checkpoints: &mut Checkpoints, parent_block_number: u64, parent_block_hash:vector<u8>){
         assert!(checkpoints.last_number + BLOCK_INTERVAL_NUMBER <= parent_block_number || checkpoints.last_number == 0, Errors::invalid_argument(ERROR_INTERVAL_TOO_LITTLE));
 
         checkpoints.index = checkpoints.index + 1;
@@ -194,20 +194,20 @@ module Block {
         }
     }
 
-    spec checkpoint_base {
+    spec base_checkpoint {
         pragma verify = false;
     }
 
     public fun latest_state_root():(u64,vector<u8>) acquires  Checkpoints{
         let checkpoints = borrow_global<Checkpoints>(CoreAddresses::GENESIS_ADDRESS());
-        latest_state_root_base(checkpoints)
+        base_latest_state_root(checkpoints)
     }
 
     spec latest_state_root {
         pragma verify = false;
     }
 
-    fun latest_state_root_base(checkpoints: &Checkpoints):(u64,vector<u8>){
+    fun base_latest_state_root(checkpoints: &Checkpoints):(u64,vector<u8>){
         let len = Ring::capacity<Checkpoint>(&checkpoints.checkpoints);
         let j = if(checkpoints.index < len - 1){
             checkpoints.index 
@@ -228,22 +228,21 @@ module Block {
         abort Errors::invalid_state(ERROR_NO_HAVE_CHECKPOINT)
     }
 
-    spec latest_state_root_base {
+    spec base_latest_state_root {
         pragma verify = false;
     }
 
     public fun update_state_root(header: vector<u8>)acquires  Checkpoints {
         let checkpoints = borrow_global_mut<Checkpoints>(CoreAddresses::GENESIS_ADDRESS());
-        update_state_root_base(checkpoints, header);
+        base_update_state_root(checkpoints, header);
     }
 
     spec update_state_root {
         pragma verify = false;
     }
 
-    fun update_state_root_base(checkpoints: &mut Checkpoints, header: vector<u8>){
-        let prefix = b"STARCOIN::BlockHeader";
-        let prefix = Hash::sha3_256(prefix);
+    fun base_update_state_root(checkpoints: &mut Checkpoints, header: vector<u8>){
+        let prefix = Hash::sha3_256(b"STARCOIN::BlockHeader");
         
         let (_parent_hash,new_offset) = BCS::deserialize_bytes(&header,0);
         let (_timestamp,new_offset) = BCS::deserialize_u64(&header,new_offset);
@@ -300,8 +299,28 @@ module Block {
 
     #[test]
     fun test_header(){
-        let prefix = b"STARCOIN::BlockHeader";
-        let prefix = Hash::sha3_256(prefix);
+        // Block header Unit test 
+        // Use Main Genesis BlockHeader in Rust 
+        // BlockHeader {
+        //  id: Some(HashValue(0x80848150abee7e9a3bfe9542a019eb0b8b01f124b63b011f9c338fdb935c417d)),
+        //  parent_hash: HashValue(0xb82a2c11f2df62bf87c2933d0281e5fe47ea94d5f0049eec1485b682df29529a),
+        //  timestamp: 1621311100863,
+        //  number: 0,
+        //  author: 0x00000000000000000000000000000001,
+        //  author_auth_key: None,
+        //  txn_accumulator_root: HashValue(0x43609d52fdf8e4a253c62dfe127d33c77e1fb4afdefb306d46ec42e21b9103ae),
+        //  block_accumulator_root: HashValue(0x414343554d554c41544f525f504c414345484f4c4445525f4841534800000000),
+        //  state_root: HashValue(0x61125a3ab755b993d72accfea741f8537104db8e022098154f3a66d5c23e828d),
+        //  gas_used: 0,
+        //  difficulty: 11660343,
+        //  body_hash: HashValue(0x7564db97ee270a6c1f2f73fbf517dc0777a6119b7460b7eae2890d1ce504537b),
+        //  chain_id: ChainId { id: 1 },
+        //  nonce: 0,
+        //  extra: BlockHeaderExtra([0, 0, 0, 0])
+        // }
+        // Blockheader BCS : 20b82a2c11f2df62bf87c2933d0281e5fe47ea94d5f0049eec1485b682df29529abf17ac7d79010000000000000000000000000000000000000000000000000001002043609d52fdf8e4a253c62dfe127d33c77e1fb4afdefb306d46ec42e21b9103ae20414343554d554c41544f525f504c414345484f4c4445525f48415348000000002061125a3ab755b993d72accfea741f8537104db8e022098154f3a66d5c23e828d00000000000000000000000000000000000000000000000000000000000000000000000000b1ec37207564db97ee270a6c1f2f73fbf517dc0777a6119b7460b7eae2890d1ce504537b010000000000000000
+        
+        let prefix = Hash::sha3_256(b"STARCOIN::BlockHeader");
         let header = x"20b82a2c11f2df62bf87c2933d0281e5fe47ea94d5f0049eec1485b682df29529abf17ac7d79010000000000000000000000000000000000000000000000000001002043609d52fdf8e4a253c62dfe127d33c77e1fb4afdefb306d46ec42e21b9103ae20414343554d554c41544f525f504c414345484f4c4445525f48415348000000002061125a3ab755b993d72accfea741f8537104db8e022098154f3a66d5c23e828d00000000000000000000000000000000000000000000000000000000000000000000000000b1ec37207564db97ee270a6c1f2f73fbf517dc0777a6119b7460b7eae2890d1ce504537b010000000000000000";
         let (_parent_hash,new_offset) = BCS::deserialize_bytes(&header,0);
         let (_timestamp,new_offset) = BCS::deserialize_u64(&header,new_offset);
@@ -337,7 +356,7 @@ module Block {
                                 last_number  : 0
                             };
 
-       checkpoint_test_function(&mut checkpoints, 0, x"80848150abee7e9a3bfe9542a019eb0b8b01f124b63b011f9c338fdb935c417d");
+       base_checkpoint(&mut checkpoints, 0, x"80848150abee7e9a3bfe9542a019eb0b8b01f124b63b011f9c338fdb935c417d");
 
        let Checkpoints{
         checkpoints: ring,
@@ -358,11 +377,11 @@ module Block {
                                 last_number  : 0
                             };
 
-        checkpoint_test_function(&mut checkpoints, 0, x"80848150abee7e9a3bfe9542a019eb0b8b01f124b63b011f9c338fdb935c417d");
+        base_checkpoint(&mut checkpoints, 0, x"80848150abee7e9a3bfe9542a019eb0b8b01f124b63b011f9c338fdb935c417d");
         
-        update_state_root_test(&mut checkpoints, copy header);
+        base_update_state_root(&mut checkpoints, copy header);
         
-        let (number , state_root ) = _latest_state_root(&checkpoints);
+        let (number , state_root ) = base_latest_state_root(&checkpoints);
         let Checkpoints{
         checkpoints: ring,
         index      : index,
