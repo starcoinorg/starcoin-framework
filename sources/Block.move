@@ -293,7 +293,7 @@ module Block {
         abort Errors::invalid_state(ERROR_NO_HAVE_CHECKPOINT)
     }
 
-    spec update_state_root_base {
+    spec base_update_state_root {
         pragma verify = false;
     }
 
