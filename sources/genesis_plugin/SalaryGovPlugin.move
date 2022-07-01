@@ -170,5 +170,9 @@ module SalaryGovPlugin {
         let user = Signer::address_of(signer);
         assert!(exists<PluginBossCap<DaoT>>(user), Errors::invalid_state(ERR_PLUGIN_USER_NOT_PRIVILEGE))
     }
+
+    public fun meta_info(): (u64, vector<u8>, vector<u8>, vector<u8>){
+        (0, b"Salary", b"Salary plugin description", b"https://1234images.icon.com")
+    }
 }
 }

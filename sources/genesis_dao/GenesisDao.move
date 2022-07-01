@@ -34,6 +34,7 @@ module StarcoinFramework::GenesisDao {
     const ERR_VOTE_STATE_MISMATCH: u64 = 1408;
     const ERR_ACTION_MUST_EXIST: u64 = 1409;
     const ERR_VOTED_OTHERS_ALREADY: u64 = 1410;
+    const ERR_CONFIG_NOT_EXISTS: u64 = 1411;
 
     struct Dao has key {
         id: u64,
@@ -298,6 +299,19 @@ module StarcoinFramework::GenesisDao {
         assert!(exists<StorageItem<PluginT, V>>(dao_address), Errors::not_published(ERR_STORAGE_ERROR));
         let StorageItem{ item } = move_from<StorageItem<PluginT, V>>(dao_address);
         item
+    }
+
+    public fun deposit_token<DaoT: store, TokenT: store>(token: Token<TokenT>) acquires DaoAccountCapHolder {
+        let dao_address = dao_address<DaoT>();
+        if (!Account::is_accept_token<TokenT>(dao_address)) {
+            Account::do_accept_token<TokenT>(&dao_signer<DaoT>());
+        };
+        Account::deposit<TokenT>(dao_address, token);
+    }
+
+    /// Query balance of DAO account
+    public fun balance<DaoT: store, TokenT: store>(): u128 {
+        Account::balance<TokenT>(dao_address<DaoT>())
     }
 
     // Withdraw Token capability function
@@ -922,6 +936,14 @@ module StarcoinFramework::GenesisDao {
             let signer = dao_signer<DaoT>();
             Config::publish_new_config<ConfigT>(&signer, config);
         }
+    }
+
+    public fun get_custom_config<DaoT: store,
+                                 PluginT: drop,
+                                 ConfigT: copy + store + drop>(): ConfigT {
+        let dao_address = dao_address<DaoT>();
+        assert!(Config::config_exist_by_address<ConfigT>(dao_address), Errors::invalid_state(ERR_CONFIG_NOT_EXISTS));
+        Config::get_by_address<ConfigT>(dao_address)
     }
 
     /// set voting delay
