@@ -112,7 +112,8 @@ module VaultGovPlugin {
     /// Create a proposal that invested by a strategy
     public fun execute_widthdraw_proposal<DaoT: store, TokenT: store, CapT: drop>(sender: signer,
                                                                                   proposal_id: u64,
-                                                                                  _witness: &CapT): Token::Token<TokenT> {
+                                                                                  _cap: &CapT)
+    : Token::Token<TokenT> {
         let witness = VaultGovPlugin{};
         let proposal_cap = GenesisDao::acquire_proposal_cap<DaoT, VaultGovPlugin>(&witness);
         let VaultWithdrawProposalAction<TokenT, CapT>{ amount } =
