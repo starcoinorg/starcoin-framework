@@ -301,6 +301,11 @@ module StarcoinFramework::GenesisDao {
         item
     }
 
+    /// Check storage exists
+    public fun storage_exists<DaoT: store, PluginT, V: store>(): bool acquires StorageItem {
+        exists<StorageItem<PluginT, V>>(dao_address<Dao>())
+    }
+
     public fun deposit_token<DaoT: store, TokenT: store>(token: Token<TokenT>) acquires DaoAccountCapHolder {
         let dao_address = dao_address<DaoT>();
         if (!Account::is_accept_token<TokenT>(dao_address)) {
