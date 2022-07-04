@@ -938,6 +938,7 @@ module StarcoinFramework::GenesisDao {
         }
     }
 
+    /// Get custom plugin
     public fun get_custom_config<DaoT: store,
                                  PluginT: drop,
                                  ConfigT: copy + store + drop>(): ConfigT {
