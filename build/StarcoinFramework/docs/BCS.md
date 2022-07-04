@@ -27,10 +27,10 @@ published on-chain.
 -  [Function `deserialize_option_tag`](#0x1_BCS_deserialize_option_tag)
 -  [Function `deserialize_len`](#0x1_BCS_deserialize_len)
 -  [Function `deserialize_bool`](#0x1_BCS_deserialize_bool)
--  [Function `deserialize_uleb128_as_u32`](#0x1_BCS_deserialize_uleb128_as_u32)
 -  [Function `get_byte`](#0x1_BCS_get_byte)
 -  [Function `get_n_bytes`](#0x1_BCS_get_n_bytes)
 -  [Function `get_n_bytes_as_u128`](#0x1_BCS_get_n_bytes_as_u128)
+-  [Function `deserialize_uleb128_as_u32`](#0x1_BCS_deserialize_uleb128_as_u32)
 -  [Function `serialize_u32_as_uleb128`](#0x1_BCS_serialize_u32_as_uleb128)
 -  [Function `skip_option_bytes_vector`](#0x1_BCS_skip_option_bytes_vector)
 -  [Function `skip_option_bytes`](#0x1_BCS_skip_option_bytes)
@@ -47,7 +47,6 @@ published on-chain.
 -  [Function `skip_address`](#0x1_BCS_skip_address)
 -  [Function `skip_bool`](#0x1_BCS_skip_bool)
 -  [Function `can_skip`](#0x1_BCS_can_skip)
--  [Function `skip_uleb128_as_u32`](#0x1_BCS_skip_uleb128_as_u32)
 -  [Module Specification](#@Module_Specification_1)
 
 
@@ -788,61 +787,6 @@ Return the address of key bytes
 
 </details>
 
-<a name="0x1_BCS_deserialize_uleb128_as_u32"></a>
-
-## Function `deserialize_uleb128_as_u32`
-
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_deserialize_uleb128_as_u32">deserialize_uleb128_as_u32</a>(input: &vector&lt;u8&gt;, offset: u64): (u64, u64)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_deserialize_uleb128_as_u32">deserialize_uleb128_as_u32</a>(input: &vector&lt;u8&gt;, offset: u64): (u64, u64) {
-    <b>let</b> value: u64 = 0;
-    <b>let</b> shift = 0;
-    <b>let</b> new_offset = offset;
-    <b>while</b> (shift &lt; 32) {
-        <b>let</b> x = <a href="BCS.md#0x1_BCS_get_byte">get_byte</a>(input, new_offset);
-        new_offset = new_offset + 1;
-        <b>let</b> digit: u8 = x & 0x7F;
-        value = value | (digit <b>as</b> u64) &lt;&lt; shift;
-        <b>if</b> ((value &lt; 0) || (value &gt; <a href="BCS.md#0x1_BCS_INTEGER32_MAX_VALUE">INTEGER32_MAX_VALUE</a>)) {
-            <b>abort</b> <a href="BCS.md#0x1_BCS_ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32">ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32</a>
-        };
-        <b>if</b> (digit == x) {
-            <b>if</b> (shift &gt; 0 && digit == 0) {
-                <b>abort</b> <a href="BCS.md#0x1_BCS_ERR_INVALID_ULEB128_NUMBER_UNEXPECTED_ZERO_DIGIT">ERR_INVALID_ULEB128_NUMBER_UNEXPECTED_ZERO_DIGIT</a>
-            };
-            <b>return</b> (value, new_offset)
-        };
-        shift = shift + 7
-    };
-    <b>abort</b> <a href="BCS.md#0x1_BCS_ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32">ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32</a>
-}
-</code></pre>
-
-
-
-</details>
-
-<details>
-<summary>Specification</summary>
-
-
-
-<pre><code><b>pragma</b> verify = <b>false</b>;
-</code></pre>
-
-
-
-</details>
-
 <a name="0x1_BCS_get_byte"></a>
 
 ## Function `get_byte`
@@ -950,6 +894,61 @@ Return the address of key bytes
         i = i + 1;
     };
     number
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_deserialize_uleb128_as_u32"></a>
+
+## Function `deserialize_uleb128_as_u32`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_deserialize_uleb128_as_u32">deserialize_uleb128_as_u32</a>(input: &vector&lt;u8&gt;, offset: u64): (u64, u64)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_deserialize_uleb128_as_u32">deserialize_uleb128_as_u32</a>(input: &vector&lt;u8&gt;, offset: u64): (u64, u64) {
+    <b>let</b> value: u64 = 0;
+    <b>let</b> shift = 0;
+    <b>let</b> new_offset = offset;
+    <b>while</b> (shift &lt; 32) {
+        <b>let</b> x = <a href="BCS.md#0x1_BCS_get_byte">get_byte</a>(input, new_offset);
+        new_offset = new_offset + 1;
+        <b>let</b> digit: u8 = x & 0x7F;
+        value = value | (digit <b>as</b> u64) &lt;&lt; shift;
+        <b>if</b> ((value &lt; 0) || (value &gt; <a href="BCS.md#0x1_BCS_INTEGER32_MAX_VALUE">INTEGER32_MAX_VALUE</a>)) {
+            <b>abort</b> <a href="BCS.md#0x1_BCS_ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32">ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32</a>
+        };
+        <b>if</b> (digit == x) {
+            <b>if</b> (shift &gt; 0 && digit == 0) {
+                <b>abort</b> <a href="BCS.md#0x1_BCS_ERR_INVALID_ULEB128_NUMBER_UNEXPECTED_ZERO_DIGIT">ERR_INVALID_ULEB128_NUMBER_UNEXPECTED_ZERO_DIGIT</a>
+            };
+            <b>return</b> (value, new_offset)
+        };
+        shift = shift + 7
+    };
+    <b>abort</b> <a href="BCS.md#0x1_BCS_ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32">ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32</a>
 }
 </code></pre>
 
@@ -1561,61 +1560,6 @@ Return the address of key bytes
 
 <pre><code><b>fun</b> <a href="BCS.md#0x1_BCS_can_skip">can_skip</a>(input: &vector&lt;u8&gt;, offset: u64, n: u64){
     <b>assert</b>!(((offset + n) &lt;= <a href="Vector.md#0x1_Vector_length">Vector::length</a>(input)) && (offset &lt; offset + n), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="BCS.md#0x1_BCS_ERR_INPUT_NOT_LARGE_ENOUGH">ERR_INPUT_NOT_LARGE_ENOUGH</a>));
-}
-</code></pre>
-
-
-
-</details>
-
-<details>
-<summary>Specification</summary>
-
-
-
-<pre><code><b>pragma</b> verify = <b>false</b>;
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_BCS_skip_uleb128_as_u32"></a>
-
-## Function `skip_uleb128_as_u32`
-
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_uleb128_as_u32">skip_uleb128_as_u32</a>(input: &vector&lt;u8&gt;, offset: u64): u64
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_uleb128_as_u32">skip_uleb128_as_u32</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
-    <b>let</b> value: u64 = 0;
-    <b>let</b> shift = 0;
-    <b>let</b> new_offset = offset;
-    <b>while</b> (shift &lt; 32) {
-        <b>let</b> x = <a href="BCS.md#0x1_BCS_get_byte">get_byte</a>(input, new_offset);
-        new_offset = new_offset + 1;
-        <b>let</b> digit: u8 = x & 0x7F;
-        value = value | (digit <b>as</b> u64) &lt;&lt; shift;
-        <b>if</b> ((value &lt; 0) || (value &gt; <a href="BCS.md#0x1_BCS_INTEGER32_MAX_VALUE">INTEGER32_MAX_VALUE</a>)) {
-            <b>abort</b> <a href="BCS.md#0x1_BCS_ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32">ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32</a>
-        };
-        <b>if</b> (digit == x) {
-            <b>if</b> (shift &gt; 0 && digit == 0) {
-                <b>abort</b> <a href="BCS.md#0x1_BCS_ERR_INVALID_ULEB128_NUMBER_UNEXPECTED_ZERO_DIGIT">ERR_INVALID_ULEB128_NUMBER_UNEXPECTED_ZERO_DIGIT</a>
-            };
-            <b>return</b> new_offset
-        };
-        shift = shift + 7
-    };
-    <b>abort</b> <a href="BCS.md#0x1_BCS_ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32">ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32</a>
 }
 </code></pre>
 
