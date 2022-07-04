@@ -244,24 +244,22 @@ module Block {
     fun base_update_state_root(checkpoints: &mut Checkpoints, header: vector<u8>){
         let prefix = Hash::sha3_256(b"STARCOIN::BlockHeader");
         
-        let (_parent_hash,new_offset) = BCS::deserialize_bytes(&header,0);
-        let (_timestamp,new_offset) = BCS::deserialize_u64(&header,new_offset);
+        //parent_hash
+        let new_offset = BCS::skip_bytes(&header,0);
+        //timestamp
+        let new_offset = BCS::skip_u64(&header,new_offset);
+        //number
         let (number,new_offset) = BCS::deserialize_u64(&header,new_offset);
-        let (_author,new_offset) = BCS::deserialize_address(&header,new_offset);
-        let (_author_auth_key,new_offset) = BCS::deserialize_option_bytes_vector(&header,new_offset);
-        let (_txn_accumulator_root,new_offset) = BCS::deserialize_bytes(&header,new_offset);
-        let (_block_accumulator_root,new_offset) = BCS::deserialize_bytes(&header,new_offset);
-        let (state_root,new_offset) = BCS::deserialize_bytes(&header,new_offset);
-        let (_gas_used,new_offset) = BCS::deserialize_u64(&header,new_offset);
-        let (_difficultyfirst,new_offset) = BCS::deserialize_u128(&header,new_offset);
-        let (_difficultylast,new_offset) = BCS::deserialize_u128(&header,new_offset);
-        let (_body_hash,new_offset) = BCS::deserialize_bytes(&header,new_offset);
-        let (_chain_id,new_offset) = BCS::deserialize_u8(&header,new_offset);
-        let (_nonce,new_offset) = BCS::deserialize_u32(&header,new_offset);
-        let (_extra1,new_offset) = BCS::deserialize_u8(&header,new_offset);
-        let (_extra2,new_offset) = BCS::deserialize_u8(&header,new_offset);
-        let (_extra3,new_offset) = BCS::deserialize_u8(&header,new_offset);
-        let (_extra4,_new_offset) = BCS::deserialize_u8(&header,new_offset);
+        //author
+        new_offset = BCS::skip_address(&header,new_offset);
+        //author_auth_key
+        new_offset = BCS::skip_option_bytes(&header,new_offset);
+        //txn_accumulator_root
+        new_offset = BCS::skip_bytes(&header,new_offset);
+        //block_accumulator_root
+        new_offset = BCS::skip_bytes(&header,new_offset);
+        //state_root
+        let (state_root,_new_offset) = BCS::deserialize_bytes(&header,new_offset);
         
         Vector::append(&mut prefix,header);
         let block_hash = Hash::sha3_256(prefix);
@@ -326,7 +324,7 @@ module Block {
         let (_timestamp,new_offset) = BCS::deserialize_u64(&header,new_offset);
         let (number,new_offset) = BCS::deserialize_u64(&header,new_offset);
         let (_author,new_offset) = BCS::deserialize_address(&header,new_offset);
-        let (_author_auth_key,new_offset) = BCS::deserialize_option_bytes_vector(&header,new_offset);
+        let (_author_auth_key,new_offset) = BCS::deserialize_option_bytes(&header,new_offset);
         let (_txn_accumulator_root,new_offset) = BCS::deserialize_bytes(&header,new_offset);
         let (_block_accumulator_root,new_offset) = BCS::deserialize_bytes(&header,new_offset);
         let (state_root,new_offset) = BCS::deserialize_bytes(&header,new_offset);

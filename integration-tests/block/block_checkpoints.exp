@@ -52,7 +52,7 @@ task 13 'run'. lines 64-72:
 
 task 14 'run'. lines 74-83:
 {
-  "gas_used": 1989291,
+  "gas_used": 553900,
   "status": {
     "Keep": {
       "MoveAbort": [
