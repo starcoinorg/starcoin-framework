@@ -302,7 +302,7 @@ module StarcoinFramework::GenesisDao {
     }
 
     /// Check storage exists
-    public fun storage_exists<DaoT: store, PluginT, V: store>(): bool acquires StorageItem {
+    public fun storage_exists<DaoT: store, PluginT, V: store>(): bool {
         exists<StorageItem<PluginT, V>>(dao_address<Dao>())
     }
 
@@ -946,10 +946,13 @@ module StarcoinFramework::GenesisDao {
     /// Get custom plugin
     public fun get_custom_config<DaoT: store,
                                  PluginT: drop,
-                                 ConfigT: copy + store + drop>(): ConfigT {
+                                 ConfigT: copy + store + drop>(defaultConf: ConfigT): ConfigT {
         let dao_address = dao_address<DaoT>();
-        assert!(Config::config_exist_by_address<ConfigT>(dao_address), Errors::invalid_state(ERR_CONFIG_NOT_EXISTS));
-        Config::get_by_address<ConfigT>(dao_address)
+        if (Config::config_exist_by_address<ConfigT>(dao_address)) {
+            Config::get_by_address<ConfigT>(dao_address)
+        } else {
+            defaultConf
+        }
     }
 
     /// set voting delay

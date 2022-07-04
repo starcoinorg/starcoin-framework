@@ -88,7 +88,9 @@ module VaultGovPlugin {
 
     public fun compute_sbt_from_token_amount<DaoT: store, TokenT>(amount: u128): u128 {
         let config =
-            GenesisDao::get_custom_config<DaoT, VaultGovPlugin, VaultConfig<DaoT, TokenT>>();
+            GenesisDao::get_custom_config<DaoT, VaultGovPlugin, VaultConfig<DaoT, TokenT>>(VaultConfig<DaoT, TokenT> {
+                weight: 1
+            });
         (config.weight as u128) * amount
     }
 
