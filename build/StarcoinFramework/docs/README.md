@@ -21,6 +21,7 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::Block`](Block.md#0x1_Block)
 -  [`0x1::BlockReward`](BlockReward.md#0x1_BlockReward)
 -  [`0x1::ChainId`](ChainId.md#0x1_ChainId)
+-  [`0x1::CheckpointScript`](Block.md#0x1_CheckpointScript)
 -  [`0x1::Collection`](Collection.md#0x1_Collection)
 -  [`0x1::Collection2`](Collection2.md#0x1_Collection2)
 -  [`0x1::Compare`](Compare.md#0x1_Compare)
