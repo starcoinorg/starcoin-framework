@@ -30,6 +30,12 @@
 -  [Resource `InstalledPluginInfo`](#0x1_GenesisDao_InstalledPluginInfo)
 -  [Struct `DaoMember`](#0x1_GenesisDao_DaoMember)
 -  [Struct `DaoMemberBody`](#0x1_GenesisDao_DaoMemberBody)
+-  [Resource `MemberEvent`](#0x1_GenesisDao_MemberEvent)
+-  [Struct `MemberJoinEvent`](#0x1_GenesisDao_MemberJoinEvent)
+-  [Struct `MemberRevokeEvent`](#0x1_GenesisDao_MemberRevokeEvent)
+-  [Struct `MemberQuitEvent`](#0x1_GenesisDao_MemberQuitEvent)
+-  [Struct `MemberIncreaseSBTEvent`](#0x1_GenesisDao_MemberIncreaseSBTEvent)
+-  [Struct `MemberDecreaseSBTEvent`](#0x1_GenesisDao_MemberDecreaseSBTEvent)
 -  [Resource `StorageItem`](#0x1_GenesisDao_StorageItem)
 -  [Struct `ProposalState`](#0x1_GenesisDao_ProposalState)
 -  [Struct `VotingChoice`](#0x1_GenesisDao_VotingChoice)
@@ -126,6 +132,7 @@
 <b>use</b> <a href="DaoAccount.md#0x1_DaoAccount">0x1::DaoAccount</a>;
 <b>use</b> <a href="DaoRegistry.md#0x1_DaoRegistry">0x1::DaoRegistry</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
+<b>use</b> <a href="Event.md#0x1_Event">0x1::Event</a>;
 <b>use</b> <a href="NFT.md#0x1_IdentifierNFT">0x1::IdentifierNFT</a>;
 <b>use</b> <a href="NFT.md#0x1_NFT">0x1::NFT</a>;
 <b>use</b> <a href="NFT.md#0x1_NFTGallery">0x1::NFTGallery</a>;
@@ -856,6 +863,264 @@ The Dao member NFT Body, hold the SBT token
 <dl>
 <dt>
 <code>sbt: <a href="Token.md#0x1_Token_Token">Token::Token</a>&lt;DaoT&gt;</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_MemberEvent"></a>
+
+## Resource `MemberEvent`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a>&lt;DaoT&gt; <b>has</b> store, key
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>member_join_event_handler: <a href="Event.md#0x1_Event_EventHandle">Event::EventHandle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberJoinEvent">GenesisDao::MemberJoinEvent</a>&lt;DaoT&gt;&gt;</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>member_quit_event_handler: <a href="Event.md#0x1_Event_EventHandle">Event::EventHandle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberQuitEvent">GenesisDao::MemberQuitEvent</a>&lt;DaoT&gt;&gt;</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>member_revoke_event_handler: <a href="Event.md#0x1_Event_EventHandle">Event::EventHandle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberRevokeEvent">GenesisDao::MemberRevokeEvent</a>&lt;DaoT&gt;&gt;</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>member_increase_sbt_event_handler: <a href="Event.md#0x1_Event_EventHandle">Event::EventHandle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberIncreaseSBTEvent">GenesisDao::MemberIncreaseSBTEvent</a>&lt;DaoT&gt;&gt;</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>member_decrease_sbt_event_handler: <a href="Event.md#0x1_Event_EventHandle">Event::EventHandle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberDecreaseSBTEvent">GenesisDao::MemberDecreaseSBTEvent</a>&lt;DaoT&gt;&gt;</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_MemberJoinEvent"></a>
+
+## Struct `MemberJoinEvent`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_MemberJoinEvent">MemberJoinEvent</a>&lt;DaoT&gt; <b>has</b> drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>id: u64</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>addr: <b>address</b></code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>sbt: u128</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_MemberRevokeEvent"></a>
+
+## Struct `MemberRevokeEvent`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_MemberRevokeEvent">MemberRevokeEvent</a>&lt;DaoT&gt; <b>has</b> drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>id: u64</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>addr: <b>address</b></code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>sbt: u128</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_MemberQuitEvent"></a>
+
+## Struct `MemberQuitEvent`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_MemberQuitEvent">MemberQuitEvent</a>&lt;DaoT&gt; <b>has</b> drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>id: u64</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>addr: <b>address</b></code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>sbt: u128</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_MemberIncreaseSBTEvent"></a>
+
+## Struct `MemberIncreaseSBTEvent`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_MemberIncreaseSBTEvent">MemberIncreaseSBTEvent</a>&lt;DaoT&gt; <b>has</b> drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>id: u64</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>addr: <b>address</b></code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>increase_sbt: u128</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>sbt: u128</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_MemberDecreaseSBTEvent"></a>
+
+## Struct `MemberDecreaseSBTEvent`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_MemberDecreaseSBTEvent">MemberDecreaseSBTEvent</a>&lt;DaoT&gt; <b>has</b> drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>id: u64</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>addr: <b>address</b></code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>decrease_sbt: u128</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>sbt: u128</code>
 </dt>
 <dd>
 
@@ -1773,6 +2038,14 @@ Create a dao with a exists Dao account
     <b>move_to</b>(&dao_signer, <a href="GenesisDao.md#0x1_GenesisDao_DaoConfigModifyCapHolder">DaoConfigModifyCapHolder</a>{
         cap: config_modify_cap,
     });
+
+    <b>move_to</b>(&dao_signer ,<a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a>{
+        member_join_event_handler:<a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberJoinEvent">MemberJoinEvent</a>&lt;DaoT&gt;&gt;(&dao_signer),
+        member_quit_event_handler:<a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberQuitEvent">MemberQuitEvent</a>&lt;DaoT&gt;&gt;(&dao_signer),
+        member_revoke_event_handler:<a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberRevokeEvent">MemberRevokeEvent</a>&lt;DaoT&gt;&gt;(&dao_signer),
+        member_increase_sbt_event_handler:<a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberIncreaseSBTEvent">MemberIncreaseSBTEvent</a>&lt;DaoT&gt;&gt;(&dao_signer),
+        member_decrease_sbt_event_handler:<a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberDecreaseSBTEvent">MemberDecreaseSBTEvent</a>&lt;DaoT&gt;&gt;(&dao_signer),
+    });
     <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt;{}
 }
 </code></pre>
@@ -2064,7 +2337,7 @@ Join Dao and get a membership
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_join_member">join_member</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, to_address: <b>address</b>, init_sbt: u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTMintCapHolder">DaoNFTMintCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenMintCapHolder">DaoTokenMintCapHolder</a>, <a href="Dao.md#0x1_Dao">Dao</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_join_member">join_member</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, to_address: <b>address</b>, init_sbt: u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTMintCapHolder">DaoNFTMintCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenMintCapHolder">DaoTokenMintCapHolder</a>, <a href="Dao.md#0x1_Dao">Dao</a>, <a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a> {
     <b>assert</b>!(!<a href="GenesisDao.md#0x1_GenesisDao_is_member">is_member</a>&lt;DaoT&gt;(to_address), <a href="Errors.md#0x1_Errors_already_published">Errors::already_published</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_ALREADY_MEMBER">ERR_NOT_ALREADY_MEMBER</a>));
 
     <b>let</b> member_id = <a href="GenesisDao.md#0x1_GenesisDao_next_member_id">next_member_id</a>&lt;DaoT&gt;();
@@ -2090,6 +2363,12 @@ Join Dao and get a membership
 
     <b>let</b> nft = <a href="NFT.md#0x1_NFT_mint_with_cap_v2">NFT::mint_with_cap_v2</a>(dao_address, nft_mint_cap, basemeta, meta, body);
     <a href="NFT.md#0x1_IdentifierNFT_grant_to">IdentifierNFT::grant_to</a>(nft_mint_cap, to_address, nft);
+    <b>let</b> memeber_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a>&lt;DaoT&gt;&gt;(dao_address);
+    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> memeber_event.member_join_event_handler, <a href="GenesisDao.md#0x1_GenesisDao_MemberJoinEvent">MemberJoinEvent</a>&lt;DaoT&gt; {
+        id : member_id,
+        addr:to_address,
+        sbt: init_sbt,
+    });
 }
 </code></pre>
 
@@ -2113,9 +2392,17 @@ Member quit Dao by self
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_quit_member">quit_member</a>&lt;DaoT: store&gt;(sender: &signer) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_quit_member">quit_member</a>&lt;DaoT: store&gt;(sender: &signer) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a> {
     <b>let</b> member_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
-    <a href="GenesisDao.md#0x1_GenesisDao_do_remove_member">do_remove_member</a>&lt;DaoT&gt;(member_addr);
+    <b>let</b> (member_id , sbt) = <a href="GenesisDao.md#0x1_GenesisDao_do_remove_member">do_remove_member</a>&lt;DaoT&gt;(member_addr);
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+
+    <b>let</b> memeber_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a>&lt;DaoT&gt;&gt;(dao_address);
+    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> memeber_event.member_quit_event_handler, <a href="GenesisDao.md#0x1_GenesisDao_MemberQuitEvent">MemberQuitEvent</a>&lt;DaoT&gt; {
+        id : member_id,
+        addr:member_addr,
+        sbt: sbt,
+    });
 }
 </code></pre>
 
@@ -2139,8 +2426,16 @@ Revoke membership with cap
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_revoke_member">revoke_member</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, member_addr: <b>address</b>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a> {
-    <a href="GenesisDao.md#0x1_GenesisDao_do_remove_member">do_remove_member</a>&lt;DaoT&gt;(member_addr);
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_revoke_member">revoke_member</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, member_addr: <b>address</b>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a> {
+    <b>let</b> (member_id , sbt) = <a href="GenesisDao.md#0x1_GenesisDao_do_remove_member">do_remove_member</a>&lt;DaoT&gt;(member_addr);
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+
+    <b>let</b> memeber_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a>&lt;DaoT&gt;&gt;(dao_address);
+    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> memeber_event.member_revoke_event_handler, <a href="GenesisDao.md#0x1_GenesisDao_MemberRevokeEvent">MemberRevokeEvent</a>&lt;DaoT&gt; {
+        id : member_id,
+        addr:member_addr,
+        sbt: sbt,
+    });
 }
 </code></pre>
 
@@ -2154,7 +2449,7 @@ Revoke membership with cap
 
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_remove_member">do_remove_member</a>&lt;DaoT: store&gt;(member_addr: <b>address</b>)
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_remove_member">do_remove_member</a>&lt;DaoT: store&gt;(member_addr: <b>address</b>): (u64, u128)
 </code></pre>
 
 
@@ -2163,16 +2458,18 @@ Revoke membership with cap
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_remove_member">do_remove_member</a>&lt;DaoT: store&gt;(member_addr: <b>address</b>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a> {
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_remove_member">do_remove_member</a>&lt;DaoT: store&gt;(member_addr: <b>address</b>):(u64,u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a> {
     <b>assert</b>!(<a href="GenesisDao.md#0x1_GenesisDao_is_member">is_member</a>&lt;DaoT&gt;(member_addr), <a href="Errors.md#0x1_Errors_already_published">Errors::already_published</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_MEMBER">ERR_NOT_MEMBER</a>));
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
 
     <b>let</b> nft_burn_cap = &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>&lt;DaoT&gt;&gt;(dao_address).cap;
     <b>let</b> nft = <a href="NFT.md#0x1_IdentifierNFT_revoke">IdentifierNFT::revoke</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoMember">DaoMember</a>&lt;DaoT&gt;, <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberBody">DaoMemberBody</a>&lt;DaoT&gt;&gt;(nft_burn_cap, member_addr);
+    <b>let</b> member_id = <a href="NFT.md#0x1_NFT_get_type_meta">NFT::get_type_meta</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoMember">DaoMember</a>&lt;DaoT&gt;, <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberBody">DaoMemberBody</a>&lt;DaoT&gt;&gt;(&nft).id;
     <b>let</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberBody">DaoMemberBody</a>&lt;DaoT&gt;{ sbt } = <a href="NFT.md#0x1_NFT_burn_with_cap">NFT::burn_with_cap</a>(nft_burn_cap, nft);
-
+    <b>let</b> sbt_amount = <a href="Token.md#0x1_Token_value">Token::value</a>&lt;DaoT&gt;(&sbt);
     <b>let</b> token_burn_cap = &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a>&lt;DaoT&gt;&gt;(dao_address).cap;
     <a href="Token.md#0x1_Token_burn_with_capability">Token::burn_with_capability</a>(token_burn_cap, sbt);
+    (member_id, sbt_amount)
 }
 </code></pre>
 
@@ -2196,19 +2493,31 @@ Increment the member SBT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_increase_member_sbt">increase_member_sbt</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, member_addr: <b>address</b>, amount: u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTUpdateCapHolder">DaoNFTUpdateCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenMintCapHolder">DaoTokenMintCapHolder</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_increase_member_sbt">increase_member_sbt</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, member_addr: <b>address</b>, amount: u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTUpdateCapHolder">DaoNFTUpdateCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenMintCapHolder">DaoTokenMintCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a> {
     <b>assert</b>!(<a href="GenesisDao.md#0x1_GenesisDao_is_member">is_member</a>&lt;DaoT&gt;(member_addr), <a href="Errors.md#0x1_Errors_already_published">Errors::already_published</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_MEMBER">ERR_NOT_MEMBER</a>));
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
 
     <b>let</b> nft_update_cap = &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoNFTUpdateCapHolder">DaoNFTUpdateCapHolder</a>&lt;DaoT&gt;&gt;(dao_address).cap;
     <b>let</b> borrow_nft = <a href="NFT.md#0x1_IdentifierNFT_borrow_out">IdentifierNFT::borrow_out</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoMember">DaoMember</a>&lt;DaoT&gt;, <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberBody">DaoMemberBody</a>&lt;DaoT&gt;&gt;(nft_update_cap, member_addr);
     <b>let</b> nft = <a href="NFT.md#0x1_IdentifierNFT_borrow_nft_mut">IdentifierNFT::borrow_nft_mut</a>(&<b>mut</b> borrow_nft);
+    <b>let</b> member_id = <a href="NFT.md#0x1_NFT_get_type_meta">NFT::get_type_meta</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoMember">DaoMember</a>&lt;DaoT&gt;, <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberBody">DaoMemberBody</a>&lt;DaoT&gt;&gt;(nft).id;
+
     <b>let</b> body = <a href="NFT.md#0x1_NFT_borrow_body_mut_with_cap">NFT::borrow_body_mut_with_cap</a>(nft_update_cap, nft);
 
     <b>let</b> token_mint_cap = &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoTokenMintCapHolder">DaoTokenMintCapHolder</a>&lt;DaoT&gt;&gt;(dao_address).cap;
     <b>let</b> increase_sbt = <a href="Token.md#0x1_Token_mint_with_capability">Token::mint_with_capability</a>&lt;DaoT&gt;(token_mint_cap, amount);
     <a href="Token.md#0x1_Token_deposit">Token::deposit</a>(&<b>mut</b> body.sbt, increase_sbt);
+
+    <b>let</b> sbt_amount = <a href="Token.md#0x1_Token_value">Token::value</a>&lt;DaoT&gt;(&body.sbt);
     <a href="NFT.md#0x1_IdentifierNFT_return_back">IdentifierNFT::return_back</a>(borrow_nft);
+
+    <b>let</b> memeber_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a>&lt;DaoT&gt;&gt;(dao_address);
+    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> memeber_event.member_increase_sbt_event_handler, <a href="GenesisDao.md#0x1_GenesisDao_MemberIncreaseSBTEvent">MemberIncreaseSBTEvent</a>&lt;DaoT&gt; {
+        id : member_id,
+        addr:member_addr,
+        increase_sbt:amount,
+        sbt: sbt_amount,
+    });
 }
 </code></pre>
 
@@ -2232,19 +2541,31 @@ Decrement the member SBT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_decrease_member_sbt">decrease_member_sbt</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, member_addr: <b>address</b>, amount: u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTUpdateCapHolder">DaoNFTUpdateCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_decrease_member_sbt">decrease_member_sbt</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, member_addr: <b>address</b>, amount: u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTUpdateCapHolder">DaoNFTUpdateCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a> {
     <b>assert</b>!(<a href="GenesisDao.md#0x1_GenesisDao_is_member">is_member</a>&lt;DaoT&gt;(member_addr), <a href="Errors.md#0x1_Errors_already_published">Errors::already_published</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_MEMBER">ERR_NOT_MEMBER</a>));
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
 
     <b>let</b> nft_update_cap = &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoNFTUpdateCapHolder">DaoNFTUpdateCapHolder</a>&lt;DaoT&gt;&gt;(dao_address).cap;
     <b>let</b> borrow_nft = <a href="NFT.md#0x1_IdentifierNFT_borrow_out">IdentifierNFT::borrow_out</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoMember">DaoMember</a>&lt;DaoT&gt;, <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberBody">DaoMemberBody</a>&lt;DaoT&gt;&gt;(nft_update_cap, member_addr);
     <b>let</b> nft = <a href="NFT.md#0x1_IdentifierNFT_borrow_nft_mut">IdentifierNFT::borrow_nft_mut</a>(&<b>mut</b> borrow_nft);
+    <b>let</b> member_id = <a href="NFT.md#0x1_NFT_get_type_meta">NFT::get_type_meta</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoMember">DaoMember</a>&lt;DaoT&gt;, <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberBody">DaoMemberBody</a>&lt;DaoT&gt;&gt;(nft).id;
+
     <b>let</b> body = <a href="NFT.md#0x1_NFT_borrow_body_mut_with_cap">NFT::borrow_body_mut_with_cap</a>(nft_update_cap, nft);
 
     <b>let</b> token_burn_cap = &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a>&lt;DaoT&gt;&gt;(dao_address).cap;
     <b>let</b> decrease_sbt = <a href="Token.md#0x1_Token_withdraw">Token::withdraw</a>(&<b>mut</b> body.sbt, amount);
+    <b>let</b> sbt_amount = <a href="Token.md#0x1_Token_value">Token::value</a>&lt;DaoT&gt;(&body.sbt);
+
     <a href="Token.md#0x1_Token_burn_with_capability">Token::burn_with_capability</a>(token_burn_cap, decrease_sbt);
     <a href="NFT.md#0x1_IdentifierNFT_return_back">IdentifierNFT::return_back</a>(borrow_nft);
+
+    <b>let</b> memeber_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a>&lt;DaoT&gt;&gt;(dao_address);
+    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> memeber_event.member_decrease_sbt_event_handler, <a href="GenesisDao.md#0x1_GenesisDao_MemberDecreaseSBTEvent">MemberDecreaseSBTEvent</a>&lt;DaoT&gt; {
+        id : member_id,
+        addr:member_addr,
+        decrease_sbt:amount,
+        sbt: sbt_amount,
+    });
 }
 </code></pre>
 
