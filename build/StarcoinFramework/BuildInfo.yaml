@@ -46,6 +46,9 @@ compiled_package_info:
       name: Config
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: ConfigProposalPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: ConsensusConfig
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -208,6 +211,9 @@ compiled_package_info:
       name: STCUSDOracle
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: SalaryGovPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: SharedEd25519PublicKey
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -291,7 +297,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 37973FE3F7BCD58FFE2521CE3319C0ED239522F2B0DDE5A5F32751C9C324DFF2
+  source_digest: 7F51997501DC9F3AFC1EA8C06C8025E33EA666DF2E3F15C374AF7C7555F061D5
   build_flags:
     dev_mode: false
     test_mode: false

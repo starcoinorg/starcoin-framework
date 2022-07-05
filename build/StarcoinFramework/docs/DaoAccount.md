@@ -11,7 +11,9 @@
 -  [Function `create_account`](#0x1_DaoAccount_create_account)
 -  [Function `create_account_entry`](#0x1_DaoAccount_create_account_entry)
 -  [Function `extract_dao_account_cap`](#0x1_DaoAccount_extract_dao_account_cap)
+-  [Function `restore_dao_account_cap`](#0x1_DaoAccount_restore_dao_account_cap)
 -  [Function `upgrade_to_dao`](#0x1_DaoAccount_upgrade_to_dao)
+-  [Function `upgrade_to_dao_with_signer_cap`](#0x1_DaoAccount_upgrade_to_dao_with_signer_cap)
 -  [Function `dao_signer`](#0x1_DaoAccount_dao_signer)
 -  [Function `submit_upgrade_plan`](#0x1_DaoAccount_submit_upgrade_plan)
 -  [Function `submit_upgrade_plan_entry`](#0x1_DaoAccount_submit_upgrade_plan_entry)
@@ -19,10 +21,12 @@
 
 
 <pre><code><b>use</b> <a href="Account.md#0x1_Account">0x1::Account</a>;
+<b>use</b> <a href="Config.md#0x1_Config">0x1::Config</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
 <b>use</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager">0x1::PackageTxnManager</a>;
 <b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
+<b>use</b> <a href="Version.md#0x1_Version">0x1::Version</a>;
 </code></pre>
 
 
@@ -52,6 +56,12 @@ DaoAccount
 </dd>
 <dt>
 <code>signer_cap: <a href="Account.md#0x1_Account_SignerCapability">Account::SignerCapability</a></code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>upgrade_plan_cap: <a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanCapability">PackageTxnManager::UpgradePlanCapability</a></code>
 </dt>
 <dd>
 
@@ -121,17 +131,8 @@ Dao Account is a delegate account, the <code>creator</code> has the <code><a hre
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_create_account">create_account</a>(creator: &signer): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a> {
-    <b>let</b> (dao_address, signer_cap) = <a href="Account.md#0x1_Account_create_delegate_account">Account::create_delegate_account</a>(creator);
-    <b>let</b> dao_signer = <a href="Account.md#0x1_Account_create_signer_with_cap">Account::create_signer_with_cap</a>(&signer_cap);
-
-    <a href="PackageTxnManager.md#0x1_PackageTxnManager_update_module_upgrade_strategy">PackageTxnManager::update_module_upgrade_strategy</a>(&dao_signer, <a href="PackageTxnManager.md#0x1_PackageTxnManager_get_strategy_two_phase">PackageTxnManager::get_strategy_two_phase</a>(), <a href="Option.md#0x1_Option_some">Option::some</a>(0));
-    <b>move_to</b>(&dao_signer, <a href="DaoAccount.md#0x1_DaoAccount">DaoAccount</a>{
-        dao_address,
-        signer_cap: signer_cap,
-    });
-    <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a>{
-        dao_address
-    }
+    <b>let</b> (_dao_address, signer_cap) = <a href="Account.md#0x1_Account_create_delegate_account">Account::create_delegate_account</a>(creator);
+    <a href="DaoAccount.md#0x1_DaoAccount_upgrade_to_dao_with_signer_cap">upgrade_to_dao_with_signer_cap</a>(signer_cap)
 }
 </code></pre>
 
@@ -169,6 +170,7 @@ Entry function for create dao account, the <code><a href="DaoAccount.md#0x1_DaoA
 
 ## Function `extract_dao_account_cap`
 
+Extract the DaoAccountCap from the <code>sender</code>
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_extract_dao_account_cap">extract_dao_account_cap</a>(sender: &signer): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccount::DaoAccountCap</a>
@@ -184,6 +186,31 @@ Entry function for create dao account, the <code><a href="DaoAccount.md#0x1_DaoA
     <b>let</b> sender_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
     <b>assert</b>!(<b>exists</b>&lt;<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a>&gt;(sender_addr), <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="DaoAccount.md#0x1_DaoAccount_ERR_ACCOUNT_CAP_NOT_EXISTS">ERR_ACCOUNT_CAP_NOT_EXISTS</a>));
     <b>move_from</b>&lt;<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a>&gt;(sender_addr)
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_DaoAccount_restore_dao_account_cap"></a>
+
+## Function `restore_dao_account_cap`
+
+Restore the DaoAccountCap to the <code>sender</code>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_restore_dao_account_cap">restore_dao_account_cap</a>(sender: &signer, cap: <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccount::DaoAccountCap</a>)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_restore_dao_account_cap">restore_dao_account_cap</a>(sender: &signer, cap: <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a>) {
+    <b>move_to</b>(sender, cap)
 }
 </code></pre>
 
@@ -208,16 +235,49 @@ Upgrade <code>sender</code> account to Dao account
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_upgrade_to_dao">upgrade_to_dao</a>(sender: signer): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a> {
-    //TODO <b>assert</b> sender not <a href="Dao.md#0x1_Dao">Dao</a>
     <b>let</b> signer_cap = <a href="Account.md#0x1_Account_remove_signer_capability">Account::remove_signer_capability</a>(&sender);
-    //TODO check the account upgrade_strategy
-    <a href="PackageTxnManager.md#0x1_PackageTxnManager_update_module_upgrade_strategy">PackageTxnManager::update_module_upgrade_strategy</a>(&sender, <a href="PackageTxnManager.md#0x1_PackageTxnManager_get_strategy_two_phase">PackageTxnManager::get_strategy_two_phase</a>(), <a href="Option.md#0x1_Option_some">Option::some</a>(0));
-    <b>let</b> dao_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&sender);
-    <b>move_to</b>(&sender, <a href="DaoAccount.md#0x1_DaoAccount">DaoAccount</a>{
+    <a href="DaoAccount.md#0x1_DaoAccount_upgrade_to_dao_with_signer_cap">upgrade_to_dao_with_signer_cap</a>(signer_cap)
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_DaoAccount_upgrade_to_dao_with_signer_cap"></a>
+
+## Function `upgrade_to_dao_with_signer_cap`
+
+Upgrade the account which have the <code>signer_cap</code> to a Dao Account
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_upgrade_to_dao_with_signer_cap">upgrade_to_dao_with_signer_cap</a>(signer_cap: <a href="Account.md#0x1_Account_SignerCapability">Account::SignerCapability</a>): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccount::DaoAccountCap</a>
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_upgrade_to_dao_with_signer_cap">upgrade_to_dao_with_signer_cap</a>(signer_cap: SignerCapability): <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a> {
+   <b>let</b> dao_signer = <a href="Account.md#0x1_Account_create_signer_with_cap">Account::create_signer_with_cap</a>(&signer_cap);
+   <b>let</b> dao_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&dao_signer);
+
+    <b>let</b> upgrade_plan_cap = <b>if</b>(<a href="Config.md#0x1_Config_config_exist_by_address">Config::config_exist_by_address</a>&lt;<a href="Version.md#0x1_Version_Version">Version::Version</a>&gt;(dao_address)){
+        //TODO <b>if</b> the account <b>has</b> extract the upgrade plan cap
+        <a href="PackageTxnManager.md#0x1_PackageTxnManager_extract_submit_upgrade_plan_cap">PackageTxnManager::extract_submit_upgrade_plan_cap</a>(&dao_signer)
+    }<b>else</b>{
+        <a href="Config.md#0x1_Config_publish_new_config">Config::publish_new_config</a>&lt;<a href="Version.md#0x1_Version_Version">Version::Version</a>&gt;(&dao_signer, <a href="Version.md#0x1_Version_new_version">Version::new_version</a>(1));
+        <a href="PackageTxnManager.md#0x1_PackageTxnManager_update_module_upgrade_strategy">PackageTxnManager::update_module_upgrade_strategy</a>(&dao_signer, <a href="PackageTxnManager.md#0x1_PackageTxnManager_get_strategy_two_phase">PackageTxnManager::get_strategy_two_phase</a>(), <a href="Option.md#0x1_Option_some">Option::some</a>(1));
+        <a href="PackageTxnManager.md#0x1_PackageTxnManager_extract_submit_upgrade_plan_cap">PackageTxnManager::extract_submit_upgrade_plan_cap</a>(&dao_signer)
+    };
+    <b>move_to</b>(&dao_signer, <a href="DaoAccount.md#0x1_DaoAccount">DaoAccount</a>{
         dao_address,
-        signer_cap: signer_cap,
+        signer_cap,
+        upgrade_plan_cap,
     });
-    <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a>{
+     <a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a>{
         dao_address
     }
 }
@@ -271,8 +331,8 @@ This function is a shortcut for create signer with DaoAccountCap and invoke <cod
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="DaoAccount.md#0x1_DaoAccount_submit_upgrade_plan">submit_upgrade_plan</a>(cap: &<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccountCap</a>, package_hash: vector&lt;u8&gt;, version:u64, enforced: bool) <b>acquires</b> <a href="DaoAccount.md#0x1_DaoAccount">DaoAccount</a>{
-    <b>let</b> dao_signer = <a href="DaoAccount.md#0x1_DaoAccount_dao_signer">dao_signer</a>(cap);
-    <a href="PackageTxnManager.md#0x1_PackageTxnManager_submit_upgrade_plan_v2">PackageTxnManager::submit_upgrade_plan_v2</a>(&dao_signer, package_hash, version, enforced);
+    <b>let</b> upgrade_plan_cap = &<b>borrow_global</b>&lt;<a href="DaoAccount.md#0x1_DaoAccount">DaoAccount</a>&gt;(cap.dao_address).upgrade_plan_cap;
+    <a href="PackageTxnManager.md#0x1_PackageTxnManager_submit_upgrade_plan_with_cap_v2">PackageTxnManager::submit_upgrade_plan_with_cap_v2</a>(upgrade_plan_cap, package_hash, version, enforced);
 }
 </code></pre>
 
