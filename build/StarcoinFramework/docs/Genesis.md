@@ -508,6 +508,12 @@ The module for init Genesis
         <a href="GenesisNFT.md#0x1_GenesisNFT_initialize">GenesisNFT::initialize</a>(&genesis_account, merkle_root, 1639u64, image);
     };
     <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v6_to_v7_with_language_version">StdlibUpgradeScripts::do_upgrade_from_v6_to_v7_with_language_version</a>(&genesis_account, 4);
+
+    //v11 -&gt; v12
+    {
+
+    };
+    <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">StdlibUpgradeScripts::do_upgrade_from_v11_to_v12</a>(&genesis_account);
     //Start time, <a href="Timestamp.md#0x1_Timestamp_is_genesis">Timestamp::is_genesis</a>() will <b>return</b> <b>false</b>. this call should at the end of genesis init.
     <a href="Timestamp.md#0x1_Timestamp_set_time_has_started">Timestamp::set_time_has_started</a>(&genesis_account);
     <a href="Account.md#0x1_Account_release_genesis_signer">Account::release_genesis_signer</a>(genesis_account);
