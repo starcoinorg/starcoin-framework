@@ -8,6 +8,7 @@
 -  [Resource `Dao`](#0x1_GenesisDao_Dao)
 -  [Resource `DaoExt`](#0x1_GenesisDao_DaoExt)
 -  [Struct `DaoConfig`](#0x1_GenesisDao_DaoConfig)
+-  [Struct `DaoCustomConfig`](#0x1_GenesisDao_DaoCustomConfig)
 -  [Resource `DaoAccountCapHolder`](#0x1_GenesisDao_DaoAccountCapHolder)
 -  [Resource `DaoTokenMintCapHolder`](#0x1_GenesisDao_DaoTokenMintCapHolder)
 -  [Resource `DaoTokenBurnCapHolder`](#0x1_GenesisDao_DaoTokenBurnCapHolder)
@@ -15,6 +16,7 @@
 -  [Resource `DaoNFTBurnCapHolder`](#0x1_GenesisDao_DaoNFTBurnCapHolder)
 -  [Resource `DaoNFTUpdateCapHolder`](#0x1_GenesisDao_DaoNFTUpdateCapHolder)
 -  [Resource `DaoConfigModifyCapHolder`](#0x1_GenesisDao_DaoConfigModifyCapHolder)
+-  [Resource `DaoCustomConfigModifyCapHolder`](#0x1_GenesisDao_DaoCustomConfigModifyCapHolder)
 -  [Struct `CapType`](#0x1_GenesisDao_CapType)
 -  [Struct `DaoRootCap`](#0x1_GenesisDao_DaoRootCap)
 -  [Struct `DaoInstallPluginCap`](#0x1_GenesisDao_DaoInstallPluginCap)
@@ -33,11 +35,18 @@
 -  [Struct `VotingChoice`](#0x1_GenesisDao_VotingChoice)
 -  [Struct `Proposal`](#0x1_GenesisDao_Proposal)
 -  [Struct `ProposalAction`](#0x1_GenesisDao_ProposalAction)
+-  [Struct `ProposalActionIndex`](#0x1_GenesisDao_ProposalActionIndex)
 -  [Struct `ProposalInfo`](#0x1_GenesisDao_ProposalInfo)
 -  [Resource `GlobalProposals`](#0x1_GenesisDao_GlobalProposals)
 -  [Resource `ProposalActions`](#0x1_GenesisDao_ProposalActions)
+-  [Resource `GlobalProposalActions`](#0x1_GenesisDao_GlobalProposalActions)
 -  [Struct `Vote`](#0x1_GenesisDao_Vote)
+-  [Struct `VoteInfo`](#0x1_GenesisDao_VoteInfo)
 -  [Resource `MyVotes`](#0x1_GenesisDao_MyVotes)
+-  [Struct `SnapshotProof`](#0x1_GenesisDao_SnapshotProof)
+-  [Struct `ProposalCreatedEvent`](#0x1_GenesisDao_ProposalCreatedEvent)
+-  [Struct `VoteChangedEvent`](#0x1_GenesisDao_VoteChangedEvent)
+-  [Resource `ProposalEvent`](#0x1_GenesisDao_ProposalEvent)
 -  [Constants](#@Constants_0)
 -  [Function `install_plugin_cap_type`](#0x1_GenesisDao_install_plugin_cap_type)
 -  [Function `upgrade_module_cap_type`](#0x1_GenesisDao_upgrade_module_cap_type)
@@ -65,6 +74,7 @@
 -  [Function `do_remove_member`](#0x1_GenesisDao_do_remove_member)
 -  [Function `increase_member_sbt`](#0x1_GenesisDao_increase_member_sbt)
 -  [Function `decrease_member_sbt`](#0x1_GenesisDao_decrease_member_sbt)
+-  [Function `query_sbt`](#0x1_GenesisDao_query_sbt)
 -  [Function `is_member`](#0x1_GenesisDao_is_member)
 -  [Function `validate_cap`](#0x1_GenesisDao_validate_cap)
 -  [Function `acquire_install_plugin_cap`](#0x1_GenesisDao_acquire_install_plugin_cap)
@@ -79,23 +89,28 @@
 -  [Function `choice_no`](#0x1_GenesisDao_choice_no)
 -  [Function `choice_no_with_veto`](#0x1_GenesisDao_choice_no_with_veto)
 -  [Function `choice_abstain`](#0x1_GenesisDao_choice_abstain)
+-  [Function `initialize_proposal`](#0x1_GenesisDao_initialize_proposal)
 -  [Function `create_proposal`](#0x1_GenesisDao_create_proposal)
 -  [Function `block_number_and_state_root`](#0x1_GenesisDao_block_number_and_state_root)
--  [Function `generate_next_proposal_id`](#0x1_GenesisDao_generate_next_proposal_id)
 -  [Function `cast_vote`](#0x1_GenesisDao_cast_vote)
--  [Function `change_vote`](#0x1_GenesisDao_change_vote)
--  [Function `revoke_vote`](#0x1_GenesisDao_revoke_vote)
+-  [Function `deserialize_snapshot_proofs`](#0x1_GenesisDao_deserialize_snapshot_proofs)
+-  [Function `new_state_proof_from_proofs`](#0x1_GenesisDao_new_state_proof_from_proofs)
 -  [Function `execute_proposal`](#0x1_GenesisDao_execute_proposal)
 -  [Function `take_proposal_action`](#0x1_GenesisDao_take_proposal_action)
 -  [Function `find_action`](#0x1_GenesisDao_find_action)
--  [Function `has_voted`](#0x1_GenesisDao_has_voted)
 -  [Function `do_cast_vote`](#0x1_GenesisDao_do_cast_vote)
--  [Function `get_vote`](#0x1_GenesisDao_get_vote)
+-  [Function `has_voted`](#0x1_GenesisDao_has_voted)
+-  [Function `get_vote_info`](#0x1_GenesisDao_get_vote_info)
 -  [Function `proposal_state`](#0x1_GenesisDao_proposal_state)
+-  [Function `proposal_state_with_proposal`](#0x1_GenesisDao_proposal_state_with_proposal)
+-  [Function `do_proposal_state`](#0x1_GenesisDao_do_proposal_state)
+-  [Function `proposal_info`](#0x1_GenesisDao_proposal_info)
 -  [Function `borrow_proposal_mut`](#0x1_GenesisDao_borrow_proposal_mut)
 -  [Function `borrow_proposal`](#0x1_GenesisDao_borrow_proposal)
+-  [Function `find_proposal_action_index`](#0x1_GenesisDao_find_proposal_action_index)
 -  [Function `proposal`](#0x1_GenesisDao_proposal)
 -  [Function `new_dao_config`](#0x1_GenesisDao_new_dao_config)
+-  [Function `set_custom_config`](#0x1_GenesisDao_set_custom_config)
 -  [Function `voting_delay`](#0x1_GenesisDao_voting_delay)
 -  [Function `voting_period`](#0x1_GenesisDao_voting_period)
 -  [Function `quorum_votes`](#0x1_GenesisDao_quorum_votes)
@@ -110,6 +125,7 @@
 -  [Function `set_min_action_delay`](#0x1_GenesisDao_set_min_action_delay)
 -  [Function `set_min_proposal_deposit`](#0x1_GenesisDao_set_min_proposal_deposit)
 -  [Function `next_member_id`](#0x1_GenesisDao_next_member_id)
+-  [Function `next_proposal_id`](#0x1_GenesisDao_next_proposal_id)
 -  [Function `assert_no_repeat`](#0x1_GenesisDao_assert_no_repeat)
 -  [Function `remove_element`](#0x1_GenesisDao_remove_element)
 -  [Function `add_element`](#0x1_GenesisDao_add_element)
@@ -118,20 +134,23 @@
 
 
 <pre><code><b>use</b> <a href="Account.md#0x1_Account">0x1::Account</a>;
+<b>use</b> <a href="BCS.md#0x1_BCS">0x1::BCS</a>;
 <b>use</b> <a href="Config.md#0x1_Config">0x1::Config</a>;
 <b>use</b> <a href="DaoAccount.md#0x1_DaoAccount">0x1::DaoAccount</a>;
 <b>use</b> <a href="DaoRegistry.md#0x1_DaoRegistry">0x1::DaoRegistry</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
+<b>use</b> <a href="Event.md#0x1_Event">0x1::Event</a>;
 <b>use</b> <a href="NFT.md#0x1_IdentifierNFT">0x1::IdentifierNFT</a>;
 <b>use</b> <a href="NFT.md#0x1_NFT">0x1::NFT</a>;
 <b>use</b> <a href="NFT.md#0x1_NFTGallery">0x1::NFTGallery</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
+<b>use</b> <a href="SBTVoteStrategy.md#0x1_SBTVoteStrategy">0x1::SBTVoteStrategy</a>;
 <b>use</b> <a href="STC.md#0x1_STC">0x1::STC</a>;
 <b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
+<b>use</b> <a href="StarcoinVerifier.md#0x1_StarcoinVerifier">0x1::StarcoinVerifier</a>;
 <b>use</b> <a href="Timestamp.md#0x1_Timestamp">0x1::Timestamp</a>;
 <b>use</b> <a href="Token.md#0x1_Token">0x1::Token</a>;
 <b>use</b> <a href="Vector.md#0x1_Vector">0x1::Vector</a>;
-<b>use</b> <a href="VoteUtil.md#0x1_VoteUtil">0x1::VoteUtil</a>;
 </code></pre>
 
 
@@ -176,6 +195,12 @@
 <dd>
 
 </dd>
+<dt>
+<code>next_proposal_id: u64</code>
+</dt>
+<dd>
+
+</dd>
 </dl>
 
 
@@ -215,7 +240,7 @@
 Configuration of the DAO.
 
 
-<pre><code><b>struct</b> <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a> <b>has</b> <b>copy</b>, drop, store
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a> <b>has</b> <b>copy</b>, drop, store
 </code></pre>
 
 
@@ -256,6 +281,33 @@ Configuration of the DAO.
 </dt>
 <dd>
  how many STC should be deposited to create a proposal.
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_DaoCustomConfig"></a>
+
+## Struct `DaoCustomConfig`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoCustomConfig">DaoCustomConfig</a>&lt;ConfigT&gt; <b>has</b> <b>copy</b>, drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>config: ConfigT</code>
+</dt>
+<dd>
+
 </dd>
 </dl>
 
@@ -442,6 +494,33 @@ Configuration of the DAO.
 <dl>
 <dt>
 <code>cap: <a href="Config.md#0x1_Config_ModifyConfigCapability">Config::ModifyConfigCapability</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">GenesisDao::DaoConfig</a>&gt;</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_DaoCustomConfigModifyCapHolder"></a>
+
+## Resource `DaoCustomConfigModifyCapHolder`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoCustomConfigModifyCapHolder">DaoCustomConfigModifyCapHolder</a>&lt;DaoT, ConfigT: <b>copy</b>, drop, store&gt; <b>has</b> key
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>cap: <a href="Config.md#0x1_Config_ModifyConfigCapability">Config::ModifyConfigCapability</a>&lt;ConfigT&gt;</code>
 </dt>
 <dd>
 
@@ -896,7 +975,7 @@ Proposal data struct.
 review: it is safe to has <code><b>copy</b></code> and <code>drop</code>?
 
 
-<pre><code><b>struct</b> <a href="Proposal.md#0x1_Proposal">Proposal</a> <b>has</b> <b>copy</b>, drop, store
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a> <b>has</b> <b>copy</b>, drop, store
 </code></pre>
 
 
@@ -931,10 +1010,28 @@ review: it is safe to has <code><b>copy</b></code> and <code>drop</code>?
  when voting ends.
 </dd>
 <dt>
-<code>votes: vector&lt;u128&gt;</code>
+<code>yes_votes: u128</code>
 </dt>
 <dd>
  count of voters who <code>yes|no|no_with_veto|abstain</code> with the proposal
+</dd>
+<dt>
+<code>no_votes: u128</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>no_with_veto_votes: u128</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>abstain_votes: u128</code>
+</dt>
+<dd>
+
 </dd>
 <dt>
 <code>eta: u64</code>
@@ -1010,6 +1107,33 @@ review: it is safe to has <code><b>copy</b></code> and <code>drop</code>?
 
 </details>
 
+<a name="0x1_GenesisDao_ProposalActionIndex"></a>
+
+## Struct `ProposalActionIndex`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalActionIndex">ProposalActionIndex</a> <b>has</b> drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>proposal_id: u64</code>
+</dt>
+<dd>
+ id of the proposal
+</dd>
+</dl>
+
+
+</details>
+
 <a name="0x1_GenesisDao_ProposalInfo"></a>
 
 ## Struct `ProposalInfo`
@@ -1074,7 +1198,7 @@ Replace with Table when support Table.
 Every ActionT keep a vector in the Dao account
 
 
-<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>&lt;ActionT&gt; <b>has</b> key
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>&lt;ActionT: store&gt; <b>has</b> key
 </code></pre>
 
 
@@ -1095,11 +1219,40 @@ Every ActionT keep a vector in the Dao account
 
 </details>
 
+<a name="0x1_GenesisDao_GlobalProposalActions"></a>
+
+## Resource `GlobalProposalActions`
+
+Keep a global proposal action record for query action by proposal_id.
+Replace with Table when support Table.
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a> <b>has</b> key
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>proposal_action_indexs: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalActionIndex">GenesisDao::ProposalActionIndex</a>&gt;</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
 <a name="0x1_GenesisDao_Vote"></a>
 
 ## Struct `Vote`
 
-User vote info.
+User vote.
 
 
 <pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_Vote">Vote</a> <b>has</b> store
@@ -1119,7 +1272,47 @@ User vote info.
  proposal id.
 </dd>
 <dt>
-<code>weight: u128</code>
+<code>vote_weight: u128</code>
+</dt>
+<dd>
+ vote weight
+</dd>
+<dt>
+<code>choice: u8</code>
+</dt>
+<dd>
+ vote choise
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_VoteInfo"></a>
+
+## Struct `VoteInfo`
+
+User vote info. has drop cap
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_VoteInfo">VoteInfo</a> <b>has</b> drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>proposal_id: u64</code>
+</dt>
+<dd>
+ proposal id.
+</dd>
+<dt>
+<code>vote_weight: u128</code>
 </dt>
 <dd>
  vote weight
@@ -1157,6 +1350,183 @@ Every voter keep a vector Vote for per Dao
 </dt>
 <dd>
 
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_SnapshotProof"></a>
+
+## Struct `SnapshotProof`
+
+use bcs se/de for Snapshot proofs
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">SnapshotProof</a> <b>has</b> <b>copy</b>, drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>account_proof_leaf: vector&lt;vector&lt;u8&gt;&gt;</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>account_proof_siblings: vector&lt;vector&lt;u8&gt;&gt;</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>account_state: vector&lt;u8&gt;</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>account_state_proof_leaf: vector&lt;vector&lt;u8&gt;&gt;</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>account_state_proof_siblings: vector&lt;vector&lt;u8&gt;&gt;</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>state: vector&lt;u8&gt;</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>resource_struct_tag: vector&lt;u8&gt;</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_ProposalCreatedEvent"></a>
+
+## Struct `ProposalCreatedEvent`
+
+emitted when proposal created.
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalCreatedEvent">ProposalCreatedEvent</a> <b>has</b> drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>proposal_id: u64</code>
+</dt>
+<dd>
+ the proposal id.
+</dd>
+<dt>
+<code>proposer: <b>address</b></code>
+</dt>
+<dd>
+ proposer is the user who create the proposal.
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_VoteChangedEvent"></a>
+
+## Struct `VoteChangedEvent`
+
+emitted when user vote/revoke_vote.
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_VoteChangedEvent">VoteChangedEvent</a> <b>has</b> drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>proposal_id: u64</code>
+</dt>
+<dd>
+ the proposal id.
+</dd>
+<dt>
+<code>voter: <b>address</b></code>
+</dt>
+<dd>
+ the voter.
+</dd>
+<dt>
+<code>choice: u8</code>
+</dt>
+<dd>
+ 1:yes, 2:no, 3:no_with_veto, 4:abstain
+</dd>
+<dt>
+<code>vote_weight: u128</code>
+</dt>
+<dd>
+ latest vote count of the voter.
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_ProposalEvent"></a>
+
+## Resource `ProposalEvent`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>&lt;DaoT: store&gt; <b>has</b> store, key
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>proposal_create_event: <a href="Event.md#0x1_Event_EventHandle">Event::EventHandle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalCreatedEvent">GenesisDao::ProposalCreatedEvent</a>&gt;</code>
+</dt>
+<dd>
+ proposal creating event.
+</dd>
+<dt>
+<code>vote_changed_event: <a href="Event.md#0x1_Event_EventHandle">Event::EventHandle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_VoteChangedEvent">GenesisDao::VoteChangedEvent</a>&gt;</code>
+</dt>
+<dd>
+ voting event.
 </dd>
 </dl>
 
@@ -1215,9 +1585,10 @@ Every voter keep a vector Vote for per Dao
 
 <a name="0x1_GenesisDao_ERR_ACTION_MUST_EXIST"></a>
 
+action
 
 
-<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_ACTION_MUST_EXIST">ERR_ACTION_MUST_EXIST</a>: u64 = 1409;
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_ACTION_MUST_EXIST">ERR_ACTION_MUST_EXIST</a>: u64 = 1430;
 </code></pre>
 
 
@@ -1226,7 +1597,7 @@ Every voter keep a vector Vote for per Dao
 
 
 
-<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>: u64 = 1407;
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>: u64 = 1403;
 </code></pre>
 
 
@@ -1235,16 +1606,17 @@ Every voter keep a vector Vote for per Dao
 
 
 
-<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_ID_MISMATCH">ERR_PROPOSAL_ID_MISMATCH</a>: u64 = 1404;
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_ID_MISMATCH">ERR_PROPOSAL_ID_MISMATCH</a>: u64 = 1414;
 </code></pre>
 
 
 
 <a name="0x1_GenesisDao_ERR_PROPOSAL_STATE_INVALID"></a>
 
+proposal
 
 
-<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_STATE_INVALID">ERR_PROPOSAL_STATE_INVALID</a>: u64 = 1403;
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_STATE_INVALID">ERR_PROPOSAL_STATE_INVALID</a>: u64 = 1413;
 </code></pre>
 
 
@@ -1253,7 +1625,7 @@ Every voter keep a vector Vote for per Dao
 
 
 
-<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSER_MISMATCH">ERR_PROPOSER_MISMATCH</a>: u64 = 1405;
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSER_MISMATCH">ERR_PROPOSER_MISMATCH</a>: u64 = 1415;
 </code></pre>
 
 
@@ -1262,7 +1634,7 @@ Every voter keep a vector Vote for per Dao
 
 
 
-<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_QUORUM_RATE_INVALID">ERR_QUORUM_RATE_INVALID</a>: u64 = 1406;
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_QUORUM_RATE_INVALID">ERR_QUORUM_RATE_INVALID</a>: u64 = 1417;
 </code></pre>
 
 
@@ -1271,16 +1643,17 @@ Every voter keep a vector Vote for per Dao
 
 
 
-<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_VOTED_OTHERS_ALREADY">ERR_VOTED_OTHERS_ALREADY</a>: u64 = 1410;
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_VOTED_OTHERS_ALREADY">ERR_VOTED_OTHERS_ALREADY</a>: u64 = 1446;
 </code></pre>
 
 
 
 <a name="0x1_GenesisDao_ERR_VOTE_STATE_MISMATCH"></a>
 
+vote
 
 
-<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_VOTE_STATE_MISMATCH">ERR_VOTE_STATE_MISMATCH</a>: u64 = 1408;
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_VOTE_STATE_MISMATCH">ERR_VOTE_STATE_MISMATCH</a>: u64 = 1445;
 </code></pre>
 
 
@@ -1324,6 +1697,24 @@ Proposal state
 
 
 
+<a name="0x1_GenesisDao_ERR_ALREADY_INIT"></a>
+
+
+
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_ALREADY_INIT">ERR_ALREADY_INIT</a>: u64 = 104;
+</code></pre>
+
+
+
+<a name="0x1_GenesisDao_ERR_ACTION_INDEX_INVALID"></a>
+
+
+
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_ACTION_INDEX_INVALID">ERR_ACTION_INDEX_INVALID</a>: u64 = 1431;
+</code></pre>
+
+
+
 <a name="0x1_GenesisDao_ERR_NFT_ERROR"></a>
 
 
@@ -1338,6 +1729,16 @@ Proposal state
 
 
 <pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_ALREADY_MEMBER">ERR_NOT_ALREADY_MEMBER</a>: u64 = 104;
+</code></pre>
+
+
+
+<a name="0x1_GenesisDao_ERR_NOT_DAO_MEMBER"></a>
+
+member
+
+
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_DAO_MEMBER">ERR_NOT_DAO_MEMBER</a>: u64 = 1436;
 </code></pre>
 
 
@@ -1360,6 +1761,33 @@ Proposal state
 
 
 
+<a name="0x1_GenesisDao_ERR_PROPOSAL_ACTIONS_NOT_EXIST"></a>
+
+
+
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_ACTIONS_NOT_EXIST">ERR_PROPOSAL_ACTIONS_NOT_EXIST</a>: u64 = 1431;
+</code></pre>
+
+
+
+<a name="0x1_GenesisDao_ERR_PROPOSAL_ACTION_INDEX_NOT_EXIST"></a>
+
+
+
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_ACTION_INDEX_NOT_EXIST">ERR_PROPOSAL_ACTION_INDEX_NOT_EXIST</a>: u64 = 1418;
+</code></pre>
+
+
+
+<a name="0x1_GenesisDao_ERR_PROPOSAL_NOT_EXIST"></a>
+
+
+
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_NOT_EXIST">ERR_PROPOSAL_NOT_EXIST</a>: u64 = 1416;
+</code></pre>
+
+
+
 <a name="0x1_GenesisDao_ERR_REPEAT_ELEMENT"></a>
 
 
@@ -1369,11 +1797,47 @@ Proposal state
 
 
 
+<a name="0x1_GenesisDao_ERR_SNAPSHOT_PROOF_PARAM_INVALID"></a>
+
+
+
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_SNAPSHOT_PROOF_PARAM_INVALID">ERR_SNAPSHOT_PROOF_PARAM_INVALID</a>: u64 = 1455;
+</code></pre>
+
+
+
+<a name="0x1_GenesisDao_ERR_STATE_PROOF_VERIFY_INVALID"></a>
+
+
+
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_STATE_PROOF_VERIFY_INVALID">ERR_STATE_PROOF_VERIFY_INVALID</a>: u64 = 1456;
+</code></pre>
+
+
+
 <a name="0x1_GenesisDao_ERR_STORAGE_ERROR"></a>
 
 
 
 <pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_STORAGE_ERROR">ERR_STORAGE_ERROR</a>: u64 = 102;
+</code></pre>
+
+
+
+<a name="0x1_GenesisDao_ERR_VOTED_ALREADY"></a>
+
+
+
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_VOTED_ALREADY">ERR_VOTED_ALREADY</a>: u64 = 1447;
+</code></pre>
+
+
+
+<a name="0x1_GenesisDao_ERR_VOTE_PARAM_INVALID"></a>
+
+
+
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_VOTE_PARAM_INVALID">ERR_VOTE_PARAM_INVALID</a>: u64 = 1448;
 </code></pre>
 
 
@@ -1440,7 +1904,7 @@ Creates a install plugin capability type.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_install_plugin_cap_type">install_plugin_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 0 } }
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_install_plugin_cap_type">install_plugin_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code: 0 } }
 </code></pre>
 
 
@@ -1463,7 +1927,7 @@ Creates a upgrade module capability type.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_upgrade_module_cap_type">upgrade_module_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 1 } }
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_upgrade_module_cap_type">upgrade_module_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code: 1 } }
 </code></pre>
 
 
@@ -1486,7 +1950,7 @@ Creates a modify dao config capability type.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_modify_config_cap_type">modify_config_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 2 } }
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_modify_config_cap_type">modify_config_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code: 2 } }
 </code></pre>
 
 
@@ -1509,7 +1973,7 @@ Creates a withdraw Token capability type.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_withdraw_token_cap_type">withdraw_token_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 3 } }
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_withdraw_token_cap_type">withdraw_token_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code: 3 } }
 </code></pre>
 
 
@@ -1532,7 +1996,7 @@ Creates a withdraw NFT capability type.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_withdraw_nft_cap_type">withdraw_nft_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 4 } }
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_withdraw_nft_cap_type">withdraw_nft_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code: 4 } }
 </code></pre>
 
 
@@ -1555,7 +2019,7 @@ Creates a write data to Dao account capability type.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_storage_cap_type">storage_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 5 } }
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_storage_cap_type">storage_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code: 5 } }
 </code></pre>
 
 
@@ -1579,7 +2043,7 @@ This cap can issue Dao member NFT or update member's SBT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_member_cap_type">member_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 6 } }
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_member_cap_type">member_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code: 6 } }
 </code></pre>
 
 
@@ -1602,7 +2066,7 @@ Creates a vote capability type.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_cap_type">proposal_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code : 7 } }
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_cap_type">proposal_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code: 7 } }
 </code></pre>
 
 
@@ -1625,7 +2089,7 @@ Creates all capability types.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_all_caps">all_caps</a>(): vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>&gt;{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_all_caps">all_caps</a>(): vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>&gt; {
     <b>let</b> caps = <a href="Vector.md#0x1_Vector_singleton">Vector::singleton</a>(<a href="GenesisDao.md#0x1_GenesisDao_install_plugin_cap_type">install_plugin_cap_type</a>());
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> caps, <a href="GenesisDao.md#0x1_GenesisDao_upgrade_module_cap_type">upgrade_module_cap_type</a>());
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> caps, <a href="GenesisDao.md#0x1_GenesisDao_modify_config_cap_type">modify_config_cap_type</a>());
@@ -1658,7 +2122,7 @@ Create a dao with a exists Dao account
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_create_dao">create_dao</a>&lt;DaoT: store&gt;(cap: DaoAccountCap, name: vector&lt;u8&gt;, ext: DaoT, config: <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>): <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt; {
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_create_dao">create_dao</a>&lt;DaoT: store&gt;(cap: DaoAccountCap, name: vector&lt;u8&gt;, ext: DaoT, config: <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>): <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt; {
     <b>let</b> dao_signer = <a href="DaoAccount.md#0x1_DaoAccount_dao_signer">DaoAccount::dao_signer</a>(&cap);
 
     <b>let</b> dao_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&dao_signer);
@@ -1668,7 +2132,11 @@ Create a dao with a exists Dao account
         name: *&name,
         dao_address,
         next_member_id: 1,
+        next_proposal_id: 1,
     };
+
+    // initialize dao proposal event
+    <a href="GenesisDao.md#0x1_GenesisDao_initialize_proposal">initialize_proposal</a>&lt;DaoT&gt;(&cap);
 
     <b>move_to</b>(&dao_signer, dao);
     <b>move_to</b>(&dao_signer, <a href="GenesisDao.md#0x1_GenesisDao_DaoExt">DaoExt</a>{
@@ -1738,7 +2206,7 @@ Create a dao with a exists Dao account
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_upgrade_to_dao">upgrade_to_dao</a>&lt;DaoT: store&gt;(sender:signer, name: vector&lt;u8&gt;, ext: DaoT, config: <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>): <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt; {
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_upgrade_to_dao">upgrade_to_dao</a>&lt;DaoT: store&gt;(sender: signer, name: vector&lt;u8&gt;, ext: DaoT, config: <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>): <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt; {
     <b>let</b> cap = <a href="DaoAccount.md#0x1_DaoAccount_upgrade_to_dao">DaoAccount::upgrade_to_dao</a>(sender);
     <a href="GenesisDao.md#0x1_GenesisDao_create_dao">create_dao</a>&lt;DaoT&gt;(cap, name, ext, config)
 }
@@ -1764,7 +2232,7 @@ Burn the root cap after init the Dao
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_burn_root_cap">burn_root_cap</a>&lt;DaoT&gt;(cap: <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt;){
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_burn_root_cap">burn_root_cap</a>&lt;DaoT&gt;(cap: <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt;) {
     <b>let</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>{} = cap;
 }
 </code></pre>
@@ -1789,7 +2257,7 @@ Install ToInstallPluginT to Dao and grant the capabilites
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_install_plugin_with_root_cap">install_plugin_with_root_cap</a>&lt;DaoT:store, ToInstallPluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt;, granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>&gt;) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_install_plugin_with_root_cap">install_plugin_with_root_cap</a>&lt;DaoT: store, ToInstallPluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoRootCap">DaoRootCap</a>&lt;DaoT&gt;, granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>&gt;) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a> {
     <a href="GenesisDao.md#0x1_GenesisDao_do_install_plugin">do_install_plugin</a>&lt;DaoT, ToInstallPluginT&gt;(granted_caps);
 }
 </code></pre>
@@ -1814,7 +2282,7 @@ Install plugin with DaoInstallPluginCap
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_install_plugin">install_plugin</a>&lt;DaoT:store, PluginT, ToInstallPluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoInstallPluginCap">DaoInstallPluginCap</a>&lt;DaoT, PluginT&gt;, granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>&gt;) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_install_plugin">install_plugin</a>&lt;DaoT: store, PluginT, ToInstallPluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoInstallPluginCap">DaoInstallPluginCap</a>&lt;DaoT, PluginT&gt;, granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>&gt;) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a> {
     <a href="GenesisDao.md#0x1_GenesisDao_do_install_plugin">do_install_plugin</a>&lt;DaoT, ToInstallPluginT&gt;(granted_caps);
 }
 </code></pre>
@@ -1838,7 +2306,7 @@ Install plugin with DaoInstallPluginCap
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_install_plugin">do_install_plugin</a>&lt;DaoT:store, ToInstallPluginT&gt;(granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>&gt;) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_install_plugin">do_install_plugin</a>&lt;DaoT: store, ToInstallPluginT&gt;(granted_caps: vector&lt;<a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>&gt;) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a> {
     <a href="GenesisDao.md#0x1_GenesisDao_assert_no_repeat">assert_no_repeat</a>(&granted_caps);
     <b>let</b> dao_signer = <a href="GenesisDao.md#0x1_GenesisDao_dao_signer">dao_signer</a>&lt;DaoT&gt;();
     <b>assert</b>!(!<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>&lt;ToInstallPluginT&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&dao_signer)), <a href="Errors.md#0x1_Errors_already_published">Errors::already_published</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_PLUGIN_HAS_INSTALLED">ERR_PLUGIN_HAS_INSTALLED</a>));
@@ -1868,9 +2336,9 @@ Submit upgrade module plan
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_submit_upgrade_plan">submit_upgrade_plan</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoUpgradeModuleCap">DaoUpgradeModuleCap</a>&lt;DaoT, PluginT&gt;, package_hash: vector&lt;u8&gt;, version:u64, enforced: bool) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
-   <b>let</b> dao_account_cap = &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>&gt;(<a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;()).cap;
-   <a href="DaoAccount.md#0x1_DaoAccount_submit_upgrade_plan">DaoAccount::submit_upgrade_plan</a>(dao_account_cap, package_hash, version, enforced);
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_submit_upgrade_plan">submit_upgrade_plan</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoUpgradeModuleCap">DaoUpgradeModuleCap</a>&lt;DaoT, PluginT&gt;, package_hash: vector&lt;u8&gt;, version: u64, enforced: bool) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a> {
+    <b>let</b> dao_account_cap = &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>&gt;(<a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;()).cap;
+    <a href="DaoAccount.md#0x1_DaoAccount_submit_upgrade_plan">DaoAccount::submit_upgrade_plan</a>(dao_account_cap, package_hash, version, enforced);
 }
 </code></pre>
 
@@ -1894,10 +2362,10 @@ Save the item to the storage
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_save">save</a>&lt;DaoT:store, PluginT, V: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoStorageCap">DaoStorageCap</a>&lt;DaoT, PluginT&gt;, item: V) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_save">save</a>&lt;DaoT: store, PluginT, V: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoStorageCap">DaoStorageCap</a>&lt;DaoT, PluginT&gt;, item: V) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a> {
     <b>let</b> dao_signer = <a href="GenesisDao.md#0x1_GenesisDao_dao_signer">dao_signer</a>&lt;DaoT&gt;();
     <b>assert</b>!(!<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_StorageItem">StorageItem</a>&lt;PluginT, V&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&dao_signer)), <a href="Errors.md#0x1_Errors_already_published">Errors::already_published</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_STORAGE_ERROR">ERR_STORAGE_ERROR</a>));
-    <b>move_to</b>(&dao_signer, <a href="GenesisDao.md#0x1_GenesisDao_StorageItem">StorageItem</a>&lt;PluginT,V&gt;{
+    <b>move_to</b>(&dao_signer, <a href="GenesisDao.md#0x1_GenesisDao_StorageItem">StorageItem</a>&lt;PluginT, V&gt;{
         item
     });
 }
@@ -1923,10 +2391,10 @@ Get the item from the storage
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_take">take</a>&lt;DaoT:store, PluginT, V: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoStorageCap">DaoStorageCap</a>&lt;DaoT, PluginT&gt;): V <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_StorageItem">StorageItem</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_take">take</a>&lt;DaoT: store, PluginT, V: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoStorageCap">DaoStorageCap</a>&lt;DaoT, PluginT&gt;): V <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_StorageItem">StorageItem</a> {
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
-    <b>assert</b>!(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_StorageItem">StorageItem</a>&lt;PluginT, V&gt;&gt;(dao_address),  <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_STORAGE_ERROR">ERR_STORAGE_ERROR</a>));
-    <b>let</b> <a href="GenesisDao.md#0x1_GenesisDao_StorageItem">StorageItem</a>{item} = <b>move_from</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_StorageItem">StorageItem</a>&lt;PluginT, V&gt;&gt;(dao_address);
+    <b>assert</b>!(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_StorageItem">StorageItem</a>&lt;PluginT, V&gt;&gt;(dao_address), <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_STORAGE_ERROR">ERR_STORAGE_ERROR</a>));
+    <b>let</b> <a href="GenesisDao.md#0x1_GenesisDao_StorageItem">StorageItem</a>{ item } = <b>move_from</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_StorageItem">StorageItem</a>&lt;PluginT, V&gt;&gt;(dao_address);
     item
 }
 </code></pre>
@@ -1951,7 +2419,7 @@ Withdraw the token from the Dao account
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_withdraw_token">withdraw_token</a>&lt;DaoT:store, PluginT, TokenT:store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">DaoWithdrawTokenCap</a>&lt;DaoT, PluginT&gt;, amount: u128): <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_withdraw_token">withdraw_token</a>&lt;DaoT: store, PluginT, TokenT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">DaoWithdrawTokenCap</a>&lt;DaoT, PluginT&gt;, amount: u128): <a href="Token.md#0x1_Token">Token</a>&lt;TokenT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a> {
     <b>let</b> dao_signer = <a href="GenesisDao.md#0x1_GenesisDao_dao_signer">dao_signer</a>&lt;DaoT&gt;();
     //we should extract the WithdrawCapability from account, and invoke the withdraw_with_cap ?
     <a href="Account.md#0x1_Account_withdraw">Account::withdraw</a>&lt;TokenT&gt;(&dao_signer, amount)
@@ -1978,7 +2446,7 @@ Withdraw the NFT from the Dao account
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_withdraw_nft">withdraw_nft</a>&lt;DaoT:store, PluginT, NFTMeta: store + <b>copy</b> + drop, NFTBody: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawNFTCap">DaoWithdrawNFTCap</a>&lt;DaoT, PluginT&gt;, id: u64): <a href="NFT.md#0x1_NFT">NFT</a>&lt;NFTMeta, NFTBody&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_withdraw_nft">withdraw_nft</a>&lt;DaoT: store, PluginT, NFTMeta: store + <b>copy</b> + drop, NFTBody: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawNFTCap">DaoWithdrawNFTCap</a>&lt;DaoT, PluginT&gt;, id: u64): <a href="NFT.md#0x1_NFT">NFT</a>&lt;NFTMeta, NFTBody&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a> {
     <b>let</b> dao_signer = <a href="GenesisDao.md#0x1_GenesisDao_dao_signer">dao_signer</a>&lt;DaoT&gt;();
     <b>let</b> nft = <a href="NFT.md#0x1_NFTGallery_withdraw">NFTGallery::withdraw</a>&lt;NFTMeta, NFTBody&gt;(&dao_signer, id);
     <b>assert</b>!(<a href="Option.md#0x1_Option_is_some">Option::is_some</a>(&nft), <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NFT_ERROR">ERR_NFT_ERROR</a>));
@@ -2006,8 +2474,7 @@ Join Dao and get a membership
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_join_member">join_member</a>&lt;DaoT:store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, to_address: <b>address</b>, init_sbt: u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTMintCapHolder">DaoNFTMintCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenMintCapHolder">DaoTokenMintCapHolder</a>, <a href="Dao.md#0x1_Dao">Dao</a>{
-
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_join_member">join_member</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, to_address: <b>address</b>, init_sbt: u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTMintCapHolder">DaoNFTMintCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenMintCapHolder">DaoTokenMintCapHolder</a>, <a href="Dao.md#0x1_Dao">Dao</a> {
     <b>assert</b>!(!<a href="GenesisDao.md#0x1_GenesisDao_is_member">is_member</a>&lt;DaoT&gt;(to_address), <a href="Errors.md#0x1_Errors_already_published">Errors::already_published</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_ALREADY_MEMBER">ERR_NOT_ALREADY_MEMBER</a>));
 
     <b>let</b> member_id = <a href="GenesisDao.md#0x1_GenesisDao_next_member_id">next_member_id</a>&lt;DaoT&gt;();
@@ -2056,7 +2523,7 @@ Member quit Dao by self
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_quit_member">quit_member</a>&lt;DaoT: store&gt;(sender: &signer) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_quit_member">quit_member</a>&lt;DaoT: store&gt;(sender: &signer) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a> {
     <b>let</b> member_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
     <a href="GenesisDao.md#0x1_GenesisDao_do_remove_member">do_remove_member</a>&lt;DaoT&gt;(member_addr);
 }
@@ -2082,7 +2549,7 @@ Revoke membership with cap
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_revoke_member">revoke_member</a>&lt;DaoT:store,PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, member_addr: <b>address</b>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_revoke_member">revoke_member</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, member_addr: <b>address</b>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a> {
     <a href="GenesisDao.md#0x1_GenesisDao_do_remove_member">do_remove_member</a>&lt;DaoT&gt;(member_addr);
 }
 </code></pre>
@@ -2106,7 +2573,7 @@ Revoke membership with cap
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_remove_member">do_remove_member</a>&lt;DaoT:store&gt;(member_addr: <b>address</b>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a>{
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_remove_member">do_remove_member</a>&lt;DaoT: store&gt;(member_addr: <b>address</b>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a> {
     <b>assert</b>!(<a href="GenesisDao.md#0x1_GenesisDao_is_member">is_member</a>&lt;DaoT&gt;(member_addr), <a href="Errors.md#0x1_Errors_already_published">Errors::already_published</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_MEMBER">ERR_NOT_MEMBER</a>));
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
 
@@ -2139,7 +2606,7 @@ Increment the member SBT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_increase_member_sbt">increase_member_sbt</a>&lt;DaoT:store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, member_addr: <b>address</b>, amount: u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTUpdateCapHolder">DaoNFTUpdateCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenMintCapHolder">DaoTokenMintCapHolder</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_increase_member_sbt">increase_member_sbt</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, member_addr: <b>address</b>, amount: u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTUpdateCapHolder">DaoNFTUpdateCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenMintCapHolder">DaoTokenMintCapHolder</a> {
     <b>assert</b>!(<a href="GenesisDao.md#0x1_GenesisDao_is_member">is_member</a>&lt;DaoT&gt;(member_addr), <a href="Errors.md#0x1_Errors_already_published">Errors::already_published</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_MEMBER">ERR_NOT_MEMBER</a>));
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
 
@@ -2175,7 +2642,7 @@ Decrement the member SBT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_decrease_member_sbt">decrease_member_sbt</a>&lt;DaoT:store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, member_addr: <b>address</b>, amount: u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTUpdateCapHolder">DaoNFTUpdateCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_decrease_member_sbt">decrease_member_sbt</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, member_addr: <b>address</b>, amount: u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTUpdateCapHolder">DaoNFTUpdateCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a> {
     <b>assert</b>!(<a href="GenesisDao.md#0x1_GenesisDao_is_member">is_member</a>&lt;DaoT&gt;(member_addr), <a href="Errors.md#0x1_Errors_already_published">Errors::already_published</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_MEMBER">ERR_NOT_MEMBER</a>));
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
 
@@ -2188,6 +2655,44 @@ Decrement the member SBT
     <b>let</b> decrease_sbt = <a href="Token.md#0x1_Token_withdraw">Token::withdraw</a>(&<b>mut</b> body.sbt, amount);
     <a href="Token.md#0x1_Token_burn_with_capability">Token::burn_with_capability</a>(token_burn_cap, decrease_sbt);
     <a href="NFT.md#0x1_IdentifierNFT_return_back">IdentifierNFT::return_back</a>(borrow_nft);
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_query_sbt"></a>
+
+## Function `query_sbt`
+
+Query amount of the member SBT
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_query_sbt">query_sbt</a>&lt;DaoT: store, PluginT&gt;(member_addr: <b>address</b>): u128
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_query_sbt">query_sbt</a>&lt;DaoT: store, PluginT&gt;(member_addr: <b>address</b>)
+: u128 <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTUpdateCapHolder">DaoNFTUpdateCapHolder</a> {
+    <b>assert</b>!(<a href="GenesisDao.md#0x1_GenesisDao_is_member">is_member</a>&lt;DaoT&gt;(member_addr), <a href="Errors.md#0x1_Errors_already_published">Errors::already_published</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_MEMBER">ERR_NOT_MEMBER</a>));
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+
+    <b>let</b> nft_update_cap =
+        &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoNFTUpdateCapHolder">DaoNFTUpdateCapHolder</a>&lt;DaoT&gt;&gt;(dao_address).cap;
+    <b>let</b> borrow_nft =
+        <a href="NFT.md#0x1_IdentifierNFT_borrow_out">IdentifierNFT::borrow_out</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoMember">DaoMember</a>&lt;DaoT&gt;, <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberBody">DaoMemberBody</a>&lt;DaoT&gt;&gt;(nft_update_cap, member_addr);
+    <b>let</b> nft = <a href="NFT.md#0x1_IdentifierNFT_borrow_nft">IdentifierNFT::borrow_nft</a>(&<b>mut</b> borrow_nft);
+    <b>let</b> body = <a href="NFT.md#0x1_NFT_borrow_body">NFT::borrow_body</a>(nft);
+
+    <b>let</b> result = <a href="Token.md#0x1_Token_value">Token::value</a>(&body.sbt);
+    <a href="NFT.md#0x1_IdentifierNFT_return_back">IdentifierNFT::return_back</a>(borrow_nft);
+    result
 }
 </code></pre>
 
@@ -2211,7 +2716,7 @@ Check the <code>member_addr</code> account is a member of DaoT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_is_member">is_member</a>&lt;DaoT: store&gt;(member_addr: <b>address</b>): bool{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_is_member">is_member</a>&lt;DaoT: store&gt;(member_addr: <b>address</b>): bool {
     <a href="NFT.md#0x1_IdentifierNFT_owns">IdentifierNFT::owns</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoMember">DaoMember</a>&lt;DaoT&gt;, <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberBody">DaoMemberBody</a>&lt;DaoT&gt;&gt;(member_addr)
 }
 </code></pre>
@@ -2235,13 +2740,13 @@ Check the <code>member_addr</code> account is a member of DaoT
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT: store, PluginT&gt;(cap: <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT: store, PluginT&gt;(cap: <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a> {
     <b>let</b> addr = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
     <b>if</b> (<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>&lt;PluginT&gt;&gt;(addr)) {
         <b>let</b> plugin_info = <b>borrow_global</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>&lt;PluginT&gt;&gt;(addr);
         <b>assert</b>!(<a href="Vector.md#0x1_Vector_contains">Vector::contains</a>(&plugin_info.granted_caps, &cap), <a href="Errors.md#0x1_Errors_requires_capability">Errors::requires_capability</a>(<a href="GenesisDao.md#0x1_GenesisDao_E_NO_GRANTED">E_NO_GRANTED</a>));
     } <b>else</b> {
-        <b>abort</b>(<a href="Errors.md#0x1_Errors_requires_capability">Errors::requires_capability</a>(<a href="GenesisDao.md#0x1_GenesisDao_E_NO_GRANTED">E_NO_GRANTED</a>))
+        <b>abort</b> (<a href="Errors.md#0x1_Errors_requires_capability">Errors::requires_capability</a>(<a href="GenesisDao.md#0x1_GenesisDao_E_NO_GRANTED">E_NO_GRANTED</a>))
     }
 }
 </code></pre>
@@ -2267,7 +2772,7 @@ _witness parameter ensures that the caller is the module which define PluginT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_install_plugin_cap">acquire_install_plugin_cap</a>&lt;DaoT:store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoInstallPluginCap">DaoInstallPluginCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_install_plugin_cap">acquire_install_plugin_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoInstallPluginCap">DaoInstallPluginCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a> {
     <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_install_plugin_cap_type">install_plugin_cap_type</a>());
     <a href="GenesisDao.md#0x1_GenesisDao_DaoInstallPluginCap">DaoInstallPluginCap</a>&lt;DaoT, PluginT&gt;{}
 }
@@ -2294,7 +2799,7 @@ _witness parameter ensures that the caller is the module which define PluginT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_upgrade_module_cap">acquire_upgrade_module_cap</a>&lt;DaoT:store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoUpgradeModuleCap">DaoUpgradeModuleCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_upgrade_module_cap">acquire_upgrade_module_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoUpgradeModuleCap">DaoUpgradeModuleCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a> {
     <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_upgrade_module_cap_type">upgrade_module_cap_type</a>());
     <a href="GenesisDao.md#0x1_GenesisDao_DaoUpgradeModuleCap">DaoUpgradeModuleCap</a>&lt;DaoT, PluginT&gt;{}
 }
@@ -2321,7 +2826,7 @@ _witness parameter ensures that the caller is the module which define PluginT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_modify_config_cap">acquire_modify_config_cap</a>&lt;DaoT:store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoModifyConfigCap">DaoModifyConfigCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_modify_config_cap">acquire_modify_config_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoModifyConfigCap">DaoModifyConfigCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a> {
     <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_modify_config_cap_type">modify_config_cap_type</a>());
     <a href="GenesisDao.md#0x1_GenesisDao_DaoModifyConfigCap">DaoModifyConfigCap</a>&lt;DaoT, PluginT&gt;{}
 }
@@ -2348,7 +2853,7 @@ _witness parameter ensures that the caller is the module which define PluginT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_withdraw_token_cap">acquire_withdraw_token_cap</a>&lt;DaoT:store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">DaoWithdrawTokenCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_withdraw_token_cap">acquire_withdraw_token_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">DaoWithdrawTokenCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a> {
     <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_withdraw_token_cap_type">withdraw_token_cap_type</a>());
     <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawTokenCap">DaoWithdrawTokenCap</a>&lt;DaoT, PluginT&gt;{}
 }
@@ -2375,7 +2880,7 @@ _witness parameter ensures that the caller is the module which define PluginT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_withdraw_nft_cap">acquire_withdraw_nft_cap</a>&lt;DaoT:store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawNFTCap">DaoWithdrawNFTCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_withdraw_nft_cap">acquire_withdraw_nft_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawNFTCap">DaoWithdrawNFTCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a> {
     <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_withdraw_nft_cap_type">withdraw_nft_cap_type</a>());
     <a href="GenesisDao.md#0x1_GenesisDao_DaoWithdrawNFTCap">DaoWithdrawNFTCap</a>&lt;DaoT, PluginT&gt;{}
 }
@@ -2402,7 +2907,7 @@ _witness parameter ensures that the caller is the module which define PluginT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_storage_cap">acquire_storage_cap</a>&lt;DaoT:store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoStorageCap">DaoStorageCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_storage_cap">acquire_storage_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoStorageCap">DaoStorageCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a> {
     <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_storage_cap_type">storage_cap_type</a>());
     <a href="GenesisDao.md#0x1_GenesisDao_DaoStorageCap">DaoStorageCap</a>&lt;DaoT, PluginT&gt;{}
 }
@@ -2429,7 +2934,7 @@ _witness parameter ensures that the caller is the module which define PluginT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_member_cap">acquire_member_cap</a>&lt;DaoT:store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_member_cap">acquire_member_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a> {
     <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_member_cap_type">member_cap_type</a>());
     <a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;{}
 }
@@ -2456,7 +2961,7 @@ _witness parameter ensures that the caller is the module which define PluginT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_proposal_cap">acquire_proposal_cap</a>&lt;DaoT:store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">DaoProposalCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_proposal_cap">acquire_proposal_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">DaoProposalCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a> {
     <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_proposal_cap_type">proposal_cap_type</a>());
     <a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">DaoProposalCap</a>&lt;DaoT, PluginT&gt;{}
 }
@@ -2481,7 +2986,7 @@ _witness parameter ensures that the caller is the module which define PluginT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_choice_yes">choice_yes</a>(): <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>{<a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>{choice: <a href="GenesisDao.md#0x1_GenesisDao_VOTING_CHOICE_YES">VOTING_CHOICE_YES</a>}}
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_choice_yes">choice_yes</a>(): <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a> { <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>{ choice: <a href="GenesisDao.md#0x1_GenesisDao_VOTING_CHOICE_YES">VOTING_CHOICE_YES</a> } }
 </code></pre>
 
 
@@ -2503,7 +3008,7 @@ _witness parameter ensures that the caller is the module which define PluginT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_choice_no">choice_no</a>(): <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>{<a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>{choice: <a href="GenesisDao.md#0x1_GenesisDao_VOTING_CHOICE_NO">VOTING_CHOICE_NO</a>}}
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_choice_no">choice_no</a>(): <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a> { <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>{ choice: <a href="GenesisDao.md#0x1_GenesisDao_VOTING_CHOICE_NO">VOTING_CHOICE_NO</a> } }
 </code></pre>
 
 
@@ -2525,7 +3030,7 @@ _witness parameter ensures that the caller is the module which define PluginT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_choice_no_with_veto">choice_no_with_veto</a>(): <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>{<a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>{choice: <a href="GenesisDao.md#0x1_GenesisDao_VOTING_CHOICE_NO_WITH_VETO">VOTING_CHOICE_NO_WITH_VETO</a>}}
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_choice_no_with_veto">choice_no_with_veto</a>(): <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a> { <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>{ choice: <a href="GenesisDao.md#0x1_GenesisDao_VOTING_CHOICE_NO_WITH_VETO">VOTING_CHOICE_NO_WITH_VETO</a> } }
 </code></pre>
 
 
@@ -2547,7 +3052,39 @@ _witness parameter ensures that the caller is the module which define PluginT
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_choice_abstain">choice_abstain</a>(): <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>{<a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>{choice: <a href="GenesisDao.md#0x1_GenesisDao_VOTING_CHOICE_ABSTAIN">VOTING_CHOICE_ABSTAIN</a>}}
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_choice_abstain">choice_abstain</a>(): <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a> { <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>{ choice: <a href="GenesisDao.md#0x1_GenesisDao_VOTING_CHOICE_ABSTAIN">VOTING_CHOICE_ABSTAIN</a> } }
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_initialize_proposal"></a>
+
+## Function `initialize_proposal`
+
+Initialize proposal
+only call by dao singer when DAO create
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_initialize_proposal">initialize_proposal</a>&lt;DaoT: store&gt;(cap: &<a href="DaoAccount.md#0x1_DaoAccount_DaoAccountCap">DaoAccount::DaoAccountCap</a>)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_initialize_proposal">initialize_proposal</a>&lt;DaoT: store&gt;(cap: &DaoAccountCap) {
+    <b>let</b> dao_signer = <a href="DaoAccount.md#0x1_DaoAccount_dao_signer">DaoAccount::dao_signer</a>(cap);
+
+    <b>let</b> proposal_event = <a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>&lt;DaoT&gt;  {
+        proposal_create_event: <a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalCreatedEvent">ProposalCreatedEvent</a>&gt;(&dao_signer),
+        vote_changed_event: <a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_VoteChangedEvent">VoteChangedEvent</a>&gt;(&dao_signer),
+    };
+    <b>move_to</b>(&dao_signer, proposal_event);
+}
 </code></pre>
 
 
@@ -2558,6 +3095,9 @@ _witness parameter ensures that the caller is the module which define PluginT
 
 ## Function `create_proposal`
 
+propose a proposal.
+<code>action</code>: the actual action to execute.
+<code>action_delay</code>: the delay to execute after the proposal is agreed
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_create_proposal">create_proposal</a>&lt;DaoT: store, PluginT, ActionT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">GenesisDao::DaoProposalCap</a>&lt;DaoT, PluginT&gt;, sender: &signer, action: ActionT, action_delay: u64): u64
@@ -2574,37 +3114,37 @@ _witness parameter ensures that the caller is the module which define PluginT
     sender: &signer,
     action: ActionT,
     action_delay: u64,
-): u64 <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a> {
+): u64 <b>acquires</b> <a href="Dao.md#0x1_Dao">Dao</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>, <a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a> {
+    // check <a href="Dao.md#0x1_Dao">Dao</a> member
+    <b>let</b> sender_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
+    <b>assert</b>!(<a href="GenesisDao.md#0x1_GenesisDao_is_member">is_member</a>&lt;DaoT&gt;(sender_addr), <a href="Errors.md#0x1_Errors_requires_capability">Errors::requires_capability</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_DAO_MEMBER">ERR_NOT_DAO_MEMBER</a>));
 
     <b>if</b> (action_delay == 0) {
         action_delay = <a href="GenesisDao.md#0x1_GenesisDao_min_action_delay">min_action_delay</a>&lt;DaoT&gt;();
     } <b>else</b> {
-        //TODO error code
-        <b>assert</b>!(action_delay &gt;= <a href="GenesisDao.md#0x1_GenesisDao_min_action_delay">min_action_delay</a>&lt;DaoT&gt;(), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(1));
+        <b>assert</b>!(action_delay &gt;= <a href="GenesisDao.md#0x1_GenesisDao_min_action_delay">min_action_delay</a>&lt;DaoT&gt;(), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_ACTION_DELAY_TOO_SMALL">ERR_ACTION_DELAY_TOO_SMALL</a>));
     };
-    //TODO load from config
+
     <b>let</b> min_proposal_deposit = <a href="GenesisDao.md#0x1_GenesisDao_min_proposal_deposit">min_proposal_deposit</a>&lt;DaoT&gt;();
     <b>let</b> deposit = <a href="Account.md#0x1_Account_withdraw">Account::withdraw</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(sender, min_proposal_deposit);
 
-    <b>let</b> proposal_id = <a href="GenesisDao.md#0x1_GenesisDao_generate_next_proposal_id">generate_next_proposal_id</a>&lt;DaoT&gt;();
+    <b>let</b> proposal_id = <a href="GenesisDao.md#0x1_GenesisDao_next_proposal_id">next_proposal_id</a>&lt;DaoT&gt;();
     <b>let</b> proposer = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
     <b>let</b> start_time = <a href="Timestamp.md#0x1_Timestamp_now_milliseconds">Timestamp::now_milliseconds</a>() + <a href="GenesisDao.md#0x1_GenesisDao_voting_delay">voting_delay</a>&lt;DaoT&gt;();
     <b>let</b> quorum_votes = <a href="GenesisDao.md#0x1_GenesisDao_quorum_votes">quorum_votes</a>&lt;DaoT&gt;();
+    <b>let</b> voting_period = <a href="GenesisDao.md#0x1_GenesisDao_voting_period">voting_period</a>&lt;DaoT&gt;();
 
     <b>let</b> (block_number,state_root) = <a href="GenesisDao.md#0x1_GenesisDao_block_number_and_state_root">block_number_and_state_root</a>();
 
-    //four choise, so init four length vector.
-    <b>let</b> votes = <a href="Vector.md#0x1_Vector_singleton">Vector::singleton</a>(0u128);
-    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> votes, 0u128);
-    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> votes, 0u128);
-    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> votes, 0u128);
-
-    <b>let</b> proposal = <a href="Proposal.md#0x1_Proposal">Proposal</a> {
+    <b>let</b> proposal = <a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a> {
         id: proposal_id,
         proposer,
         start_time,
-        end_time: start_time + <a href="GenesisDao.md#0x1_GenesisDao_voting_period">voting_period</a>&lt;DaoT&gt;(),
-        votes,
+        end_time: start_time + voting_period,
+        yes_votes: 0,
+        no_votes: 0,
+        no_with_veto_votes: 0,
+        abstain_votes: 0,
         eta: 0,
         action_delay,
         quorum_votes,
@@ -2616,12 +3156,15 @@ _witness parameter ensures that the caller is the module which define PluginT
         deposit,
         action,
     };
+    <b>let</b> proposal_action_index = <a href="GenesisDao.md#0x1_GenesisDao_ProposalActionIndex">ProposalActionIndex</a>{
+        proposal_id,
+    };
 
     <b>let</b> dao_signer = <a href="GenesisDao.md#0x1_GenesisDao_dao_signer">dao_signer</a>&lt;DaoT&gt;();
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
 
     <b>let</b> actions = <a href="Vector.md#0x1_Vector_singleton">Vector::singleton</a>(proposal_action);
-    //TODO check <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a> is <b>exists</b>
+    // check <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a> is <b>exists</b>
     <b>if</b>(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>&lt;ActionT&gt;&gt;(dao_address)){
         //TODO add limit <b>to</b> max action before support Table.
         <b>let</b> current_actions = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>&lt;ActionT&gt;&gt;(dao_address);
@@ -2631,10 +3174,37 @@ _witness parameter ensures that the caller is the module which define PluginT
             actions,
         });
     };
-    <b>let</b> global_proposals = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
-    //TODO add limit <b>to</b> max proposal before support Table
-    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> global_proposals.proposals, proposal);
-    //TODO trigger event
+
+    <b>let</b> proposal_action_indexs = <a href="Vector.md#0x1_Vector_singleton">Vector::singleton</a>(proposal_action_index);
+    // check <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a> is <b>exists</b>
+    <b>if</b>(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a>&gt;(dao_address)){
+        //TODO add limit <b>to</b> max <b>global</b> proposal action indexs before support Table
+        <b>let</b> current_global_proposal_actions = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a>&gt;(dao_address);
+        <a href="Vector.md#0x1_Vector_append">Vector::append</a>(&<b>mut</b> current_global_proposal_actions.proposal_action_indexs, proposal_action_indexs);
+    }<b>else</b>{
+        <b>move_to</b>(&dao_signer, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a>{
+            proposal_action_indexs,
+        });
+    };
+
+    <b>let</b> proposals = <a href="Vector.md#0x1_Vector_singleton">Vector::singleton</a>(proposal);
+    // check <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a> is <b>exists</b>
+    <b>if</b>(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address)){
+        //TODO add limit <b>to</b> max <b>global</b> proposal before support Table
+        <b>let</b> current_global_proposals = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
+        <a href="Vector.md#0x1_Vector_append">Vector::append</a>(&<b>mut</b> current_global_proposals.proposals, proposals);
+    }<b>else</b>{
+        <b>move_to</b>(&dao_signer, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>{
+            proposals,
+        });
+    };
+
+    // emit event
+    <b>let</b> proposal_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>&lt;DaoT&gt;&gt;(<a href="DaoRegistry.md#0x1_DaoRegistry_dao_address">DaoRegistry::dao_address</a>&lt;DaoT&gt;());
+    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> proposal_event.proposal_create_event,
+        <a href="GenesisDao.md#0x1_GenesisDao_ProposalCreatedEvent">ProposalCreatedEvent</a> { proposal_id, proposer },
+    );
+
     proposal_id
 }
 </code></pre>
@@ -2658,34 +3228,9 @@ _witness parameter ensures that the caller is the module which define PluginT
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_block_number_and_state_root">block_number_and_state_root</a>():(u64, vector&lt;u8&gt;){
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_block_number_and_state_root">block_number_and_state_root</a>(): (u64, vector&lt;u8&gt;) {
     //TODO how <b>to</b> get state root
     (0, <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>())
-}
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_GenesisDao_generate_next_proposal_id"></a>
-
-## Function `generate_next_proposal_id`
-
-
-
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_generate_next_proposal_id">generate_next_proposal_id</a>&lt;DaoT&gt;(): u64
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_generate_next_proposal_id">generate_next_proposal_id</a>&lt;DaoT&gt;(): u64{
-    //TODO
-    0
 }
 </code></pre>
 
@@ -2697,9 +3242,12 @@ _witness parameter ensures that the caller is the module which define PluginT
 
 ## Function `cast_vote`
 
+votes for a proposal.
+User can only vote once, then the stake is locked,
+The voting power depends on the strategy of the proposal configuration and the user's token amount at the time of the snapshot
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_cast_vote">cast_vote</a>&lt;DaoT: store&gt;(sender: &signer, proposal_id: u64, sbt_proof: vector&lt;u8&gt;, choice: <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">GenesisDao::VotingChoice</a>)
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_cast_vote">cast_vote</a>&lt;DaoT: store&gt;(sender: &signer, proposal_id: u64, snpashot_proofs: vector&lt;u8&gt;, choice: <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">GenesisDao::VotingChoice</a>)
 </code></pre>
 
 
@@ -2711,48 +3259,64 @@ _witness parameter ensures that the caller is the module which define PluginT
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_cast_vote">cast_vote</a>&lt;DaoT: store&gt;(
     sender: &signer,
     proposal_id: u64,
-    sbt_proof: vector&lt;u8&gt;,
+    snpashot_proofs: vector&lt;u8&gt;,
     choice: <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>,
-)  <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>{
+)  <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>, <a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a> {
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
     <b>let</b> proposals = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
     <b>let</b> proposal = <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal_mut">borrow_proposal_mut</a>(proposals, proposal_id);
 
-    {
-        <b>let</b> state = <a href="GenesisDao.md#0x1_GenesisDao_proposal_state">proposal_state</a>(proposal);
-        // only when proposal is active, <b>use</b> can cast vote.
-        //TODO
-        <b>assert</b>!(state == <a href="GenesisDao.md#0x1_GenesisDao_ACTIVE">ACTIVE</a>, <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_STATE_INVALID">ERR_PROPOSAL_STATE_INVALID</a>));
-    };
+        {
+            <b>let</b> state = <a href="GenesisDao.md#0x1_GenesisDao_proposal_state_with_proposal">proposal_state_with_proposal</a>&lt;DaoT&gt;(proposal);
+            // only when proposal is active, <b>use</b> can cast vote.
+            <b>assert</b>!(state == <a href="GenesisDao.md#0x1_GenesisDao_ACTIVE">ACTIVE</a>, <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_STATE_INVALID">ERR_PROPOSAL_STATE_INVALID</a>));
+        };
 
     <b>let</b> sender_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
+    // check <a href="Dao.md#0x1_Dao">Dao</a> member
+    <b>assert</b>!(<a href="GenesisDao.md#0x1_GenesisDao_is_member">is_member</a>&lt;DaoT&gt;(sender_addr), <a href="Errors.md#0x1_Errors_requires_capability">Errors::requires_capability</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_DAO_MEMBER">ERR_NOT_DAO_MEMBER</a>));
+
+    // verify snapshot state proof
+    <b>let</b> snapshot_proofs = <a href="GenesisDao.md#0x1_GenesisDao_deserialize_snapshot_proofs">deserialize_snapshot_proofs</a>(&snpashot_proofs);
+    <b>let</b> state_proof = <a href="GenesisDao.md#0x1_GenesisDao_new_state_proof_from_proofs">new_state_proof_from_proofs</a>(&snapshot_proofs);
+    // verify state_proof according <b>to</b> proposal snapshot proofs, and state root
+    <b>let</b> verify = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_state_proof">StarcoinVerifier::verify_state_proof</a>(&state_proof, &proposal.state_root, sender_addr, &snapshot_proofs.resource_struct_tag, &snapshot_proofs.state);
+    <b>assert</b>!(verify, <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_STATE_PROOF_VERIFY_INVALID">ERR_STATE_PROOF_VERIFY_INVALID</a>));
 
     // TODO is allowed just <b>use</b> part of weight?
-    <b>let</b> weight = <a href="VoteUtil.md#0x1_VoteUtil_get_vote_weight_from_sbt_snapshot">VoteUtil::get_vote_weight_from_sbt_snapshot</a>(sender_addr, *&proposal.state_root, sbt_proof);
+    // decode sbt value from snapshot state
+    <b>let</b> vote_weight = <a href="SBTVoteStrategy.md#0x1_SBTVoteStrategy_get_voting_power">SBTVoteStrategy::get_voting_power</a>(&snapshot_proofs.state);
 
-    //TODO errorcode
-    <b>assert</b>!(!<a href="GenesisDao.md#0x1_GenesisDao_has_voted">has_voted</a>&lt;DaoT&gt;(sender_addr, proposal_id), 0);
+    <b>assert</b>!(!<a href="GenesisDao.md#0x1_GenesisDao_has_voted">has_voted</a>&lt;DaoT&gt;(sender_addr, proposal_id), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_VOTED_ALREADY">ERR_VOTED_ALREADY</a>));
 
     <b>let</b> vote = <a href="GenesisDao.md#0x1_GenesisDao_Vote">Vote</a>{
         proposal_id,
-        weight,
+        vote_weight,
         choice: choice.choice,
     };
 
     <a href="GenesisDao.md#0x1_GenesisDao_do_cast_vote">do_cast_vote</a>(proposal, &<b>mut</b> vote);
 
     <b>if</b> (<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>&lt;DaoT&gt;&gt;(sender_addr)) {
+        <b>assert</b>!(vote.proposal_id == proposal_id, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_VOTED_OTHERS_ALREADY">ERR_VOTED_OTHERS_ALREADY</a>));
         <b>let</b> my_votes = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>&lt;DaoT&gt;&gt;(sender_addr);
         <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> my_votes.votes, vote);
-        //<b>assert</b>!(my_vote.id == proposal_id, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_VOTED_OTHERS_ALREADY">ERR_VOTED_OTHERS_ALREADY</a>));
-        //TODO
-        //<b>assert</b>!(vote.choice == choice, <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_VOTE_STATE_MISMATCH">ERR_VOTE_STATE_MISMATCH</a>));
     } <b>else</b> {
         <b>move_to</b>(sender, <a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>&lt;DaoT&gt;{
             votes: <a href="Vector.md#0x1_Vector_singleton">Vector::singleton</a>(vote),
         });
     };
 
+    // emit event
+    <b>let</b> proposal_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>&lt;DaoT&gt; &gt;(<a href="DaoRegistry.md#0x1_DaoRegistry_dao_address">DaoRegistry::dao_address</a>&lt;DaoT&gt;());
+    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> proposal_event.vote_changed_event,
+        <a href="GenesisDao.md#0x1_GenesisDao_VoteChangedEvent">VoteChangedEvent</a> {
+            proposal_id,
+            voter: sender_addr,
+            choice: choice.choice,
+            vote_weight,
+        },
+    );
 }
 </code></pre>
 
@@ -2760,14 +3324,13 @@ _witness parameter ensures that the caller is the module which define PluginT
 
 </details>
 
-<a name="0x1_GenesisDao_change_vote"></a>
+<a name="0x1_GenesisDao_deserialize_snapshot_proofs"></a>
 
-## Function `change_vote`
-
-Just change vote choice, the weight do not change.
+## Function `deserialize_snapshot_proofs`
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_change_vote">change_vote</a>&lt;DaoT&gt;(_sender: &signer, _proposal_id: u64, _choice: <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">GenesisDao::VotingChoice</a>)
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_deserialize_snapshot_proofs">deserialize_snapshot_proofs</a>(snapshot_proofs: &vector&lt;u8&gt;): <a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">GenesisDao::SnapshotProof</a>
 </code></pre>
 
 
@@ -2776,12 +3339,27 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_change_vote">change_vote</a>&lt;DaoT&gt;(
-    _sender: &signer,
-    _proposal_id: u64,
-    _choice: <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>,
-){
-    //TODO
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_deserialize_snapshot_proofs">deserialize_snapshot_proofs</a>(snapshot_proofs: &vector&lt;u8&gt;): <a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">SnapshotProof</a>{
+    <b>assert</b>!(<a href="Vector.md#0x1_Vector_length">Vector::length</a>(snapshot_proofs) &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_SNAPSHOT_PROOF_PARAM_INVALID">ERR_SNAPSHOT_PROOF_PARAM_INVALID</a>));
+
+    <b>let</b> offset= 0;
+    <b>let</b> (account_proof_leaf, offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes_vector">BCS::deserialize_bytes_vector</a>(snapshot_proofs, offset);
+    <b>let</b> (account_proof_siblings, offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes_vector">BCS::deserialize_bytes_vector</a>(snapshot_proofs, offset);
+    <b>let</b> (account_state, offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes">BCS::deserialize_bytes</a>(snapshot_proofs, offset);
+    <b>let</b> (account_state_proof_leaf, offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes_vector">BCS::deserialize_bytes_vector</a>(snapshot_proofs, offset);
+    <b>let</b> (account_state_proof_siblings, offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes_vector">BCS::deserialize_bytes_vector</a>(snapshot_proofs, offset);
+    <b>let</b> (state, offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes">BCS::deserialize_bytes</a>(snapshot_proofs, offset);
+    <b>let</b> (resource_struct_tag, _offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes">BCS::deserialize_bytes</a>(snapshot_proofs, offset);
+
+    <a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">SnapshotProof</a> {
+        account_proof_leaf,
+        account_proof_siblings,
+        account_state,
+        account_state_proof_leaf,
+        account_state_proof_siblings,
+        state,
+        resource_struct_tag,
+    }
 }
 </code></pre>
 
@@ -2789,13 +3367,13 @@ Just change vote choice, the weight do not change.
 
 </details>
 
-<a name="0x1_GenesisDao_revoke_vote"></a>
+<a name="0x1_GenesisDao_new_state_proof_from_proofs"></a>
 
-## Function `revoke_vote`
+## Function `new_state_proof_from_proofs`
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_revoke_vote">revoke_vote</a>&lt;DaoT&gt;(_sender: &signer, _proposal_id: u64)
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_new_state_proof_from_proofs">new_state_proof_from_proofs</a>(snpashot_proofs: &<a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">GenesisDao::SnapshotProof</a>): <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_StateProof">StarcoinVerifier::StateProof</a>
 </code></pre>
 
 
@@ -2804,11 +3382,36 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_revoke_vote">revoke_vote</a>&lt;DaoT&gt;(
-    _sender: &signer,
-    _proposal_id: u64,
-){
-    //TODO
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_new_state_proof_from_proofs">new_state_proof_from_proofs</a>(snpashot_proofs: &<a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">SnapshotProof</a>): StateProof{
+    <b>let</b> (account_proof_leaf_hash1, account_proof_leaf_hash2) = (<a href="Vector.md#0x1_Vector_empty">Vector::empty</a>(), <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>());
+    <b>let</b> (account_state_proof_leaf_hash1, account_state_proof_leaf_hash2) = (<a href="Vector.md#0x1_Vector_empty">Vector::empty</a>(), <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>());
+
+    <b>if</b> (<a href="Vector.md#0x1_Vector_length">Vector::length</a>(&snpashot_proofs.account_proof_leaf) &gt;= 2){
+        account_proof_leaf_hash1 = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&snpashot_proofs.account_proof_leaf, 0);
+        account_proof_leaf_hash2 = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&snpashot_proofs.account_proof_leaf, 1);
+    };
+    <b>if</b> (<a href="Vector.md#0x1_Vector_length">Vector::length</a>(&snpashot_proofs.account_state_proof_leaf) &gt;= 2){
+        account_state_proof_leaf_hash1 = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&snpashot_proofs.account_state_proof_leaf, 0);
+        account_state_proof_leaf_hash2 = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&snpashot_proofs.account_state_proof_leaf, 1);
+    };
+    <b>let</b> state_proof = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_new_state_proof">StarcoinVerifier::new_state_proof</a>(
+        <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_new_sparse_merkle_proof">StarcoinVerifier::new_sparse_merkle_proof</a>(
+            *&snpashot_proofs.account_proof_siblings,
+            <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_new_smt_node">StarcoinVerifier::new_smt_node</a>(
+                account_proof_leaf_hash1,
+                account_proof_leaf_hash2,
+            ),
+        ),
+        *&snpashot_proofs.account_state,
+        <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_new_sparse_merkle_proof">StarcoinVerifier::new_sparse_merkle_proof</a>(
+            *&snpashot_proofs.account_state_proof_siblings,
+            <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_new_smt_node">StarcoinVerifier::new_smt_node</a>(
+                account_state_proof_leaf_hash1,
+                account_state_proof_leaf_hash2,
+            ),
+        ),
+    );
+    state_proof
 }
 </code></pre>
 
@@ -2822,7 +3425,7 @@ Just change vote choice, the weight do not change.
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_execute_proposal">execute_proposal</a>&lt;DaoT, PluginT, ActionT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">GenesisDao::DaoProposalCap</a>&lt;DaoT, PluginT&gt;, _sender: &signer, proposal_id: u64): ActionT
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_execute_proposal">execute_proposal</a>&lt;DaoT: store, PluginT, ActionT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">GenesisDao::DaoProposalCap</a>&lt;DaoT, PluginT&gt;, _sender: &signer, proposal_id: u64): ActionT
 </code></pre>
 
 
@@ -2831,21 +3434,19 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_execute_proposal">execute_proposal</a>&lt;DaoT, PluginT, ActionT: store&gt;(
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_execute_proposal">execute_proposal</a>&lt;DaoT: store, PluginT, ActionT: store&gt;(
     _cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">DaoProposalCap</a>&lt;DaoT, PluginT&gt;,
     _sender: &signer,
     proposal_id: u64,
-): ActionT <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a> {
+): ActionT <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a> {
     // Only executable proposal's action can be extracted.
-    // <b>assert</b>!(
-    //     <a href="GenesisDao.md#0x1_GenesisDao_proposal_state">proposal_state</a>&lt;DaoT&gt;(proposer_address, proposal_id) == <a href="GenesisDao.md#0x1_GenesisDao_EXECUTABLE">EXECUTABLE</a>,
-    //     <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_STATE_INVALID">ERR_PROPOSAL_STATE_INVALID</a>),
-    // );
+     <b>assert</b>!(<a href="GenesisDao.md#0x1_GenesisDao_proposal_state">proposal_state</a>&lt;DaoT&gt;(proposal_id) == <a href="GenesisDao.md#0x1_GenesisDao_EXECUTABLE">EXECUTABLE</a>, <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_STATE_INVALID">ERR_PROPOSAL_STATE_INVALID</a>));
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
-    //TODO error code
-    <b>assert</b>!(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>&lt;ActionT&gt;&gt;(dao_address), 0);
+    <b>assert</b>!(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>&lt;ActionT&gt;&gt;(dao_address), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_ACTIONS_NOT_EXIST">ERR_PROPOSAL_ACTIONS_NOT_EXIST</a>));
 
     <a href="GenesisDao.md#0x1_GenesisDao_take_proposal_action">take_proposal_action</a>(dao_address, proposal_id)
+
+    //TODO add event
 }
 </code></pre>
 
@@ -2868,17 +3469,24 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_take_proposal_action">take_proposal_action</a>&lt;ActionT: store&gt;(dao_address: <b>address</b>, proposal_id: u64): ActionT <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>{
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_take_proposal_action">take_proposal_action</a>&lt;ActionT: store&gt;(dao_address: <b>address</b>, proposal_id: u64): ActionT <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a> {
     <b>let</b> actions = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>&lt;ActionT&gt;&gt;(dao_address);
     <b>let</b> index_opt = <a href="GenesisDao.md#0x1_GenesisDao_find_action">find_action</a>(&actions.actions, proposal_id);
-    //TODO error code.
-    <b>assert</b>!(<a href="Option.md#0x1_Option_is_some">Option::is_some</a>(&index_opt), 1);
+    <b>assert</b>!(<a href="Option.md#0x1_Option_is_some">Option::is_some</a>(&index_opt), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_ACTION_INDEX_INVALID">ERR_ACTION_INDEX_INVALID</a>));
 
     <b>let</b> global_proposals = <b>borrow_global</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
     <b>let</b> proposal = <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal">borrow_proposal</a>(global_proposals, proposal_id);
 
     <b>let</b> index = <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> index_opt);
     <b>let</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalAction">ProposalAction</a>{ proposal_id:_, deposit, action} = <a href="Vector.md#0x1_Vector_remove">Vector::remove</a>(&<b>mut</b> actions.actions, index);
+
+    // remove proposal action index
+    <b>let</b> global_proposal_actions = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a>&gt;(dao_address);
+    <b>let</b> proposal_action_index_opt = <a href="GenesisDao.md#0x1_GenesisDao_find_proposal_action_index">find_proposal_action_index</a>(global_proposal_actions, proposal_id);
+    <b>assert</b>!(<a href="Option.md#0x1_Option_is_some">Option::is_some</a>(&proposal_action_index_opt), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_ACTION_INDEX_NOT_EXIST">ERR_PROPOSAL_ACTION_INDEX_NOT_EXIST</a>));
+    <b>let</b> propopsal_action_index = <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> proposal_action_index_opt);
+    <b>let</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalActionIndex">ProposalActionIndex</a>{ proposal_id:_,} = <a href="Vector.md#0x1_Vector_remove">Vector::remove</a>(&<b>mut</b> global_proposal_actions.proposal_action_indexs, propopsal_action_index);
+
     //TODO check the proposal state and do deposit or burn.
     <a href="Account.md#0x1_Account_deposit">Account::deposit</a>(proposal.proposer, deposit);
     action
@@ -2922,6 +3530,40 @@ Just change vote choice, the weight do not change.
 
 </details>
 
+<a name="0x1_GenesisDao_do_cast_vote"></a>
+
+## Function `do_cast_vote`
+
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_cast_vote">do_cast_vote</a>(proposal: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Proposal">GenesisDao::Proposal</a>, vote: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Vote">GenesisDao::Vote</a>)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_cast_vote">do_cast_vote</a>(proposal: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a>, vote: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Vote">Vote</a>){
+    <b>if</b> (<a href="GenesisDao.md#0x1_GenesisDao_choice_yes">choice_yes</a>().choice == vote.choice) {
+        proposal.yes_votes = proposal.yes_votes + vote.vote_weight;
+    } <b>else</b> <b>if</b> (<a href="GenesisDao.md#0x1_GenesisDao_choice_no">choice_no</a>().choice == vote.choice) {
+        proposal.no_votes = proposal.no_votes + vote.vote_weight;
+    } <b>else</b> <b>if</b> ( <a href="GenesisDao.md#0x1_GenesisDao_choice_no_with_veto">choice_no_with_veto</a>().choice == vote.choice) {
+        proposal.no_with_veto_votes = proposal.no_with_veto_votes + vote.vote_weight;
+    } <b>else</b> <b>if</b> (<a href="GenesisDao.md#0x1_GenesisDao_choice_abstain">choice_abstain</a>().choice == vote.choice) {
+        proposal.abstain_votes = proposal.abstain_votes + vote.vote_weight;
+    } <b>else</b> {
+        <b>abort</b> <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_VOTE_PARAM_INVALID">ERR_VOTE_PARAM_INVALID</a>)
+    };
+}
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_GenesisDao_has_voted"></a>
 
 ## Function `has_voted`
@@ -2940,8 +3582,8 @@ Just change vote choice, the weight do not change.
 <pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_has_voted">has_voted</a>&lt;DaoT&gt;(sender: <b>address</b>, proposal_id: u64): bool <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>{
     <b>if</b>(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>&lt;DaoT&gt;&gt;(sender)){
         <b>let</b> my_votes = <b>borrow_global</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>&lt;DaoT&gt;&gt;(sender);
-        <b>let</b> vote = <a href="GenesisDao.md#0x1_GenesisDao_get_vote">get_vote</a>&lt;DaoT&gt;(my_votes, proposal_id);
-        <a href="Option.md#0x1_Option_is_some">Option::is_some</a>(vote)
+        <b>let</b> vote = <a href="GenesisDao.md#0x1_GenesisDao_get_vote_info">get_vote_info</a>&lt;DaoT&gt;(my_votes, proposal_id);
+        <a href="Option.md#0x1_Option_is_some">Option::is_some</a>(&vote)
     }<b>else</b>{
         <b>false</b>
     }
@@ -2952,13 +3594,14 @@ Just change vote choice, the weight do not change.
 
 </details>
 
-<a name="0x1_GenesisDao_do_cast_vote"></a>
+<a name="0x1_GenesisDao_get_vote_info"></a>
 
-## Function `do_cast_vote`
+## Function `get_vote_info`
+
+get vote info by proposal_id
 
 
-
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_cast_vote">do_cast_vote</a>(proposal: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Proposal">GenesisDao::Proposal</a>, vote: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Vote">GenesisDao::Vote</a>)
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_get_vote_info">get_vote_info</a>&lt;DaoT&gt;(my_votes: &<a href="GenesisDao.md#0x1_GenesisDao_MyVotes">GenesisDao::MyVotes</a>&lt;DaoT&gt;, proposal_id: u64): <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_VoteInfo">GenesisDao::VoteInfo</a>&gt;
 </code></pre>
 
 
@@ -2967,35 +3610,25 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_cast_vote">do_cast_vote</a>(proposal: &<b>mut</b> <a href="Proposal.md#0x1_Proposal">Proposal</a>, vote: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Vote">Vote</a>){
-    <b>let</b> weight = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&proposal.votes, (vote.choice <b>as</b> u64));
-    <b>let</b> total_weight = <a href="Vector.md#0x1_Vector_borrow_mut">Vector::borrow_mut</a>(&<b>mut</b> proposal.votes, (vote.choice <b>as</b> u64));
-    *total_weight = weight + vote.weight;
-}
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_GenesisDao_get_vote"></a>
-
-## Function `get_vote`
-
-
-
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_get_vote">get_vote</a>&lt;DaoT&gt;(_my_votes: &<a href="GenesisDao.md#0x1_GenesisDao_MyVotes">GenesisDao::MyVotes</a>&lt;DaoT&gt;, _proposal_id: u64): &<a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_Vote">GenesisDao::Vote</a>&gt;
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_get_vote">get_vote</a>&lt;DaoT&gt;(_my_votes: &<a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>&lt;DaoT&gt;, _proposal_id: u64):&<a href="Option.md#0x1_Option">Option</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_Vote">Vote</a>&gt;{
-    //TODO
-    <b>abort</b> 0
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_get_vote_info">get_vote_info</a>&lt;DaoT&gt;(my_votes: &<a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>&lt;DaoT&gt;, proposal_id: u64): <a href="Option.md#0x1_Option">Option</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_VoteInfo">VoteInfo</a>&gt;{
+    <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&my_votes.votes);
+    <b>let</b> idx = 0;
+    <b>loop</b> {
+        <b>if</b> (idx &gt;= len) {
+            <b>break</b>
+        };
+        <b>let</b> vote = <a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&my_votes.votes, idx);
+        <b>if</b> (proposal_id == vote.proposal_id) {
+            <b>let</b> vote_info = <a href="GenesisDao.md#0x1_GenesisDao_VoteInfo">VoteInfo</a> {
+                proposal_id: vote.proposal_id,
+                vote_weight: vote.vote_weight,
+                choice: vote.choice,
+            };
+            <b>return</b> <a href="Option.md#0x1_Option_some">Option::some</a>(vote_info)
+        };
+        idx = idx + 1;
+    };
+    <a href="Option.md#0x1_Option_none">Option::none</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_VoteInfo">VoteInfo</a>&gt;()
 }
 </code></pre>
 
@@ -3009,7 +3642,7 @@ Just change vote choice, the weight do not change.
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_state">proposal_state</a>(_proposal: &<a href="GenesisDao.md#0x1_GenesisDao_Proposal">GenesisDao::Proposal</a>): u8
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_state">proposal_state</a>&lt;DaoT: store&gt;(proposal_id: u64): u8
 </code></pre>
 
 
@@ -3018,9 +3651,118 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_state">proposal_state</a>(_proposal: &<a href="Proposal.md#0x1_Proposal">Proposal</a>):u8 {
-    //TOOD
-    0
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_state">proposal_state</a>&lt;DaoT: store&gt;(proposal_id: u64) : u8 <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a> {
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+    <b>let</b> proposals = <b>borrow_global</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
+    <b>let</b> proposal = <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal">borrow_proposal</a>(proposals, proposal_id);
+
+    <a href="GenesisDao.md#0x1_GenesisDao_proposal_state_with_proposal">proposal_state_with_proposal</a>&lt;DaoT&gt;(proposal)
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_proposal_state_with_proposal"></a>
+
+## Function `proposal_state_with_proposal`
+
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_state_with_proposal">proposal_state_with_proposal</a>&lt;DaoT: store&gt;(proposal: &<a href="GenesisDao.md#0x1_GenesisDao_Proposal">GenesisDao::Proposal</a>): u8
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_state_with_proposal">proposal_state_with_proposal</a>&lt;DaoT: store&gt;(proposal: &<a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a>) : u8 <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a> {
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+    <b>let</b> current_time = <a href="Timestamp.md#0x1_Timestamp_now_milliseconds">Timestamp::now_milliseconds</a>();
+
+    <b>let</b> global_proposal_actions = <b>borrow_global</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a>&gt;(dao_address);
+    <b>let</b> action_index_opt = <a href="GenesisDao.md#0x1_GenesisDao_find_proposal_action_index">find_proposal_action_index</a>(global_proposal_actions, proposal.id);
+
+    <a href="GenesisDao.md#0x1_GenesisDao_do_proposal_state">do_proposal_state</a>(proposal, current_time, action_index_opt)
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_do_proposal_state"></a>
+
+## Function `do_proposal_state`
+
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_proposal_state">do_proposal_state</a>(proposal: &<a href="GenesisDao.md#0x1_GenesisDao_Proposal">GenesisDao::Proposal</a>, current_time: u64, action_index_opt: <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;u64&gt;): u8
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_do_proposal_state">do_proposal_state</a>(proposal: &<a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a>, current_time: u64, action_index_opt: <a href="Option.md#0x1_Option">Option</a>&lt;u64&gt; ): u8 {
+    <b>if</b> (current_time &lt; proposal.start_time) {
+        // Pending
+        <a href="GenesisDao.md#0x1_GenesisDao_PENDING">PENDING</a>
+    } <b>else</b> <b>if</b> (current_time &lt;= proposal.end_time) {
+        // Active
+        <a href="GenesisDao.md#0x1_GenesisDao_ACTIVE">ACTIVE</a>
+        //TODO need restrict yes votes ratio <b>with</b> (no/no_with_veto/abstain) ?
+    } <b>else</b> <b>if</b> (proposal.yes_votes &lt;= (proposal.no_votes + proposal.no_with_veto_votes + proposal.abstain_votes) ||
+               proposal.yes_votes &lt; proposal.quorum_votes) {
+        // Defeated
+        <a href="GenesisDao.md#0x1_GenesisDao_DEFEATED">DEFEATED</a>
+    } <b>else</b> <b>if</b> (proposal.eta == 0) {
+        // Agreed.
+        <a href="GenesisDao.md#0x1_GenesisDao_AGREED">AGREED</a>
+    } <b>else</b> <b>if</b> (current_time &lt; proposal.eta) {
+        // Queued, waiting <b>to</b> execute
+        <a href="GenesisDao.md#0x1_GenesisDao_QUEUED">QUEUED</a>
+    } <b>else</b> <b>if</b> (<a href="Option.md#0x1_Option_is_some">Option::is_some</a>(&action_index_opt)) {
+        <a href="GenesisDao.md#0x1_GenesisDao_EXECUTABLE">EXECUTABLE</a>
+    } <b>else</b> {
+        <a href="GenesisDao.md#0x1_GenesisDao_EXTRACTED">EXTRACTED</a>
+    }
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_proposal_info"></a>
+
+## Function `proposal_info`
+
+get proposal's information.
+return: (id, proposer, start_time, end_time, yes_votes, no_votes, no_with_veto_votes, abstain_votes, block_number, state_root).
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_info">proposal_info</a>&lt;DaoT: <b>copy</b>, drop, store, ActionT: <b>copy</b>, drop, store&gt;(proposal_id: u64): (u64, <b>address</b>, u64, u64, u128, u128, u128, u128, u64, vector&lt;u8&gt;)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_info">proposal_info</a>&lt;DaoT: <b>copy</b> + drop + store, ActionT: <b>copy</b> + drop + store&gt;(
+    proposal_id: u64,
+): (u64, <b>address</b>, u64, u64, u128, u128, u128, u128, u64, vector&lt;u8&gt;) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a> {
+    <b>let</b> dao_address = <a href="DaoRegistry.md#0x1_DaoRegistry_dao_address">DaoRegistry::dao_address</a>&lt;DaoT&gt;();
+    <b>let</b> proposals = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
+    <b>let</b> proposal = <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal">borrow_proposal</a>(proposals, proposal_id);
+    (proposal.id, proposal.proposer, proposal.start_time, proposal.end_time, proposal.yes_votes, proposal.no_votes, proposal.no_with_veto_votes, proposal.abstain_votes, proposal.block_number, *&proposal.state_root)
 }
 </code></pre>
 
@@ -3034,7 +3776,7 @@ Just change vote choice, the weight do not change.
 
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal_mut">borrow_proposal_mut</a>(_proposals: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GenesisDao::GlobalProposals</a>, _proposal_id: u64): &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Proposal">GenesisDao::Proposal</a>
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal_mut">borrow_proposal_mut</a>(proposals: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GenesisDao::GlobalProposals</a>, proposal_id: u64): &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Proposal">GenesisDao::Proposal</a>
 </code></pre>
 
 
@@ -3043,9 +3785,17 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal_mut">borrow_proposal_mut</a>(_proposals: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, _proposal_id: u64): &<b>mut</b> <a href="Proposal.md#0x1_Proposal">Proposal</a>{
-    //TODO
-    <b>abort</b> 0
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal_mut">borrow_proposal_mut</a>(proposals: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, proposal_id: u64): &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a>{
+    <b>let</b> i = 0;
+    <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&proposals.proposals);
+    <b>while</b>(i &lt; len){
+        <b>let</b> proposal = <a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&proposals.proposals, i);
+        <b>if</b>(proposal.id == proposal_id){
+            <b>return</b> <a href="Vector.md#0x1_Vector_borrow_mut">Vector::borrow_mut</a>(&<b>mut</b> proposals.proposals, i)
+        };
+        i = i + 1;
+    };
+    <b>abort</b> <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_NOT_EXIST">ERR_PROPOSAL_NOT_EXIST</a>)
 }
 </code></pre>
 
@@ -3068,7 +3818,7 @@ Just change vote choice, the weight do not change.
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal">borrow_proposal</a>(proposals: &<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, proposal_id: u64): &<a href="Proposal.md#0x1_Proposal">Proposal</a> {
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal">borrow_proposal</a>(proposals: &<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, proposal_id: u64): &<a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a> {
     <b>let</b> i = 0;
     <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&proposals.proposals);
     <b>while</b>(i &lt; len){
@@ -3078,8 +3828,40 @@ Just change vote choice, the weight do not change.
         };
         i = i + 1;
     };
-    //TODO error code
-    <b>abort</b> 0
+    <b>abort</b> <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_NOT_EXIST">ERR_PROPOSAL_NOT_EXIST</a>)
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_find_proposal_action_index"></a>
+
+## Function `find_proposal_action_index`
+
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_find_proposal_action_index">find_proposal_action_index</a>(global_proposal_action: &<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GenesisDao::GlobalProposalActions</a>, proposal_id: u64): <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;u64&gt;
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_find_proposal_action_index">find_proposal_action_index</a>(global_proposal_action: &<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a>, proposal_id: u64): <a href="Option.md#0x1_Option">Option</a>&lt;u64&gt; {
+    <b>let</b> i = 0;
+    <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&global_proposal_action.proposal_action_indexs);
+    <b>while</b>(i &lt; len){
+        <b>let</b> proposal_action_index = <a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&global_proposal_action.proposal_action_indexs, i);
+        <b>if</b>(proposal_action_index.proposal_id == proposal_id){
+            <b>return</b> <a href="Option.md#0x1_Option_some">Option::some</a>(i)
+        };
+        i = i + 1;
+    };
+    <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u64&gt;()
 }
 </code></pre>
 
@@ -3103,7 +3885,7 @@ Return a copy of Proposal
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal">proposal</a>&lt;DaoT&gt;(proposal_id: u64): <a href="Proposal.md#0x1_Proposal">Proposal</a> <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal">proposal</a>&lt;DaoT&gt;(proposal_id: u64): <a href="GenesisDao.md#0x1_GenesisDao_Proposal">Proposal</a> <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>{
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
     <b>let</b> global_proposals = <b>borrow_global</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
     *<a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal">borrow_proposal</a>(global_proposals, proposal_id)
@@ -3138,7 +3920,7 @@ create a dao config
     voting_quorum_rate: u8,
     min_action_delay: u64,
     min_proposal_deposit: u128,
-): <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>{
+): <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>{
     <b>assert</b>!(voting_delay &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>));
     <b>assert</b>!(voting_period &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>));
     <b>assert</b>!(
@@ -3146,7 +3928,45 @@ create a dao config
         <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>),
     );
     <b>assert</b>!(min_action_delay &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>));
-    <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a> { voting_delay, voting_period, voting_quorum_rate, min_action_delay, min_proposal_deposit }
+    <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a> { voting_delay, voting_period, voting_quorum_rate, min_action_delay, min_proposal_deposit }
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_set_custom_config"></a>
+
+## Function `set_custom_config`
+
+Update, save function of custom plugin configuration
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_set_custom_config">set_custom_config</a>&lt;DaoT: store, PluginT: drop, ConfigT: <b>copy</b>, drop, store&gt;(_cap: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoModifyConfigCap">GenesisDao::DaoModifyConfigCap</a>&lt;DaoT, PluginT&gt;, config: ConfigT)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_set_custom_config">set_custom_config</a>&lt;DaoT: store,
+                             PluginT: drop,
+                             ConfigT: <b>copy</b> + store + drop&gt;(
+    _cap: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoModifyConfigCap">DaoModifyConfigCap</a>&lt;DaoT, PluginT&gt;,
+    config: ConfigT)
+<b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoCustomConfigModifyCapHolder">DaoCustomConfigModifyCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a> {
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+    <b>if</b> (<a href="Config.md#0x1_Config_config_exist_by_address">Config::config_exist_by_address</a>&lt;ConfigT&gt;(dao_address)) {
+        <b>let</b> modify_config_cap =
+            &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoCustomConfigModifyCapHolder">DaoCustomConfigModifyCapHolder</a>&lt;DaoT, ConfigT&gt;&gt;(dao_address).cap;
+        <a href="Config.md#0x1_Config_set_with_capability">Config::set_with_capability</a>(modify_config_cap, config);
+    } <b>else</b> {
+        <b>let</b> signer = <a href="GenesisDao.md#0x1_GenesisDao_dao_signer">dao_signer</a>&lt;DaoT&gt;();
+        <a href="Config.md#0x1_Config_publish_new_config">Config::publish_new_config</a>&lt;ConfigT&gt;(&signer, config);
+    }
 }
 </code></pre>
 
@@ -3289,7 +4109,7 @@ Get the min action delay of the DAO.
 Get the min proposal deposit of the DAO.
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_min_proposal_deposit">min_proposal_deposit</a>&lt;DaoT: store&gt;(): u128
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_min_proposal_deposit">min_proposal_deposit</a>&lt;DaoT: store&gt;(): u128
 </code></pre>
 
 
@@ -3298,7 +4118,7 @@ Get the min proposal deposit of the DAO.
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_min_proposal_deposit">min_proposal_deposit</a>&lt;DaoT: store&gt;(): u128{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_min_proposal_deposit">min_proposal_deposit</a>&lt;DaoT: store&gt;(): u128{
     <a href="GenesisDao.md#0x1_GenesisDao_get_config">get_config</a>&lt;DaoT&gt;().min_proposal_deposit
 }
 </code></pre>
@@ -3322,9 +4142,9 @@ Get the min proposal deposit of the DAO.
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_get_config">get_config</a>&lt;DaoT: store&gt;(): <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a> {
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_get_config">get_config</a>&lt;DaoT: store&gt;(): <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a> {
     <b>let</b> dao_address= <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
-    <a href="Config.md#0x1_Config_get_by_address">Config::get_by_address</a>&lt;<a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>&gt;(dao_address)
+    <a href="Config.md#0x1_Config_get_by_address">Config::get_by_address</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>&gt;(dao_address)
 }
 </code></pre>
 
@@ -3350,13 +4170,13 @@ Update function, modify dao config.
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_modify_dao_config">modify_dao_config</a>&lt;DaoT: store, PluginT&gt;(
     _cap: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoModifyConfigCap">DaoModifyConfigCap</a>&lt;DaoT, PluginT&gt;,
-    new_config: <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>,
+    new_config: <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>,
 ) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoConfigModifyCapHolder">DaoConfigModifyCapHolder</a> {
     <b>let</b> modify_config_cap = &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoConfigModifyCapHolder">DaoConfigModifyCapHolder</a>&gt;(
         <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;(),
     ).cap;
     //<b>assert</b>!(<a href="Config.md#0x1_Config_account_address">Config::account_address</a>(cap) == <a href="Token.md#0x1_Token_token_address">Token::token_address</a>&lt;TokenT&gt;(), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_AUTHORIZED">ERR_NOT_AUTHORIZED</a>));
-    <a href="Config.md#0x1_Config_set_with_capability">Config::set_with_capability</a>&lt;<a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>&gt;(modify_config_cap, new_config);
+    <a href="Config.md#0x1_Config_set_with_capability">Config::set_with_capability</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>&gt;(modify_config_cap, new_config);
 }
 </code></pre>
 
@@ -3381,7 +4201,7 @@ set voting delay
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_set_voting_delay">set_voting_delay</a>(
-    config: &<b>mut</b> <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>,
+    config: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>,
     value: u64,
 ) {
     <b>assert</b>!(value &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>));
@@ -3410,7 +4230,7 @@ set voting period
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_set_voting_period">set_voting_period</a>&lt;DaoT: store&gt;(
-    config: &<b>mut</b> <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>,
+    config: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>,
     value: u64,
 ) {
     <b>assert</b>!(value &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>));
@@ -3439,7 +4259,7 @@ set voting quorum rate
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_set_voting_quorum_rate">set_voting_quorum_rate</a>&lt;DaoT: store&gt;(
-    config: &<b>mut</b> <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>,
+    config: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>,
     value: u8,
 ) {
     <b>assert</b>!(value &lt;= 100 && value &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_QUORUM_RATE_INVALID">ERR_QUORUM_RATE_INVALID</a>));
@@ -3468,7 +4288,7 @@ set min action delay
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_set_min_action_delay">set_min_action_delay</a>&lt;DaoT: store&gt;(
-    config: &<b>mut</b> <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>,
+    config: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>,
     value: u64,
 ) {
     <b>assert</b>!(value &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>));
@@ -3497,7 +4317,7 @@ set min action delay
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_set_min_proposal_deposit">set_min_proposal_deposit</a>&lt;DaoT: store&gt;(
-    config: &<b>mut</b> <a href="DaoConfig.md#0x1_DaoConfig">DaoConfig</a>,
+    config: &<b>mut</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a>,
     value: u128,
 ) {
     config.min_proposal_deposit = value;
@@ -3526,11 +4346,39 @@ Helpers
 
 
 <pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_next_member_id">next_member_id</a>&lt;DaoT&gt;(): u64 <b>acquires</b> <a href="Dao.md#0x1_Dao">Dao</a> {
-   <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
-   <b>let</b> dao = <b>borrow_global_mut</b>&lt;<a href="Dao.md#0x1_Dao">Dao</a>&gt;(dao_address);
-   <b>let</b> member_id = dao.next_member_id;
-   dao.next_member_id = member_id + 1;
-   member_id
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+    <b>let</b> dao = <b>borrow_global_mut</b>&lt;<a href="Dao.md#0x1_Dao">Dao</a>&gt;(dao_address);
+    <b>let</b> member_id = dao.next_member_id;
+    dao.next_member_id = member_id + 1;
+    member_id
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_next_proposal_id"></a>
+
+## Function `next_proposal_id`
+
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_next_proposal_id">next_proposal_id</a>&lt;DaoT&gt;(): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_next_proposal_id">next_proposal_id</a>&lt;DaoT&gt;(): u64 <b>acquires</b> <a href="Dao.md#0x1_Dao">Dao</a> {
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+    <b>let</b> dao = <b>borrow_global_mut</b>&lt;<a href="Dao.md#0x1_Dao">Dao</a>&gt;(dao_address);
+    <b>let</b> proposal_id = dao.next_proposal_id;
+    dao.next_proposal_id = proposal_id + 1;
+    proposal_id
 }
 </code></pre>
 
@@ -3556,9 +4404,9 @@ Helpers
 <pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_assert_no_repeat">assert_no_repeat</a>&lt;E&gt;(v: &vector&lt;E&gt;) {
     <b>let</b> i = 0;
     <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(v);
-    <b>while</b>(i &lt; len){
+    <b>while</b> (i &lt; len) {
         <b>let</b> e = <a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v, i);
-        <b>if</b>(<a href="Vector.md#0x1_Vector_contains">Vector::contains</a>(v, e)){
+        <b>if</b> (<a href="Vector.md#0x1_Vector_contains">Vector::contains</a>(v, e)) {
             <b>abort</b> <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_REPEAT_ELEMENT">ERR_REPEAT_ELEMENT</a>)
         };
         i = i + 1;
@@ -3640,7 +4488,7 @@ Helper to add an element to a vector.
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_dao_signer">dao_signer</a>&lt;DaoT&gt;(): signer <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>{
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_dao_signer">dao_signer</a>&lt;DaoT&gt;(): signer <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a> {
     <b>let</b> cap = &<b>borrow_global</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>&gt;(<a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;()).cap;
     <a href="DaoAccount.md#0x1_DaoAccount_dao_signer">DaoAccount::dao_signer</a>(cap)
 }

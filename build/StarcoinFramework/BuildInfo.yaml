@@ -46,6 +46,9 @@ compiled_package_info:
       name: Config
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: ConfigProposalPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: ConsensusConfig
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -59,9 +62,6 @@ compiled_package_info:
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: DaoAccount
-    : StarcoinFramework
-    ? address: "0x00000000000000000000000000000001"
-      name: DaoConfig
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: DaoRegistry
@@ -187,13 +187,13 @@ compiled_package_info:
       name: PriceOracleScripts
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
-      name: Proposal
-    : StarcoinFramework
-    ? address: "0x00000000000000000000000000000001"
       name: RewardConfig
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: Ring
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: SBTVoteStrategy
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: SIP_2
@@ -206,6 +206,9 @@ compiled_package_info:
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: STCUSDOracle
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: SalaryGovPlugin
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: SharedEd25519PublicKey
@@ -291,7 +294,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 37973FE3F7BCD58FFE2521CE3319C0ED239522F2B0DDE5A5F32751C9C324DFF2
+  source_digest: D00910DABB5452E65451F33B7628A3BB30BF84F46808BDDAA9C91FD8947766F7
   build_flags:
     dev_mode: false
     test_mode: false
