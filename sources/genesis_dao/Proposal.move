@@ -577,10 +577,7 @@ module Proposal {
     /// Revoke some voting powers from vote on `proposal_id` of `proposer_address`.
     public fun revoke_vote<DaoT: store>(
         _signer: &signer,
-        _proposer_address: address,
         _proposal_id: u64,
-        _voting_power: u128,
-        _cap: &ProposalCapability
     )  {
 //        {
 //            let state = proposal_state<DaoT, ActionT>(proposer_address, proposal_id);
