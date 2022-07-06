@@ -19,6 +19,7 @@ module StarcoinFramework::GenesisDao {
     use StarcoinFramework::BCS;
     use StarcoinFramework::SBTVoteStrategy;
 
+
     const E_NO_GRANTED: u64 = 1;
     const ERR_REPEAT_ELEMENT: u64 = 100;
     const ERR_PLUGIN_HAS_INSTALLED: u64 = 101;
@@ -262,6 +263,14 @@ module StarcoinFramework::GenesisDao {
         move_to(&dao_signer, DaoConfigModifyCapHolder{
             cap: config_modify_cap,
         });
+
+        move_to(&dao_signer ,MemberEvent{
+            member_join_event_handler:Event::new_event_handle<MemberJoinEvent<DaoT>>(&dao_signer),
+            member_quit_event_handler:Event::new_event_handle<MemberQuitEvent<DaoT>>(&dao_signer),
+            member_revoke_event_handler:Event::new_event_handle<MemberRevokeEvent<DaoT>>(&dao_signer),
+            member_increase_sbt_event_handler:Event::new_event_handle<MemberIncreaseSBTEvent<DaoT>>(&dao_signer),
+            member_decrease_sbt_event_handler:Event::new_event_handle<MemberDecreaseSBTEvent<DaoT>>(&dao_signer),
+        });
         DaoRootCap<DaoT>{}
     }
 
@@ -274,6 +283,65 @@ module StarcoinFramework::GenesisDao {
     /// Burn the root cap after init the Dao
     public fun burn_root_cap<DaoT>(cap: DaoRootCap<DaoT>) {
         let DaoRootCap{} = cap;
+    }
+
+    ///
+    struct MemberEvent<phantom DaoT> has key, store{
+        member_join_event_handler:Event::EventHandle<MemberJoinEvent<DaoT>>,
+        member_quit_event_handler:Event::EventHandle<MemberQuitEvent<DaoT>>,
+        member_revoke_event_handler:Event::EventHandle<MemberRevokeEvent<DaoT>>,
+        member_increase_sbt_event_handler:Event::EventHandle<MemberIncreaseSBTEvent<DaoT>>,
+        member_decrease_sbt_event_handler:Event::EventHandle<MemberDecreaseSBTEvent<DaoT>>,
+    }
+
+    struct MemberJoinEvent<phantom DaoT> has drop, store{
+        //Member id
+        id : u64,
+        //address
+        addr: address,
+        // SBT
+        sbt: u128,
+
+    }
+
+    struct MemberRevokeEvent<phantom DaoT> has drop, store{
+        //Member id
+        id : u64,
+        //address
+        addr: address,
+        // SBT
+        sbt: u128,
+    }
+
+    struct MemberQuitEvent<phantom DaoT> has drop, store{
+        //Member id
+        id : u64,
+        //address
+        addr: address,
+        // SBT
+        sbt: u128,
+    }
+
+    struct MemberIncreaseSBTEvent<phantom DaoT> has drop, store{
+        //Member id
+        id : u64,
+        //address
+        addr: address,
+        //increase sbt amount
+        increase_sbt:u128 ,
+        // SBT
+        sbt: u128,
+    }
+    
+    struct MemberDecreaseSBTEvent<phantom DaoT> has drop, store{
+        //Member id
+        id : u64,
+        //address
+        addr: address,
+        //decrease sbt amount
+        decrease_sbt:u128 ,
+        // SBT
+        sbt: u128,
     }
 
     // Capability support function
@@ -351,7 +419,7 @@ module StarcoinFramework::GenesisDao {
     // Membership function
 
     /// Join Dao and get a membership
-    public fun join_member<DaoT: store, PluginT>(_cap: &DaoMemberCap<DaoT, PluginT>, to_address: address, init_sbt: u128) acquires DaoNFTMintCapHolder, DaoTokenMintCapHolder, Dao {
+    public fun join_member<DaoT: store, PluginT>(_cap: &DaoMemberCap<DaoT, PluginT>, to_address: address, init_sbt: u128) acquires DaoNFTMintCapHolder, DaoTokenMintCapHolder, Dao, MemberEvent {
         assert!(!is_member<DaoT>(to_address), Errors::already_published(ERR_NOT_ALREADY_MEMBER));
 
         let member_id = next_member_id<DaoT>();
@@ -377,61 +445,109 @@ module StarcoinFramework::GenesisDao {
 
         let nft = NFT::mint_with_cap_v2(dao_address, nft_mint_cap, basemeta, meta, body);
         IdentifierNFT::grant_to(nft_mint_cap, to_address, nft);
+        let memeber_event = borrow_global_mut<MemberEvent<DaoT>>(dao_address);
+        Event::emit_event(&mut memeber_event.member_join_event_handler, MemberJoinEvent<DaoT> {
+            id : member_id,
+            addr:to_address,
+            sbt: init_sbt,
+        });
     }
 
     /// Member quit Dao by self 
-    public fun quit_member<DaoT: store>(sender: &signer) acquires DaoNFTBurnCapHolder, DaoTokenBurnCapHolder {
+    public fun quit_member<DaoT: store>(sender: &signer) acquires DaoNFTBurnCapHolder, DaoTokenBurnCapHolder, MemberEvent {
         let member_addr = Signer::address_of(sender);
-        do_remove_member<DaoT>(member_addr);
+        let (member_id , sbt) = do_remove_member<DaoT>(member_addr);
+        let dao_address = dao_address<DaoT>();
+
+        let memeber_event = borrow_global_mut<MemberEvent<DaoT>>(dao_address);
+        Event::emit_event(&mut memeber_event.member_quit_event_handler, MemberQuitEvent<DaoT> {
+            id : member_id,
+            addr:member_addr,
+            sbt: sbt,
+        });
     }
 
     /// Revoke membership with cap
-    public fun revoke_member<DaoT: store, PluginT>(_cap: &DaoMemberCap<DaoT, PluginT>, member_addr: address) acquires DaoNFTBurnCapHolder, DaoTokenBurnCapHolder {
-        do_remove_member<DaoT>(member_addr);
+    public fun revoke_member<DaoT: store, PluginT>(_cap: &DaoMemberCap<DaoT, PluginT>, member_addr: address) acquires DaoNFTBurnCapHolder, DaoTokenBurnCapHolder, MemberEvent {
+        let (member_id , sbt) = do_remove_member<DaoT>(member_addr);
+        let dao_address = dao_address<DaoT>();
+        
+        let memeber_event = borrow_global_mut<MemberEvent<DaoT>>(dao_address);
+        Event::emit_event(&mut memeber_event.member_revoke_event_handler, MemberRevokeEvent<DaoT> {
+            id : member_id,
+            addr:member_addr,
+            sbt: sbt,
+        });
     }
 
-    fun do_remove_member<DaoT: store>(member_addr: address) acquires DaoNFTBurnCapHolder, DaoTokenBurnCapHolder {
+    fun do_remove_member<DaoT: store>(member_addr: address):(u64,u128) acquires DaoNFTBurnCapHolder, DaoTokenBurnCapHolder {
         assert!(is_member<DaoT>(member_addr), Errors::already_published(ERR_NOT_MEMBER));
         let dao_address = dao_address<DaoT>();
 
         let nft_burn_cap = &mut borrow_global_mut<DaoNFTBurnCapHolder<DaoT>>(dao_address).cap;
         let nft = IdentifierNFT::revoke<DaoMember<DaoT>, DaoMemberBody<DaoT>>(nft_burn_cap, member_addr);
+        let member_id = NFT::get_type_meta<DaoMember<DaoT>, DaoMemberBody<DaoT>>(&nft).id;
         let DaoMemberBody<DaoT>{ sbt } = NFT::burn_with_cap(nft_burn_cap, nft);
-
+        let sbt_amount = Token::value<DaoT>(&sbt);
         let token_burn_cap = &mut borrow_global_mut<DaoTokenBurnCapHolder<DaoT>>(dao_address).cap;
         Token::burn_with_capability(token_burn_cap, sbt);
+        (member_id, sbt_amount)
     }
 
     /// Increment the member SBT
-    public fun increase_member_sbt<DaoT: store, PluginT>(_cap: &DaoMemberCap<DaoT, PluginT>, member_addr: address, amount: u128) acquires DaoNFTUpdateCapHolder, DaoTokenMintCapHolder {
+    public fun increase_member_sbt<DaoT: store, PluginT>(_cap: &DaoMemberCap<DaoT, PluginT>, member_addr: address, amount: u128) acquires DaoNFTUpdateCapHolder, DaoTokenMintCapHolder, MemberEvent {
         assert!(is_member<DaoT>(member_addr), Errors::already_published(ERR_NOT_MEMBER));
         let dao_address = dao_address<DaoT>();
 
         let nft_update_cap = &mut borrow_global_mut<DaoNFTUpdateCapHolder<DaoT>>(dao_address).cap;
         let borrow_nft = IdentifierNFT::borrow_out<DaoMember<DaoT>, DaoMemberBody<DaoT>>(nft_update_cap, member_addr);
         let nft = IdentifierNFT::borrow_nft_mut(&mut borrow_nft);
+        let member_id = NFT::get_type_meta<DaoMember<DaoT>, DaoMemberBody<DaoT>>(nft).id;
+        
         let body = NFT::borrow_body_mut_with_cap(nft_update_cap, nft);
 
         let token_mint_cap = &mut borrow_global_mut<DaoTokenMintCapHolder<DaoT>>(dao_address).cap;
         let increase_sbt = Token::mint_with_capability<DaoT>(token_mint_cap, amount);
         Token::deposit(&mut body.sbt, increase_sbt);
+
+        let sbt_amount = Token::value<DaoT>(&body.sbt);
         IdentifierNFT::return_back(borrow_nft);
+
+        let memeber_event = borrow_global_mut<MemberEvent<DaoT>>(dao_address);
+        Event::emit_event(&mut memeber_event.member_increase_sbt_event_handler, MemberIncreaseSBTEvent<DaoT> {
+            id : member_id,
+            addr:member_addr,
+            increase_sbt:amount,
+            sbt: sbt_amount,
+        });
     }
 
     /// Decrement the member SBT
-    public fun decrease_member_sbt<DaoT: store, PluginT>(_cap: &DaoMemberCap<DaoT, PluginT>, member_addr: address, amount: u128) acquires DaoNFTUpdateCapHolder, DaoTokenBurnCapHolder {
+    public fun decrease_member_sbt<DaoT: store, PluginT>(_cap: &DaoMemberCap<DaoT, PluginT>, member_addr: address, amount: u128) acquires DaoNFTUpdateCapHolder, DaoTokenBurnCapHolder, MemberEvent {
         assert!(is_member<DaoT>(member_addr), Errors::already_published(ERR_NOT_MEMBER));
         let dao_address = dao_address<DaoT>();
 
         let nft_update_cap = &mut borrow_global_mut<DaoNFTUpdateCapHolder<DaoT>>(dao_address).cap;
         let borrow_nft = IdentifierNFT::borrow_out<DaoMember<DaoT>, DaoMemberBody<DaoT>>(nft_update_cap, member_addr);
         let nft = IdentifierNFT::borrow_nft_mut(&mut borrow_nft);
+        let member_id = NFT::get_type_meta<DaoMember<DaoT>, DaoMemberBody<DaoT>>(nft).id;
+        
         let body = NFT::borrow_body_mut_with_cap(nft_update_cap, nft);
 
         let token_burn_cap = &mut borrow_global_mut<DaoTokenBurnCapHolder<DaoT>>(dao_address).cap;
         let decrease_sbt = Token::withdraw(&mut body.sbt, amount);
+        let sbt_amount = Token::value<DaoT>(&body.sbt);
+       
         Token::burn_with_capability(token_burn_cap, decrease_sbt);
         IdentifierNFT::return_back(borrow_nft);
+
+        let memeber_event = borrow_global_mut<MemberEvent<DaoT>>(dao_address);
+        Event::emit_event(&mut memeber_event.member_decrease_sbt_event_handler, MemberDecreaseSBTEvent<DaoT> {
+            id : member_id,
+            addr:member_addr,
+            decrease_sbt:amount,
+            sbt: sbt_amount,
+        });
     }
 
     /// Query amount of the member SBT
