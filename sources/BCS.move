@@ -320,7 +320,7 @@ module BCS {
     }
 
     fun get_n_bytes(input: &vector<u8>, offset: u64, n: u64): vector<u8> {
-        assert!(((offset + n) <= Vector::length(input)) && (offset < offset + n), Errors::invalid_state(ERR_INPUT_NOT_LARGE_ENOUGH));
+        assert!(((offset + n) <= Vector::length(input)) && (offset <= offset + n), Errors::invalid_state(ERR_INPUT_NOT_LARGE_ENOUGH));
         let i = 0;
         let content = Vector::empty<u8>();
         while (i < n) {
