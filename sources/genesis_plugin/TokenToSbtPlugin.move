@@ -38,7 +38,9 @@ module TokenToSbtPlugin {
     }
 
     /// Set the weight of convert parameter
-    public fun set_weight<DaoT: store, TokenT: store>(_root_cap: &GenesisDao::DaoRootCap<DaoT>, _weight: u128) {}
+    public fun set_weight<DaoT: store, TokenT: store>(_root_cap: &GenesisDao::DaoRootCap<DaoT>, _weight: u128) {
+        // TODO
+    }
 
     /// Recycle token from token exchange pool
     public fun recycle<DaoT: store, TokenT: store>(_cap: &Token::MintCapability<TokenT>): Token::Token<TokenT> {
