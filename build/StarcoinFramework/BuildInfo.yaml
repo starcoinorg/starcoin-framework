@@ -46,6 +46,9 @@ compiled_package_info:
       name: Config
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: ConfigProposalPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: ConsensusConfig
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -208,6 +211,9 @@ compiled_package_info:
       name: STCUSDOracle
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: SalaryGovPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: SharedEd25519PublicKey
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -233,6 +239,9 @@ compiled_package_info:
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: Token
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: TokenToSbtPlugin
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: TransactionFee
@@ -271,6 +280,9 @@ compiled_package_info:
       name: VMConfig
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: VaultGovPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: Vector
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -291,13 +303,13 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 37973FE3F7BCD58FFE2521CE3319C0ED239522F2B0DDE5A5F32751C9C324DFF2
+  source_digest: 22E82F98FB51C0404B9575E596E46FE90B86267BCB7F0E0C924140B4F72163E4
   build_flags:
     dev_mode: false
     test_mode: false
-    generate_docs: true
-    generate_abis: true
+    generate_docs: false
+    generate_abis: false
     install_dir: ~
-    force_recompilation: true
+    force_recompilation: false
     additional_named_addresses: {}
 dependencies: []
