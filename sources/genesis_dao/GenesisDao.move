@@ -15,6 +15,7 @@ module StarcoinFramework::GenesisDao {
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::Config;
     use StarcoinFramework::Event;
+    use StarcoinFramework::Math;
 
     const E_NO_GRANTED: u64 = 1;
     const ERR_REPEAT_ELEMENT: u64 = 100;
@@ -35,6 +36,10 @@ module StarcoinFramework::GenesisDao {
     const ERR_VOTE_STATE_MISMATCH: u64 = 1408;
     const ERR_ACTION_MUST_EXIST: u64 = 1409;
     const ERR_VOTED_OTHERS_ALREADY: u64 = 1410;
+
+
+    const ERR_ZERO_AMOUNT:u64 = 1501;
+    const ERR_TOO_BIG_AMOUNT:u64 = 1502;
 
     struct Dao has key {
         id: u64,
@@ -160,6 +165,17 @@ module StarcoinFramework::GenesisDao {
 
     struct DaoProposalCap<phantom DaoT, phantom PluginT> has drop {}
 
+    struct DaoGrantWithdrawTokenCap<phantom DaoT, phantom PluginT, phantom TokenT> has key, store{
+        /// The total amount of tokens that can be withdrawn by this capability
+        total: u128,
+        /// The amount of tokens that have been withdrawn by this capability
+        withdraw: u128,
+        /// The time-based linear release start time, timestamp in seconds.
+        start_time: u64,
+        ///  The time-based linear release period in seconds
+        period: u64,
+    }
+
     /// The info for Dao installed Plugin
     struct InstalledPluginInfo<phantom PluginT> has key {
         granted_caps: vector<CapType>,
@@ -174,6 +190,107 @@ module StarcoinFramework::GenesisDao {
     /// The Dao member NFT Body, hold the SBT token
     struct DaoMemberBody<phantom DaoT> has store {
         sbt: Token<DaoT>,
+    }
+
+    struct GrantEvent<phantom DaoT, phantom PluginT, phantom TokenT> has key, store{
+        create_grant_event_handler:Event::EventHandle<GrantCreateEvent<DaoT, PluginT, TokenT>>,
+        revoke_grant_event_handler:Event::EventHandle<GrantRevokeEvent<DaoT, PluginT, TokenT>>,
+        config_grant_event_handler:Event::EventHandle<GrantConfigEvent<DaoT, PluginT, TokenT>>,
+        withdraw_grant_event_handler:Event::EventHandle<GrantWithdrawEvent<DaoT, PluginT, TokenT>>,
+    }
+
+    struct GrantCreateEvent<phantom DaoT, phantom PluginT, phantom TokenT> has drop, store{
+        total:u128,
+        start_time:u64,
+        period:u64
+    }
+
+    struct GrantRevokeEvent<phantom DaoT, phantom PluginT, phantom TokenT>  has drop, store{
+        total:u128,
+        withdraw:u128,
+        start_time:u64,
+        period:u64
+    }
+
+    struct GrantConfigEvent<phantom DaoT, phantom PluginT, phantom TokenT>  has drop, store{
+        total:u128,
+        withdraw:u128,
+        start_time:u64,
+        period:u64
+    }
+
+    struct GrantWithdrawEvent<phantom DaoT, phantom PluginT, phantom TokenT>  has drop, store{
+        total:u128,
+        withdraw:u128,
+        start_time:u64,
+        period:u64,
+        withdraw_value:u128
+    }
+
+
+    public fun create_grant<DaoT, PluginT, TokenT:store>(total:u128, start_time:u64, period:u64):DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT> acquires DaoAccountCapHolder{
+        let dao_signer = dao_signer<DaoT>();
+        move_to(&dao_signer, GrantEvent<DaoT, PluginT, TokenT>{
+            create_grant_event_handler:Event::new_event_handle<GrantCreateEvent<DaoT, PluginT, TokenT>>(&dao_signer),
+            revoke_grant_event_handler:Event::new_event_handle<GrantRevokeEvent<DaoT, PluginT, TokenT>>(&dao_signer),
+            config_grant_event_handler:Event::new_event_handle<GrantConfigEvent<DaoT, PluginT, TokenT>>(&dao_signer),
+            withdraw_grant_event_handler:Event::new_event_handle<GrantWithdrawEvent<DaoT, PluginT, TokenT>>(&dao_signer),
+        });
+
+        DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT>{
+            total:total,
+            withdraw: 0 ,
+            start_time:start_time,
+            period:period
+        }
+    }
+
+    public fun grant_withdraw<DaoT, PluginT, TokenT:store>(cap: &mut DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT>):Token<TokenT> acquires DaoAccountCapHolder, GrantEvent{
+        let now = Timestamp::now_seconds();
+        let elapsed_time = now - cap.start_time;
+        let amount =  if (elapsed_time >= cap.period) {
+            cap.total - cap.withdraw
+        } else {
+            Math::mul_div(cap.total, (elapsed_time as u128), (cap.period as u128)) - cap.withdraw
+        };
+        
+        assert!(amount > 0, Errors::invalid_argument(ERR_ZERO_AMOUNT));
+
+        let dao_signer = dao_signer<DaoT>();
+        let dao_address = dao_address<DaoT>();
+
+        assert!(amount <= Account::balance<TokenT>(dao_address) , Errors::invalid_argument(ERR_TOO_BIG_AMOUNT));
+        cap.withdraw = cap.withdraw + amount;
+
+        let grant_event = borrow_global_mut<GrantEvent<DaoT, PluginT, TokenT>>(dao_address);
+        Event::emit_event(&mut grant_event.withdraw_grant_event_handler, GrantWithdrawEvent<DaoT, PluginT, TokenT> {
+            total:cap.total,
+            withdraw:cap.withdraw,
+            start_time:cap.start_time,
+            period:cap.period,
+            withdraw_value:amount
+        });
+        Account::withdraw<TokenT>(&dao_signer, amount)
+    }
+
+    public fun grant_revoke<DaoT, PluginT, TokenT:store>(cap: DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT>) acquires StorageItem , GrantEvent{
+        let dao_address = dao_address<DaoT>();
+        assert!(exists<StorageItem<PluginT, Token<TokenT>>>(dao_address), Errors::not_published(ERR_STORAGE_ERROR));
+        let StorageItem{ item:token } = move_from<StorageItem<PluginT,  Token<TokenT>>>(dao_address);
+        Token::destroy_zero(token);
+        let DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT>{
+            total:total,
+            withdraw:withdraw,
+            start_time:start_time,
+            period:period
+        } = cap ;
+        let grant_event = borrow_global_mut<GrantEvent<DaoT, PluginT, TokenT>>(dao_address);
+        Event::emit_event(&mut grant_event.revoke_grant_event_handler, GrantRevokeEvent<DaoT, PluginT, TokenT> {
+            total:total,
+            withdraw:withdraw,
+            start_time:start_time,
+            period:period
+        });
     }
 
     /// Create a dao with a exists Dao account
@@ -543,6 +660,9 @@ module StarcoinFramework::GenesisDao {
     public fun is_member<DaoT: store>(member_addr: address): bool {
         IdentifierNFT::owns<DaoMember<DaoT>, DaoMemberBody<DaoT>>(member_addr)
     }
+
+    /// Grant
+    
 
     // Acquiring Capabilities
 
