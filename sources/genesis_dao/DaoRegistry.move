@@ -12,7 +12,7 @@ module StarcoinFramework::DaoRegistry{
         pragma aborts_if_is_strict = true;
     }
 
-    const ERR_ALREADY_INIT: u64 = 100;
+    const ERR_ALREADY_INITIALIZED: u64 = 100;
 
     /// Global Dao registry info
     struct DaoRegistry has key{
@@ -26,7 +26,7 @@ module StarcoinFramework::DaoRegistry{
     }
 
     public(friend) fun initialize(){
-        assert!(!exists<DaoRegistry>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INIT));
+        assert!(!exists<DaoRegistry>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
         let signer = GenesisSignerCapability::get_genesis_signer();
         move_to(&signer, DaoRegistry{next_dao_id: 1})
     }
