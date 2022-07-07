@@ -19,6 +19,7 @@ module StdlibUpgradeScripts {
         use StarcoinFramework::Config;
         use StarcoinFramework::GenesisSignerCapability;
         use StarcoinFramework::Account;
+        use StarcoinFramework::Block;
 
         spec module {
             pragma verify = false;
@@ -97,6 +98,15 @@ module StdlibUpgradeScripts {
             {
                 let cap = NFT::extract_signer_cap(sender);
                 Account::destroy_signer_cap(cap);
+            };
+        }
+
+        public(script) fun upgrade_from_v11_to_v12(sender: signer) {
+            do_upgrade_from_v11_to_v12(&sender);
+        }
+        public fun do_upgrade_from_v11_to_v12(sender: &signer) {
+            {
+                Block::checkpoints_init(sender);
             };
         }
 }

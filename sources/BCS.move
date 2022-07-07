@@ -310,33 +310,6 @@ module BCS {
         assert!(!d, 1015);
     }
 
-    public fun deserialize_uleb128_as_u32(input: &vector<u8>, offset: u64): (u64, u64) {
-        let value: u64 = 0;
-        let shift = 0;
-        let new_offset = offset;
-        while (shift < 32) {
-            let x = get_byte(input, new_offset);
-            new_offset = new_offset + 1;
-            let digit: u8 = x & 0x7F;
-            value = value | (digit as u64) << shift;
-            if ((value < 0) || (value > INTEGER32_MAX_VALUE)) {
-                abort ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32
-            };
-            if (digit == x) {
-                if (shift > 0 && digit == 0) {
-                    abort ERR_INVALID_ULEB128_NUMBER_UNEXPECTED_ZERO_DIGIT
-                };
-                return (value, new_offset)
-            };
-            shift = shift + 7
-        };
-        abort ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32
-    }
-
-    spec deserialize_uleb128_as_u32 {
-        pragma verify = false;
-    }
-
     fun get_byte(input: &vector<u8>, offset: u64): u8 {
         assert!(((offset + 1) <= Vector::length(input)) && (offset < offset + 1), Errors::invalid_state(ERR_INPUT_NOT_LARGE_ENOUGH));
         *Vector::borrow(input, offset)
@@ -347,7 +320,7 @@ module BCS {
     }
 
     fun get_n_bytes(input: &vector<u8>, offset: u64, n: u64): vector<u8> {
-        assert!(((offset + n) <= Vector::length(input)) && (offset < offset + n), Errors::invalid_state(ERR_INPUT_NOT_LARGE_ENOUGH));
+        assert!(((offset + n) <= Vector::length(input)) && (offset <= offset + n), Errors::invalid_state(ERR_INPUT_NOT_LARGE_ENOUGH));
         let i = 0;
         let content = Vector::empty<u8>();
         while (i < n) {
@@ -379,6 +352,33 @@ module BCS {
         pragma verify = false;
     }
 
+    public fun deserialize_uleb128_as_u32(input: &vector<u8>, offset: u64): (u64, u64) {
+        let value: u64 = 0;
+        let shift = 0;
+        let new_offset = offset;
+        while (shift < 32) {
+            let x = get_byte(input, new_offset);
+            new_offset = new_offset + 1;
+            let digit: u8 = x & 0x7F;
+            value = value | (digit as u64) << shift;
+            if ((value < 0) || (value > INTEGER32_MAX_VALUE)) {
+                abort ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32
+            };
+            if (digit == x) {
+                if (shift > 0 && digit == 0) {
+                    abort ERR_INVALID_ULEB128_NUMBER_UNEXPECTED_ZERO_DIGIT
+                };
+                return (value, new_offset)
+            };
+            shift = shift + 7
+        };
+        abort ERR_OVERFLOW_PARSING_ULEB128_ENCODED_UINT32
+    }
+
+    spec deserialize_uleb128_as_u32 {
+        pragma verify = false;
+    }
+    
     #[test]
     public fun test_deserialize_uleb128_as_u32() {
         let i: u64 = 0x7F;
@@ -427,5 +427,269 @@ module BCS {
         pragma verify = false;
     }
 
+    // skip Vector<Option::Option<vector<u8>>>
+    public fun skip_option_bytes_vector(input: &vector<u8>, offset: u64): u64 {
+        let (len, new_offset) = deserialize_len(input, offset);
+        let i = 0;
+        while (i < len) {
+            new_offset = skip_option_bytes(input, new_offset);
+            i = i + 1;
+        };
+        new_offset
+    }
+
+    spec skip_option_bytes_vector {
+        pragma verify = false;
+    }
+
+    #[test]
+    fun test_skip_option_bytes_vector(){
+        let vec = Vector::empty<Option::Option<vector<u8>>>();
+        Vector::push_back(&mut vec, Option::some(x"01020304"));
+        Vector::push_back(&mut vec, Option::some(x"04030201"));
+        let vec = to_bytes(&vec);
+        //vec : [2, 1, 4, 1, 2, 3, 4, 1, 4, 4, 3, 2, 1]
+        assert!(skip_option_bytes_vector(&vec, 0) == 13,2000);
+    }
+
+    // skip Option::Option<vector<u8>>
+    public fun skip_option_bytes(input: &vector<u8>, offset: u64):  u64 {
+        let (tag, new_offset) = deserialize_option_tag(input, offset);
+        if (!tag) {
+            new_offset
+        } else {
+            skip_bytes(input, new_offset)
+        }
+    }
+
+    spec skip_option_bytes {
+        pragma verify = false;
+    }
+
+    #[test]
+    fun test_skip_none_option_bytes(){
+        let op = Option::none<vector<u8>>();
+        let op = to_bytes(&op);
+        let vec = to_bytes(&x"01020304");
+        Vector::append(&mut op, vec);
+        // op : [0, 4, 1, 2, 3, 4] 
+        assert!(skip_option_bytes(&op, 0) == 1,2007);
+    }
+
+    #[test]
+    fun test_skip_some_option_bytes(){
+        let op = Option::some(x"01020304");
+        let op = to_bytes(&op);
+        let vec = to_bytes(&x"01020304");
+        Vector::append(&mut op, vec);
+        // op : [1, 4, 1, 2, 3, 4, 4, 1, 2, 3, 4]
+        assert!(skip_option_bytes(&op, 0) == 6,2008);
+    }
+
+    // skip vector<vector<u8>>
+    public fun skip_bytes_vector(input: &vector<u8>, offset: u64): u64 {
+        let (len, new_offset) = deserialize_len(input, offset);
+        let i = 0;
+        while (i < len) {
+            new_offset = skip_bytes(input, new_offset);
+            i = i + 1;
+        };
+        new_offset
+    }
+
+    spec skip_bytes_vector {
+        pragma verify = false;
+    }
+
+    // skip vector<u8>
+    public fun skip_bytes(input: &vector<u8>, offset: u64): u64 {
+        let (len, new_offset) = deserialize_len(input, offset);
+        new_offset + len
+    }
+
+    spec skip_bytes {
+        pragma verify = false;
+    }
+
+    #[test]
+    fun test_skip_bytes(){
+        let vec = to_bytes(&x"01020304");
+        let u_64 = to_bytes(&10);
+        Vector::append(&mut vec, u_64);
+        // vec : [4, 1, 2, 3, 4, 10, 0, 0, 0, 0, 0, 0, 0]
+        assert!(skip_bytes(&vec, 0) == 5,2001);
+    }
+
+    // skip some bytes
+    public fun skip_n_bytes(input: &vector<u8>, offset: u64, n:u64): u64 {
+        can_skip(input, offset, n );
+        offset + n 
+    }
+
+    spec skip_n_bytes {
+        pragma verify = false;
+    }
+
+    #[test]
+    fun test_skip_n_bytes(){
+        let vec = to_bytes(&x"01020304");
+        let u_64 = to_bytes(&10);
+        Vector::append(&mut vec, u_64);
+        // vec : [4, 1, 2, 3, 4, 10, 0, 0, 0, 0, 0, 0, 0]
+        assert!(skip_n_bytes(&vec, 0, 1) == 1,2002);
+    }
+
+    // skip vector<u64>
+    public fun skip_u64_vector(input: &vector<u8>, offset: u64): u64 {
+        let (len, new_offset) = deserialize_len(input, offset);
+        can_skip(input, new_offset, len * 8);
+        new_offset + len * 8 
+    }
+    
+    spec skip_u64_vector {
+        pragma verify = false;
+    }
+
+    #[test]
+    fun test_skip_u64_vector(){
+        let vec = Vector::empty<u64>();
+        Vector::push_back(&mut vec, 11111);
+        Vector::push_back(&mut vec, 22222);
+        let u_64 = to_bytes(&10);
+        let vec = to_bytes(&vec);
+        Vector::append(&mut vec, u_64);
+        // vec : [2, 103, 43, 0, 0, 0, 0, 0, 0, 206, 86, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0]
+        assert!(skip_u64_vector(&vec, 0) == 17,2004);
+    }
+
+    // skip vector<u128>
+    public fun skip_u128_vector(input: &vector<u8>, offset: u64): u64 {
+        let (len, new_offset) = deserialize_len(input, offset);
+        can_skip(input, new_offset, len * 16);
+        new_offset + len * 16 
+    }
+
+    spec skip_u128_vector {
+        pragma verify = false;
+    }
+
+    #[test]
+    fun test_skip_u128_vector(){
+        let vec = Vector::empty<u128>();
+        Vector::push_back(&mut vec, 11111);
+        Vector::push_back(&mut vec, 22222);
+        let u_64 = to_bytes(&10);
+        let vec = to_bytes(&vec);
+        Vector::append(&mut vec, u_64);
+        // vec : [2, 103, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 206, 86, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0]
+        assert!(skip_u128_vector(&vec, 0) == 33,2003);
+    }
+
+    // skip u256
+    public fun skip_u256(input: &vector<u8>, offset: u64): u64 {
+        can_skip(input, offset, 32 );
+        offset + 32 
+    }
+
+    spec skip_u256 {
+        pragma verify = false;
+    }
+
+    // skip u128
+    public fun skip_u128(input: &vector<u8>, offset: u64): u64 {
+        can_skip(input, offset, 16 );
+        offset + 16 
+    }
+
+    spec skip_u128 {
+        pragma verify = false;
+    }
+
+    #[test]
+    fun test_skip_u128(){
+        let u_128:u128 = 100;
+        let u_128 = to_bytes(&u_128);
+        let vec = to_bytes(&x"01020304");
+        Vector::append(&mut u_128, vec);
+        // u_128 : [100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1, 2, 3, 4]
+        assert!(skip_u128(&u_128, 0) == 16,2005);
+    }
+
+    // skip u64
+    public fun skip_u64(input: &vector<u8>, offset: u64): u64 {
+        can_skip(input, offset, 8 );
+        offset + 8 
+    }
+
+    spec skip_u64 {
+        pragma verify = false;
+    }
+
+    #[test]
+    fun test_skip_u64(){
+        let u_64:u64 = 100;
+        let u_64 = to_bytes(&u_64);
+        let vec = to_bytes(&x"01020304");
+        Vector::append(&mut u_64, vec);
+        // u_64 : [100, 0, 0, 0, 0, 0, 0, 0, 4, 1, 2, 3, 4]
+        assert!(skip_u64(&u_64, 0) == 8,2006);
+    }
+
+    // skip u32
+    public fun skip_u32(input: &vector<u8>, offset: u64): u64 {
+        can_skip(input, offset, 4 );
+        offset + 4 
+    }
+
+    spec skip_u32 {
+        pragma verify = false;
+    }
+
+    // skip u16
+    public fun skip_u16(input: &vector<u8>, offset: u64): u64 {
+        can_skip(input, offset, 2 );
+        offset + 2 
+    }
+
+    spec skip_u16 {
+        pragma verify = false;
+    }
+
+    // skip address
+    public fun skip_address(input: &vector<u8>, offset: u64): u64 {
+        skip_n_bytes(input, offset, 16)
+    }
+
+    spec skip_address {
+        pragma verify = false;
+    }
+
+    #[test]
+    fun test_address(){
+        let addr:address = @0x1;
+        let addr = to_bytes(&addr);
+        let vec = to_bytes(&x"01020304");
+        Vector::append(&mut addr, vec);
+        // addr :  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4, 1, 2, 3, 4]
+        assert!(skip_address(&addr, 0) == 16,2006);
+    }
+
+    // skip bool
+    public fun skip_bool(input: &vector<u8>, offset: u64):  u64{
+        can_skip(input, offset, 1);
+        offset + 1
+    }
+
+    spec skip_bool {
+        pragma verify = false;
+    }
+
+    fun can_skip(input: &vector<u8>, offset: u64, n: u64){
+        assert!(((offset + n) <= Vector::length(input)) && (offset < offset + n), Errors::invalid_state(ERR_INPUT_NOT_LARGE_ENOUGH));
+    }
+
+    spec can_skip {
+        pragma verify = false;
+    }
 }
 }
