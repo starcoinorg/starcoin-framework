@@ -14,14 +14,16 @@ module StarcoinFramework::GrantProposalPlugin{
         grantee: address,
         total: u128,
         start_time:u64,
-        second_per:u128
+        second_per:u128,
+        linear:bool
     }
 
     struct GrantConfigAction<phantom TokenT:store> has store {
         grantee: address,
         total: u128,
         start_time:u64,
-        second_per:u128
+        second_per:u128,
+        linear:bool
     }
 
     struct GrantRevokeAction<phantom TokenT:store> has store {
@@ -32,20 +34,66 @@ module StarcoinFramework::GrantProposalPlugin{
         total:u128,
         start_time:u64,
         treasury:Token::Token<TokenT>,
-        second_per:u128
+        second_per:u128,
+        linear:bool 
+    }
+
+    // struct GrantTreasuryEvent<phantom Grant, phantom TokenT:store> has key, store{
+    //     create_grant_event_handler:Event::EventHandle<GrantTreasuryCreateEvent<Grant, TokenT>>,
+    //     revoke_grant_event_handler:Event::EventHandle<GrantTreasuryRevokeEvent<Grant, TokenT>>,
+    //     config_grant_event_handler:Event::EventHandle<GrantTreasuryConfigEvent<Grant, TokenT>>,
+    //     withdraw_grant_event_handler:Event::EventHandle<GrantTreasuryWithdrawEvent<Grant, TokenT>>,
+    // }
+
+    struct GrantTreasuryCreateEvent<phantom Grant, phantom TokenT:store> has drop, store{
+        proposal_id:u64,
+        grantee:address,
+        total:u128,
+        start_time:u64,
+        second_per:u128,
+        linear:bool
+    }
+
+    struct GrantTreasuryRevokeEvent<phantom Grant, phantom TokenT:store> has drop, store{
+        proposal_id:u64,
+        grantee:address,
+        total:u128,
+        start_time:u64,
+        second_per:u128,
+        linear:bool
+    }
+
+    struct GrantTreasuryConfigEvent<phantom Grant, phantom TokenT:store> has drop, store{
+        proposal_id:u64,
+        grantee:address,
+        total:u128,
+        start_time:u64,
+        second_per:u128,
+        linear:bool
+    }
+
+    struct GrantTreasuryWithdrawEvent<phantom Grant, phantom TokenT:store> has drop, store{
+        proposal_id:u64,
+        grantee:address,
+        total:u128,
+        start_time:u64,
+        second_per:u128,
+        linear:bool,
+        withdraw_amount:u128
     }
 
     const ERR_GRANTTREASURY_WITHDRAW_NOT_GRANTEE :u64 = 101;
     const ERR_GRANTTREASURY_WITHDRAW_TOO_MORE :u64 = 102;
 
-    public fun create_grant_proposal<DaoT: store, Grant, TokenT:store>(sender: &signer, grantee: address, total: u128, second_per: u128,start_time:u64, action_delay:u64){
+    public fun create_grant_proposal<DaoT: store, Grant, TokenT:store>(sender: &signer, grantee: address, total: u128, second_per: u128, start_time:u64, linear:bool, action_delay:u64){
         let witness = GrantProposalPlugin{};
         let cap = GenesisDao::acquire_proposal_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
         let action = GrantCreateAction<TokenT>{
             grantee:grantee,
             total:total,
             start_time:start_time,
-            second_per:second_per
+            second_per:second_per,
+            linear:linear
         };
         GenesisDao::create_proposal(&cap, sender, action, action_delay);
     }
@@ -53,7 +101,7 @@ module StarcoinFramework::GrantProposalPlugin{
     public fun execute_grant_proposal<DaoT: store, Grant, TokenT:store>(sender: &signer, proposal_id: u64){
         let witness = GrantProposalPlugin{};
         let proposal_cap = GenesisDao::acquire_proposal_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
-        let GrantCreateAction{grantee, total, start_time, second_per} = GenesisDao::execute_proposal<DaoT, GrantProposalPlugin<Grant>, GrantCreateAction<TokenT>>(&proposal_cap, sender, proposal_id);
+        let GrantCreateAction{grantee, total, start_time, second_per,linear} = GenesisDao::execute_proposal<DaoT, GrantProposalPlugin<Grant>, GrantCreateAction<TokenT>>(&proposal_cap, sender, proposal_id);
         let withdraw_cap = GenesisDao::acquire_withdraw_token_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
         let token = GenesisDao::withdraw_token<DaoT, GrantProposalPlugin<Grant>, TokenT>(&withdraw_cap, total);
         let storage_cap = GenesisDao::acquire_storage_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
@@ -62,8 +110,17 @@ module StarcoinFramework::GrantProposalPlugin{
             total:total,
             start_time:start_time,
             treasury:token,
-            second_per:second_per
+            second_per:second_per,
+            linear:linear
         });
+
+        // GenesisDao::save(&storage_cap, GrantTreasuryEvent<Grant, TokenT>{
+        //     create_grant_event_handler:Event::new_event_handle<GrantTreasuryCreateEvent<Grant, TokenT>>(sender),
+        //     revoke_grant_event_handler:Event::new_event_handle<GrantTreasuryRevokeEvent<Grant, TokenT>>(sender),
+        //     config_grant_event_handler:Event::new_event_handle<GrantTreasuryConfigEvent<Grant, TokenT>>(sender),
+        //     withdraw_grant_event_handler:Event::new_event_handle<GrantTreasuryWithdrawEvent<Grant, TokenT>>(sender),
+        // });
+         
     }
 
     public fun create_grant_revoke_proposal<DaoT: store, Grant, TokenT:store>(sender: &signer, action_delay:u64){
@@ -84,7 +141,8 @@ module StarcoinFramework::GrantProposalPlugin{
             total:total,
             start_time:start_time,
             treasury:treasury,
-            second_per:second_per
+            second_per:second_per,
+            linear:linear
         }  = GenesisDao::take<DaoT, GrantProposalPlugin<Grant>, GrantTreasury<Grant, TokenT>>(&storage_cap);
         let token_value = Token::value(&treasury);
         let token = Token::withdraw(&mut treasury, token_value);
@@ -92,14 +150,15 @@ module StarcoinFramework::GrantProposalPlugin{
         Token::destroy_zero(treasury);
     }
 
-    public fun create_grant_config_proposal<DaoT: store, Grant, TokenT:store>(sender: &signer, grantee: address, total: u128, second_per: u128,start_time:u64, action_delay:u64){
+    public fun create_grant_config_proposal<DaoT: store, Grant, TokenT:store>(sender: &signer, grantee: address, total: u128, second_per: u128,start_time:u64, linear:bool, action_delay:u64){
         let witness = GrantProposalPlugin{};
         let cap = GenesisDao::acquire_proposal_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
         let action = GrantConfigAction<TokenT>{
             grantee:grantee,
             total:total,
             start_time:start_time,
-            second_per:second_per
+            second_per:second_per,
+            linear:linear
         };
         GenesisDao::create_proposal(&cap, sender, action, action_delay);
     }
@@ -111,7 +170,8 @@ module StarcoinFramework::GrantProposalPlugin{
             grantee:new_grantee, 
             total:new_total, 
             start_time:new_start_time, 
-            second_per:new_second_per
+            second_per:new_second_per,
+            linear:linear
         } = GenesisDao::execute_proposal<DaoT, GrantProposalPlugin<Grant>, GrantConfigAction<TokenT>>(&proposal_cap, sender, proposal_id);
         
         let withdraw_cap = GenesisDao::acquire_withdraw_token_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
@@ -121,7 +181,8 @@ module StarcoinFramework::GrantProposalPlugin{
             total:total,
             start_time:start_time,
             treasury:treasury,
-            second_per:second_per
+            second_per:second_per,
+            linear:linear
         }  = GenesisDao::take<DaoT, GrantProposalPlugin<Grant>, GrantTreasury<Grant, TokenT>>(&storage_cap);
         
         if( new_total >= total){
@@ -147,7 +208,8 @@ module StarcoinFramework::GrantProposalPlugin{
             total:new_total, 
             start_time:new_start_time,
             treasury:treasury,
-            second_per:new_second_per
+            second_per:new_second_per,
+            linear:linear
         });
     }
 
@@ -160,7 +222,8 @@ module StarcoinFramework::GrantProposalPlugin{
             total:total,
             start_time:start_time,
             treasury:treasury,
-            second_per:second_per
+            second_per:second_per,
+            linear:linear
         }  = GenesisDao::take<DaoT, GrantProposalPlugin<Grant>, GrantTreasury<Grant, TokenT>>(&storage_cap);
         if( Token::value(&treasury) == 0 ){
             Token::destroy_zero(treasury);
@@ -171,11 +234,16 @@ module StarcoinFramework::GrantProposalPlugin{
         let now_seconds = (Timestamp::now_seconds() as u128 );
         let can_withdraw = {
             let release = ( now_seconds - ( start_time as u128) ) * second_per;
-            if( total > release){
-                token_value - (total - release)
+            if(linear){
+                if( total > release){
+                    token_value - (total - release)
+                }else{
+                    token_value
+                }
             }else{
                 token_value
             }
+            
         };
         assert!( amount > can_withdraw, Errors::invalid_state(ERR_GRANTTREASURY_WITHDRAW_TOO_MORE));
         Account::deposit(grantee, Token::withdraw(&mut treasury, amount));
@@ -188,7 +256,8 @@ module StarcoinFramework::GrantProposalPlugin{
             total:total,
             start_time:start_time,
             treasury:treasury,
-            second_per:second_per
+            second_per:second_per,
+            linear:linear
         });
         }
 
