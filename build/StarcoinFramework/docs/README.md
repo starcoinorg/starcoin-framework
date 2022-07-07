@@ -106,6 +106,5 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::Version`](Version.md#0x1_Version)
 -  [`0x1::VoteStrategy`](VoteStrategy.md#0x1_VoteStrategy)
 -  [`0x1::VoteUtil`](VoteUtil.md#0x1_VoteUtil)
--  [`0x1::XDao`](XDao.md#0x1_XDao)
 -  [`0x1::YieldFarming`](YieldFarming.md#0x1_YieldFarming)
 -  [`0x1::YieldFarmingV2`](YieldFarmingV2.md#0x1_YieldFarmingV2)
