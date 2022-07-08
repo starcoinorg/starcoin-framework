@@ -40,6 +40,9 @@ module StarcoinFramework::GenesisDao {
 
     const ERR_ZERO_AMOUNT:u64 = 1501;
     const ERR_TOO_BIG_AMOUNT:u64 = 1502;
+    const ERR_TOO_SMALL_TOTAL:u64 = 1503;
+    const ERR_HAVE_SAME_GRANT:u64 = 1504;
+    const ERR_NOT_HAVE_GRANT:u64 = 1505;
 
     struct Dao has key {
         id: u64,
@@ -133,6 +136,9 @@ module StarcoinFramework::GenesisDao {
     /// Creates a vote capability type.
     public fun proposal_cap_type(): CapType { CapType{ code: 7 } }
 
+    /// Creates a grant capability type.
+    public fun grant_cap_type(): CapType { CapType{ code: 8 } }
+
     /// Creates all capability types.
     public fun all_caps(): vector<CapType> {
         let caps = Vector::singleton(install_plugin_cap_type());
@@ -143,6 +149,7 @@ module StarcoinFramework::GenesisDao {
         Vector::push_back(&mut caps, storage_cap_type());
         Vector::push_back(&mut caps, member_cap_type());
         Vector::push_back(&mut caps, proposal_cap_type());
+        Vector::push_back(&mut caps, grant_cap_type());
         caps
     }
 
@@ -165,7 +172,9 @@ module StarcoinFramework::GenesisDao {
 
     struct DaoProposalCap<phantom DaoT, phantom PluginT> has drop {}
 
-    struct DaoGrantWithdrawTokenCap<phantom DaoT, phantom PluginT, phantom TokenT> has key, store{
+    struct DaoGrantCap<phantom DaoT, phantom PluginT> has drop {}
+
+    struct DaoGrantWithdrawTokenCap<phantom DaoT, phantom PluginT ,phantom TokenT> has key, store{
         /// The total amount of tokens that can be withdrawn by this capability
         total: u128,
         /// The amount of tokens that have been withdrawn by this capability
@@ -190,107 +199,6 @@ module StarcoinFramework::GenesisDao {
     /// The Dao member NFT Body, hold the SBT token
     struct DaoMemberBody<phantom DaoT> has store {
         sbt: Token<DaoT>,
-    }
-
-    struct GrantEvent<phantom DaoT, phantom PluginT, phantom TokenT> has key, store{
-        create_grant_event_handler:Event::EventHandle<GrantCreateEvent<DaoT, PluginT, TokenT>>,
-        revoke_grant_event_handler:Event::EventHandle<GrantRevokeEvent<DaoT, PluginT, TokenT>>,
-        config_grant_event_handler:Event::EventHandle<GrantConfigEvent<DaoT, PluginT, TokenT>>,
-        withdraw_grant_event_handler:Event::EventHandle<GrantWithdrawEvent<DaoT, PluginT, TokenT>>,
-    }
-
-    struct GrantCreateEvent<phantom DaoT, phantom PluginT, phantom TokenT> has drop, store{
-        total:u128,
-        start_time:u64,
-        period:u64
-    }
-
-    struct GrantRevokeEvent<phantom DaoT, phantom PluginT, phantom TokenT>  has drop, store{
-        total:u128,
-        withdraw:u128,
-        start_time:u64,
-        period:u64
-    }
-
-    struct GrantConfigEvent<phantom DaoT, phantom PluginT, phantom TokenT>  has drop, store{
-        total:u128,
-        withdraw:u128,
-        start_time:u64,
-        period:u64
-    }
-
-    struct GrantWithdrawEvent<phantom DaoT, phantom PluginT, phantom TokenT>  has drop, store{
-        total:u128,
-        withdraw:u128,
-        start_time:u64,
-        period:u64,
-        withdraw_value:u128
-    }
-
-
-    public fun create_grant<DaoT, PluginT, TokenT:store>(total:u128, start_time:u64, period:u64):DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT> acquires DaoAccountCapHolder{
-        let dao_signer = dao_signer<DaoT>();
-        move_to(&dao_signer, GrantEvent<DaoT, PluginT, TokenT>{
-            create_grant_event_handler:Event::new_event_handle<GrantCreateEvent<DaoT, PluginT, TokenT>>(&dao_signer),
-            revoke_grant_event_handler:Event::new_event_handle<GrantRevokeEvent<DaoT, PluginT, TokenT>>(&dao_signer),
-            config_grant_event_handler:Event::new_event_handle<GrantConfigEvent<DaoT, PluginT, TokenT>>(&dao_signer),
-            withdraw_grant_event_handler:Event::new_event_handle<GrantWithdrawEvent<DaoT, PluginT, TokenT>>(&dao_signer),
-        });
-
-        DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT>{
-            total:total,
-            withdraw: 0 ,
-            start_time:start_time,
-            period:period
-        }
-    }
-
-    public fun grant_withdraw<DaoT, PluginT, TokenT:store>(cap: &mut DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT>):Token<TokenT> acquires DaoAccountCapHolder, GrantEvent{
-        let now = Timestamp::now_seconds();
-        let elapsed_time = now - cap.start_time;
-        let amount =  if (elapsed_time >= cap.period) {
-            cap.total - cap.withdraw
-        } else {
-            Math::mul_div(cap.total, (elapsed_time as u128), (cap.period as u128)) - cap.withdraw
-        };
-        
-        assert!(amount > 0, Errors::invalid_argument(ERR_ZERO_AMOUNT));
-
-        let dao_signer = dao_signer<DaoT>();
-        let dao_address = dao_address<DaoT>();
-
-        assert!(amount <= Account::balance<TokenT>(dao_address) , Errors::invalid_argument(ERR_TOO_BIG_AMOUNT));
-        cap.withdraw = cap.withdraw + amount;
-
-        let grant_event = borrow_global_mut<GrantEvent<DaoT, PluginT, TokenT>>(dao_address);
-        Event::emit_event(&mut grant_event.withdraw_grant_event_handler, GrantWithdrawEvent<DaoT, PluginT, TokenT> {
-            total:cap.total,
-            withdraw:cap.withdraw,
-            start_time:cap.start_time,
-            period:cap.period,
-            withdraw_value:amount
-        });
-        Account::withdraw<TokenT>(&dao_signer, amount)
-    }
-
-    public fun grant_revoke<DaoT, PluginT, TokenT:store>(cap: DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT>) acquires StorageItem , GrantEvent{
-        let dao_address = dao_address<DaoT>();
-        assert!(exists<StorageItem<PluginT, Token<TokenT>>>(dao_address), Errors::not_published(ERR_STORAGE_ERROR));
-        let StorageItem{ item:token } = move_from<StorageItem<PluginT,  Token<TokenT>>>(dao_address);
-        Token::destroy_zero(token);
-        let DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT>{
-            total:total,
-            withdraw:withdraw,
-            start_time:start_time,
-            period:period
-        } = cap ;
-        let grant_event = borrow_global_mut<GrantEvent<DaoT, PluginT, TokenT>>(dao_address);
-        Event::emit_event(&mut grant_event.revoke_grant_event_handler, GrantRevokeEvent<DaoT, PluginT, TokenT> {
-            total:total,
-            withdraw:withdraw,
-            start_time:start_time,
-            period:period
-        });
     }
 
     /// Create a dao with a exists Dao account
@@ -661,8 +569,150 @@ module StarcoinFramework::GenesisDao {
         IdentifierNFT::owns<DaoMember<DaoT>, DaoMemberBody<DaoT>>(member_addr)
     }
 
-    /// Grant
-    
+    /// Grant Event
+
+    struct GrantEvent<phantom DaoT, phantom PluginT ,phantom TokenT> has key, store{
+        create_grant_event_handler:Event::EventHandle<GrantCreateEvent<DaoT, PluginT, TokenT>>,
+        revoke_grant_event_handler:Event::EventHandle<GrantRevokeEvent<DaoT, PluginT, TokenT>>,
+        config_grant_event_handler:Event::EventHandle<GrantConfigEvent<DaoT, PluginT, TokenT>>,
+        withdraw_grant_event_handler:Event::EventHandle<GrantWithdrawEvent<DaoT, PluginT, TokenT>>,
+    }
+
+    struct GrantCreateEvent<phantom DaoT, phantom PluginT ,phantom TokenT> has drop, store{
+        total:u128,
+        start_time:u64,
+        period:u64,
+        now_time:u64
+    }
+
+    struct GrantRevokeEvent<phantom DaoT, phantom PluginT ,phantom TokenT>  has drop, store{
+        total:u128,
+        withdraw:u128,
+        start_time:u64,
+        period:u64
+    }
+
+    struct GrantConfigEvent<phantom DaoT, phantom PluginT ,phantom TokenT>  has drop, store{
+        total:u128,
+        withdraw:u128,
+        start_time:u64,
+        period:u64
+    }
+
+    struct GrantWithdrawEvent<phantom DaoT, phantom PluginT ,phantom TokenT>  has drop, store{
+        total:u128,
+        withdraw:u128,
+        start_time:u64,
+        period:u64,
+        withdraw_value:u128
+    }
+
+    /// Grant function
+
+    /// create grant and init/emit a event
+    public fun create_grant<DaoT, PluginT , TokenT:store>(_cap:&DaoGrantCap<DaoT, PluginT>, sender: &signer, total:u128, start_time:u64, period:u64) acquires DaoAccountCapHolder,GrantEvent {
+        let dao_signer = dao_signer<DaoT>();
+        let dao_address = dao_address<DaoT>();
+        let account_address = Signer::address_of(sender);
+
+        if(! exists<GrantEvent<DaoT, PluginT, TokenT>>(dao_address)){
+            move_to(&dao_signer, GrantEvent<DaoT, PluginT, TokenT>{
+                create_grant_event_handler:Event::new_event_handle<GrantCreateEvent<DaoT, PluginT, TokenT>>(&dao_signer),
+                revoke_grant_event_handler:Event::new_event_handle<GrantRevokeEvent<DaoT, PluginT, TokenT>>(&dao_signer),
+                config_grant_event_handler:Event::new_event_handle<GrantConfigEvent<DaoT, PluginT, TokenT>>(&dao_signer),
+                withdraw_grant_event_handler:Event::new_event_handle<GrantWithdrawEvent<DaoT, PluginT, TokenT>>(&dao_signer),
+            });
+        };
+        let grant_event = borrow_global_mut<GrantEvent<DaoT, PluginT, TokenT>>(dao_address);
+
+        Event::emit_event(&mut grant_event.create_grant_event_handler, GrantCreateEvent<DaoT, PluginT, TokenT> {
+            total:total,
+            start_time:start_time,
+            period:period,
+            now_time:Timestamp::now_seconds()
+        });
+
+        assert!(! exists<DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT>>(account_address) , Errors::invalid_state(ERR_HAVE_SAME_GRANT));
+        move_to(sender, DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT>{
+                            total:total,
+                            withdraw: 0 ,
+                            start_time:start_time,
+                            period:period
+                        });
+    }
+
+    /// withdraw token with grant 
+    public fun grant_withdraw<DaoT, PluginT, TokenT:store>(sender:&signer, amount:u128) acquires DaoAccountCapHolder, DaoGrantWithdrawTokenCap, GrantEvent{
+        let account_address = Signer::address_of(sender);
+        assert!(exists<DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT>>(account_address) , Errors::invalid_state(ERR_NOT_HAVE_GRANT));
+        
+        let cap = borrow_global_mut<DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT>>(account_address);
+        let now = Timestamp::now_seconds();
+        let elapsed_time = now - cap.start_time;
+        let can_amount =  if (elapsed_time >= cap.period) {
+            cap.total - cap.withdraw
+        } else {
+            Math::mul_div(cap.total, (elapsed_time as u128), (cap.period as u128)) - cap.withdraw
+        };
+        
+        assert!(can_amount > 0, Errors::invalid_argument(ERR_ZERO_AMOUNT));
+        assert!(can_amount >= amount, Errors::invalid_argument(ERR_TOO_BIG_AMOUNT));
+
+        let dao_signer = dao_signer<DaoT>();
+        let dao_address = dao_address<DaoT>();
+
+        assert!(amount <= Account::balance<TokenT>(dao_address) , Errors::invalid_argument(ERR_TOO_BIG_AMOUNT));
+        cap.withdraw = cap.withdraw + amount;
+
+        let grant_event = borrow_global_mut<GrantEvent<DaoT, PluginT, TokenT>>(dao_address);
+        Event::emit_event(&mut grant_event.withdraw_grant_event_handler, GrantWithdrawEvent<DaoT, PluginT, TokenT> {
+            total:cap.total,
+            withdraw:cap.withdraw,
+            start_time:cap.start_time,
+            period:cap.period,
+            withdraw_value:amount
+        });
+        let token = Account::withdraw<TokenT>(&dao_signer, amount);
+        Account::deposit<TokenT>(account_address, token);
+    }
+
+    /// revoke grant 
+    public fun grant_revoke<DaoT, PluginT , TokenT:store>(_cap:&DaoGrantCap<DaoT, PluginT>, cap: DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT>) acquires GrantEvent{
+        let dao_address = dao_address<DaoT>();
+        
+        let DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT>{
+            total:total,
+            withdraw:withdraw,
+            start_time:start_time,
+            period:period
+        } = cap ;
+
+        let grant_event = borrow_global_mut<GrantEvent<DaoT, PluginT, TokenT>>(dao_address);
+        Event::emit_event(&mut grant_event.revoke_grant_event_handler, GrantRevokeEvent<DaoT, PluginT, TokenT> {
+            total:total,
+            withdraw:withdraw,
+            start_time:start_time,
+            period:period
+        });
+    }
+
+    /// Reset the parameters of the grant 
+    public fun grant_config<DaoT, PluginT , TokenT:store>(_cap:&DaoGrantCap<DaoT, PluginT>, cap:&mut DaoGrantWithdrawTokenCap<DaoT, PluginT, TokenT>, total:u128, start_time:u64, period:u64) acquires GrantEvent {
+        let dao_address = dao_address<DaoT>();
+
+        assert!( total >= cap.withdraw , Errors::invalid_argument(ERR_TOO_SMALL_TOTAL));
+        cap.total = total;
+        cap.start_time = start_time;
+        cap.period = period;
+
+        let grant_event = borrow_global_mut<GrantEvent<DaoT, PluginT, TokenT>>(dao_address);
+        Event::emit_event(&mut grant_event.config_grant_event_handler, GrantConfigEvent<DaoT, PluginT, TokenT> {
+            total:cap.total,
+            withdraw:cap.withdraw,
+            start_time:cap.start_time,
+            period:cap.period
+        });
+    }
 
     // Acquiring Capabilities
 
@@ -730,6 +780,13 @@ module StarcoinFramework::GenesisDao {
     public fun acquire_proposal_cap<DaoT: store, PluginT>(_witness: &PluginT): DaoProposalCap<DaoT, PluginT> acquires InstalledPluginInfo {
         validate_cap<DaoT, PluginT>(proposal_cap_type());
         DaoProposalCap<DaoT, PluginT>{}
+    }
+
+    /// Acquire the grant capability
+    /// _witness parameter ensures that the caller is the module which define PluginT
+    public fun acquire_grant_cap<DaoT: store, PluginT>(_witness: &PluginT): DaoGrantCap<DaoT, PluginT> acquires InstalledPluginInfo {
+        validate_cap<DaoT, PluginT>(grant_cap_type());
+        DaoGrantCap<DaoT, PluginT>{}
     }
 
     /// Proposal
