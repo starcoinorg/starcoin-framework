@@ -89,11 +89,11 @@ Registry Entry for record the mapping between <code>DaoT</code> and <code>dao_ad
 ## Constants
 
 
-<a name="0x1_DaoRegistry_ERR_ALREADY_INIT"></a>
+<a name="0x1_DaoRegistry_ERR_ALREADY_INITIALIZED"></a>
 
 
 
-<pre><code><b>const</b> <a href="DaoRegistry.md#0x1_DaoRegistry_ERR_ALREADY_INIT">ERR_ALREADY_INIT</a>: u64 = 100;
+<pre><code><b>const</b> <a href="DaoRegistry.md#0x1_DaoRegistry_ERR_ALREADY_INITIALIZED">ERR_ALREADY_INITIALIZED</a>: u64 = 100;
 </code></pre>
 
 
@@ -114,7 +114,7 @@ Registry Entry for record the mapping between <code>DaoT</code> and <code>dao_ad
 
 
 <pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="DaoRegistry.md#0x1_DaoRegistry_initialize">initialize</a>(){
-    <b>assert</b>!(!<b>exists</b>&lt;<a href="DaoRegistry.md#0x1_DaoRegistry">DaoRegistry</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()), <a href="Errors.md#0x1_Errors_already_published">Errors::already_published</a>(<a href="DaoRegistry.md#0x1_DaoRegistry_ERR_ALREADY_INIT">ERR_ALREADY_INIT</a>));
+    <b>assert</b>!(!<b>exists</b>&lt;<a href="DaoRegistry.md#0x1_DaoRegistry">DaoRegistry</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()), <a href="Errors.md#0x1_Errors_already_published">Errors::already_published</a>(<a href="DaoRegistry.md#0x1_DaoRegistry_ERR_ALREADY_INITIALIZED">ERR_ALREADY_INITIALIZED</a>));
     <b>let</b> signer = <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability_get_genesis_signer">GenesisSignerCapability::get_genesis_signer</a>();
     <b>move_to</b>(&signer, <a href="DaoRegistry.md#0x1_DaoRegistry">DaoRegistry</a>{next_dao_id: 1})
 }

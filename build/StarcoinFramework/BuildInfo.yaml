@@ -295,15 +295,12 @@ compiled_package_info:
       name: VoteUtil
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
-      name: XDao
-    : StarcoinFramework
-    ? address: "0x00000000000000000000000000000001"
       name: YieldFarming
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 4BDD9B690BF4D5A9F9EB44796B77E439ACAA7989D1B9333A412315D74D674656
+  source_digest: 8CE5FEF923BB812CFF6167EF9FA83FCADF583079B9B27138C79DF2ACDE688871
   build_flags:
     dev_mode: false
     test_mode: false

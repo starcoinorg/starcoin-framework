@@ -246,10 +246,10 @@ module StarcoinFramework::GenesisDao {
             cap: token_burn_cap,
         });
 
-        let nft_name = name;
+        let nft_name = copy name;
         //TODO generate a svg NFT image.
-        let nft_image = Vector::empty<u8>();
-        let nft_description = Vector::empty<u8>();
+        let nft_image = b"SVG image";
+        let nft_description = name;
         let basemeta = NFT::new_meta_with_image_data(nft_name, nft_image, nft_description);
 
         NFT::register_v2<DaoMember<DaoT>>(&dao_signer, basemeta);
@@ -1441,15 +1441,36 @@ module StarcoinFramework::GenesisDao {
     }
 
     fun assert_no_repeat<E>(v: &vector<E>) {
-        let i = 0;
+        let i = 1;
         let len = Vector::length(v);
         while (i < len) {
             let e = Vector::borrow(v, i);
-            if (Vector::contains(v, e)) {
-                abort Errors::invalid_argument(ERR_REPEAT_ELEMENT)
+            let j = 0;
+            while (j < i) {
+                let f = Vector::borrow(v, j);
+                assert!(e != f, Errors::invalid_argument(ERR_REPEAT_ELEMENT));
+                j = j + 1;
             };
             i = i + 1;
         };
+    }
+
+    #[test]
+    fun test_assert_no_repeat() {
+        let v = Vector::singleton(1);
+        Vector::push_back(&mut v, 2);
+        Vector::push_back(&mut v, 3);
+        assert_no_repeat(&v);
+    }
+
+    #[test]
+    #[expected_failure]
+    fun test_assert_no_repeat_fail() {
+        let v = Vector::singleton(1);
+        Vector::push_back(&mut v, 2);
+        Vector::push_back(&mut v, 3);
+        Vector::push_back(&mut v, 1);
+        assert_no_repeat(&v);
     }
 
     /// Helper to remove an element from a vector.

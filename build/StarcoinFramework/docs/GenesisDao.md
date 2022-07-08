@@ -1965,20 +1965,20 @@ Proposal state
 
 
 
-<a name="0x1_GenesisDao_ERR_ALREADY_INIT"></a>
-
-
-
-<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_ALREADY_INIT">ERR_ALREADY_INIT</a>: u64 = 104;
-</code></pre>
-
-
-
 <a name="0x1_GenesisDao_ERR_ACTION_INDEX_INVALID"></a>
 
 
 
 <pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_ACTION_INDEX_INVALID">ERR_ACTION_INDEX_INVALID</a>: u64 = 1431;
+</code></pre>
+
+
+
+<a name="0x1_GenesisDao_ERR_ALREADY_INIT"></a>
+
+
+
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_ALREADY_INIT">ERR_ALREADY_INIT</a>: u64 = 104;
 </code></pre>
 
 
@@ -2434,10 +2434,10 @@ Create a dao with a exists Dao account
         cap: token_burn_cap,
     });
 
-    <b>let</b> nft_name = name;
+    <b>let</b> nft_name = <b>copy</b> name;
     //TODO generate a svg <a href="NFT.md#0x1_NFT">NFT</a> image.
-    <b>let</b> nft_image = <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>&lt;u8&gt;();
-    <b>let</b> nft_description = <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>&lt;u8&gt;();
+    <b>let</b> nft_image = b"SVG image";
+    <b>let</b> nft_description = name;
     <b>let</b> basemeta = <a href="NFT.md#0x1_NFT_new_meta_with_image_data">NFT::new_meta_with_image_data</a>(nft_name, nft_image, nft_description);
 
     <a href="NFT.md#0x1_NFT_register_v2">NFT::register_v2</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoMember">DaoMember</a>&lt;DaoT&gt;&gt;(&dao_signer, basemeta);
@@ -4845,12 +4845,15 @@ Helpers
 
 
 <pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_assert_no_repeat">assert_no_repeat</a>&lt;E&gt;(v: &vector&lt;E&gt;) {
-    <b>let</b> i = 0;
+    <b>let</b> i = 1;
     <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(v);
     <b>while</b> (i &lt; len) {
         <b>let</b> e = <a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v, i);
-        <b>if</b> (<a href="Vector.md#0x1_Vector_contains">Vector::contains</a>(v, e)) {
-            <b>abort</b> <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_REPEAT_ELEMENT">ERR_REPEAT_ELEMENT</a>)
+        <b>let</b> j = 0;
+        <b>while</b> (j &lt; i) {
+            <b>let</b> f = <a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v, j);
+            <b>assert</b>!(e != f, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_REPEAT_ELEMENT">ERR_REPEAT_ELEMENT</a>));
+            j = j + 1;
         };
         i = i + 1;
     };
