@@ -1,12 +1,8 @@
 //TODO find more good name
 module StarcoinFramework::GrantProposalPlugin{
-    use StarcoinFramework::GenesisDao::{Self, CapType};
-    use StarcoinFramework::DaoRegistry;
-    use StarcoinFramework::Token;
-    use StarcoinFramework::Timestamp;
-    use StarcoinFramework::Errors;
-    use StarcoinFramework::Account;
+    use StarcoinFramework::GenesisDao::{Self};
     use StarcoinFramework::Signer;
+    use StarcoinFramework::Errors;
 
     struct GrantProposalPlugin<phantom Grant> has drop{}
 
@@ -14,86 +10,34 @@ module StarcoinFramework::GrantProposalPlugin{
         grantee: address,
         total: u128,
         start_time:u64,
-        second_per:u128,
-        linear:bool
+        period:u64
     }
 
     struct GrantConfigAction<phantom TokenT:store> has store {
-        grantee: address,
+        old_grantee: address,
+        new_grantee:address,
         total: u128,
         start_time:u64,
-        second_per:u128,
-        linear:bool
+        period:u64
     }
 
     struct GrantRevokeAction<phantom TokenT:store> has store {
+        grantee:address
     }
 
-    struct GrantTreasury<phantom Grant, phantom TokenT:store> has store {
-        grantee: address,
-        total:u128,
-        start_time:u64,
-        treasury:Token::Token<TokenT>,
-        second_per:u128,
-        linear:bool 
-    }
-
-    // struct GrantTreasuryEvent<phantom Grant, phantom TokenT:store> has key, store{
-    //     create_grant_event_handler:Event::EventHandle<GrantTreasuryCreateEvent<Grant, TokenT>>,
-    //     revoke_grant_event_handler:Event::EventHandle<GrantTreasuryRevokeEvent<Grant, TokenT>>,
-    //     config_grant_event_handler:Event::EventHandle<GrantTreasuryConfigEvent<Grant, TokenT>>,
-    //     withdraw_grant_event_handler:Event::EventHandle<GrantTreasuryWithdrawEvent<Grant, TokenT>>,
-    // }
-
-    struct GrantTreasuryCreateEvent<phantom Grant, phantom TokenT:store> has drop, store{
-        proposal_id:u64,
-        grantee:address,
-        total:u128,
-        start_time:u64,
-        second_per:u128,
-        linear:bool
-    }
-
-    struct GrantTreasuryRevokeEvent<phantom Grant, phantom TokenT:store> has drop, store{
-        proposal_id:u64,
-        grantee:address,
-        total:u128,
-        start_time:u64,
-        second_per:u128,
-        linear:bool
-    }
-
-    struct GrantTreasuryConfigEvent<phantom Grant, phantom TokenT:store> has drop, store{
-        proposal_id:u64,
-        grantee:address,
-        total:u128,
-        start_time:u64,
-        second_per:u128,
-        linear:bool
-    }
-
-    struct GrantTreasuryWithdrawEvent<phantom Grant, phantom TokenT:store> has drop, store{
-        proposal_id:u64,
-        grantee:address,
-        total:u128,
-        start_time:u64,
-        second_per:u128,
-        linear:bool,
-        withdraw_amount:u128
-    }
 
     const ERR_GRANTTREASURY_WITHDRAW_NOT_GRANTEE :u64 = 101;
     const ERR_GRANTTREASURY_WITHDRAW_TOO_MORE :u64 = 102;
+    const ERR_SENDER_NOT_SAME :u64 = 103;
 
-    public fun create_grant_proposal<DaoT: store, Grant, TokenT:store>(sender: &signer, grantee: address, total: u128, second_per: u128, start_time:u64, linear:bool, action_delay:u64){
+    public fun create_grant_proposal<DaoT: store, Grant, TokenT:store>(sender: &signer, grantee: address, total: u128, start_time:u64, period: u64, action_delay:u64){
         let witness = GrantProposalPlugin{};
         let cap = GenesisDao::acquire_proposal_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
         let action = GrantCreateAction<TokenT>{
             grantee:grantee,
             total:total,
             start_time:start_time,
-            second_per:second_per,
-            linear:linear
+            period:period
         };
         GenesisDao::create_proposal(&cap, sender, action, action_delay);
     }
@@ -101,64 +45,36 @@ module StarcoinFramework::GrantProposalPlugin{
     public fun execute_grant_proposal<DaoT: store, Grant, TokenT:store>(sender: &signer, proposal_id: u64){
         let witness = GrantProposalPlugin{};
         let proposal_cap = GenesisDao::acquire_proposal_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
-        let GrantCreateAction{grantee, total, start_time, second_per,linear} = GenesisDao::execute_proposal<DaoT, GrantProposalPlugin<Grant>, GrantCreateAction<TokenT>>(&proposal_cap, sender, proposal_id);
-        let withdraw_cap = GenesisDao::acquire_withdraw_token_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
-        let token = GenesisDao::withdraw_token<DaoT, GrantProposalPlugin<Grant>, TokenT>(&withdraw_cap, total);
-        let storage_cap = GenesisDao::acquire_storage_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
-        GenesisDao::save(&storage_cap, GrantTreasury<Grant, TokenT>{
-            grantee:grantee,
-            total:total,
-            start_time:start_time,
-            treasury:token,
-            second_per:second_per,
-            linear:linear
-        });
-
-        // GenesisDao::save(&storage_cap, GrantTreasuryEvent<Grant, TokenT>{
-        //     create_grant_event_handler:Event::new_event_handle<GrantTreasuryCreateEvent<Grant, TokenT>>(sender),
-        //     revoke_grant_event_handler:Event::new_event_handle<GrantTreasuryRevokeEvent<Grant, TokenT>>(sender),
-        //     config_grant_event_handler:Event::new_event_handle<GrantTreasuryConfigEvent<Grant, TokenT>>(sender),
-        //     withdraw_grant_event_handler:Event::new_event_handle<GrantTreasuryWithdrawEvent<Grant, TokenT>>(sender),
-        // });
-         
+        let GrantCreateAction{grantee, total, start_time, period} = GenesisDao::execute_proposal<DaoT, GrantProposalPlugin<Grant>, GrantCreateAction<TokenT>>(&proposal_cap, sender, proposal_id);
+        assert!(grantee == Signer::address_of(sender),Errors::not_published(ERR_SENDER_NOT_SAME));
+        let grant_cap = GenesisDao::acquire_grant_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
+        GenesisDao::create_grant<DaoT, GrantProposalPlugin<Grant>, TokenT>(&grant_cap, sender, total, start_time, period);
     }
 
-    public fun create_grant_revoke_proposal<DaoT: store, Grant, TokenT:store>(sender: &signer, action_delay:u64){
+    public fun create_grant_revoke_proposal<DaoT: store, Grant, TokenT:store>(sender: &signer, grantee:address, action_delay:u64){
         let witness = GrantProposalPlugin{};
         let cap = GenesisDao::acquire_proposal_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
-        let action = GrantRevokeAction<TokenT>{};
+        let action = GrantRevokeAction<TokenT>{ grantee };
         GenesisDao::create_proposal(&cap, sender, action, action_delay);
     }
 
     public fun execute_grant_revoke_proposal<DaoT: store, Grant, TokenT:store>(sender: &signer, proposal_id: u64){
         let witness = GrantProposalPlugin{};
         let proposal_cap = GenesisDao::acquire_proposal_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
-        let GrantRevokeAction{} = GenesisDao::execute_proposal<DaoT, GrantProposalPlugin<Grant>, GrantRevokeAction<TokenT>>(&proposal_cap, sender, proposal_id);
-        let withdraw_cap = GenesisDao::acquire_withdraw_token_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
-        let storage_cap = GenesisDao::acquire_storage_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
-        let GrantTreasury<Grant, TokenT>{
-            grantee:grantee,
-            total:total,
-            start_time:start_time,
-            treasury:treasury,
-            second_per:second_per,
-            linear:linear
-        }  = GenesisDao::take<DaoT, GrantProposalPlugin<Grant>, GrantTreasury<Grant, TokenT>>(&storage_cap);
-        let token_value = Token::value(&treasury);
-        let token = Token::withdraw(&mut treasury, token_value);
-        Account::deposit(DaoRegistry::dao_address<DaoT>(), token);
-        Token::destroy_zero(treasury);
+        let GrantRevokeAction{ grantee } = GenesisDao::execute_proposal<DaoT, GrantProposalPlugin<Grant>, GrantRevokeAction<TokenT>>(&proposal_cap, sender, proposal_id);
+        let grant_cap = GenesisDao::acquire_grant_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
+        GenesisDao::grant_revoke<DaoT, GrantProposalPlugin<Grant>, TokenT>(&grant_cap , grantee);
     }
 
-    public fun create_grant_config_proposal<DaoT: store, Grant, TokenT:store>(sender: &signer, grantee: address, total: u128, second_per: u128,start_time:u64, linear:bool, action_delay:u64){
+    public fun create_grant_config_proposal<DaoT: store, Grant, TokenT:store>(sender: &signer, old_grantee: address, new_grantee: address, total: u128, period: u64,start_time:u64, action_delay:u64){
         let witness = GrantProposalPlugin{};
         let cap = GenesisDao::acquire_proposal_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
         let action = GrantConfigAction<TokenT>{
-            grantee:grantee,
+            old_grantee: old_grantee,
+            new_grantee: new_grantee,
             total:total,
             start_time:start_time,
-            second_per:second_per,
-            linear:linear
+            period:period
         };
         GenesisDao::create_proposal(&cap, sender, action, action_delay);
     }
@@ -167,99 +83,14 @@ module StarcoinFramework::GrantProposalPlugin{
         let witness = GrantProposalPlugin{};
         let proposal_cap = GenesisDao::acquire_proposal_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
         let GrantConfigAction{
-            grantee:new_grantee, 
-            total:new_total, 
-            start_time:new_start_time, 
-            second_per:new_second_per,
-            linear:linear
+            old_grantee: old_grantee,
+            new_grantee: new_grantee,
+            total:total,
+            start_time:start_time,
+            period:period
         } = GenesisDao::execute_proposal<DaoT, GrantProposalPlugin<Grant>, GrantConfigAction<TokenT>>(&proposal_cap, sender, proposal_id);
-        
-        let withdraw_cap = GenesisDao::acquire_withdraw_token_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
-        let storage_cap = GenesisDao::acquire_storage_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
-        let GrantTreasury<Grant, TokenT>{
-            grantee:grantee,
-            total:total,
-            start_time:start_time,
-            treasury:treasury,
-            second_per:second_per,
-            linear:linear
-        }  = GenesisDao::take<DaoT, GrantProposalPlugin<Grant>, GrantTreasury<Grant, TokenT>>(&storage_cap);
-        
-        if( new_total >= total){
-
-            let withdraw_cap = GenesisDao::acquire_withdraw_token_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
-            let token = GenesisDao::withdraw_token<DaoT, GrantProposalPlugin<Grant>, TokenT>(&withdraw_cap, new_total - total);
-            Token::deposit(&mut treasury, token);
-        }else{
-
-            let token_value = Token::value(&treasury);
-            let withdraw_value = total - new_total;
-            
-            let token = if( token_value >= withdraw_value){
-                            Token::withdraw(&mut treasury, token_value - withdraw_value)
-                        }else{
-                            Token::withdraw(&mut treasury, token_value)
-                        };
-            Account::deposit(DaoRegistry::dao_address<DaoT>(), token);
-        };
-        
-        GenesisDao::save(&storage_cap, GrantTreasury<Grant, TokenT>{
-            grantee:new_grantee, 
-            total:new_total, 
-            start_time:new_start_time,
-            treasury:treasury,
-            second_per:new_second_per,
-            linear:linear
-        });
-    }
-
-    public fun withdraw_grant<DaoT: store, Grant, TokenT:store>(sender: &signer, amount: u128){
-        let account_address = Signer::address_of(sender);
-        let witness = GrantProposalPlugin{};
-        let storage_cap = GenesisDao::acquire_storage_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
-        let GrantTreasury<Grant, TokenT>{
-            grantee:grantee,
-            total:total,
-            start_time:start_time,
-            treasury:treasury,
-            second_per:second_per,
-            linear:linear
-        }  = GenesisDao::take<DaoT, GrantProposalPlugin<Grant>, GrantTreasury<Grant, TokenT>>(&storage_cap);
-        if( Token::value(&treasury) == 0 ){
-            Token::destroy_zero(treasury);
-            return 
-        };
-        assert!( grantee == account_address, Errors::invalid_state(ERR_GRANTTREASURY_WITHDRAW_TOO_MORE));
-        let token_value = Token::value(&treasury);
-        let now_seconds = (Timestamp::now_seconds() as u128 );
-        let can_withdraw = {
-            let release = ( now_seconds - ( start_time as u128) ) * second_per;
-            if(linear){
-                if( total > release){
-                    token_value - (total - release)
-                }else{
-                    token_value
-                }
-            }else{
-                token_value
-            }
-            
-        };
-        assert!( amount > can_withdraw, Errors::invalid_state(ERR_GRANTTREASURY_WITHDRAW_TOO_MORE));
-        Account::deposit(grantee, Token::withdraw(&mut treasury, amount));
-
-        if( Token::value(&treasury) == 0 ){
-            Token::destroy_zero(treasury);
-        }else{
-            GenesisDao::save(&storage_cap, GrantTreasury<Grant, TokenT>{
-            grantee:grantee,
-            total:total,
-            start_time:start_time,
-            treasury:treasury,
-            second_per:second_per,
-            linear:linear
-        });
-        }
-
+        assert!(new_grantee == Signer::address_of(sender),Errors::not_published(ERR_SENDER_NOT_SAME));
+        let grant_cap = GenesisDao::acquire_grant_cap<DaoT, GrantProposalPlugin<Grant>>(&witness);
+        GenesisDao::grant_config<DaoT, GrantProposalPlugin<Grant>, TokenT>(&grant_cap , old_grantee , sender, total, start_time, period);
     }
 }

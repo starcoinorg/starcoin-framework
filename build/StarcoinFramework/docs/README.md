@@ -49,6 +49,7 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::GenesisNFT`](GenesisNFT.md#0x1_GenesisNFT)
 -  [`0x1::GenesisNFTScripts`](GenesisNFT.md#0x1_GenesisNFTScripts)
 -  [`0x1::GenesisSignerCapability`](GenesisSignerCapability.md#0x1_GenesisSignerCapability)
+-  [`0x1::GrantProposalPlugin`](GrantProposalPlugin.md#0x1_GrantProposalPlugin)
 -  [`0x1::Hash`](Hash.md#0x1_Hash)
 -  [`0x1::IdentifierNFT`](NFT.md#0x1_IdentifierNFT)
 -  [`0x1::IdentifierNFTScripts`](NFT.md#0x1_IdentifierNFTScripts)
