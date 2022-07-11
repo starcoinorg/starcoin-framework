@@ -11,6 +11,7 @@ module Block {
     use StarcoinFramework::Ring;
     use StarcoinFramework::BCS;
     use StarcoinFramework::Hash;
+    use StarcoinFramework::GenesisSignerCapability;
 
     spec module {
         pragma verify;
@@ -61,6 +62,7 @@ module Block {
     const ERROR_NO_HAVE_CHECKPOINT: u64 = 18;
     const ERROR_NOT_BLOCK_HEADER  : u64 = 19;
     const ERROR_INTERVAL_TOO_LITTLE: u64 = 20;
+    const ERR_ALREADY_INITIALIZED : u64 = 21;
     
     const CHECKPOINT_LENGTH       : u64 = 60;
     const BLOCK_HEADER_LENGTH     : u64 = 247;
@@ -147,12 +149,14 @@ module Block {
         aborts_if !exists<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
     }
 
-    public fun checkpoints_init(account: &signer){
-        CoreAddresses::assert_genesis_address(account);
+    public fun checkpoints_init(){
+
+        assert!(!exists<Checkpoints>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
+        let signer = GenesisSignerCapability::get_genesis_signer();
         
         let checkpoints = Ring::create_with_capacity<Checkpoint>(CHECKPOINT_LENGTH);
         move_to<Checkpoints>(
-            account,
+            &signer,
             Checkpoints {
                checkpoints  : checkpoints,
                index        : 0,

@@ -67,9 +67,6 @@ compiled_package_info:
       name: DaoAccount
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
-      name: DaoConfig
-    : StarcoinFramework
-    ? address: "0x00000000000000000000000000000001"
       name: DaoRegistry
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -196,13 +193,13 @@ compiled_package_info:
       name: PriceOracleScripts
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
-      name: Proposal
-    : StarcoinFramework
-    ? address: "0x00000000000000000000000000000001"
       name: RewardConfig
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: Ring
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: SBTVoteStrategy
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: SIP_2
@@ -295,15 +292,12 @@ compiled_package_info:
       name: VoteUtil
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
-      name: XDao
-    : StarcoinFramework
-    ? address: "0x00000000000000000000000000000001"
       name: YieldFarming
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 01202286D69D8D9080C4AE21F96C3C2DDBE47D9717CFE92E3BFA4049E90AF974
+  source_digest: 1FBF1244CB4C8640CC21B1B37D63F0C84A2DD56D503546B6CDF3B28D07DBD648
   build_flags:
     dev_mode: false
     test_mode: false
