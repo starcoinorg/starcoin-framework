@@ -28,7 +28,7 @@
 -  [Struct `DaoMemberCap`](#0x1_GenesisDao_DaoMemberCap)
 -  [Struct `DaoProposalCap`](#0x1_GenesisDao_DaoProposalCap)
 -  [Struct `DaoGrantCap`](#0x1_GenesisDao_DaoGrantCap)
--  [Resource `DaoGrantWithdrawTokenCap`](#0x1_GenesisDao_DaoGrantWithdrawTokenCap)
+-  [Resource `DaoGrantWithdrawTokenKey`](#0x1_GenesisDao_DaoGrantWithdrawTokenKey)
 -  [Resource `InstalledPluginInfo`](#0x1_GenesisDao_InstalledPluginInfo)
 -  [Struct `DaoMember`](#0x1_GenesisDao_DaoMember)
 -  [Struct `DaoMemberBody`](#0x1_GenesisDao_DaoMemberBody)
@@ -850,13 +850,13 @@ RootCap only have one instance, and can not been <code>drop</code> and <code>sto
 
 </details>
 
-<a name="0x1_GenesisDao_DaoGrantWithdrawTokenCap"></a>
+<a name="0x1_GenesisDao_DaoGrantWithdrawTokenKey"></a>
 
-## Resource `DaoGrantWithdrawTokenCap`
+## Resource `DaoGrantWithdrawTokenKey`
 
 
 
-<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenCap">DaoGrantWithdrawTokenCap</a>&lt;DaoT, PluginT, TokenT&gt; <b>has</b> store, key
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt; <b>has</b> store, key
 </code></pre>
 
 
@@ -3484,8 +3484,8 @@ create grant and init/emit a event
         now_time:<a href="Timestamp.md#0x1_Timestamp_now_seconds">Timestamp::now_seconds</a>()
     });
 
-    <b>assert</b>!(! <b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenCap">DaoGrantWithdrawTokenCap</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(account_address) , <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_HAVE_SAME_GRANT">ERR_HAVE_SAME_GRANT</a>));
-    <b>move_to</b>(sender, <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenCap">DaoGrantWithdrawTokenCap</a>&lt;DaoT, PluginT, TokenT&gt;{
+    <b>assert</b>!(! <b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(account_address) , <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_HAVE_SAME_GRANT">ERR_HAVE_SAME_GRANT</a>));
+    <b>move_to</b>(sender, <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;{
                         total:total,
                         withdraw: 0 ,
                         start_time:start_time,
@@ -3514,11 +3514,11 @@ withdraw token with grant
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_withdraw">grant_withdraw</a>&lt;DaoT, PluginT, TokenT:store&gt;(sender:&signer, amount:u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenCap">DaoGrantWithdrawTokenCap</a>, <a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_withdraw">grant_withdraw</a>&lt;DaoT, PluginT, TokenT:store&gt;(sender:&signer, amount:u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>, <a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>{
     <b>let</b> account_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
-    <b>assert</b>!(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenCap">DaoGrantWithdrawTokenCap</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(account_address) , <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_HAVE_GRANT">ERR_NOT_HAVE_GRANT</a>));
+    <b>assert</b>!(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(account_address) , <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_HAVE_GRANT">ERR_NOT_HAVE_GRANT</a>));
 
-    <b>let</b> cap = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenCap">DaoGrantWithdrawTokenCap</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(account_address);
+    <b>let</b> cap = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(account_address);
     <b>let</b> now = <a href="Timestamp.md#0x1_Timestamp_now_seconds">Timestamp::now_seconds</a>();
     <b>let</b> elapsed_time = now - cap.start_time;
     <b>let</b> can_amount =  <b>if</b> (elapsed_time &gt;= cap.period) {
@@ -3557,7 +3557,7 @@ withdraw token with grant
 
 ## Function `is_have_grant`
 
-is have DaoGrantWithdrawTokenCap
+is have DaoGrantWithdrawTokenKey
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_is_have_grant">is_have_grant</a>&lt;DaoT, PluginT, TokenT: store&gt;(addr: <b>address</b>): bool
@@ -3570,7 +3570,7 @@ is have DaoGrantWithdrawTokenCap
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_is_have_grant">is_have_grant</a>&lt;DaoT, PluginT, TokenT:store&gt;(addr:<b>address</b>):bool{
-    <b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenCap">DaoGrantWithdrawTokenCap</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(addr)
+    <b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(addr)
 }
 </code></pre>
 
@@ -3594,16 +3594,16 @@ revoke grant
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_revoke">grant_revoke</a>&lt;DaoT, PluginT , TokenT:store&gt;(_cap:&<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantCap">DaoGrantCap</a>&lt;DaoT, PluginT&gt;, grantee: <b>address</b>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenCap">DaoGrantWithdrawTokenCap</a>, <a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_revoke">grant_revoke</a>&lt;DaoT, PluginT , TokenT:store&gt;(_cap:&<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantCap">DaoGrantCap</a>&lt;DaoT, PluginT&gt;, grantee: <b>address</b>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>, <a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>{
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
-    <b>assert</b>!(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenCap">DaoGrantWithdrawTokenCap</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(grantee) , <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_HAVE_GRANT">ERR_NOT_HAVE_GRANT</a>));
+    <b>assert</b>!(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(grantee) , <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_HAVE_GRANT">ERR_NOT_HAVE_GRANT</a>));
 
-    <b>let</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenCap">DaoGrantWithdrawTokenCap</a>&lt;DaoT, PluginT, TokenT&gt;{
+    <b>let</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;{
         total:total,
         withdraw:withdraw,
         start_time:start_time,
         period:period
-    } = <b>move_from</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenCap">DaoGrantWithdrawTokenCap</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(grantee);
+    } = <b>move_from</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(grantee);
 
     <b>let</b> grant_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(dao_address);
     <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> grant_event.revoke_grant_event_handler, <a href="GenesisDao.md#0x1_GenesisDao_GrantRevokeEvent">GrantRevokeEvent</a>&lt;DaoT, PluginT, TokenT&gt; {
@@ -3635,17 +3635,17 @@ Reset the parameters of the grant
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_config">grant_config</a>&lt;DaoT, PluginT , TokenT:store&gt;(_cap:&<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantCap">DaoGrantCap</a>&lt;DaoT, PluginT&gt;, old_grantee: <b>address</b>, sender: &signer, total:u128, start_time:u64, period:u64) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenCap">DaoGrantWithdrawTokenCap</a>, <a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_config">grant_config</a>&lt;DaoT, PluginT , TokenT:store&gt;(_cap:&<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantCap">DaoGrantCap</a>&lt;DaoT, PluginT&gt;, old_grantee: <b>address</b>, sender: &signer, total:u128, start_time:u64, period:u64) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>, <a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a> {
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
     <b>let</b> new_grantee = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
-    <b>assert</b>!(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenCap">DaoGrantWithdrawTokenCap</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(old_grantee) , <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_HAVE_GRANT">ERR_NOT_HAVE_GRANT</a>));
+    <b>assert</b>!(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(old_grantee) , <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_HAVE_GRANT">ERR_NOT_HAVE_GRANT</a>));
 
     <b>if</b>( old_grantee != new_grantee){
-        <b>assert</b>!(!<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenCap">DaoGrantWithdrawTokenCap</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(new_grantee) , <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_HAVE_SAME_GRANT">ERR_HAVE_SAME_GRANT</a>));
-        <b>move_to</b>(sender, <b>move_from</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenCap">DaoGrantWithdrawTokenCap</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(old_grantee));
+        <b>assert</b>!(!<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(new_grantee) , <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_HAVE_SAME_GRANT">ERR_HAVE_SAME_GRANT</a>));
+        <b>move_to</b>(sender, <b>move_from</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(old_grantee));
     };
 
-    <b>let</b> cap = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenCap">DaoGrantWithdrawTokenCap</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(new_grantee);
+    <b>let</b> cap = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(new_grantee);
     <b>assert</b>!( total &gt;= cap.withdraw , <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_TOO_SMALL_TOTAL">ERR_TOO_SMALL_TOTAL</a>));
     cap.total = total;
     cap.start_time = start_time;
