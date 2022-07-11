@@ -115,6 +115,9 @@ compiled_package_info:
       name: GenesisSignerCapability
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: GrantProposalPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: Hash
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -294,7 +297,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 71902B56015C02D55C738DFC991E60E43F8BED8EEE5B2EE2BD62B3D5854D84E0
+  source_digest: D9DFFAB8D267DDB2327F75CA124EC4471D20291F3EE14E80D8035263453CCDE6
   build_flags:
     dev_mode: false
     test_mode: false

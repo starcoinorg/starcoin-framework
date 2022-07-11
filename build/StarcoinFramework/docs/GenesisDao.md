@@ -27,6 +27,8 @@
 -  [Struct `DaoStorageCap`](#0x1_GenesisDao_DaoStorageCap)
 -  [Struct `DaoMemberCap`](#0x1_GenesisDao_DaoMemberCap)
 -  [Struct `DaoProposalCap`](#0x1_GenesisDao_DaoProposalCap)
+-  [Struct `DaoGrantCap`](#0x1_GenesisDao_DaoGrantCap)
+-  [Resource `DaoGrantWithdrawTokenKey`](#0x1_GenesisDao_DaoGrantWithdrawTokenKey)
 -  [Resource `InstalledPluginInfo`](#0x1_GenesisDao_InstalledPluginInfo)
 -  [Struct `DaoMember`](#0x1_GenesisDao_DaoMember)
 -  [Struct `DaoMemberBody`](#0x1_GenesisDao_DaoMemberBody)
@@ -37,6 +39,11 @@
 -  [Struct `MemberIncreaseSBTEvent`](#0x1_GenesisDao_MemberIncreaseSBTEvent)
 -  [Struct `MemberDecreaseSBTEvent`](#0x1_GenesisDao_MemberDecreaseSBTEvent)
 -  [Resource `StorageItem`](#0x1_GenesisDao_StorageItem)
+-  [Resource `GrantEvent`](#0x1_GenesisDao_GrantEvent)
+-  [Struct `GrantCreateEvent`](#0x1_GenesisDao_GrantCreateEvent)
+-  [Struct `GrantRevokeEvent`](#0x1_GenesisDao_GrantRevokeEvent)
+-  [Struct `GrantConfigEvent`](#0x1_GenesisDao_GrantConfigEvent)
+-  [Struct `GrantWithdrawEvent`](#0x1_GenesisDao_GrantWithdrawEvent)
 -  [Struct `ProposalState`](#0x1_GenesisDao_ProposalState)
 -  [Struct `VotingChoice`](#0x1_GenesisDao_VotingChoice)
 -  [Struct `Proposal`](#0x1_GenesisDao_Proposal)
@@ -62,6 +69,7 @@
 -  [Function `storage_cap_type`](#0x1_GenesisDao_storage_cap_type)
 -  [Function `member_cap_type`](#0x1_GenesisDao_member_cap_type)
 -  [Function `proposal_cap_type`](#0x1_GenesisDao_proposal_cap_type)
+-  [Function `grant_cap_type`](#0x1_GenesisDao_grant_cap_type)
 -  [Function `all_caps`](#0x1_GenesisDao_all_caps)
 -  [Function `create_dao`](#0x1_GenesisDao_create_dao)
 -  [Function `upgrade_to_dao`](#0x1_GenesisDao_upgrade_to_dao)
@@ -82,6 +90,11 @@
 -  [Function `decrease_member_sbt`](#0x1_GenesisDao_decrease_member_sbt)
 -  [Function `query_sbt`](#0x1_GenesisDao_query_sbt)
 -  [Function `is_member`](#0x1_GenesisDao_is_member)
+-  [Function `create_grant`](#0x1_GenesisDao_create_grant)
+-  [Function `grant_withdraw`](#0x1_GenesisDao_grant_withdraw)
+-  [Function `is_have_grant`](#0x1_GenesisDao_is_have_grant)
+-  [Function `grant_revoke`](#0x1_GenesisDao_grant_revoke)
+-  [Function `grant_config`](#0x1_GenesisDao_grant_config)
 -  [Function `validate_cap`](#0x1_GenesisDao_validate_cap)
 -  [Function `acquire_install_plugin_cap`](#0x1_GenesisDao_acquire_install_plugin_cap)
 -  [Function `acquire_upgrade_module_cap`](#0x1_GenesisDao_acquire_upgrade_module_cap)
@@ -91,6 +104,7 @@
 -  [Function `acquire_storage_cap`](#0x1_GenesisDao_acquire_storage_cap)
 -  [Function `acquire_member_cap`](#0x1_GenesisDao_acquire_member_cap)
 -  [Function `acquire_proposal_cap`](#0x1_GenesisDao_acquire_proposal_cap)
+-  [Function `acquire_grant_cap`](#0x1_GenesisDao_acquire_grant_cap)
 -  [Function `choice_yes`](#0x1_GenesisDao_choice_yes)
 -  [Function `choice_no`](#0x1_GenesisDao_choice_no)
 -  [Function `choice_no_with_veto`](#0x1_GenesisDao_choice_no_with_veto)
@@ -147,6 +161,7 @@
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Event.md#0x1_Event">0x1::Event</a>;
 <b>use</b> <a href="NFT.md#0x1_IdentifierNFT">0x1::IdentifierNFT</a>;
+<b>use</b> <a href="Math.md#0x1_Math">0x1::Math</a>;
 <b>use</b> <a href="NFT.md#0x1_NFT">0x1::NFT</a>;
 <b>use</b> <a href="NFT.md#0x1_NFTGallery">0x1::NFTGallery</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
@@ -808,6 +823,78 @@ RootCap only have one instance, and can not been <code>drop</code> and <code>sto
 
 </details>
 
+<a name="0x1_GenesisDao_DaoGrantCap"></a>
+
+## Struct `DaoGrantCap`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantCap">DaoGrantCap</a>&lt;DaoT, PluginT&gt; <b>has</b> drop
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>dummy_field: bool</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_DaoGrantWithdrawTokenKey"></a>
+
+## Resource `DaoGrantWithdrawTokenKey`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt; <b>has</b> store, key
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>total: u128</code>
+</dt>
+<dd>
+ The total amount of tokens that can be withdrawn by this capability
+</dd>
+<dt>
+<code>withdraw: u128</code>
+</dt>
+<dd>
+ The amount of tokens that have been withdrawn by this capability
+</dd>
+<dt>
+<code>start_time: u64</code>
+</dt>
+<dd>
+ The time-based linear release start time, timestamp in seconds.
+</dd>
+<dt>
+<code>period: u64</code>
+</dt>
+<dd>
+  The time-based linear release period in seconds
+</dd>
+</dl>
+
+
+</details>
+
 <a name="0x1_GenesisDao_InstalledPluginInfo"></a>
 
 ## Resource `InstalledPluginInfo`
@@ -1168,6 +1255,250 @@ The Dao member NFT Body, hold the SBT token
 <dl>
 <dt>
 <code>item: V</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_GrantEvent"></a>
+
+## Resource `GrantEvent`
+
+Grant Event
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>&lt;DaoT, PluginT, TokenT&gt; <b>has</b> store, key
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>create_grant_event_handler: <a href="Event.md#0x1_Event_EventHandle">Event::EventHandle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GrantCreateEvent">GenesisDao::GrantCreateEvent</a>&lt;DaoT, PluginT, TokenT&gt;&gt;</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>revoke_grant_event_handler: <a href="Event.md#0x1_Event_EventHandle">Event::EventHandle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GrantRevokeEvent">GenesisDao::GrantRevokeEvent</a>&lt;DaoT, PluginT, TokenT&gt;&gt;</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>config_grant_event_handler: <a href="Event.md#0x1_Event_EventHandle">Event::EventHandle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GrantConfigEvent">GenesisDao::GrantConfigEvent</a>&lt;DaoT, PluginT, TokenT&gt;&gt;</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>withdraw_grant_event_handler: <a href="Event.md#0x1_Event_EventHandle">Event::EventHandle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GrantWithdrawEvent">GenesisDao::GrantWithdrawEvent</a>&lt;DaoT, PluginT, TokenT&gt;&gt;</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_GrantCreateEvent"></a>
+
+## Struct `GrantCreateEvent`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_GrantCreateEvent">GrantCreateEvent</a>&lt;DaoT, PluginT, TokenT&gt; <b>has</b> drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>total: u128</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>start_time: u64</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>period: u64</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>now_time: u64</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_GrantRevokeEvent"></a>
+
+## Struct `GrantRevokeEvent`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_GrantRevokeEvent">GrantRevokeEvent</a>&lt;DaoT, PluginT, TokenT&gt; <b>has</b> drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>total: u128</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>withdraw: u128</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>start_time: u64</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>period: u64</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_GrantConfigEvent"></a>
+
+## Struct `GrantConfigEvent`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_GrantConfigEvent">GrantConfigEvent</a>&lt;DaoT, PluginT, TokenT&gt; <b>has</b> drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>old_grantee: <b>address</b></code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>new_grantee: <b>address</b></code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>total: u128</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>withdraw: u128</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>start_time: u64</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>period: u64</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_GrantWithdrawEvent"></a>
+
+## Struct `GrantWithdrawEvent`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_GrantWithdrawEvent">GrantWithdrawEvent</a>&lt;DaoT, PluginT, TokenT&gt; <b>has</b> drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>total: u128</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>withdraw: u128</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>start_time: u64</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>period: u64</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>withdraw_value: u128</code>
 </dt>
 <dd>
 
@@ -1811,6 +2142,24 @@ emitted when user vote/revoke_vote.
 
 
 
+<a name="0x1_GenesisDao_ERR_TOO_BIG_AMOUNT"></a>
+
+
+
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_TOO_BIG_AMOUNT">ERR_TOO_BIG_AMOUNT</a>: u64 = 1502;
+</code></pre>
+
+
+
+<a name="0x1_GenesisDao_ERR_ZERO_AMOUNT"></a>
+
+
+
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_ZERO_AMOUNT">ERR_ZERO_AMOUNT</a>: u64 = 1501;
+</code></pre>
+
+
+
 <a name="0x1_GenesisDao_ACTIVE"></a>
 
 
@@ -1979,6 +2328,15 @@ Proposal state
 
 
 
+<a name="0x1_GenesisDao_ERR_HAVE_SAME_GRANT"></a>
+
+
+
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_HAVE_SAME_GRANT">ERR_HAVE_SAME_GRANT</a>: u64 = 1504;
+</code></pre>
+
+
+
 <a name="0x1_GenesisDao_ERR_NFT_ERROR"></a>
 
 
@@ -2003,6 +2361,15 @@ member
 
 
 <pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_DAO_MEMBER">ERR_NOT_DAO_MEMBER</a>: u64 = 1436;
+</code></pre>
+
+
+
+<a name="0x1_GenesisDao_ERR_NOT_HAVE_GRANT"></a>
+
+
+
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_HAVE_GRANT">ERR_NOT_HAVE_GRANT</a>: u64 = 1505;
 </code></pre>
 
 
@@ -2084,6 +2451,15 @@ member
 
 
 <pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_STORAGE_ERROR">ERR_STORAGE_ERROR</a>: u64 = 102;
+</code></pre>
+
+
+
+<a name="0x1_GenesisDao_ERR_TOO_SMALL_TOTAL"></a>
+
+
+
+<pre><code><b>const</b> <a href="GenesisDao.md#0x1_GenesisDao_ERR_TOO_SMALL_TOTAL">ERR_TOO_SMALL_TOTAL</a>: u64 = 1503;
 </code></pre>
 
 
@@ -2337,6 +2713,29 @@ Creates a vote capability type.
 
 </details>
 
+<a name="0x1_GenesisDao_grant_cap_type"></a>
+
+## Function `grant_cap_type`
+
+Creates a grant capability type.
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_cap_type">grant_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">GenesisDao::CapType</a>
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_cap_type">grant_cap_type</a>(): <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a> { <a href="GenesisDao.md#0x1_GenesisDao_CapType">CapType</a>{ code: 8 } }
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_GenesisDao_all_caps"></a>
 
 ## Function `all_caps`
@@ -2362,6 +2761,7 @@ Creates all capability types.
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> caps, <a href="GenesisDao.md#0x1_GenesisDao_storage_cap_type">storage_cap_type</a>());
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> caps, <a href="GenesisDao.md#0x1_GenesisDao_member_cap_type">member_cap_type</a>());
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> caps, <a href="GenesisDao.md#0x1_GenesisDao_proposal_cap_type">proposal_cap_type</a>());
+    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> caps, <a href="GenesisDao.md#0x1_GenesisDao_grant_cap_type">grant_cap_type</a>());
     caps
 }
 </code></pre>
@@ -3045,6 +3445,229 @@ Check the <code>member_addr</code> account is a member of DaoT
 
 </details>
 
+<a name="0x1_GenesisDao_create_grant"></a>
+
+## Function `create_grant`
+
+Grant function
+create grant and init/emit a event
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_create_grant">create_grant</a>&lt;DaoT, PluginT, TokenT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantCap">GenesisDao::DaoGrantCap</a>&lt;DaoT, PluginT&gt;, sender: &signer, total: u128, start_time: u64, period: u64)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_create_grant">create_grant</a>&lt;DaoT, PluginT , TokenT:store&gt;(_cap:&<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantCap">DaoGrantCap</a>&lt;DaoT, PluginT&gt;, sender: &signer, total:u128, start_time:u64, period:u64) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>,<a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a> {
+    <b>let</b> dao_signer = <a href="GenesisDao.md#0x1_GenesisDao_dao_signer">dao_signer</a>&lt;DaoT&gt;();
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+    <b>let</b> account_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
+
+    <b>if</b>(! <b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(dao_address)){
+        <b>move_to</b>(&dao_signer, <a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>&lt;DaoT, PluginT, TokenT&gt;{
+            create_grant_event_handler:<a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GrantCreateEvent">GrantCreateEvent</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(&dao_signer),
+            revoke_grant_event_handler:<a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GrantRevokeEvent">GrantRevokeEvent</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(&dao_signer),
+            config_grant_event_handler:<a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GrantConfigEvent">GrantConfigEvent</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(&dao_signer),
+            withdraw_grant_event_handler:<a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GrantWithdrawEvent">GrantWithdrawEvent</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(&dao_signer),
+        });
+    };
+    <b>let</b> grant_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(dao_address);
+
+    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> grant_event.create_grant_event_handler, <a href="GenesisDao.md#0x1_GenesisDao_GrantCreateEvent">GrantCreateEvent</a>&lt;DaoT, PluginT, TokenT&gt; {
+        total:total,
+        start_time:start_time,
+        period:period,
+        now_time:<a href="Timestamp.md#0x1_Timestamp_now_seconds">Timestamp::now_seconds</a>()
+    });
+
+    <b>assert</b>!(! <b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(account_address) , <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_HAVE_SAME_GRANT">ERR_HAVE_SAME_GRANT</a>));
+    <b>move_to</b>(sender, <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;{
+                        total:total,
+                        withdraw: 0 ,
+                        start_time:start_time,
+                        period:period
+                    });
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_grant_withdraw"></a>
+
+## Function `grant_withdraw`
+
+withdraw token with grant
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_withdraw">grant_withdraw</a>&lt;DaoT, PluginT, TokenT: store&gt;(sender: &signer, amount: u128)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_withdraw">grant_withdraw</a>&lt;DaoT, PluginT, TokenT:store&gt;(sender:&signer, amount:u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>, <a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>{
+    <b>let</b> account_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
+    <b>assert</b>!(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(account_address) , <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_HAVE_GRANT">ERR_NOT_HAVE_GRANT</a>));
+
+    <b>let</b> cap = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(account_address);
+    <b>let</b> now = <a href="Timestamp.md#0x1_Timestamp_now_seconds">Timestamp::now_seconds</a>();
+    <b>let</b> elapsed_time = now - cap.start_time;
+    <b>let</b> can_amount =  <b>if</b> (elapsed_time &gt;= cap.period) {
+        cap.total - cap.withdraw
+    } <b>else</b> {
+        <a href="Math.md#0x1_Math_mul_div">Math::mul_div</a>(cap.total, (elapsed_time <b>as</b> u128), (cap.period <b>as</b> u128)) - cap.withdraw
+    };
+
+    <b>assert</b>!(can_amount &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_ZERO_AMOUNT">ERR_ZERO_AMOUNT</a>));
+    <b>assert</b>!(can_amount &gt;= amount, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_TOO_BIG_AMOUNT">ERR_TOO_BIG_AMOUNT</a>));
+
+    <b>let</b> dao_signer = <a href="GenesisDao.md#0x1_GenesisDao_dao_signer">dao_signer</a>&lt;DaoT&gt;();
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+
+    <b>assert</b>!(amount &lt;= <a href="Account.md#0x1_Account_balance">Account::balance</a>&lt;TokenT&gt;(dao_address) , <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_TOO_BIG_AMOUNT">ERR_TOO_BIG_AMOUNT</a>));
+    cap.withdraw = cap.withdraw + amount;
+
+    <b>let</b> grant_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(dao_address);
+    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> grant_event.withdraw_grant_event_handler, <a href="GenesisDao.md#0x1_GenesisDao_GrantWithdrawEvent">GrantWithdrawEvent</a>&lt;DaoT, PluginT, TokenT&gt; {
+        total:cap.total,
+        withdraw:cap.withdraw,
+        start_time:cap.start_time,
+        period:cap.period,
+        withdraw_value:amount
+    });
+    <b>let</b> token = <a href="Account.md#0x1_Account_withdraw">Account::withdraw</a>&lt;TokenT&gt;(&dao_signer, amount);
+    <a href="Account.md#0x1_Account_deposit">Account::deposit</a>&lt;TokenT&gt;(account_address, token);
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_is_have_grant"></a>
+
+## Function `is_have_grant`
+
+is have DaoGrantWithdrawTokenKey
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_is_have_grant">is_have_grant</a>&lt;DaoT, PluginT, TokenT: store&gt;(addr: <b>address</b>): bool
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_is_have_grant">is_have_grant</a>&lt;DaoT, PluginT, TokenT:store&gt;(addr:<b>address</b>):bool{
+    <b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(addr)
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_grant_revoke"></a>
+
+## Function `grant_revoke`
+
+revoke grant
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_revoke">grant_revoke</a>&lt;DaoT, PluginT, TokenT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantCap">GenesisDao::DaoGrantCap</a>&lt;DaoT, PluginT&gt;, grantee: <b>address</b>)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_revoke">grant_revoke</a>&lt;DaoT, PluginT , TokenT:store&gt;(_cap:&<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantCap">DaoGrantCap</a>&lt;DaoT, PluginT&gt;, grantee: <b>address</b>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>, <a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>{
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+    <b>assert</b>!(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(grantee) , <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_HAVE_GRANT">ERR_NOT_HAVE_GRANT</a>));
+
+    <b>let</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;{
+        total:total,
+        withdraw:withdraw,
+        start_time:start_time,
+        period:period
+    } = <b>move_from</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(grantee);
+
+    <b>let</b> grant_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(dao_address);
+    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> grant_event.revoke_grant_event_handler, <a href="GenesisDao.md#0x1_GenesisDao_GrantRevokeEvent">GrantRevokeEvent</a>&lt;DaoT, PluginT, TokenT&gt; {
+        total:total,
+        withdraw:withdraw,
+        start_time:start_time,
+        period:period
+    });
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_grant_config"></a>
+
+## Function `grant_config`
+
+Reset the parameters of the grant
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_config">grant_config</a>&lt;DaoT, PluginT, TokenT: store&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantCap">GenesisDao::DaoGrantCap</a>&lt;DaoT, PluginT&gt;, old_grantee: <b>address</b>, sender: &signer, total: u128, start_time: u64, period: u64)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_config">grant_config</a>&lt;DaoT, PluginT , TokenT:store&gt;(_cap:&<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantCap">DaoGrantCap</a>&lt;DaoT, PluginT&gt;, old_grantee: <b>address</b>, sender: &signer, total:u128, start_time:u64, period:u64) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>, <a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a> {
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+    <b>let</b> new_grantee = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
+    <b>assert</b>!(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(old_grantee) , <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_HAVE_GRANT">ERR_NOT_HAVE_GRANT</a>));
+
+    <b>if</b>( old_grantee != new_grantee){
+        <b>assert</b>!(!<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(new_grantee) , <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_HAVE_SAME_GRANT">ERR_HAVE_SAME_GRANT</a>));
+        <b>move_to</b>(sender, <b>move_from</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(old_grantee));
+    };
+
+    <b>let</b> cap = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(new_grantee);
+    <b>assert</b>!( total &gt;= cap.withdraw , <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_TOO_SMALL_TOTAL">ERR_TOO_SMALL_TOTAL</a>));
+    cap.total = total;
+    cap.start_time = start_time;
+    cap.period = period;
+
+    <b>let</b> grant_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(dao_address);
+
+    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> grant_event.config_grant_event_handler, <a href="GenesisDao.md#0x1_GenesisDao_GrantConfigEvent">GrantConfigEvent</a>&lt;DaoT, PluginT, TokenT&gt; {
+        old_grantee:old_grantee,
+        new_grantee:new_grantee,
+        total:cap.total,
+        withdraw:cap.withdraw,
+        start_time:cap.start_time,
+        period:cap.period
+    });
+}
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_GenesisDao_validate_cap"></a>
 
 ## Function `validate_cap`
@@ -3284,6 +3907,33 @@ _witness parameter ensures that the caller is the module which define PluginT
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_proposal_cap">acquire_proposal_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">DaoProposalCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a> {
     <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_proposal_cap_type">proposal_cap_type</a>());
     <a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">DaoProposalCap</a>&lt;DaoT, PluginT&gt;{}
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_acquire_grant_cap"></a>
+
+## Function `acquire_grant_cap`
+
+Acquire the grant capability
+_witness parameter ensures that the caller is the module which define PluginT
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_grant_cap">acquire_grant_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantCap">GenesisDao::DaoGrantCap</a>&lt;DaoT, PluginT&gt;
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_acquire_grant_cap">acquire_grant_cap</a>&lt;DaoT: store, PluginT&gt;(_witness: &PluginT): <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantCap">DaoGrantCap</a>&lt;DaoT, PluginT&gt; <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_InstalledPluginInfo">InstalledPluginInfo</a> {
+    <a href="GenesisDao.md#0x1_GenesisDao_validate_cap">validate_cap</a>&lt;DaoT, PluginT&gt;(<a href="GenesisDao.md#0x1_GenesisDao_grant_cap_type">grant_cap_type</a>());
+    <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantCap">DaoGrantCap</a>&lt;DaoT, PluginT&gt;{}
 }
 </code></pre>
 
