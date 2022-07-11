@@ -1,0 +1,69 @@
+processed 9 tasks
+
+task 4 'run'. lines 11-19:
+{
+  "gas_used": 491764,
+  "status": {
+    "Keep": "Executed"
+  }
+}
+
+task 6 'run'. lines 102-110:
+{
+  "gas_used": 1082602,
+  "status": {
+    "Keep": "Executed"
+  }
+}
+
+task 7 'run'. lines 113-128:
+{
+  "gas_used": 214125,
+  "status": {
+    "Keep": "Executed"
+  }
+}
+
+task 8 'run'. lines 131-148:
+warning[W09003]: unused assignment
+    ┌─ /var/folders/b7/gt6_vlj14mn6h8xk1x9ly6m40000gn/T/.tmpyiNFEv:140:14
+    │
+140 │         let (id, proposer, start_time, end_time, yes_votes, no_votes, no_with_veto_votes, abstain_votes, block_number, state_root) = GenesisDao::proposal_info<X>(proposal_id);
+    │              ^^ Unused assignment or binding for local 'id'. Consider removing, replacing with '_', or prefixing with '_' (e.g., '_id')
+
+warning[W09003]: unused assignment
+    ┌─ /var/folders/b7/gt6_vlj14mn6h8xk1x9ly6m40000gn/T/.tmpyiNFEv:140:40
+    │
+140 │         let (id, proposer, start_time, end_time, yes_votes, no_votes, no_with_veto_votes, abstain_votes, block_number, state_root) = GenesisDao::proposal_info<X>(proposal_id);
+    │                                        ^^^^^^^^ Unused assignment or binding for local 'end_time'. Consider removing, replacing with '_', or prefixing with '_' (e.g., '_end_time')
+
+warning[W09003]: unused assignment
+    ┌─ /var/folders/b7/gt6_vlj14mn6h8xk1x9ly6m40000gn/T/.tmpyiNFEv:140:50
+    │
+140 │         let (id, proposer, start_time, end_time, yes_votes, no_votes, no_with_veto_votes, abstain_votes, block_number, state_root) = GenesisDao::proposal_info<X>(proposal_id);
+    │                                                  ^^^^^^^^^ Unused assignment or binding for local 'yes_votes'. Consider removing, replacing with '_', or prefixing with '_' (e.g., '_yes_votes')
+
+warning[W09003]: unused assignment
+    ┌─ /var/folders/b7/gt6_vlj14mn6h8xk1x9ly6m40000gn/T/.tmpyiNFEv:140:61
+    │
+140 │         let (id, proposer, start_time, end_time, yes_votes, no_votes, no_with_veto_votes, abstain_votes, block_number, state_root) = GenesisDao::proposal_info<X>(proposal_id);
+    │                                                             ^^^^^^^^ Unused assignment or binding for local 'no_votes'. Consider removing, replacing with '_', or prefixing with '_' (e.g., '_no_votes')
+
+warning[W09003]: unused assignment
+    ┌─ /var/folders/b7/gt6_vlj14mn6h8xk1x9ly6m40000gn/T/.tmpyiNFEv:140:71
+    │
+140 │         let (id, proposer, start_time, end_time, yes_votes, no_votes, no_with_veto_votes, abstain_votes, block_number, state_root) = GenesisDao::proposal_info<X>(proposal_id);
+    │                                                                       ^^^^^^^^^^^^^^^^^^ Unused assignment or binding for local 'no_with_veto_votes'. Consider removing, replacing with '_', or prefixing with '_' (e.g., '_no_with_veto_votes')
+
+warning[W09003]: unused assignment
+    ┌─ /var/folders/b7/gt6_vlj14mn6h8xk1x9ly6m40000gn/T/.tmpyiNFEv:140:91
+    │
+140 │         let (id, proposer, start_time, end_time, yes_votes, no_votes, no_with_veto_votes, abstain_votes, block_number, state_root) = GenesisDao::proposal_info<X>(proposal_id);
+    │                                                                                           ^^^^^^^^^^^^^ Unused assignment or binding for local 'abstain_votes'. Consider removing, replacing with '_', or prefixing with '_' (e.g., '_abstain_votes')
+
+{
+  "gas_used": 362380,
+  "status": {
+    "Keep": "Executed"
+  }
+}

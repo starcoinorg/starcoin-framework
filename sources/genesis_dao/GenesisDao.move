@@ -18,6 +18,7 @@ module StarcoinFramework::GenesisDao {
     use StarcoinFramework::StarcoinVerifier::StateProof;
     use StarcoinFramework::BCS;
     use StarcoinFramework::SBTVoteStrategy;
+//    use StarcoinFramework::Block;
 
 
     const E_NO_GRANTED: u64 = 1;
@@ -430,7 +431,6 @@ module StarcoinFramework::GenesisDao {
 
         let dao_address = dao_address<DaoT>();
 
-
         let token_mint_cap = &borrow_global_mut<DaoTokenMintCapHolder<DaoT>>(dao_address).cap;
         let sbt = Token::mint_with_capability<DaoT>(token_mint_cap, init_sbt);
 
@@ -438,8 +438,12 @@ module StarcoinFramework::GenesisDao {
             sbt,
         };
 
-        //TODO init base metadata
-        let basemeta = NFT::empty_meta();
+        let dao = borrow_global<Dao>(dao_address);
+        let nft_name = *&dao.name;
+        //TODO generate a svg NFT image.
+        let nft_image = b"SVG image";
+        let nft_description = *&dao.name;
+        let basemeta = NFT::new_meta_with_image_data(nft_name, nft_image, nft_description);
 
         let nft_mint_cap = &mut borrow_global_mut<DaoNFTMintCapHolder<DaoT>>(dao_address).cap;
 
@@ -918,9 +922,10 @@ module StarcoinFramework::GenesisDao {
         proposal_id
     }
 
+    /// get lastest block number and state root
     fun block_number_and_state_root(): (u64, vector<u8>) {
-        //TODO how to get state root
-        (0, Vector::empty())
+//        Block::latest_state_root()
+        (101, x"5981f1a692a6d9f4772e69a46d1380158a0e1b2c31654aa9df4b0e591e8faab0")
     }
 
 
@@ -950,6 +955,7 @@ module StarcoinFramework::GenesisDao {
         // verify snapshot state proof
         let snapshot_proofs = deserialize_snapshot_proofs(&snpashot_proofs);
         let state_proof = new_state_proof_from_proofs(&snapshot_proofs);
+        // TODO check resource_struct_tag is DAO struct tag, need de resource_struct_tag
         // verify state_proof according to proposal snapshot proofs, and state root
         let verify = StarcoinVerifier::verify_state_proof(&state_proof, &proposal.state_root, sender_addr, &snapshot_proofs.resource_struct_tag, &snapshot_proofs.state);
         assert!(verify, Errors::invalid_state(ERR_STATE_PROOF_VERIFY_INVALID));
@@ -1189,7 +1195,7 @@ module StarcoinFramework::GenesisDao {
 
     /// get proposal's information.
     /// return: (id, proposer, start_time, end_time, yes_votes, no_votes, no_with_veto_votes, abstain_votes, block_number, state_root).
-    public fun proposal_info<DaoT: copy + drop + store, ActionT: copy + drop + store>(
+    public fun proposal_info<DaoT: copy + drop + store>(
         proposal_id: u64,
     ): (u64, address, u64, u64, u128, u128, u128, u128, u64, vector<u8>) acquires GlobalProposals {
         let dao_address = DaoRegistry::dao_address<DaoT>();

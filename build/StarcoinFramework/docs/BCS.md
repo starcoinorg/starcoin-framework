@@ -44,6 +44,7 @@ published on-chain.
 -  [Function `skip_u64`](#0x1_BCS_skip_u64)
 -  [Function `skip_u32`](#0x1_BCS_skip_u32)
 -  [Function `skip_u16`](#0x1_BCS_skip_u16)
+-  [Function `skip_u8`](#0x1_BCS_skip_u8)
 -  [Function `skip_address`](#0x1_BCS_skip_address)
 -  [Function `skip_bool`](#0x1_BCS_skip_bool)
 -  [Function `can_skip`](#0x1_BCS_can_skip)
@@ -1451,6 +1452,43 @@ Return the address of key bytes
 <pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u16">skip_u16</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
     <a href="BCS.md#0x1_BCS_can_skip">can_skip</a>(input, offset, 2 );
     offset + 2
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_u8"></a>
+
+## Function `skip_u8`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u8">skip_u8</a>(input: &vector&lt;u8&gt;, offset: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u8">skip_u8</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
+    <a href="BCS.md#0x1_BCS_can_skip">can_skip</a>(input, offset, 1 );
+    offset + 1
 }
 </code></pre>
 

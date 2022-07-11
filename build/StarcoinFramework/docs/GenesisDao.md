@@ -2757,7 +2757,6 @@ Join Dao and get a membership
 
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
 
-
     <b>let</b> token_mint_cap = &<b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoTokenMintCapHolder">DaoTokenMintCapHolder</a>&lt;DaoT&gt;&gt;(dao_address).cap;
     <b>let</b> sbt = <a href="Token.md#0x1_Token_mint_with_capability">Token::mint_with_capability</a>&lt;DaoT&gt;(token_mint_cap, init_sbt);
 
@@ -2765,8 +2764,12 @@ Join Dao and get a membership
         sbt,
     };
 
-    //TODO init base metadata
-    <b>let</b> basemeta = <a href="NFT.md#0x1_NFT_empty_meta">NFT::empty_meta</a>();
+    <b>let</b> dao = <b>borrow_global</b>&lt;<a href="Dao.md#0x1_Dao">Dao</a>&gt;(dao_address);
+    <b>let</b> nft_name = *&dao.name;
+    //TODO generate a svg <a href="NFT.md#0x1_NFT">NFT</a> image.
+    <b>let</b> nft_image = b"SVG image";
+    <b>let</b> nft_description = *&dao.name;
+    <b>let</b> basemeta = <a href="NFT.md#0x1_NFT_new_meta_with_image_data">NFT::new_meta_with_image_data</a>(nft_name, nft_image, nft_description);
 
     <b>let</b> nft_mint_cap = &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoNFTMintCapHolder">DaoNFTMintCapHolder</a>&lt;DaoT&gt;&gt;(dao_address).cap;
 
@@ -3537,6 +3540,7 @@ propose a proposal.
 
 ## Function `block_number_and_state_root`
 
+get lastest block number and state root
 
 
 <pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_block_number_and_state_root">block_number_and_state_root</a>(): (u64, vector&lt;u8&gt;)
@@ -3549,8 +3553,8 @@ propose a proposal.
 
 
 <pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_block_number_and_state_root">block_number_and_state_root</a>(): (u64, vector&lt;u8&gt;) {
-    //TODO how <b>to</b> get state root
-    (0, <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>())
+//        <a href="Block.md#0x1_Block_latest_state_root">Block::latest_state_root</a>()
+    (101, x"5981f1a692a6d9f4772e69a46d1380158a0e1b2c31654aa9df4b0e591e8faab0")
 }
 </code></pre>
 
@@ -3599,6 +3603,7 @@ The voting power depends on the strategy of the proposal configuration and the u
     // verify snapshot state proof
     <b>let</b> snapshot_proofs = <a href="GenesisDao.md#0x1_GenesisDao_deserialize_snapshot_proofs">deserialize_snapshot_proofs</a>(&snpashot_proofs);
     <b>let</b> state_proof = <a href="GenesisDao.md#0x1_GenesisDao_new_state_proof_from_proofs">new_state_proof_from_proofs</a>(&snapshot_proofs);
+    // TODO check resource_struct_tag is DAO <b>struct</b> tag, need de resource_struct_tag
     // verify state_proof according <b>to</b> proposal snapshot proofs, and state root
     <b>let</b> verify = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_state_proof">StarcoinVerifier::verify_state_proof</a>(&state_proof, &proposal.state_root, sender_addr, &snapshot_proofs.resource_struct_tag, &snapshot_proofs.state);
     <b>assert</b>!(verify, <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_STATE_PROOF_VERIFY_INVALID">ERR_STATE_PROOF_VERIFY_INVALID</a>));
@@ -4067,7 +4072,7 @@ get proposal's information.
 return: (id, proposer, start_time, end_time, yes_votes, no_votes, no_with_veto_votes, abstain_votes, block_number, state_root).
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_info">proposal_info</a>&lt;DaoT: <b>copy</b>, drop, store, ActionT: <b>copy</b>, drop, store&gt;(proposal_id: u64): (u64, <b>address</b>, u64, u64, u128, u128, u128, u128, u64, vector&lt;u8&gt;)
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_info">proposal_info</a>&lt;DaoT: <b>copy</b>, drop, store&gt;(proposal_id: u64): (u64, <b>address</b>, u64, u64, u128, u128, u128, u128, u64, vector&lt;u8&gt;)
 </code></pre>
 
 
@@ -4076,7 +4081,7 @@ return: (id, proposer, start_time, end_time, yes_votes, no_votes, no_with_veto_v
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_info">proposal_info</a>&lt;DaoT: <b>copy</b> + drop + store, ActionT: <b>copy</b> + drop + store&gt;(
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_info">proposal_info</a>&lt;DaoT: <b>copy</b> + drop + store&gt;(
     proposal_id: u64,
 ): (u64, <b>address</b>, u64, u64, u128, u128, u128, u128, u64, vector&lt;u8&gt;) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a> {
     <b>let</b> dao_address = <a href="DaoRegistry.md#0x1_DaoRegistry_dao_address">DaoRegistry::dao_address</a>&lt;DaoT&gt;();

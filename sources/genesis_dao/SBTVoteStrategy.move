@@ -54,13 +54,13 @@ module StarcoinFramework::SBTVoteStrategy{
             return 0u128
         };
 
-        let (_, offset) = BCS::deserialize_address(state, offset);
-        let (_, offset) = BCS::deserialize_u64(state, offset);
-        let (_, offset) = BCS::deserialize_bytes(state, offset);
-        let (_, offset) = BCS::deserialize_bytes(state, offset);
-        let (_, offset) = BCS::deserialize_bytes(state, offset);
-        let (_, offset) = BCS::deserialize_bytes(state, offset);
-        let (_, offset) = BCS::deserialize_u64(state, offset);
+        offset = BCS::skip_address(state, offset);
+        offset = BCS::skip_u64(state, offset);
+        offset = BCS::skip_bytes(state, offset);
+        offset = BCS::skip_bytes(state, offset);
+        offset = BCS::skip_bytes(state, offset);
+        offset = BCS::skip_bytes(state, offset);
+        offset = BCS::skip_u64(state, offset);
         let (value, _offset) = BCS::deserialize_u128(state, offset);
 
         value
@@ -77,22 +77,19 @@ module StarcoinFramework::SBTVoteStrategy{
         let offset = 0;
 
         // array length
-        let (_r, offset) = BCS::deserialize_u8(&bs, offset);
+        offset = BCS::skip_u8(&bs, offset);
         // creator
-        let (_r, offset) = BCS::deserialize_address(&bs, offset);
-        Debug::print(&_r);
+        offset = BCS::skip_address(&bs, offset);
         // id
-        let (_r, offset) = BCS::deserialize_u64(&bs, offset);
-        Debug::print(&_r);
+        offset = BCS::skip_u64(&bs, offset);
         Debug::print<u64>(&offset);
         // base_meta
-        let (_r, offset) = BCS::deserialize_bytes(&bs, offset);
-        let (_r, offset) = BCS::deserialize_bytes(&bs, offset);
-        let (_r, offset) = BCS::deserialize_bytes(&bs, offset);
-        let (_r, offset) = BCS::deserialize_bytes(&bs, offset);
+        offset = BCS::skip_bytes(&bs, offset);
+        offset = BCS::skip_bytes(&bs, offset);
+        offset = BCS::skip_bytes(&bs, offset);
+        offset = BCS::skip_bytes(&bs, offset);
         // type_meta
-        let (_r, offset) = BCS::deserialize_u64(&bs, offset);
-        Debug::print(&_r);
+        offset = BCS::skip_u64(&bs, offset);
         Debug::print<u64>(&offset);
         // body
         let (sbt_value, offset) = BCS::deserialize_u128(&bs, offset);

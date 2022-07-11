@@ -655,6 +655,16 @@ module BCS {
         pragma verify = false;
     }
 
+    // skip u8
+    public fun skip_u8(input: &vector<u8>, offset: u64): u64 {
+        can_skip(input, offset, 1 );
+        offset + 1
+    }
+
+    spec skip_u8 {
+        pragma verify = false;
+    }
+
     // skip address
     public fun skip_address(input: &vector<u8>, offset: u64): u64 {
         skip_n_bytes(input, offset, 16)
