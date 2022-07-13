@@ -12,6 +12,7 @@ published on-chain.
 -  [Function `to_bytes`](#0x1_BCS_to_bytes)
 -  [Function `to_address`](#0x1_BCS_to_address)
 -  [Function `deserialize_option_bytes_vector`](#0x1_BCS_deserialize_option_bytes_vector)
+-  [Function `deserialize_option_tuple`](#0x1_BCS_deserialize_option_tuple)
 -  [Function `deserialize_bytes_vector`](#0x1_BCS_deserialize_bytes_vector)
 -  [Function `deserialize_u64_vector`](#0x1_BCS_deserialize_u64_vector)
 -  [Function `deserialize_u128_vector`](#0x1_BCS_deserialize_u128_vector)
@@ -180,6 +181,50 @@ Return the address of key bytes
         i = i + 1;
     };
     (vec, new_offset)
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_deserialize_option_tuple"></a>
+
+## Function `deserialize_option_tuple`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_deserialize_option_tuple">deserialize_option_tuple</a>(input: &vector&lt;u8&gt;, offset: u64): (<a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;, <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;, u64)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_deserialize_option_tuple">deserialize_option_tuple</a>(input: &vector&lt;u8&gt;, offset: u64): (<a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;, <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;, u64) {
+    <b>let</b> (tag, new_offset) = <a href="BCS.md#0x1_BCS_deserialize_option_tag">deserialize_option_tag</a>(input, offset);
+    <b>if</b> (!tag) {
+        <b>return</b> (<a href="Option.md#0x1_Option_none">Option::none</a>&lt;vector&lt;u8&gt;&gt;(), <a href="Option.md#0x1_Option_none">Option::none</a>&lt;vector&lt;u8&gt;&gt;(), new_offset)
+    } <b>else</b> {
+        <b>let</b> (bs1, new_offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes">deserialize_bytes</a>(input, new_offset);
+        <b>let</b> (bs2, new_offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes">deserialize_bytes</a>(input, new_offset);
+
+        (<a href="Option.md#0x1_Option_some">Option::some</a>&lt;vector&lt;u8&gt;&gt;(bs1), <a href="Option.md#0x1_Option_some">Option::some</a>&lt;vector&lt;u8&gt;&gt;(bs2), new_offset)
+    }
 }
 </code></pre>
 

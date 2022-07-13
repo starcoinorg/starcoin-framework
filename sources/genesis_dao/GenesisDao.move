@@ -18,7 +18,9 @@ module StarcoinFramework::GenesisDao {
     use StarcoinFramework::StarcoinVerifier::StateProof;
     use StarcoinFramework::BCS;
     use StarcoinFramework::SBTVoteStrategy;
-//    use StarcoinFramework::Block;
+    #[test_only]
+    use StarcoinFramework::Debug;
+    //    use StarcoinFramework::Block;
 
 
     const E_NO_GRANTED: u64 = 1;
@@ -771,13 +773,19 @@ module StarcoinFramework::GenesisDao {
 
     /// use bcs se/de for Snapshot proofs
     struct SnapshotProof has store, drop, copy {
-        account_proof_leaf: vector<vector<u8>>,
-        account_proof_siblings: vector<vector<u8>>,
-        account_state: vector<u8>,
-        account_state_proof_leaf: vector<vector<u8>>,
-        account_state_proof_siblings: vector<vector<u8>>,
         state: vector<u8>,
+        account_state: vector<u8>,
+        account_proof_leaf: HashNode,
+        account_proof_siblings: vector<vector<u8>>,
+        account_state_proof_leaf: HashNode,
+        account_state_proof_siblings: vector<vector<u8>>,
+
         resource_struct_tag: vector<u8>,
+    }
+
+    struct HashNode has store, drop, copy {
+        hash1: vector<u8>,
+        hash2: vector<u8>,
     }
 
     /// emitted when proposal created.
@@ -935,7 +943,8 @@ module StarcoinFramework::GenesisDao {
     public fun cast_vote<DaoT: store>(
         sender: &signer,
         proposal_id: u64,
-        snpashot_proofs: vector<u8>,
+        snpashot_raw_proofs: vector<u8>,
+        resource_struct_tag: vector<u8>,
         choice: VotingChoice,
     )  acquires GlobalProposals, MyVotes, ProposalEvent, GlobalProposalActions {
         let dao_address = dao_address<DaoT>();
@@ -953,16 +962,16 @@ module StarcoinFramework::GenesisDao {
         assert!(is_member<DaoT>(sender_addr), Errors::requires_capability(ERR_NOT_DAO_MEMBER));
 
         // verify snapshot state proof
-        let snapshot_proofs = deserialize_snapshot_proofs(&snpashot_proofs);
-        let state_proof = new_state_proof_from_proofs(&snapshot_proofs);
+        let snapshot_proof = deserialize_snapshot_proofs(&snpashot_raw_proofs, &resource_struct_tag);
+        let state_proof = new_state_proof_from_proofs(&snapshot_proof);
         // TODO check resource_struct_tag is DAO struct tag, need de resource_struct_tag
         // verify state_proof according to proposal snapshot proofs, and state root
-        let verify = StarcoinVerifier::verify_state_proof(&state_proof, &proposal.state_root, sender_addr, &snapshot_proofs.resource_struct_tag, &snapshot_proofs.state);
+        let verify = StarcoinVerifier::verify_state_proof(&state_proof, &proposal.state_root, sender_addr, &snapshot_proof.resource_struct_tag, &snapshot_proof.state);
         assert!(verify, Errors::invalid_state(ERR_STATE_PROOF_VERIFY_INVALID));
 
         // TODO is allowed just use part of weight?
         // decode sbt value from snapshot state
-        let vote_weight = SBTVoteStrategy::get_voting_power(&snapshot_proofs.state);
+        let vote_weight = SBTVoteStrategy::get_voting_power(&snapshot_proof.state);
 
         assert!(!has_voted<DaoT>(sender_addr, proposal_id), Errors::invalid_state(ERR_VOTED_ALREADY));
 
@@ -996,59 +1005,132 @@ module StarcoinFramework::GenesisDao {
         );
     }
 
-    fun deserialize_snapshot_proofs(snapshot_proofs: &vector<u8>): SnapshotProof{
-        assert!(Vector::length(snapshot_proofs) > 0, Errors::invalid_argument(ERR_SNAPSHOT_PROOF_PARAM_INVALID));
+//    pub struct StateWithProofView {
+//        pub state: Option<StrView<Vec<u8>>>,
+//        pub account_state: Option<StrView<Vec<u8>>>,
+//        pub account_proof: SparseMerkleProofView,
+//        pub account_state_proof: SparseMerkleProofView,
+//    }
 
+//    pub struct SparseMerkleProofView {
+//        /// This proof can be used to authenticate whether a given leaf exists in the tree or not.
+//        ///     - If this is `Some(HashValue, HashValue)`
+//        ///         - If the first `HashValue` equals requested key, this is an inclusion proof and the
+//        ///           second `HashValue` equals the hash of the corresponding account blob.
+//        ///         - Otherwise this is a non-inclusion proof. The first `HashValue` is the only key
+//        ///           that exists in the subtree and the second `HashValue` equals the hash of the
+//        ///           corresponding account blob.
+//        ///     - If this is `None`, this is also a non-inclusion proof which indicates the subtree is
+//        ///       empty.
+//        pub leaf: Option<(HashValue, HashValue)>,
+//
+//        /// All siblings in this proof, including the default ones. Siblings are ordered from the bottom
+//        /// level to the root level.
+//        pub siblings: Vec<HashValue>,
+//    }
+    fun deserialize_snapshot_proofs(snpashot_raw_proofs: &vector<u8>, resource_struct_tag: &vector<u8>): SnapshotProof{
+        assert!(Vector::length(snpashot_raw_proofs) > 0, Errors::invalid_argument(ERR_SNAPSHOT_PROOF_PARAM_INVALID));
         let offset= 0;
-        let (account_proof_leaf, offset) = BCS::deserialize_bytes_vector(snapshot_proofs, offset);
-        let (account_proof_siblings, offset) = BCS::deserialize_bytes_vector(snapshot_proofs, offset);
-        let (account_state, offset) = BCS::deserialize_bytes(snapshot_proofs, offset);
-        let (account_state_proof_leaf, offset) = BCS::deserialize_bytes_vector(snapshot_proofs, offset);
-        let (account_state_proof_siblings, offset) = BCS::deserialize_bytes_vector(snapshot_proofs, offset);
-        let (state, offset) = BCS::deserialize_bytes(snapshot_proofs, offset);
-        let (resource_struct_tag, _offset) = BCS::deserialize_bytes(snapshot_proofs, offset);
+        let (state_option, offset) = BCS::deserialize_option_bytes(snpashot_raw_proofs, offset);
+        let (account_state_option, offset) = BCS::deserialize_option_bytes(snpashot_raw_proofs, offset);
+
+        let (account_proof_leaf1_option, account_proof_leaf2_option, offset) = BCS::deserialize_option_tuple(snpashot_raw_proofs, offset);
+        let account_proof_leaf1 = Option::extract(&mut account_proof_leaf1_option);
+        let account_proof_leaf2 = Option::extract(&mut account_proof_leaf2_option);
+        let (account_proof_siblings, offset) = BCS::deserialize_bytes_vector(snpashot_raw_proofs, offset);
+
+        let (account_state_proof_leaf1_option, account_state_proof_leaf2_option, offset) = BCS::deserialize_option_tuple(snpashot_raw_proofs, offset);
+        let account_state_proof_leaf1 = Option::extract(&mut account_state_proof_leaf1_option);
+        let account_state_proof_leaf2 = Option::extract(&mut account_state_proof_leaf2_option);
+        let (account_state_proof_siblings, _offset) = BCS::deserialize_bytes_vector(snpashot_raw_proofs, offset);
+
+//        let (resource_struct_tag, _offset) = BCS::deserialize_bytes(snapshot_proofs, offset);
 
         SnapshotProof {
-            account_proof_leaf,
+            state: Option::extract(&mut state_option),
+            account_state: Option::extract(&mut account_state_option),
+            account_proof_leaf: HashNode {
+                hash1: account_proof_leaf1,
+                hash2: account_proof_leaf2,
+            },
             account_proof_siblings,
-            account_state,
-            account_state_proof_leaf,
+            account_state_proof_leaf: HashNode {
+                hash1: account_state_proof_leaf1,
+                hash2: account_state_proof_leaf2,
+            },
             account_state_proof_siblings,
-            state,
-            resource_struct_tag,
+
+            resource_struct_tag : *resource_struct_tag,
         }
     }
 
-    fun new_state_proof_from_proofs(snpashot_proofs: &SnapshotProof): StateProof{
-        let (account_proof_leaf_hash1, account_proof_leaf_hash2) = (Vector::empty(), Vector::empty());
-        let (account_state_proof_leaf_hash1, account_state_proof_leaf_hash2) = (Vector::empty(), Vector::empty());
+    #[test]
+    fun test_deserialize_snapshot_proofs() {
+        // barnard, block number 6201718
+        let snpashot_raw_proofs = x"0145016bfb460477adf9dd0455d3de2fc7f21101000000000000000664616f313031000a69616d67655f64617461005704000000000000640000000000000000000000000000000145020120cc969848619e507450ebf01437155ab5f2dbb554fe611cb71958855a1b2ec664012035f2374c333a51e46b62b693ebef25b9be2cefde8d156db08bff28f9a0b87742012073837fcf4e69ae60e18ea291b9f25c86ce8053c6ee647a2b287083327c67dd7e20dac300fb581a6df034a44a99e8eb1cd55c7dd8f0a9e78f1114a6b4eda01d834e0e2078179a07914562223d40068488a0d65673b3b2681642633dc33904575f8f070b20b7c2a21de200ca82241e5e480e922258591b219dd56c24c4d94299020ee8299a204f541db82477510f699c9d75dd6d8280639a1ec9d0b90962cbc0c2b06514a78b20cacfce99bb564cfb70eec6a61bb76b9d56eb1b626d7fa231338792e1f572a8df20da6c1337ca5d8f0fa18b2db35844c610858a710edac35206ef0bf52fd32a4ac920ef6fb8f82d32ca2b7c482b7942505e6492bffa3ed14dd635bae16a14b4ac32e6202ad7b36e08e7b5d208de8eec1ef1964dc8433ccca8ac4632f36054926e858ac32027d5ccc8aa57b964ad50334f62821188b89945ae999ad0bb31cdc16df1763f8120afa983813953d6aa9563db12d5e443c9e8114c3482867c95a661a240d6f0e0ec206466ac318f5d9deb7b64b12622a0f4bed2f19379667d18b6ccfeaa84171d812f20eb45021b7b39887925a5b49018cdc8ad44c14835a42e5775666315f4a3e0ba42204c2b365a78e4615873772a0f039a7326150472b4923d40640863dbe42a2351eb20825d0c21dd1105faf528934842419f8661d695fc72ec6ef8036f5d03359126d3205d806c027eecdfbc3960e68c5997718a0709a6079f96e1af3ffe21878ada2b830120fa60f8311936961f5e9dee5ccafaea83ed91c6eaa04a7dea0b85a38cf84d8564207ef6a85019523861474cdf47f4db8087e5368171d95cc2c1e57055a72ca39cb704208db1e4e4c864882bd611b1cda02ca30c43b3c7bc56ee7cb174598188da8b49ef2063b3f1e4f05973830ba40e0c50c4e59f31d3baa5643d19676ddbacbf797bf6b720b39d31107837c1751d439706c8ddac96f8c148b8430ac4f40546f33fb9871e4320fb0ad035780bb8f1c6481bd674ccad0948cd2e8e6b97c08e582f67cc26918fb3";
+        //        let state_root = x"d5cd5dc44799c989a84b7d4a810259f373b13a9bf8ee21ecbed0fab264e2090d";
+        //        let account_address = @0x6bfb460477adf9dd0455d3de2fc7f211;
+        //        // 0x00000000000000000000000000000001::Account::Balance<0x8c109349c6bd91411d6bc962e080c4a3::STAR::STAR>
+        //        let resource_struct_tag = x"00000000000000000000000000000001074163636f756e740742616c616e636501078c109349c6bd91411d6bc962e080c4a30453544152045354415200";
 
-        if (Vector::length(&snpashot_proofs.account_proof_leaf) >= 2){
-            account_proof_leaf_hash1 = *Vector::borrow(&snpashot_proofs.account_proof_leaf, 0);
-            account_proof_leaf_hash2 = *Vector::borrow(&snpashot_proofs.account_proof_leaf, 1);
-        };
-        if (Vector::length(&snpashot_proofs.account_state_proof_leaf) >= 2){
-            account_state_proof_leaf_hash1 = *Vector::borrow(&snpashot_proofs.account_state_proof_leaf, 0);
-            account_state_proof_leaf_hash2 = *Vector::borrow(&snpashot_proofs.account_state_proof_leaf, 1);
-        };
+        let offset = 0;
+        let (state_option, offset) = BCS::deserialize_option_bytes(&snpashot_raw_proofs, offset);
+        let state = Option::extract(&mut state_option);
+        Debug::print(&state);
+        Debug::print(&x"016bfb460477adf9dd0455d3de2fc7f21101000000000000000664616f313031000a69616d67655f6461746100570400000000000064000000000000000000000000000000");
+        Debug::print(&offset);
+        let (_account_state_option, offset) = BCS::deserialize_option_bytes(&snpashot_raw_proofs, offset);
+        let (_account_proof_leaf_option, offset) = BCS::deserialize_option_bytes_vector(&snpashot_raw_proofs, offset);
+        let (_account_proof_siblings, offset) = BCS::deserialize_bytes_vector(&snpashot_raw_proofs, offset);
+        let (account_state_proof_leaf_option, offset) = BCS::deserialize_option_bytes_vector(&snpashot_raw_proofs, offset);
+        let (account_state_proof_siblings, _offset) = BCS::deserialize_bytes_vector(&snpashot_raw_proofs, offset);
+
+        let _account_state_proof_leaf = convert_option_bytes_vector(&account_state_proof_leaf_option);
+        Debug::print(&account_state_proof_siblings);
+
+    }
+
+    fun new_state_proof_from_proofs(snpashot_proofs: &SnapshotProof): StateProof{
         let state_proof = StarcoinVerifier::new_state_proof(
             StarcoinVerifier::new_sparse_merkle_proof(
                 *&snpashot_proofs.account_proof_siblings,
                 StarcoinVerifier::new_smt_node(
-                    account_proof_leaf_hash1,
-                    account_proof_leaf_hash2,
+                    *&snpashot_proofs.account_proof_leaf.hash1,
+                    *&snpashot_proofs.account_proof_leaf.hash2,
                 ),
             ),
             *&snpashot_proofs.account_state,
             StarcoinVerifier::new_sparse_merkle_proof(
                 *&snpashot_proofs.account_state_proof_siblings,
                 StarcoinVerifier::new_smt_node(
-                    account_state_proof_leaf_hash1,
-                    account_state_proof_leaf_hash2,
+                    *&snpashot_proofs.account_state_proof_leaf.hash1,
+                    *&snpashot_proofs.account_state_proof_leaf.hash2,
                 ),
             ),
         );
         state_proof
+    }
+
+    #[test]
+    fun test_snapshot_proof() {
+        // barnard, block number 6201718
+        let snpashot_raw_proofs = x"0145016bfb460477adf9dd0455d3de2fc7f21101000000000000000664616f313031000a69616d67655f64617461005704000000000000640000000000000000000000000000000145020120cc969848619e507450ebf01437155ab5f2dbb554fe611cb71958855a1b2ec664012035f2374c333a51e46b62b693ebef25b9be2cefde8d156db08bff28f9a0b87742012073837fcf4e69ae60e18ea291b9f25c86ce8053c6ee647a2b287083327c67dd7e20dac300fb581a6df034a44a99e8eb1cd55c7dd8f0a9e78f1114a6b4eda01d834e0e2078179a07914562223d40068488a0d65673b3b2681642633dc33904575f8f070b20b7c2a21de200ca82241e5e480e922258591b219dd56c24c4d94299020ee8299a204f541db82477510f699c9d75dd6d8280639a1ec9d0b90962cbc0c2b06514a78b20cacfce99bb564cfb70eec6a61bb76b9d56eb1b626d7fa231338792e1f572a8df20da6c1337ca5d8f0fa18b2db35844c610858a710edac35206ef0bf52fd32a4ac920ef6fb8f82d32ca2b7c482b7942505e6492bffa3ed14dd635bae16a14b4ac32e6202ad7b36e08e7b5d208de8eec1ef1964dc8433ccca8ac4632f36054926e858ac32027d5ccc8aa57b964ad50334f62821188b89945ae999ad0bb31cdc16df1763f8120afa983813953d6aa9563db12d5e443c9e8114c3482867c95a661a240d6f0e0ec206466ac318f5d9deb7b64b12622a0f4bed2f19379667d18b6ccfeaa84171d812f20eb45021b7b39887925a5b49018cdc8ad44c14835a42e5775666315f4a3e0ba42204c2b365a78e4615873772a0f039a7326150472b4923d40640863dbe42a2351eb20825d0c21dd1105faf528934842419f8661d695fc72ec6ef8036f5d03359126d3205d806c027eecdfbc3960e68c5997718a0709a6079f96e1af3ffe21878ada2b830120fa60f8311936961f5e9dee5ccafaea83ed91c6eaa04a7dea0b85a38cf84d8564207ef6a85019523861474cdf47f4db8087e5368171d95cc2c1e57055a72ca39cb704208db1e4e4c864882bd611b1cda02ca30c43b3c7bc56ee7cb174598188da8b49ef2063b3f1e4f05973830ba40e0c50c4e59f31d3baa5643d19676ddbacbf797bf6b720b39d31107837c1751d439706c8ddac96f8c148b8430ac4f40546f33fb9871e4320fb0ad035780bb8f1c6481bd674ccad0948cd2e8e6b97c08e582f67cc26918fb3";
+        let state_root = x"d5cd5dc44799c989a84b7d4a810259f373b13a9bf8ee21ecbed0fab264e2090d";
+        let account_address = @0x6bfb460477adf9dd0455d3de2fc7f211;
+        // 0x00000000000000000000000000000001::Account::Balance<0x8c109349c6bd91411d6bc962e080c4a3::STAR::STAR>
+        let resource_struct_tag = x"00000000000000000000000000000001074163636f756e740742616c616e636501078c109349c6bd91411d6bc962e080c4a30453544152045354415200";
+
+        let snapshot_proof = deserialize_snapshot_proofs(&snpashot_raw_proofs, &resource_struct_tag);
+        let state_proof = new_state_proof_from_proofs(&snapshot_proof);
+
+        let b = StarcoinVerifier::verify_state_proof(
+            &state_proof,
+            &state_root,
+            account_address,
+            &resource_struct_tag,
+            &snapshot_proof.state,
+        );
+        assert!(b, 8006);
     }
 
 
@@ -1451,6 +1533,20 @@ module StarcoinFramework::GenesisDao {
         if (!Vector::contains(v, &x)) {
             Vector::push_back(v, x)
         }
+    }
+
+    fun convert_option_bytes_vector(input: &vector<Option::Option<vector<u8>>>): vector<vector<u8>> {
+        let len = Vector::length(input);
+        let i = 0;
+        let output = Vector::empty<vector<u8>>();
+        while (i < len) {
+            let option = Vector::borrow(input, i);
+            if (Option::is_some(option)){
+                Vector::push_back(&mut output, Option::extract(&mut *option));
+            };
+            i = i + 1;
+        };
+        output
     }
 
     fun dao_signer<DaoT>(): signer acquires DaoAccountCapHolder {

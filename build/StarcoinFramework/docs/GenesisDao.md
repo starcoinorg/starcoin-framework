@@ -50,6 +50,7 @@
 -  [Struct `VoteInfo`](#0x1_GenesisDao_VoteInfo)
 -  [Resource `MyVotes`](#0x1_GenesisDao_MyVotes)
 -  [Struct `SnapshotProof`](#0x1_GenesisDao_SnapshotProof)
+-  [Struct `HashNode`](#0x1_GenesisDao_HashNode)
 -  [Struct `ProposalCreatedEvent`](#0x1_GenesisDao_ProposalCreatedEvent)
 -  [Struct `VoteChangedEvent`](#0x1_GenesisDao_VoteChangedEvent)
 -  [Resource `ProposalEvent`](#0x1_GenesisDao_ProposalEvent)
@@ -135,6 +136,7 @@
 -  [Function `assert_no_repeat`](#0x1_GenesisDao_assert_no_repeat)
 -  [Function `remove_element`](#0x1_GenesisDao_remove_element)
 -  [Function `add_element`](#0x1_GenesisDao_add_element)
+-  [Function `convert_option_bytes_vector`](#0x1_GenesisDao_convert_option_bytes_vector)
 -  [Function `dao_signer`](#0x1_GenesisDao_dao_signer)
 -  [Function `dao_address`](#0x1_GenesisDao_dao_address)
 
@@ -1638,13 +1640,7 @@ use bcs se/de for Snapshot proofs
 
 <dl>
 <dt>
-<code>account_proof_leaf: vector&lt;vector&lt;u8&gt;&gt;</code>
-</dt>
-<dd>
-
-</dd>
-<dt>
-<code>account_proof_siblings: vector&lt;vector&lt;u8&gt;&gt;</code>
+<code>state: vector&lt;u8&gt;</code>
 </dt>
 <dd>
 
@@ -1656,7 +1652,19 @@ use bcs se/de for Snapshot proofs
 
 </dd>
 <dt>
-<code>account_state_proof_leaf: vector&lt;vector&lt;u8&gt;&gt;</code>
+<code>account_proof_leaf: <a href="GenesisDao.md#0x1_GenesisDao_HashNode">GenesisDao::HashNode</a></code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>account_proof_siblings: vector&lt;vector&lt;u8&gt;&gt;</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>account_state_proof_leaf: <a href="GenesisDao.md#0x1_GenesisDao_HashNode">GenesisDao::HashNode</a></code>
 </dt>
 <dd>
 
@@ -1668,13 +1676,40 @@ use bcs se/de for Snapshot proofs
 
 </dd>
 <dt>
-<code>state: vector&lt;u8&gt;</code>
+<code>resource_struct_tag: vector&lt;u8&gt;</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_GenesisDao_HashNode"></a>
+
+## Struct `HashNode`
+
+
+
+<pre><code><b>struct</b> <a href="GenesisDao.md#0x1_GenesisDao_HashNode">HashNode</a> <b>has</b> <b>copy</b>, drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>hash1: vector&lt;u8&gt;</code>
 </dt>
 <dd>
 
 </dd>
 <dt>
-<code>resource_struct_tag: vector&lt;u8&gt;</code>
+<code>hash2: vector&lt;u8&gt;</code>
 </dt>
 <dd>
 
@@ -3571,7 +3606,7 @@ User can only vote once, then the stake is locked,
 The voting power depends on the strategy of the proposal configuration and the user's token amount at the time of the snapshot
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_cast_vote">cast_vote</a>&lt;DaoT: store&gt;(sender: &signer, proposal_id: u64, snpashot_proofs: vector&lt;u8&gt;, choice: <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">GenesisDao::VotingChoice</a>)
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_cast_vote">cast_vote</a>&lt;DaoT: store&gt;(sender: &signer, proposal_id: u64, snpashot_raw_proofs: vector&lt;u8&gt;, resource_struct_tag: vector&lt;u8&gt;, choice: <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">GenesisDao::VotingChoice</a>)
 </code></pre>
 
 
@@ -3583,7 +3618,8 @@ The voting power depends on the strategy of the proposal configuration and the u
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_cast_vote">cast_vote</a>&lt;DaoT: store&gt;(
     sender: &signer,
     proposal_id: u64,
-    snpashot_proofs: vector&lt;u8&gt;,
+    snpashot_raw_proofs: vector&lt;u8&gt;,
+    resource_struct_tag: vector&lt;u8&gt;,
     choice: <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>,
 )  <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>, <a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a> {
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
@@ -3601,16 +3637,16 @@ The voting power depends on the strategy of the proposal configuration and the u
     <b>assert</b>!(<a href="GenesisDao.md#0x1_GenesisDao_is_member">is_member</a>&lt;DaoT&gt;(sender_addr), <a href="Errors.md#0x1_Errors_requires_capability">Errors::requires_capability</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_DAO_MEMBER">ERR_NOT_DAO_MEMBER</a>));
 
     // verify snapshot state proof
-    <b>let</b> snapshot_proofs = <a href="GenesisDao.md#0x1_GenesisDao_deserialize_snapshot_proofs">deserialize_snapshot_proofs</a>(&snpashot_proofs);
-    <b>let</b> state_proof = <a href="GenesisDao.md#0x1_GenesisDao_new_state_proof_from_proofs">new_state_proof_from_proofs</a>(&snapshot_proofs);
+    <b>let</b> snapshot_proof = <a href="GenesisDao.md#0x1_GenesisDao_deserialize_snapshot_proofs">deserialize_snapshot_proofs</a>(&snpashot_raw_proofs, &resource_struct_tag);
+    <b>let</b> state_proof = <a href="GenesisDao.md#0x1_GenesisDao_new_state_proof_from_proofs">new_state_proof_from_proofs</a>(&snapshot_proof);
     // TODO check resource_struct_tag is DAO <b>struct</b> tag, need de resource_struct_tag
     // verify state_proof according <b>to</b> proposal snapshot proofs, and state root
-    <b>let</b> verify = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_state_proof">StarcoinVerifier::verify_state_proof</a>(&state_proof, &proposal.state_root, sender_addr, &snapshot_proofs.resource_struct_tag, &snapshot_proofs.state);
+    <b>let</b> verify = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_state_proof">StarcoinVerifier::verify_state_proof</a>(&state_proof, &proposal.state_root, sender_addr, &snapshot_proof.resource_struct_tag, &snapshot_proof.state);
     <b>assert</b>!(verify, <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_STATE_PROOF_VERIFY_INVALID">ERR_STATE_PROOF_VERIFY_INVALID</a>));
 
     // TODO is allowed just <b>use</b> part of weight?
     // decode sbt value from snapshot state
-    <b>let</b> vote_weight = <a href="SBTVoteStrategy.md#0x1_SBTVoteStrategy_get_voting_power">SBTVoteStrategy::get_voting_power</a>(&snapshot_proofs.state);
+    <b>let</b> vote_weight = <a href="SBTVoteStrategy.md#0x1_SBTVoteStrategy_get_voting_power">SBTVoteStrategy::get_voting_power</a>(&snapshot_proof.state);
 
     <b>assert</b>!(!<a href="GenesisDao.md#0x1_GenesisDao_has_voted">has_voted</a>&lt;DaoT&gt;(sender_addr, proposal_id), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_VOTED_ALREADY">ERR_VOTED_ALREADY</a>));
 
@@ -3655,7 +3691,7 @@ The voting power depends on the strategy of the proposal configuration and the u
 
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_deserialize_snapshot_proofs">deserialize_snapshot_proofs</a>(snapshot_proofs: &vector&lt;u8&gt;): <a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">GenesisDao::SnapshotProof</a>
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_deserialize_snapshot_proofs">deserialize_snapshot_proofs</a>(snpashot_raw_proofs: &vector&lt;u8&gt;, resource_struct_tag: &vector&lt;u8&gt;): <a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">GenesisDao::SnapshotProof</a>
 </code></pre>
 
 
@@ -3664,26 +3700,39 @@ The voting power depends on the strategy of the proposal configuration and the u
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_deserialize_snapshot_proofs">deserialize_snapshot_proofs</a>(snapshot_proofs: &vector&lt;u8&gt;): <a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">SnapshotProof</a>{
-    <b>assert</b>!(<a href="Vector.md#0x1_Vector_length">Vector::length</a>(snapshot_proofs) &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_SNAPSHOT_PROOF_PARAM_INVALID">ERR_SNAPSHOT_PROOF_PARAM_INVALID</a>));
-
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_deserialize_snapshot_proofs">deserialize_snapshot_proofs</a>(snpashot_raw_proofs: &vector&lt;u8&gt;, resource_struct_tag: &vector&lt;u8&gt;): <a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">SnapshotProof</a>{
+    <b>assert</b>!(<a href="Vector.md#0x1_Vector_length">Vector::length</a>(snpashot_raw_proofs) &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_SNAPSHOT_PROOF_PARAM_INVALID">ERR_SNAPSHOT_PROOF_PARAM_INVALID</a>));
     <b>let</b> offset= 0;
-    <b>let</b> (account_proof_leaf, offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes_vector">BCS::deserialize_bytes_vector</a>(snapshot_proofs, offset);
-    <b>let</b> (account_proof_siblings, offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes_vector">BCS::deserialize_bytes_vector</a>(snapshot_proofs, offset);
-    <b>let</b> (account_state, offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes">BCS::deserialize_bytes</a>(snapshot_proofs, offset);
-    <b>let</b> (account_state_proof_leaf, offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes_vector">BCS::deserialize_bytes_vector</a>(snapshot_proofs, offset);
-    <b>let</b> (account_state_proof_siblings, offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes_vector">BCS::deserialize_bytes_vector</a>(snapshot_proofs, offset);
-    <b>let</b> (state, offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes">BCS::deserialize_bytes</a>(snapshot_proofs, offset);
-    <b>let</b> (resource_struct_tag, _offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes">BCS::deserialize_bytes</a>(snapshot_proofs, offset);
+    <b>let</b> (state_option, offset) = <a href="BCS.md#0x1_BCS_deserialize_option_bytes">BCS::deserialize_option_bytes</a>(snpashot_raw_proofs, offset);
+    <b>let</b> (account_state_option, offset) = <a href="BCS.md#0x1_BCS_deserialize_option_bytes">BCS::deserialize_option_bytes</a>(snpashot_raw_proofs, offset);
+
+    <b>let</b> (account_proof_leaf1_option, account_proof_leaf2_option, offset) = <a href="BCS.md#0x1_BCS_deserialize_option_tuple">BCS::deserialize_option_tuple</a>(snpashot_raw_proofs, offset);
+    <b>let</b> account_proof_leaf1 = <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> account_proof_leaf1_option);
+    <b>let</b> account_proof_leaf2 = <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> account_proof_leaf2_option);
+    <b>let</b> (account_proof_siblings, offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes_vector">BCS::deserialize_bytes_vector</a>(snpashot_raw_proofs, offset);
+
+    <b>let</b> (account_state_proof_leaf1_option, account_state_proof_leaf2_option, offset) = <a href="BCS.md#0x1_BCS_deserialize_option_tuple">BCS::deserialize_option_tuple</a>(snpashot_raw_proofs, offset);
+    <b>let</b> account_state_proof_leaf1 = <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> account_state_proof_leaf1_option);
+    <b>let</b> account_state_proof_leaf2 = <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> account_state_proof_leaf2_option);
+    <b>let</b> (account_state_proof_siblings, _offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes_vector">BCS::deserialize_bytes_vector</a>(snpashot_raw_proofs, offset);
+
+//        <b>let</b> (resource_struct_tag, _offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes">BCS::deserialize_bytes</a>(snapshot_proofs, offset);
 
     <a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">SnapshotProof</a> {
-        account_proof_leaf,
+        state: <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> state_option),
+        account_state: <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> account_state_option),
+        account_proof_leaf: <a href="GenesisDao.md#0x1_GenesisDao_HashNode">HashNode</a> {
+            hash1: account_proof_leaf1,
+            hash2: account_proof_leaf2,
+        },
         account_proof_siblings,
-        account_state,
-        account_state_proof_leaf,
+        account_state_proof_leaf: <a href="GenesisDao.md#0x1_GenesisDao_HashNode">HashNode</a> {
+            hash1: account_state_proof_leaf1,
+            hash2: account_state_proof_leaf2,
+        },
         account_state_proof_siblings,
-        state,
-        resource_struct_tag,
+
+        resource_struct_tag : *resource_struct_tag,
     }
 }
 </code></pre>
@@ -3708,31 +3757,20 @@ The voting power depends on the strategy of the proposal configuration and the u
 
 
 <pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_new_state_proof_from_proofs">new_state_proof_from_proofs</a>(snpashot_proofs: &<a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">SnapshotProof</a>): StateProof{
-    <b>let</b> (account_proof_leaf_hash1, account_proof_leaf_hash2) = (<a href="Vector.md#0x1_Vector_empty">Vector::empty</a>(), <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>());
-    <b>let</b> (account_state_proof_leaf_hash1, account_state_proof_leaf_hash2) = (<a href="Vector.md#0x1_Vector_empty">Vector::empty</a>(), <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>());
-
-    <b>if</b> (<a href="Vector.md#0x1_Vector_length">Vector::length</a>(&snpashot_proofs.account_proof_leaf) &gt;= 2){
-        account_proof_leaf_hash1 = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&snpashot_proofs.account_proof_leaf, 0);
-        account_proof_leaf_hash2 = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&snpashot_proofs.account_proof_leaf, 1);
-    };
-    <b>if</b> (<a href="Vector.md#0x1_Vector_length">Vector::length</a>(&snpashot_proofs.account_state_proof_leaf) &gt;= 2){
-        account_state_proof_leaf_hash1 = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&snpashot_proofs.account_state_proof_leaf, 0);
-        account_state_proof_leaf_hash2 = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&snpashot_proofs.account_state_proof_leaf, 1);
-    };
     <b>let</b> state_proof = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_new_state_proof">StarcoinVerifier::new_state_proof</a>(
         <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_new_sparse_merkle_proof">StarcoinVerifier::new_sparse_merkle_proof</a>(
             *&snpashot_proofs.account_proof_siblings,
             <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_new_smt_node">StarcoinVerifier::new_smt_node</a>(
-                account_proof_leaf_hash1,
-                account_proof_leaf_hash2,
+                *&snpashot_proofs.account_proof_leaf.hash1,
+                *&snpashot_proofs.account_proof_leaf.hash2,
             ),
         ),
         *&snpashot_proofs.account_state,
         <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_new_sparse_merkle_proof">StarcoinVerifier::new_sparse_merkle_proof</a>(
             *&snpashot_proofs.account_state_proof_siblings,
             <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_new_smt_node">StarcoinVerifier::new_smt_node</a>(
-                account_state_proof_leaf_hash1,
-                account_state_proof_leaf_hash2,
+                *&snpashot_proofs.account_state_proof_leaf.hash1,
+                *&snpashot_proofs.account_state_proof_leaf.hash2,
             ),
         ),
     );
@@ -4794,6 +4832,40 @@ Helper to add an element to a vector.
     <b>if</b> (!<a href="Vector.md#0x1_Vector_contains">Vector::contains</a>(v, &x)) {
         <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(v, x)
     }
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_convert_option_bytes_vector"></a>
+
+## Function `convert_option_bytes_vector`
+
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_convert_option_bytes_vector">convert_option_bytes_vector</a>(input: &vector&lt;<a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;&gt;): vector&lt;vector&lt;u8&gt;&gt;
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_convert_option_bytes_vector">convert_option_bytes_vector</a>(input: &vector&lt;<a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;&gt;): vector&lt;vector&lt;u8&gt;&gt; {
+    <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(input);
+    <b>let</b> i = 0;
+    <b>let</b> output = <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>&lt;vector&lt;u8&gt;&gt;();
+    <b>while</b> (i &lt; len) {
+        <b>let</b> option = <a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(input, i);
+        <b>if</b> (<a href="Option.md#0x1_Option_is_some">Option::is_some</a>(option)){
+            <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> output, <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> *option));
+        };
+        i = i + 1;
+    };
+    output
 }
 </code></pre>
 

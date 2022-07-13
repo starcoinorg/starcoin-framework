@@ -6,6 +6,8 @@
 
 //# faucet --addr bob --amount 10000000000
 
+//# faucet --addr cindy --amount 10000000000
+
 // TODO figure out how to call genesis init script in integration tests
 
 //# run --signers creator
@@ -40,6 +42,13 @@ module creator::DAOHelper {
         min_action_delay: u64,
         min_proposal_deposit: u128,){
         let dao_account_cap = DaoAccount::upgrade_to_dao(sender);
+
+        // checkpoint store
+        let dao_signer = DaoAccount::dao_signer(&dao_account_cap);
+        move_to(&dao_signer, Checkpoint<X> {
+            proposal_id:0,
+        });
+
         //let dao_signer = DaoAccount::dao_signer(&dao_account_cap);
         let config = GenesisDao::new_dao_config(
             voting_delay,
@@ -56,6 +65,7 @@ module creator::DAOHelper {
         GenesisDao::install_plugin_with_root_cap<X, XPlugin>(&dao_root_cap, required_caps());
 
         GenesisDao::burn_root_cap(dao_root_cap);
+
     }
 
     struct XPlugin has drop{}
@@ -73,14 +83,17 @@ module creator::DAOHelper {
         caps
     }
 
-    public fun create_x_proposal<DaoT: store, TokenT:store>(sender: &signer, total: u128, receiver:address, action_delay:u64): u64{
+    public fun create_x_proposal<DaoT: store, TokenT:store>(sender: &signer, total: u128, receiver:address, action_delay:u64): u64 acquires Checkpoint {
         let witness = XPlugin{};
         let cap = GenesisDao::acquire_proposal_cap<DaoT, XPlugin>(&witness);
         let action = XAction<TokenT>{
             total,
             receiver,
         };
-        GenesisDao::create_proposal(&cap, sender, action, action_delay)
+        let proposal_id = GenesisDao::create_proposal(&cap, sender, action, action_delay);
+        checkpoint<DaoT>(proposal_id);
+
+        proposal_id
     }
 
     public fun execute_x_proposal<DaoT: store, TokenT:store>(sender: &signer, proposal_id: u64){
@@ -97,14 +110,48 @@ module creator::DAOHelper {
         let member_cap = GenesisDao::acquire_member_cap<DaoT, XPlugin>(&witness);
         GenesisDao::join_member<DaoT, XPlugin>(&member_cap, to_address, init_sbt);
     }
+
+    struct Checkpoint<phantom Daot:store> has key{
+        //last proposal id
+        proposal_id: u64,
+    }
+
+    public fun checkpoint<DaoT:store>(proposal_id: u64) acquires Checkpoint {
+        let checkpoint = borrow_global_mut<Checkpoint<DaoT>>(@creator);
+        checkpoint.proposal_id = proposal_id;
+    }
+
+    public fun last_proposal_id<DaoT:store>(): u64 acquires Checkpoint {
+        let checkpoint = borrow_global<Checkpoint<DaoT>>(@creator);
+        checkpoint.proposal_id
+    }
 }
+
+//# block --author 0x1 --timestamp 86400000
 
 //# run --signers creator
 script{
     use creator::DAOHelper;
-    
+
     fun main(sender: signer){
-        DAOHelper::create_dao(sender, 10, 10, 10, 10, 10);
+        // time unit is millsecond
+        DAOHelper::create_dao(sender, 10000, 3600000, 2, 10000, 10);
+    }
+}
+// check: EXECUTED
+
+//# run --signers creator
+script{
+    use creator::DAOHelper::{X};
+    use StarcoinFramework::DaoRegistry;
+    use StarcoinFramework::Account;
+    use StarcoinFramework::STC::STC;
+
+    //deposit to dao address
+    fun main(sender: signer){
+        let dao_address = DaoRegistry::dao_address<X>();
+        let deposit = Account::withdraw<STC>(&sender, 500000);
+        Account::deposit(dao_address, deposit);
     }
 }
 // check: EXECUTED
@@ -117,12 +164,31 @@ script{
     use StarcoinFramework::GenesisDao::{DaoMember, DaoMemberBody};
     use StarcoinFramework::Signer;
 
+    //alice join dao
     fun member_join(sender: signer){
         //nft must be accept before grant
         IdentifierNFT::accept<DaoMember<X>, DaoMemberBody<X>>(&sender);
 
         let user_add = Signer::address_of(&sender);
-        DAOHelper::member_join<X>(user_add, 100000u128);
+        DAOHelper::member_join<X>(user_add, 1000u128);
+    }
+}
+// check: EXECUTED
+
+//# run --signers bob
+script{
+    use creator::DAOHelper::{Self, X};
+    use StarcoinFramework::IdentifierNFT;
+    use StarcoinFramework::GenesisDao::{DaoMember, DaoMemberBody};
+    use StarcoinFramework::Signer;
+
+    //bob join dao
+    fun member_join(sender: signer){
+        //nft must be accept before grant
+        IdentifierNFT::accept<DaoMember<X>, DaoMemberBody<X>>(&sender);
+
+        let user_add = Signer::address_of(&sender);
+        DAOHelper::member_join<X>(user_add, 3000u128);
     }
 }
 // check: EXECUTED
@@ -135,14 +201,83 @@ script{
     use StarcoinFramework::GenesisDao;
     use StarcoinFramework::Debug;
 
+    //alice create proposal
     fun create_proposal(sender: signer){
-        let proposal_id = DAOHelper::create_x_proposal<X, STC>(&sender, 1000u128, @alice, 10);
+        let proposal_id = DAOHelper::create_x_proposal<X, STC>(&sender, 100u128, @alice, 10000);
 //        (u64, address, u64, u64, u128, u128, u128, u128, u64, vector<u8>)
-        let (id, proposer, start_time, end_time, yes_votes, no_votes, no_with_veto_votes, abstain_votes, block_number, state_root) = GenesisDao::proposal_info<X>(proposal_id);
+        let (_id, proposer, start_time, end_time, _yes_votes, _no_votes, _no_with_veto_votes, _abstain_votes, block_number, state_root) = GenesisDao::proposal_info<X>(proposal_id);
         Debug::print(&proposer);
         Debug::print(&start_time);
+        Debug::print(&end_time);
         Debug::print(&block_number);
         Debug::print(&state_root);
+    }
+}
+// check: EXECUTED
+
+//# block --author 0x1 --timestamp 86420000
+
+//# run --signers bob
+script{
+    use creator::DAOHelper::{Self, X};
+    use StarcoinFramework::GenesisDao;
+//    use StarcoinFramework::Debug;
+
+    // bob vote
+    fun cast_vote(sender: signer){
+        let proposal_id = DAOHelper::last_proposal_id<X>();
+        let snapshot_proofs = x"";
+        let choice = GenesisDao::choice_yes();
+        GenesisDao::cast_vote<X>(&sender, proposal_id, snapshot_proofs, choice);
+    }
+}
+// check: EXECUTED
+
+////# run --signers alice
+//script{
+//    use creator::DAOHelper::{Self, X};
+//    use StarcoinFramework::GenesisDao;
+//    //    use StarcoinFramework::Debug;
+//
+//    // alice vote
+//    fun cast_vote(sender: signer){
+//        let proposal_id = DAOHelper::last_proposal_id<X>();
+//        let snapshot_proofs = x"";
+//        let choice = GenesisDao::choice_abstain();
+//        GenesisDao::cast_vote<X>(&sender, proposal_id, snapshot_proofs, choice);
+//    }
+//}
+//// check: EXECUTED
+//
+////# run --signers cindy
+//script{
+//    use creator::DAOHelper::{Self, X};
+//    use StarcoinFramework::GenesisDao;
+//    //    use StarcoinFramework::Debug;
+//
+//    // cindy vote
+//    fun cast_vote(sender: signer){
+//        let proposal_id = DAOHelper::last_proposal_id<X>();
+//        let snapshot_proofs = x"";
+//        let choice = GenesisDao::choice_yes();
+//        GenesisDao::cast_vote<X>(&sender, proposal_id, snapshot_proofs, choice);
+//    }
+//}
+//// check: ABORT
+
+
+//# block --author 0x1 --timestamp 90015000
+
+//# run --signers bob
+script{
+    use creator::DAOHelper::{Self, X};
+    use StarcoinFramework::STC::STC;
+    //    use StarcoinFramework::Debug;
+
+    // execute action
+    fun execute_action(sender: signer){
+        let proposal_id = DAOHelper::last_proposal_id<X>();
+        DAOHelper::execute_x_proposal<X, STC>(&sender, proposal_id);
     }
 }
 // check: EXECUTED

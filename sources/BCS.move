@@ -48,6 +48,31 @@ module BCS {
         pragma verify = false;
     }
 
+    public fun deserialize_option_tuple(input: &vector<u8>, offset: u64): (Option::Option<vector<u8>>, Option::Option<vector<u8>>, u64) {
+        let (tag, new_offset) = deserialize_option_tag(input, offset);
+        if (!tag) {
+            return (Option::none<vector<u8>>(), Option::none<vector<u8>>(), new_offset)
+        } else {
+            let (bs1, new_offset) = deserialize_bytes(input, new_offset);
+            let (bs2, new_offset) = deserialize_bytes(input, new_offset);
+
+            (Option::some<vector<u8>>(bs1), Option::some<vector<u8>>(bs2), new_offset)
+        }
+    }
+    spec deserialize_option_tuple {
+        pragma verify = false;
+    }
+
+//    #[test]
+//    fun test_deserialize_option_tuple() {
+//        let max_int128 = 170141183460469231731687303715884105727;
+//        let u: u128 = max_int128;
+//        let bs = BCS::to_bytes<u128>(&u);
+//        let (r, offset) =  deserialize_u128(&bs, 0);
+//        assert!(u == r, 1006);
+//        assert!(offset == 16, 1007);
+//    }
+
     public fun deserialize_bytes_vector(input: &vector<u8>, offset: u64): (vector<vector<u8>>, u64) {
         let (len, new_offset) = deserialize_len(input, offset);
         let i = 0;
