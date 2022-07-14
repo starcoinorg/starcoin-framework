@@ -130,6 +130,8 @@
 -  [Function `find_proposal_action_index`](#0x1_GenesisDao_find_proposal_action_index)
 -  [Function `proposal`](#0x1_GenesisDao_proposal)
 -  [Function `new_dao_config`](#0x1_GenesisDao_new_dao_config)
+-  [Function `get_custom_config`](#0x1_GenesisDao_get_custom_config)
+-  [Function `exists_custom_config`](#0x1_GenesisDao_exists_custom_config)
 -  [Function `set_custom_config`](#0x1_GenesisDao_set_custom_config)
 -  [Function `voting_delay`](#0x1_GenesisDao_voting_delay)
 -  [Function `voting_period`](#0x1_GenesisDao_voting_period)
@@ -4899,6 +4901,58 @@ create a dao config
     );
     <b>assert</b>!(min_action_delay &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_CONFIG_PARAM_INVALID">ERR_CONFIG_PARAM_INVALID</a>));
     <a href="GenesisDao.md#0x1_GenesisDao_DaoConfig">DaoConfig</a> { voting_delay, voting_period, voting_quorum_rate, min_action_delay, min_proposal_deposit }
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_get_custom_config"></a>
+
+## Function `get_custom_config`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_get_custom_config">get_custom_config</a>&lt;DaoT: store, ConfigT: <b>copy</b>, drop, store&gt;(): ConfigT
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_get_custom_config">get_custom_config</a>&lt;DaoT: store,
+                             ConfigT: <b>copy</b> + store + drop&gt;(): ConfigT {
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+    <a href="Config.md#0x1_Config_get_by_address">Config::get_by_address</a>&lt;ConfigT&gt;(dao_address)
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_exists_custom_config"></a>
+
+## Function `exists_custom_config`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_exists_custom_config">exists_custom_config</a>&lt;DaoT: store, ConfigT: <b>copy</b>, drop, store&gt;(): bool
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_exists_custom_config">exists_custom_config</a>&lt;DaoT: store,
+                                ConfigT: <b>copy</b> + store + drop&gt;(): bool {
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+    <a href="Config.md#0x1_Config_config_exist_by_address">Config::config_exist_by_address</a>&lt;ConfigT&gt;(dao_address)
 }
 </code></pre>
 

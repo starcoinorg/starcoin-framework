@@ -1463,6 +1463,20 @@ module StarcoinFramework::GenesisDao {
         DaoConfig { voting_delay, voting_period, voting_quorum_rate, min_action_delay, min_proposal_deposit }
     }
 
+    // Get config
+    public fun get_custom_config<DaoT: store,
+                                 ConfigT: copy + store + drop>(): ConfigT {
+        let dao_address = dao_address<DaoT>();
+        Config::get_by_address<ConfigT>(dao_address)
+    }
+
+    // Get config
+    public fun exists_custom_config<DaoT: store,
+                                    ConfigT: copy + store + drop>(): bool {
+        let dao_address = dao_address<DaoT>();
+        Config::config_exist_by_address<ConfigT>(dao_address)
+    }
+
     /// Update, save function of custom plugin configuration
     public fun set_custom_config<DaoT: store,
                                  PluginT: drop,
