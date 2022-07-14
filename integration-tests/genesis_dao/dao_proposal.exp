@@ -1,4 +1,4 @@
-processed 19 tasks
+processed 18 tasks
 
 task 5 'run'. lines 13-21:
 {
@@ -16,7 +16,7 @@ task 8 'run'. lines 132-141:
   }
 }
 
-task 9 'run'. lines 143-157:
+task 9 'run'. lines 145-159:
 {
   "gas_used": 0,
   "status": {
@@ -24,7 +24,15 @@ task 9 'run'. lines 143-157:
   }
 }
 
-task 10 'run'. lines 160-176:
+task 10 'run'. lines 161-186:
+{
+  "gas_used": 306386,
+  "status": {
+    "Keep": "Executed"
+  }
+}
+
+task 11 'run'. lines 188-204:
 {
   "gas_used": 214125,
   "status": {
@@ -32,7 +40,7 @@ task 10 'run'. lines 160-176:
   }
 }
 
-task 11 'run'. lines 178-194:
+task 12 'run'. lines 206-222:
 {
   "gas_used": 214125,
   "status": {
@@ -40,7 +48,7 @@ task 11 'run'. lines 178-194:
   }
 }
 
-task 12 'run'. lines 197-216:
+task 13 'run'. lines 225-246:
 {
   "gas_used": 366904,
   "status": {
@@ -48,7 +56,7 @@ task 12 'run'. lines 197-216:
   }
 }
 
-task 14 'run'. lines 220-234:
+task 15 'run'. lines 250-296:
 {
   "gas_used": 103439,
   "status": {
@@ -66,43 +74,7 @@ task 14 'run'. lines 220-234:
   }
 }
 
-task 15 'run'. lines 236-250:
-{
-  "gas_used": 103439,
-  "status": {
-    "Keep": {
-      "MoveAbort": [
-        {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "GenesisDao"
-          }
-        },
-        372487
-      ]
-    }
-  }
-}
-
-task 16 'run'. lines 252-266:
-{
-  "gas_used": 95619,
-  "status": {
-    "Keep": {
-      "MoveAbort": [
-        {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "GenesisDao"
-          }
-        },
-        367620
-      ]
-    }
-  }
-}
-
-task 18 'run'. lines 271-283:
+task 17 'run'. lines 301-313:
 {
   "gas_used": 106802,
   "status": {

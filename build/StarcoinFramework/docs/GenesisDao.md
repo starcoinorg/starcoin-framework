@@ -155,6 +155,7 @@
 <b>use</b> <a href="SBTVoteStrategy.md#0x1_SBTVoteStrategy">0x1::SBTVoteStrategy</a>;
 <b>use</b> <a href="STC.md#0x1_STC">0x1::STC</a>;
 <b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
+<b>use</b> <a href="SnapshotUtil.md#0x1_SnapshotUtil">0x1::SnapshotUtil</a>;
 <b>use</b> <a href="StarcoinVerifier.md#0x1_StarcoinVerifier">0x1::StarcoinVerifier</a>;
 <b>use</b> <a href="Timestamp.md#0x1_Timestamp">0x1::Timestamp</a>;
 <b>use</b> <a href="Token.md#0x1_Token">0x1::Token</a>;
@@ -1671,12 +1672,6 @@ use bcs se/de for Snapshot proofs
 </dd>
 <dt>
 <code>account_state_proof_siblings: vector&lt;vector&lt;u8&gt;&gt;</code>
-</dt>
-<dd>
-
-</dd>
-<dt>
-<code>resource_struct_tag: vector&lt;u8&gt;</code>
 </dt>
 <dd>
 
@@ -3606,7 +3601,7 @@ User can only vote once, then the stake is locked,
 The voting power depends on the strategy of the proposal configuration and the user's token amount at the time of the snapshot
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_cast_vote">cast_vote</a>&lt;DaoT: store&gt;(sender: &signer, proposal_id: u64, snpashot_raw_proofs: vector&lt;u8&gt;, resource_struct_tag: vector&lt;u8&gt;, choice: <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">GenesisDao::VotingChoice</a>)
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_cast_vote">cast_vote</a>&lt;DaoT: store&gt;(sender: &signer, proposal_id: u64, snpashot_raw_proofs: vector&lt;u8&gt;, choice: <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">GenesisDao::VotingChoice</a>)
 </code></pre>
 
 
@@ -3619,7 +3614,6 @@ The voting power depends on the strategy of the proposal configuration and the u
     sender: &signer,
     proposal_id: u64,
     snpashot_raw_proofs: vector&lt;u8&gt;,
-    resource_struct_tag: vector&lt;u8&gt;,
     choice: <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>,
 )  <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>, <a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a> {
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
@@ -3637,11 +3631,11 @@ The voting power depends on the strategy of the proposal configuration and the u
     <b>assert</b>!(<a href="GenesisDao.md#0x1_GenesisDao_is_member">is_member</a>&lt;DaoT&gt;(sender_addr), <a href="Errors.md#0x1_Errors_requires_capability">Errors::requires_capability</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_DAO_MEMBER">ERR_NOT_DAO_MEMBER</a>));
 
     // verify snapshot state proof
-    <b>let</b> snapshot_proof = <a href="GenesisDao.md#0x1_GenesisDao_deserialize_snapshot_proofs">deserialize_snapshot_proofs</a>(&snpashot_raw_proofs, &resource_struct_tag);
+    <b>let</b> snapshot_proof = <a href="GenesisDao.md#0x1_GenesisDao_deserialize_snapshot_proofs">deserialize_snapshot_proofs</a>(&snpashot_raw_proofs);
     <b>let</b> state_proof = <a href="GenesisDao.md#0x1_GenesisDao_new_state_proof_from_proofs">new_state_proof_from_proofs</a>(&snapshot_proof);
-    // TODO check resource_struct_tag is DAO <b>struct</b> tag, need de resource_struct_tag
+    <b>let</b> resource_struct_tag = <a href="SnapshotUtil.md#0x1_SnapshotUtil_get_sturct_tag">SnapshotUtil::get_sturct_tag</a>&lt;DaoT&gt;();
     // verify state_proof according <b>to</b> proposal snapshot proofs, and state root
-    <b>let</b> verify = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_state_proof">StarcoinVerifier::verify_state_proof</a>(&state_proof, &proposal.state_root, sender_addr, &snapshot_proof.resource_struct_tag, &snapshot_proof.state);
+    <b>let</b> verify = <a href="StarcoinVerifier.md#0x1_StarcoinVerifier_verify_state_proof">StarcoinVerifier::verify_state_proof</a>(&state_proof, &proposal.state_root, sender_addr, &resource_struct_tag, &snapshot_proof.state);
     <b>assert</b>!(verify, <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_STATE_PROOF_VERIFY_INVALID">ERR_STATE_PROOF_VERIFY_INVALID</a>));
 
     // TODO is allowed just <b>use</b> part of weight?
@@ -3691,7 +3685,7 @@ The voting power depends on the strategy of the proposal configuration and the u
 
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_deserialize_snapshot_proofs">deserialize_snapshot_proofs</a>(snpashot_raw_proofs: &vector&lt;u8&gt;, resource_struct_tag: &vector&lt;u8&gt;): <a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">GenesisDao::SnapshotProof</a>
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_deserialize_snapshot_proofs">deserialize_snapshot_proofs</a>(snpashot_raw_proofs: &vector&lt;u8&gt;): <a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">GenesisDao::SnapshotProof</a>
 </code></pre>
 
 
@@ -3700,7 +3694,7 @@ The voting power depends on the strategy of the proposal configuration and the u
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_deserialize_snapshot_proofs">deserialize_snapshot_proofs</a>(snpashot_raw_proofs: &vector&lt;u8&gt;, resource_struct_tag: &vector&lt;u8&gt;): <a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">SnapshotProof</a>{
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_deserialize_snapshot_proofs">deserialize_snapshot_proofs</a>(snpashot_raw_proofs: &vector&lt;u8&gt;): <a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">SnapshotProof</a>{
     <b>assert</b>!(<a href="Vector.md#0x1_Vector_length">Vector::length</a>(snpashot_raw_proofs) &gt; 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_SNAPSHOT_PROOF_PARAM_INVALID">ERR_SNAPSHOT_PROOF_PARAM_INVALID</a>));
     <b>let</b> offset= 0;
     <b>let</b> (state_option, offset) = <a href="BCS.md#0x1_BCS_deserialize_option_bytes">BCS::deserialize_option_bytes</a>(snpashot_raw_proofs, offset);
@@ -3716,8 +3710,6 @@ The voting power depends on the strategy of the proposal configuration and the u
     <b>let</b> account_state_proof_leaf2 = <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> account_state_proof_leaf2_option);
     <b>let</b> (account_state_proof_siblings, _offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes_vector">BCS::deserialize_bytes_vector</a>(snpashot_raw_proofs, offset);
 
-//        <b>let</b> (resource_struct_tag, _offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes">BCS::deserialize_bytes</a>(snapshot_proofs, offset);
-
     <a href="GenesisDao.md#0x1_GenesisDao_SnapshotProof">SnapshotProof</a> {
         state: <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> state_option),
         account_state: <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> account_state_option),
@@ -3731,8 +3723,6 @@ The voting power depends on the strategy of the proposal configuration and the u
             hash2: account_state_proof_leaf2,
         },
         account_state_proof_siblings,
-
-        resource_struct_tag : *resource_struct_tag,
     }
 }
 </code></pre>

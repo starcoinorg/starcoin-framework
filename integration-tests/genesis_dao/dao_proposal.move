@@ -140,6 +140,8 @@ script{
 }
 // check: EXECUTED
 
+
+
 //# run --signers creator
 script{
     use creator::DAOHelper::{X};
@@ -156,6 +158,32 @@ script{
 }
 // check: EXECUTED
 
+//# run --signers alice
+script{
+    use creator::DAOHelper::{X};
+    use StarcoinFramework::Token;
+    use StarcoinFramework::Debug;
+    use StarcoinFramework::BCS;
+
+    fun token_code(_sender: signer){
+        //        let struct_tag = b"";
+        let token_code = Token::token_code<X>();
+        let bcs_token_code = BCS::to_bytes(&token_code);
+
+        let offset = 0;
+        let (address, offset) = BCS::deserialize_address(&bcs_token_code, offset);
+        let (module_name, offset) = BCS::deserialize_bytes(&bcs_token_code, offset);
+        let (name, _offset) = BCS::deserialize_bytes(&bcs_token_code, offset);
+        Debug::print(&address);
+        Debug::print(&module_name);
+        Debug::print(&name);
+        Debug::print(&110220);
+        Debug::print(&token_code);
+        Debug::print(&b"DAOHelper");
+        Debug::print(&b"X");
+    }
+}
+// check: EXECUTED
 
 //# run --signers alice
 script{
@@ -206,11 +234,13 @@ script{
         let proposal_id = DAOHelper::create_x_proposal<X, STC>(&sender, 100u128, @alice, 10000);
 //        (u64, address, u64, u64, u128, u128, u128, u128, u64, vector<u8>)
         let (_id, proposer, start_time, end_time, _yes_votes, _no_votes, _no_with_veto_votes, _abstain_votes, block_number, state_root) = GenesisDao::proposal_info<X>(proposal_id);
+
         Debug::print(&proposer);
         Debug::print(&start_time);
         Debug::print(&end_time);
         Debug::print(&block_number);
         Debug::print(&state_root);
+
     }
 }
 // check: EXECUTED
