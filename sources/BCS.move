@@ -64,14 +64,25 @@ module BCS {
     }
 
 //    #[test]
-//    fun test_deserialize_option_tuple() {
-//        let max_int128 = 170141183460469231731687303715884105727;
-//        let u: u128 = max_int128;
-//        let bs = BCS::to_bytes<u128>(&u);
-//        let (r, offset) =  deserialize_u128(&bs, 0);
-//        assert!(u == r, 1006);
-//        assert!(offset == 16, 1007);
-//    }
+    fun test_deserialize_option_tuple() {
+        let tuple_bytes = Vector::empty<u8>();
+        let tuple1_bytes = x"01020304";
+        let tuple2_bytes = x"05060708";
+        let tuple1_bcs = to_bytes(&tuple1_bytes);
+        let tuple2_bcs = to_bytes(&tuple2_bytes);
+        Vector::append(&mut tuple_bytes, tuple1_bcs);
+        Vector::append(&mut tuple_bytes, tuple2_bcs);
+
+        let tuple_option = Option::some(tuple_bytes);
+        let tuple_option_bcs = to_bytes(&tuple_option);
+
+        let offset = 0;
+        let (tuple1, tuple2, _offset) = deserialize_option_tuple(&tuple_option_bcs, offset);
+        let tuple1_option = Option::some(tuple1_bytes);
+        let tuple2_option = Option::some(tuple2_bytes);
+        assert!(tuple1 == tuple1_option, 999);
+        assert!(tuple2 == tuple2_option, 1000);
+    }
 
     public fun deserialize_bytes_vector(input: &vector<u8>, offset: u64): (vector<vector<u8>>, u64) {
         let (len, new_offset) = deserialize_len(input, offset);

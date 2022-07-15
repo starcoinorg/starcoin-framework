@@ -24,12 +24,14 @@ module StarcoinFramework::SnapshotUtil{
         Debug::print(&offset);
         let (_account_state_option, offset) = BCS::deserialize_option_bytes(&snpashot_raw_proofs, offset);
         let _account_state = Option::extract(&mut _account_state_option);
+        Debug::print(&110110);
         Debug::print(&_account_state);
         Debug::print(&offset);
 
         let (_account_proof_leaf1_option, _account_proof_leaf2_option, offset) = BCS::deserialize_option_tuple(&snpashot_raw_proofs, offset);
         let _account_proof_leaf1 = Option::extract(&mut _account_proof_leaf1_option);
         let _account_proof_leaf2 = Option::extract(&mut _account_proof_leaf2_option);
+        Debug::print(&offset);
 
         let account_proof_leaf_nodes = Vector::empty<vector<u8>>();
         Vector::push_back(&mut account_proof_leaf_nodes, x"73837fcf4e69ae60e18ea291b9f25c86ce8053c6ee647a2b287083327c67dd7e");
@@ -48,7 +50,7 @@ module StarcoinFramework::SnapshotUtil{
         let (_account_state_proof_siblings, _offset) = BCS::deserialize_bytes_vector(&snpashot_raw_proofs, offset);
 
         Debug::print(&_account_state_proof_siblings);
-        Debug::print(&offset);
+        Debug::print(&_offset);
     }
 
     /// Struct Tag which identify a unique Struct.

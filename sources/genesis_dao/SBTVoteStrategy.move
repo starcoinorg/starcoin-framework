@@ -4,9 +4,7 @@ module StarcoinFramework::SBTVoteStrategy{
     use StarcoinFramework::Debug;
     use StarcoinFramework::Vector;
 
-
     const ERR_BCS_STATE_NTFS_LENGHT_TYPE_INVALID: u64 = 1413;
-
 
     /// deserialize snapshot vote value from state
     public fun get_voting_power(state: &vector<u8>) : u128 {
