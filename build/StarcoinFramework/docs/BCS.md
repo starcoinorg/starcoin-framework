@@ -13,7 +13,6 @@ published on-chain.
 -  [Function `to_address`](#0x1_BCS_to_address)
 -  [Function `deserialize_option_bytes_vector`](#0x1_BCS_deserialize_option_bytes_vector)
 -  [Function `deserialize_option_tuple`](#0x1_BCS_deserialize_option_tuple)
--  [Function `test_deserialize_option_tuple`](#0x1_BCS_test_deserialize_option_tuple)
 -  [Function `deserialize_bytes_vector`](#0x1_BCS_deserialize_bytes_vector)
 -  [Function `deserialize_u64_vector`](#0x1_BCS_deserialize_u64_vector)
 -  [Function `deserialize_u128_vector`](#0x1_BCS_deserialize_u128_vector)
@@ -239,46 +238,6 @@ Return the address of key bytes
 
 
 <pre><code><b>pragma</b> verify = <b>false</b>;
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_BCS_test_deserialize_option_tuple"></a>
-
-## Function `test_deserialize_option_tuple`
-
-
-
-<pre><code><b>fun</b> <a href="BCS.md#0x1_BCS_test_deserialize_option_tuple">test_deserialize_option_tuple</a>()
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>fun</b> <a href="BCS.md#0x1_BCS_test_deserialize_option_tuple">test_deserialize_option_tuple</a>() {
-    <b>let</b> tuple_bytes = <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>&lt;u8&gt;();
-    <b>let</b> tuple1_bytes = x"01020304";
-    <b>let</b> tuple2_bytes = x"05060708";
-    <b>let</b> tuple1_bcs = <a href="BCS.md#0x1_BCS_to_bytes">to_bytes</a>(&tuple1_bytes);
-    <b>let</b> tuple2_bcs = <a href="BCS.md#0x1_BCS_to_bytes">to_bytes</a>(&tuple2_bytes);
-    <a href="Vector.md#0x1_Vector_append">Vector::append</a>(&<b>mut</b> tuple_bytes, tuple1_bcs);
-    <a href="Vector.md#0x1_Vector_append">Vector::append</a>(&<b>mut</b> tuple_bytes, tuple2_bcs);
-
-    <b>let</b> tuple_option = <a href="Option.md#0x1_Option_some">Option::some</a>(tuple_bytes);
-    <b>let</b> tuple_option_bcs = <a href="BCS.md#0x1_BCS_to_bytes">to_bytes</a>(&tuple_option);
-
-    <b>let</b> offset = 0;
-    <b>let</b> (tuple1, tuple2, _offset) = <a href="BCS.md#0x1_BCS_deserialize_option_tuple">deserialize_option_tuple</a>(&tuple_option_bcs, offset);
-    <b>let</b> tuple1_option = <a href="Option.md#0x1_Option_some">Option::some</a>(tuple1_bytes);
-    <b>let</b> tuple2_option = <a href="Option.md#0x1_Option_some">Option::some</a>(tuple2_bytes);
-    <b>assert</b>!(tuple1 == tuple1_option, 999);
-    <b>assert</b>!(tuple2 == tuple2_option, 1000);
-}
 </code></pre>
 
 

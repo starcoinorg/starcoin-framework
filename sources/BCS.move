@@ -63,7 +63,7 @@ module BCS {
         pragma verify = false;
     }
 
-//    #[test]
+    #[test]
     fun test_deserialize_option_tuple() {
         let tuple_bytes = Vector::empty<u8>();
         let tuple1_bytes = x"01020304";
@@ -73,8 +73,9 @@ module BCS {
         Vector::append(&mut tuple_bytes, tuple1_bcs);
         Vector::append(&mut tuple_bytes, tuple2_bcs);
 
-        let tuple_option = Option::some(tuple_bytes);
-        let tuple_option_bcs = to_bytes(&tuple_option);
+        let tuple_option_bcs = Vector::empty<u8>();
+        Vector::append(&mut tuple_option_bcs, x"01");
+        Vector::append(&mut tuple_option_bcs, tuple_bytes);
 
         let offset = 0;
         let (tuple1, tuple2, _offset) = deserialize_option_tuple(&tuple_option_bcs, offset);
