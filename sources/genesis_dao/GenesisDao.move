@@ -1299,6 +1299,17 @@ module StarcoinFramework::GenesisDao {
         *borrow_proposal(global_proposals, proposal_id)
     }
 
+    /// queue agreed proposal to execute.
+    public(script) fun queue_proposal_action<DaoT: copy + drop + store>(
+        proposal_id: u64,
+    ) acquires GlobalProposalActions, GlobalProposals {
+        // Only agreed proposal can be submitted.
+        assert!(proposal_state<DaoT>(proposal_id) == AGREED, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
+        let dao_address = dao_address<DaoT>();
+        let proposals = borrow_global_mut<GlobalProposals>(dao_address);
+        let proposal = borrow_proposal_mut(proposals, proposal_id);
+        proposal.eta = Timestamp::now_milliseconds() + proposal.action_delay;
+    }
 
     /// DaoConfig
     /// ---------------------------------------------------

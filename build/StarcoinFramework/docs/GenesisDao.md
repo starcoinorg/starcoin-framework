@@ -116,6 +116,7 @@
 -  [Function `borrow_proposal`](#0x1_GenesisDao_borrow_proposal)
 -  [Function `find_proposal_action_index`](#0x1_GenesisDao_find_proposal_action_index)
 -  [Function `proposal`](#0x1_GenesisDao_proposal)
+-  [Function `queue_proposal_action`](#0x1_GenesisDao_queue_proposal_action)
 -  [Function `new_dao_config`](#0x1_GenesisDao_new_dao_config)
 -  [Function `set_custom_config`](#0x1_GenesisDao_set_custom_config)
 -  [Function `voting_delay`](#0x1_GenesisDao_voting_delay)
@@ -4242,6 +4243,38 @@ Return a copy of Proposal
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
     <b>let</b> global_proposals = <b>borrow_global</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
     *<a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal">borrow_proposal</a>(global_proposals, proposal_id)
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_queue_proposal_action"></a>
+
+## Function `queue_proposal_action`
+
+queue agreed proposal to execute.
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_queue_proposal_action">queue_proposal_action</a>&lt;DaoT: <b>copy</b>, drop, store&gt;(proposal_id: u64)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_queue_proposal_action">queue_proposal_action</a>&lt;DaoT: <b>copy</b> + drop + store&gt;(
+    proposal_id: u64,
+) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a> {
+    // Only agreed proposal can be submitted.
+    <b>assert</b>!(<a href="GenesisDao.md#0x1_GenesisDao_proposal_state">proposal_state</a>&lt;DaoT&gt;(proposal_id) == <a href="GenesisDao.md#0x1_GenesisDao_AGREED">AGREED</a>, <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_STATE_INVALID">ERR_PROPOSAL_STATE_INVALID</a>));
+    <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
+    <b>let</b> proposals = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
+    <b>let</b> proposal = <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal_mut">borrow_proposal_mut</a>(proposals, proposal_id);
+    proposal.eta = <a href="Timestamp.md#0x1_Timestamp_now_milliseconds">Timestamp::now_milliseconds</a>() + proposal.action_delay;
 }
 </code></pre>
 
