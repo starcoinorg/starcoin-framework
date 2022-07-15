@@ -1245,7 +1245,7 @@ module StarcoinFramework::GenesisDao {
 
     /// get proposal's information.
     /// return: (id, proposer, start_time, end_time, yes_votes, no_votes, no_with_veto_votes, abstain_votes, block_number, state_root).
-    public fun proposal_info<DaoT: copy + drop + store>(
+    public fun proposal_info<DaoT: store>(
         proposal_id: u64,
     ): (u64, address, u64, u64, u128, u128, u128, u128, u64, vector<u8>) acquires GlobalProposals {
         let dao_address = DaoRegistry::dao_address<DaoT>();
@@ -1301,7 +1301,7 @@ module StarcoinFramework::GenesisDao {
     }
 
     /// queue agreed proposal to execute.
-    public(script) fun queue_proposal_action<DaoT: copy + drop + store>(
+    public(script) fun queue_proposal_action<DaoT:store>(
         _signer: signer,
         proposal_id: u64,
     ) acquires GlobalProposalActions, GlobalProposals {
