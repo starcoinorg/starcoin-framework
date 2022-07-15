@@ -261,7 +261,7 @@ script{
         GenesisDao::cast_vote<X>(&sender, proposal_id, snapshot_proofs, choice);
     }
 }
-// check: EXECUTED
+// check: ABORT
 
 ////# run --signers alice
 //script{
@@ -310,4 +310,4 @@ script{
         DAOHelper::execute_x_proposal<X, STC>(&sender, proposal_id);
     }
 }
-// check: EXECUTED
+// check: ABORT

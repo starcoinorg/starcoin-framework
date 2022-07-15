@@ -50,44 +50,56 @@ task 12 'run'. lines 206-222:
 
 task 13 'run'. lines 225-246:
 {
-  "gas_used": 366904,
-  "status": {
-    "Keep": "Executed"
-  }
-}
-
-task 15 'run'. lines 250-296:
-{
-  "gas_used": 103439,
+  "gas_used": 237418,
   "status": {
     "Keep": {
       "MoveAbort": [
         {
           "Module": {
             "address": "0x00000000000000000000000000000001",
+            "name": "Block"
+          }
+        },
+        4609
+      ]
+    }
+  }
+}
+
+task 15 'run'. lines 250-296:
+{
+  "gas_used": 17749,
+  "status": {
+    "Keep": {
+      "ExecutionFailure": {
+        "location": {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
             "name": "GenesisDao"
           }
         },
-        372487
-      ]
+        "function": 16,
+        "code_offset": 3
+      }
     }
   }
 }
 
 task 17 'run'. lines 301-313:
 {
-  "gas_used": 106802,
+  "gas_used": 46317,
   "status": {
     "Keep": {
-      "MoveAbort": [
-        {
+      "ExecutionFailure": {
+        "location": {
           "Module": {
             "address": "0x00000000000000000000000000000001",
             "name": "GenesisDao"
           }
         },
-        361729
-      ]
+        "function": 66,
+        "code_offset": 3
+      }
     }
   }
 }
