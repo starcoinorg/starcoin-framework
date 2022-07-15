@@ -117,6 +117,7 @@
 -  [Function `find_proposal_action_index`](#0x1_GenesisDao_find_proposal_action_index)
 -  [Function `proposal`](#0x1_GenesisDao_proposal)
 -  [Function `queue_proposal_action`](#0x1_GenesisDao_queue_proposal_action)
+-  [Function `cast_vote_entry`](#0x1_GenesisDao_cast_vote_entry)
 -  [Function `new_dao_config`](#0x1_GenesisDao_new_dao_config)
 -  [Function `set_custom_config`](#0x1_GenesisDao_set_custom_config)
 -  [Function `voting_delay`](#0x1_GenesisDao_voting_delay)
@@ -144,6 +145,7 @@
 
 <pre><code><b>use</b> <a href="Account.md#0x1_Account">0x1::Account</a>;
 <b>use</b> <a href="BCS.md#0x1_BCS">0x1::BCS</a>;
+<b>use</b> <a href="Block.md#0x1_Block">0x1::Block</a>;
 <b>use</b> <a href="Config.md#0x1_Config">0x1::Config</a>;
 <b>use</b> <a href="DaoAccount.md#0x1_DaoAccount">0x1::DaoAccount</a>;
 <b>use</b> <a href="DaoRegistry.md#0x1_DaoRegistry">0x1::DaoRegistry</a>;
@@ -3584,8 +3586,9 @@ get lastest block number and state root
 
 
 <pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_block_number_and_state_root">block_number_and_state_root</a>(): (u64, vector&lt;u8&gt;) {
-//        <a href="Block.md#0x1_Block_latest_state_root">Block::latest_state_root</a>()
-    (101, x"5981f1a692a6d9f4772e69a46d1380158a0e1b2c31654aa9df4b0e591e8faab0")
+    //        (101, x"5981f1a692a6d9f4772e69a46d1380158a0e1b2c31654aa9df4b0e591e8faab0")
+    <a href="Block.md#0x1_Block_latest_state_root">Block::latest_state_root</a>()
+
 }
 </code></pre>
 
@@ -4276,6 +4279,43 @@ queue agreed proposal to execute.
     <b>let</b> proposals = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
     <b>let</b> proposal = <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal_mut">borrow_proposal_mut</a>(proposals, proposal_id);
     proposal.eta = <a href="Timestamp.md#0x1_Timestamp_now_milliseconds">Timestamp::now_milliseconds</a>() + proposal.action_delay;
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_cast_vote_entry"></a>
+
+## Function `cast_vote_entry`
+
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_cast_vote_entry">cast_vote_entry</a>&lt;DaoT: store&gt;(sender: signer, proposal_id: u64, snpashot_raw_proofs: vector&lt;u8&gt;, choice: u8)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_cast_vote_entry">cast_vote_entry</a>&lt;DaoT:store&gt;(
+    sender: signer,
+    proposal_id: u64,
+    snpashot_raw_proofs: vector&lt;u8&gt;,
+    choice: u8,
+) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a> {
+    <b>let</b> sender_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&sender);
+    <b>if</b> (<a href="GenesisDao.md#0x1_GenesisDao_has_voted">has_voted</a>&lt;DaoT&gt;(sender_addr, proposal_id)) {
+        <b>abort</b> <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_VOTED_ALREADY">ERR_VOTED_ALREADY</a>)
+    };
+
+    <b>let</b> vote_choice = <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a> {
+        choice,
+    };
+    <a href="GenesisDao.md#0x1_GenesisDao_cast_vote">cast_vote</a>&lt;DaoT&gt;(&sender, proposal_id, snpashot_raw_proofs, vote_choice)
 }
 </code></pre>
 

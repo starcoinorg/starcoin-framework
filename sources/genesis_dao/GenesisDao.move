@@ -19,7 +19,7 @@ module StarcoinFramework::GenesisDao {
     use StarcoinFramework::BCS;
     use StarcoinFramework::SBTVoteStrategy;
     use StarcoinFramework::SnapshotUtil;
-    //    use StarcoinFramework::Block;
+    use StarcoinFramework::Block;
 
 
     const E_NO_GRANTED: u64 = 1;
@@ -930,8 +930,9 @@ module StarcoinFramework::GenesisDao {
 
     /// get lastest block number and state root
     fun block_number_and_state_root(): (u64, vector<u8>) {
-//        Block::latest_state_root()
-        (101, x"5981f1a692a6d9f4772e69a46d1380158a0e1b2c31654aa9df4b0e591e8faab0")
+        //        (101, x"5981f1a692a6d9f4772e69a46d1380158a0e1b2c31654aa9df4b0e591e8faab0")
+        Block::latest_state_root()
+
     }
 
 
@@ -1310,6 +1311,23 @@ module StarcoinFramework::GenesisDao {
         let proposals = borrow_global_mut<GlobalProposals>(dao_address);
         let proposal = borrow_proposal_mut(proposals, proposal_id);
         proposal.eta = Timestamp::now_milliseconds() + proposal.action_delay;
+    }
+
+    public(script) fun cast_vote_entry<DaoT:store>(
+        sender: signer,
+        proposal_id: u64,
+        snpashot_raw_proofs: vector<u8>,
+        choice: u8,
+    ) acquires MyVotes, GlobalProposals, ProposalEvent, GlobalProposalActions {
+        let sender_addr = Signer::address_of(&sender);
+        if (has_voted<DaoT>(sender_addr, proposal_id)) {
+            abort Errors::invalid_state(ERR_VOTED_ALREADY)
+        };
+
+        let vote_choice = VotingChoice {
+            choice,
+        };
+        cast_vote<DaoT>(&sender, proposal_id, snpashot_raw_proofs, vote_choice)
     }
 
     /// DaoConfig
