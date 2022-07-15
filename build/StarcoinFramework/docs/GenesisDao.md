@@ -4257,7 +4257,7 @@ Return a copy of Proposal
 queue agreed proposal to execute.
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_queue_proposal_action">queue_proposal_action</a>&lt;DaoT: <b>copy</b>, drop, store&gt;(proposal_id: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_queue_proposal_action">queue_proposal_action</a>&lt;DaoT: <b>copy</b>, drop, store&gt;(_signer: signer, proposal_id: u64)
 </code></pre>
 
 
@@ -4267,6 +4267,7 @@ queue agreed proposal to execute.
 
 
 <pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_queue_proposal_action">queue_proposal_action</a>&lt;DaoT: <b>copy</b> + drop + store&gt;(
+    _signer: signer,
     proposal_id: u64,
 ) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a> {
     // Only agreed proposal can be submitted.

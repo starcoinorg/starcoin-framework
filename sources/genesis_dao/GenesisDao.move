@@ -1301,6 +1301,7 @@ module StarcoinFramework::GenesisDao {
 
     /// queue agreed proposal to execute.
     public(script) fun queue_proposal_action<DaoT: copy + drop + store>(
+        _signer: signer,
         proposal_id: u64,
     ) acquires GlobalProposalActions, GlobalProposals {
         // Only agreed proposal can be submitted.
