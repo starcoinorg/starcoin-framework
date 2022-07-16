@@ -14,12 +14,16 @@
 
 ## Usage
 
-Add dependency to the project's Move.toml
+Add `address` and `dependency` to the project's Move.toml
 
 ```
+[addresses]
+StarcoinFramework = "0x1"
+
 [dependencies]
 StarcoinFramework = {git = "https://github.com/starcoinorg/starcoin-framework.git", rev="cf1deda180af40a8b3e26c0c7b548c4c290cd7e7"}
 ```
+
 * v11 git version: cf1deda180af40a8b3e26c0c7b548c4c290cd7e7
 
 ## Build and Test
