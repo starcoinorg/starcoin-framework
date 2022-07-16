@@ -186,21 +186,21 @@ module StarcoinFramework::VoteStrategy{
 
     public fun deserialize_one_type_cursor(input: &vector<u8>, ctype: &vector<u8>, offset:u64) : u64 {
         if (TYPE_U8 == *ctype) {
-            (_, offset) = BCS::deserialize_u8(input, offset);
+            offset = BCS::skip_u8(input, offset);
         } else if (TYPE_U64 == *ctype) {
-            (_, offset) = BCS::deserialize_u64(input, offset);
+            offset = BCS::skip_u64(input, offset);
         } else if (TYPE_U128 == *ctype) {
-            (_, offset) = BCS::deserialize_u128(input, offset);
+            offset = BCS::skip_u128(input, offset);
         } else if (TYPE_BYTES == *ctype) {
-            (_, offset) = BCS::deserialize_bytes(input, offset);
+            offset = BCS::skip_bytes(input, offset);
         } else if (TYPE_BYTES_VECTOR == *ctype) {
-            (_, offset) = BCS::deserialize_bytes_vector(input, offset);
+            offset = BCS::skip_bytes_vector(input, offset);
         } else if (TYPE_ADDRESS == *ctype) {
-            (_, offset) = BCS::deserialize_address(input, offset);
+            offset = BCS::skip_address(input, offset);
         } else if (TYPE_BOOL == *ctype) {
-            (_, offset) = BCS::deserialize_bool(input, offset);
+            offset = BCS::skip_bool(input, offset);
         } else if (TYPE_OPTION_BYTES == *ctype) {
-            (_, offset) = BCS::deserialize_option_bytes(input, offset);
+            offset = BCS::skip_option_bytes(input, offset);
         } else {
             abort Errors::invalid_argument(ERR_PRE_ORDER_TYPE_INVALID)
         };
@@ -238,22 +238,19 @@ module StarcoinFramework::VoteStrategy{
         let offset = 0;
 
         // array length
-        let (_r, offset) = BCS::deserialize_u8(&bs, offset);
+        let offset = BCS::skip_u8(&bs, offset);
         // creator
-        let (_r, offset) = BCS::deserialize_address(&bs, offset);
-        Debug::print(&_r);
+        let offset = BCS::skip_address(&bs, offset);
         // id
-        let (_r, offset) = BCS::deserialize_u64(&bs, offset);
-        Debug::print(&_r);
+        let offset = BCS::skip_u64(&bs, offset);
         Debug::print<u64>(&offset);
         // base_meta
-        let (_r, offset) = BCS::deserialize_bytes(&bs, offset);
-        let (_r, offset) = BCS::deserialize_bytes(&bs, offset);
-        let (_r, offset) = BCS::deserialize_bytes(&bs, offset);
-        let (_r, offset) = BCS::deserialize_bytes(&bs, offset);
+        let offset = BCS::skip_bytes(&bs, offset);
+        let offset = BCS::skip_bytes(&bs, offset);
+        let offset = BCS::skip_bytes(&bs, offset);
+        let offset = BCS::skip_bytes(&bs, offset);
         // type_meta
-        let (_r, offset) = BCS::deserialize_u64(&bs, offset);
-        Debug::print(&_r);
+        let offset = BCS::skip_u64(&bs, offset);
         Debug::print<u64>(&offset);
         // body
         let (sbt_value, offset) = BCS::deserialize_u128(&bs, offset);
@@ -349,9 +346,9 @@ module StarcoinFramework::VoteStrategy{
         Debug::print<u64>(&offset);
         let (_r, offset) = BCS::deserialize_bytes(&bs, offset);
         let (_r, offset) = BCS::deserialize_bytes(&bs, offset);
-        let (_r, offset) = BCS::deserialize_bytes(&bs, offset);
-        let (_r, offset) = BCS::deserialize_bytes(&bs, offset);
-        let (_r, offset) = BCS::deserialize_u64(&bs, offset);
+        let offset = BCS::skip_bytes(&bs, offset);
+        let offset = BCS::skip_bytes(&bs, offset);
+        let offset = BCS::skip_u64(&bs, offset);
         Debug::print(&_r);
         Debug::print<u64>(&offset);
         let (_r, offset) = BCS::deserialize_u128(&bs, offset);
