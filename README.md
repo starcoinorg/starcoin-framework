@@ -12,6 +12,16 @@
 - [latest](./build/StarcoinFramework/docs)
 - [v11](./release/v11/docs)
 
+## Usage
+
+Add dependency to the project's Move.toml
+
+```
+[dependencies]
+StarcoinFramework = {git = "https://github.com/starcoinorg/starcoin-framework.git", rev="cf1deda180af40a8b3e26c0c7b548c4c290cd7e7"}
+```
+* v11 git version: cf1deda180af40a8b3e26c0c7b548c4c290cd7e7
+
 ## Build and Test
 
 Setup dev environment:
