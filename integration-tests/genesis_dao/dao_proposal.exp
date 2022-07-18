@@ -10,7 +10,7 @@ task 5 'run'. lines 13-21:
 
 task 8 'run'. lines 132-141:
 {
-  "gas_used": 1091610,
+  "gas_used": 1106547,
   "status": {
     "Keep": "Executed"
   }
@@ -97,7 +97,7 @@ task 17 'run'. lines 301-313:
             "name": "GenesisDao"
           }
         },
-        "function": 66,
+        "function": 67,
         "code_offset": 3
       }
     }

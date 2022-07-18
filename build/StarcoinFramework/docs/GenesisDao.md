@@ -84,6 +84,7 @@
 -  [Function `withdraw_token`](#0x1_GenesisDao_withdraw_token)
 -  [Function `withdraw_nft`](#0x1_GenesisDao_withdraw_nft)
 -  [Function `join_member`](#0x1_GenesisDao_join_member)
+-  [Function `quit_member_entry`](#0x1_GenesisDao_quit_member_entry)
 -  [Function `quit_member`](#0x1_GenesisDao_quit_member)
 -  [Function `revoke_member`](#0x1_GenesisDao_revoke_member)
 -  [Function `do_remove_member`](#0x1_GenesisDao_do_remove_member)
@@ -92,6 +93,7 @@
 -  [Function `query_sbt`](#0x1_GenesisDao_query_sbt)
 -  [Function `is_member`](#0x1_GenesisDao_is_member)
 -  [Function `create_grant`](#0x1_GenesisDao_create_grant)
+-  [Function `grant_withdraw_entry`](#0x1_GenesisDao_grant_withdraw_entry)
 -  [Function `grant_withdraw`](#0x1_GenesisDao_grant_withdraw)
 -  [Function `is_have_grant`](#0x1_GenesisDao_is_have_grant)
 -  [Function `grant_revoke`](#0x1_GenesisDao_grant_revoke)
@@ -3223,6 +3225,31 @@ Join Dao and get a membership
 
 </details>
 
+<a name="0x1_GenesisDao_quit_member_entry"></a>
+
+## Function `quit_member_entry`
+
+Member quit Dao by self
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_quit_member_entry">quit_member_entry</a>&lt;DaoT: store&gt;(sender: signer)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_quit_member_entry">quit_member_entry</a>&lt;DaoT: store&gt;(sender: signer) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a> {
+    <a href="GenesisDao.md#0x1_GenesisDao_quit_member">quit_member</a>&lt;DaoT&gt;(&sender);
+}
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_GenesisDao_quit_member"></a>
 
 ## Function `quit_member`
@@ -3536,6 +3563,31 @@ create grant and init/emit a event
 
 </details>
 
+<a name="0x1_GenesisDao_grant_withdraw_entry"></a>
+
+## Function `grant_withdraw_entry`
+
+withdraw token with grant
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_withdraw_entry">grant_withdraw_entry</a>&lt;DaoT, PluginT, TokenT: store&gt;(sender: signer, amount: u128)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_withdraw_entry">grant_withdraw_entry</a>&lt;DaoT, PluginT, TokenT:store&gt;(sender: signer, amount:u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>, <a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>{
+    <a href="GenesisDao.md#0x1_GenesisDao_grant_withdraw">grant_withdraw</a>&lt;DaoT, PluginT, TokenT&gt;(&sender, amount);
+}
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_GenesisDao_grant_withdraw"></a>
 
 ## Function `grant_withdraw`
@@ -3552,7 +3604,7 @@ withdraw token with grant
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_withdraw">grant_withdraw</a>&lt;DaoT, PluginT, TokenT:store&gt;(sender:&signer, amount:u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>, <a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_grant_withdraw">grant_withdraw</a>&lt;DaoT, PluginT, TokenT:store&gt;(sender: &signer, amount:u128) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoAccountCapHolder">DaoAccountCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>, <a href="GenesisDao.md#0x1_GenesisDao_GrantEvent">GrantEvent</a>{
     <b>let</b> account_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
     <b>assert</b>!(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_DaoGrantWithdrawTokenKey">DaoGrantWithdrawTokenKey</a>&lt;DaoT, PluginT, TokenT&gt;&gt;(account_address) , <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_NOT_HAVE_GRANT">ERR_NOT_HAVE_GRANT</a>));
 

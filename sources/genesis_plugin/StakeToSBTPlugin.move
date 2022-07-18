@@ -7,6 +7,7 @@ module StarcoinFramework::StakeToSBTPlugin {
     use StarcoinFramework::Errors;
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::Option;
+    use StarcoinFramework::InstallPluginProposalPlugin;
 
     const ERR_PLUGIN_USER_IS_MEMBER: u64 = 1001;
     const ERR_PLUGIN_HAS_STAKED: u64 = 1002;
@@ -217,4 +218,8 @@ module StarcoinFramework::StakeToSBTPlugin {
 
         init_config(cap);
     }
+
+    public (script) fun install_plugin_proposal<DaoT:store>(sender:signer, action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DaoT, StakeToSBTPlugin>(&sender, required_caps(), action_delay);
+    } 
 }

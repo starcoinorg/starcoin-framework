@@ -13,6 +13,9 @@ compiled_package_info:
       name: AccountScripts
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: AnyMemberPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: Arith
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -300,7 +303,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: E093E86F1F126777DAD34B174922F891D02EFD89E99EEE11D9CA926DE44E3CC5
+  source_digest: 224DADF28660C7CEBE78D4C88C0120D270973A6767772459A71D0C20369776A5
   build_flags:
     dev_mode: false
     test_mode: false
