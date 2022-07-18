@@ -229,7 +229,7 @@ module StarcoinFramework::GenesisDao {
     }
 
     /// Create a dao with a exists Dao account
-    public fun create_dao<DaoT: store>(cap: DaoAccountCap, name: vector<u8>, ext: DaoT, config: DaoConfig): DaoRootCap<DaoT> {
+    public fun create_dao<DaoT: store>(cap: DaoAccountCap, name: vector<u8>, ext: DaoT, config: DaoConfig): DaoRootCap<DaoT> acquires DaoEvent {
         let dao_signer = DaoAccount::dao_signer(&cap);
 
         let dao_address = Signer::address_of(&dao_signer);
@@ -241,9 +241,6 @@ module StarcoinFramework::GenesisDao {
             next_member_id: 1,
             next_proposal_id: 1,
         };
-
-        // initialize dao proposal event
-        initialize_proposal<DaoT>(&cap);
 
         move_to(&dao_signer, dao);
         move_to(&dao_signer, DaoExt{
@@ -267,7 +264,7 @@ module StarcoinFramework::GenesisDao {
         let nft_name = copy name;
         //TODO generate a svg NFT image.
         let nft_image = b"SVG image";
-        let nft_description = name;
+        let nft_description = copy name;
         let basemeta = NFT::new_meta_with_image_data(nft_name, nft_image, nft_description);
 
         NFT::register_v2<DaoMember<DaoT>>(&dao_signer, basemeta);
@@ -291,6 +288,9 @@ module StarcoinFramework::GenesisDao {
             cap: config_modify_cap,
         });
 
+        move_to(&dao_signer, DaoEvent<DaoT>  {
+            dao_create_event: Event::new_event_handle<DaoCreatedEvent>(&dao_signer),
+        });
         move_to(&dao_signer ,MemberEvent{
             member_join_event_handler:Event::new_event_handle<MemberJoinEvent<DaoT>>(&dao_signer),
             member_quit_event_handler:Event::new_event_handle<MemberQuitEvent<DaoT>>(&dao_signer),
@@ -298,11 +298,27 @@ module StarcoinFramework::GenesisDao {
             member_increase_sbt_event_handler:Event::new_event_handle<MemberIncreaseSBTEvent<DaoT>>(&dao_signer),
             member_decrease_sbt_event_handler:Event::new_event_handle<MemberDecreaseSBTEvent<DaoT>>(&dao_signer),
         });
+        move_to(&dao_signer, ProposalEvent<DaoT>  {
+            proposal_create_event: Event::new_event_handle<ProposalCreatedEvent>(&dao_signer),
+            vote_event: Event::new_event_handle<VotedEvent>(&dao_signer),
+            proposal_action_event: Event::new_event_handle<ProposalActionEvent>(&dao_signer),
+        });
+
+        // dao event emit
+        let dao_event = borrow_global_mut<DaoEvent<DaoT> >(dao_address);
+        Event::emit_event(&mut dao_event.dao_create_event,
+            DaoCreatedEvent {
+                id,
+                name: copy name,
+                dao_address,
+            },
+        );
+
         DaoRootCap<DaoT>{}
     }
 
     // Upgrade account to Dao account and create Dao
-    public fun upgrade_to_dao<DaoT: store>(sender: signer, name: vector<u8>, ext: DaoT, config: DaoConfig): DaoRootCap<DaoT> {
+    public fun upgrade_to_dao<DaoT: store>(sender: signer, name: vector<u8>, ext: DaoT, config: DaoConfig): DaoRootCap<DaoT> acquires DaoEvent{
         let cap = DaoAccount::upgrade_to_dao(sender);
         create_dao<DaoT>(cap, name, ext, config)
     }
@@ -312,7 +328,18 @@ module StarcoinFramework::GenesisDao {
         let DaoRootCap{} = cap;
     }
 
-    ///
+    /// dao event
+    struct DaoEvent<phantom DaoT> has key, store{
+        dao_create_event:Event::EventHandle<DaoCreatedEvent>,
+    }
+
+    struct DaoCreatedEvent has drop, store{
+        id: u64,
+        name: vector<u8>,
+        dao_address: address,
+    }
+
+    /// member event
     struct MemberEvent<phantom DaoT> has key, store{
         member_join_event_handler:Event::EventHandle<MemberJoinEvent<DaoT>>,
         member_quit_event_handler:Event::EventHandle<MemberQuitEvent<DaoT>>,
@@ -982,6 +1009,15 @@ module StarcoinFramework::GenesisDao {
         hash2: vector<u8>,
     }
 
+    /// proposal event
+    struct ProposalEvent<phantom DaoT: store> has key, store {
+        /// proposal creating event.
+        proposal_create_event: Event::EventHandle<ProposalCreatedEvent>,
+        /// voting event.
+        vote_event: Event::EventHandle<VotedEvent>,
+        /// proposal action event.
+        proposal_action_event: Event::EventHandle<ProposalActionEvent>,
+    }
 
     /// emitted when proposal created.
     struct ProposalCreatedEvent has drop, store {
@@ -992,7 +1028,7 @@ module StarcoinFramework::GenesisDao {
     }
 
     /// emitted when user vote/revoke_vote.
-    struct VoteChangedEvent has drop, store {
+    struct VotedEvent has drop, store {
         /// the proposal id.
         proposal_id: u64,
         /// the voter.
@@ -1004,23 +1040,12 @@ module StarcoinFramework::GenesisDao {
         vote_weight: u128,
     }
 
-    struct ProposalEvent<phantom DaoT: store> has key, store {
-        /// proposal creating event.
-        proposal_create_event: Event::EventHandle<ProposalCreatedEvent>,
-        /// voting event.
-        vote_changed_event: Event::EventHandle<VoteChangedEvent>,
-    }
-
-    /// Initialize proposal
-    /// only call by dao singer when DAO create
-    fun initialize_proposal<DaoT: store>(cap: &DaoAccountCap) {
-        let dao_signer = DaoAccount::dao_signer(cap);
-
-        let proposal_event = ProposalEvent<DaoT>  {
-            proposal_create_event: Event::new_event_handle<ProposalCreatedEvent>(&dao_signer),
-            vote_changed_event: Event::new_event_handle<VoteChangedEvent>(&dao_signer),
-        };
-        move_to(&dao_signer, proposal_event);
+    /// emitted when proposal executed.
+    struct ProposalActionEvent has drop, store {
+        /// the proposal id.
+        proposal_id: u64,
+        /// the sender.
+        sender: address,
     }
 
     /// propose a proposal.
@@ -1117,7 +1142,7 @@ module StarcoinFramework::GenesisDao {
         };
 
         // emit event
-        let proposal_event = borrow_global_mut<ProposalEvent<DaoT>>(DaoRegistry::dao_address<DaoT>());
+        let proposal_event = borrow_global_mut<ProposalEvent<DaoT>>(dao_address);
         Event::emit_event(&mut proposal_event.proposal_create_event,
             ProposalCreatedEvent { proposal_id, proposer },
         );
@@ -1190,8 +1215,8 @@ module StarcoinFramework::GenesisDao {
 
         // emit event
         let proposal_event = borrow_global_mut<ProposalEvent<DaoT> >(DaoRegistry::dao_address<DaoT>());
-        Event::emit_event(&mut proposal_event.vote_changed_event,
-            VoteChangedEvent {
+        Event::emit_event(&mut proposal_event.vote_event,
+            VotedEvent {
                 proposal_id,
                 voter: sender_addr,
                 choice: choice.choice,
@@ -1302,17 +1327,24 @@ module StarcoinFramework::GenesisDao {
     // Execute the proposal and return the action.
     public fun execute_proposal<DaoT: store, PluginT, ActionT: store>(
         _cap: &DaoProposalCap<DaoT, PluginT>,
-        _sender: &signer,
+        sender: &signer,
         proposal_id: u64,
-    ): ActionT acquires ProposalActions, GlobalProposals, GlobalProposalActions {
+    ): ActionT acquires ProposalActions, GlobalProposals, GlobalProposalActions, ProposalEvent {
         // Only executable proposal's action can be extracted.
          assert!(proposal_state<DaoT>(proposal_id) == EXECUTABLE, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
         let dao_address = dao_address<DaoT>();
+        let sender_addr = Signer::address_of(sender);
         assert!(exists<ProposalActions<ActionT>>(dao_address), Errors::invalid_state(ERR_PROPOSAL_ACTIONS_NOT_EXIST));
 
-        take_proposal_action(dao_address, proposal_id)
+        let actionT = take_proposal_action(dao_address, proposal_id);
 
-        //TODO add event
+        // emit event
+        let proposal_event = borrow_global_mut<ProposalEvent<DaoT>>(dao_address);
+        Event::emit_event(&mut proposal_event.proposal_action_event,
+            ProposalActionEvent { proposal_id, sender: sender_addr }
+        );
+
+        actionT
     }
 
     fun take_proposal_action<ActionT: store>(dao_address: address, proposal_id: u64): ActionT acquires ProposalActions, GlobalProposals, GlobalProposalActions {
@@ -1368,15 +1400,15 @@ module StarcoinFramework::GenesisDao {
     fun has_voted<DaoT>(sender: address, proposal_id: u64): bool acquires MyVotes{
         if(exists<MyVotes<DaoT>>(sender)){
             let my_votes = borrow_global<MyVotes<DaoT>>(sender);
-            let vote = get_vote_info<DaoT>(my_votes, proposal_id);
+            let vote = vote_info<DaoT>(my_votes, proposal_id);
             Option::is_some(&vote)
         }else{
             false
         }
     }
 
-    /// get vote info by proposal_id
-    fun get_vote_info<DaoT>(my_votes: &MyVotes<DaoT>, proposal_id: u64): Option<VoteInfo>{
+    /// vote info by proposal_id
+    fun vote_info<DaoT>(my_votes: &MyVotes<DaoT>, proposal_id: u64): Option<VoteInfo>{
         let len = Vector::length(&my_votes.votes);
         let idx = 0;
         loop {
@@ -1395,6 +1427,18 @@ module StarcoinFramework::GenesisDao {
             idx = idx + 1;
         };
         Option::none<VoteInfo>()
+    }
+
+    /// get vote info by proposal_id
+    public fun get_vote_info<DaoT>(voter: address, proposal_id: u64): (u64, u8, u128)acquires MyVotes {
+        if(exists<MyVotes<DaoT>>(voter)){
+            let my_votes = borrow_global<MyVotes<DaoT>>(voter);
+            let vote_option = vote_info<DaoT>(my_votes, proposal_id);
+            let vote = Option::extract(&mut vote_option);
+            (vote.proposal_id, vote.choice, vote.vote_weight)
+        }else{
+            (0, 0, 0)
+        }
     }
 
     public fun proposal_state<DaoT: store>(proposal_id: u64) : u8 acquires GlobalProposalActions, GlobalProposals {
