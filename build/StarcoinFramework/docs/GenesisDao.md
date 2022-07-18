@@ -1687,16 +1687,10 @@ review: it is safe to has <code><b>copy</b></code> and <code>drop</code>?
 <code>yes_votes: u128</code>
 </dt>
 <dd>
- count of voters who <code>yes|no|no_with_veto|abstain</code> with the proposal
+ count of voters who <code>yes|no|abstain</code> with the proposal
 </dd>
 <dt>
 <code>no_votes: u128</code>
-</dt>
-<dd>
-
-</dd>
-<dt>
-<code>no_with_veto_votes: u128</code>
 </dt>
 <dd>
 
@@ -1706,6 +1700,12 @@ review: it is safe to has <code><b>copy</b></code> and <code>drop</code>?
 </dt>
 <dd>
 
+</dd>
+<dt>
+<code>veto_votes: u128</code>
+</dt>
+<dd>
+ no_with_veto counts as no but also adds a veto vote
 </dd>
 <dt>
 <code>eta: u64</code>
@@ -4155,6 +4155,7 @@ _witness parameter ensures that the caller is the module which define PluginT
 
 ## Function `choice_no_with_veto`
 
+no_with_veto counts as no but also adds a veto vote
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_choice_no_with_veto">choice_no_with_veto</a>(): <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">GenesisDao::VotingChoice</a>
@@ -4247,8 +4248,8 @@ propose a proposal.
         end_time: start_time + voting_period,
         yes_votes: 0,
         no_votes: 0,
-        no_with_veto_votes: 0,
         abstain_votes: 0,
+        veto_votes: 0,
         eta: 0,
         action_delay,
         quorum_votes,
@@ -4663,7 +4664,8 @@ The voting power depends on the strategy of the proposal configuration and the u
     } <b>else</b> <b>if</b> (<a href="GenesisDao.md#0x1_GenesisDao_choice_no">choice_no</a>().choice == vote.choice) {
         proposal.no_votes = proposal.no_votes + vote.vote_weight;
     } <b>else</b> <b>if</b> ( <a href="GenesisDao.md#0x1_GenesisDao_choice_no_with_veto">choice_no_with_veto</a>().choice == vote.choice) {
-        proposal.no_with_veto_votes = proposal.no_with_veto_votes + vote.vote_weight;
+        proposal.no_votes = proposal.no_votes + vote.vote_weight;
+        proposal.veto_votes = proposal.veto_votes + vote.vote_weight;
     } <b>else</b> <b>if</b> (<a href="GenesisDao.md#0x1_GenesisDao_choice_abstain">choice_abstain</a>().choice == vote.choice) {
         proposal.abstain_votes = proposal.abstain_votes + vote.vote_weight;
     } <b>else</b> {
@@ -4864,7 +4866,7 @@ get vote info by proposal_id
         // Active
         <a href="GenesisDao.md#0x1_GenesisDao_ACTIVE">ACTIVE</a>
         //TODO need restrict yes votes ratio <b>with</b> (no/no_with_veto/abstain) ?
-    } <b>else</b> <b>if</b> (proposal.yes_votes &lt;= (proposal.no_votes + proposal.no_with_veto_votes + proposal.abstain_votes) ||
+    } <b>else</b> <b>if</b> (proposal.yes_votes &lt;= (proposal.no_votes  + proposal.abstain_votes) ||
                proposal.yes_votes &lt; proposal.quorum_votes) {
         // Defeated
         <a href="GenesisDao.md#0x1_GenesisDao_DEFEATED">DEFEATED</a>
@@ -4891,7 +4893,7 @@ get vote info by proposal_id
 ## Function `proposal_info`
 
 get proposal's information.
-return: (id, proposer, start_time, end_time, yes_votes, no_votes, no_with_veto_votes, abstain_votes, block_number, state_root).
+return: (id, proposer, start_time, end_time, yes_votes, no_votes, abstain_votes, veto_votes, block_number, state_root).
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_proposal_info">proposal_info</a>&lt;DaoT: store&gt;(proposal_id: u64): (u64, <b>address</b>, u64, u64, u128, u128, u128, u128, u64, vector&lt;u8&gt;)
@@ -4909,7 +4911,7 @@ return: (id, proposer, start_time, end_time, yes_votes, no_votes, no_with_veto_v
     <b>let</b> dao_address = <a href="DaoRegistry.md#0x1_DaoRegistry_dao_address">DaoRegistry::dao_address</a>&lt;DaoT&gt;();
     <b>let</b> proposals = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
     <b>let</b> proposal = <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal">borrow_proposal</a>(proposals, proposal_id);
-    (proposal.id, proposal.proposer, proposal.start_time, proposal.end_time, proposal.yes_votes, proposal.no_votes, proposal.no_with_veto_votes, proposal.abstain_votes, proposal.block_number, *&proposal.state_root)
+    (proposal.id, proposal.proposer, proposal.start_time, proposal.end_time, proposal.yes_votes, proposal.no_votes, proposal.abstain_votes, proposal.veto_votes, proposal.block_number, *&proposal.state_root)
 }
 </code></pre>
 

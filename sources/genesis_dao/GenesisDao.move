@@ -899,6 +899,7 @@ module StarcoinFramework::GenesisDao {
 
     public fun choice_no(): VotingChoice { VotingChoice{ choice: VOTING_CHOICE_NO } }
 
+    /// no_with_veto counts as no but also adds a veto vote
     public fun choice_no_with_veto(): VotingChoice { VotingChoice{ choice: VOTING_CHOICE_NO_WITH_VETO } }
 
     public fun choice_abstain(): VotingChoice { VotingChoice{ choice: VOTING_CHOICE_ABSTAIN } }
@@ -914,11 +915,12 @@ module StarcoinFramework::GenesisDao {
         start_time: u64,
         /// when voting ends.
         end_time: u64,
-        /// count of voters who `yes|no|no_with_veto|abstain` with the proposal
+        /// count of voters who `yes|no|abstain` with the proposal
         yes_votes: u128,
         no_votes: u128,
-        no_with_veto_votes: u128,
         abstain_votes: u128,
+        /// no_with_veto counts as no but also adds a veto vote
+        veto_votes: u128,
         /// executable after this time.
         eta: u64,
         /// after how long, the agreed proposal can be executed.
@@ -1085,8 +1087,8 @@ module StarcoinFramework::GenesisDao {
             end_time: start_time + voting_period,
             yes_votes: 0,
             no_votes: 0,
-            no_with_veto_votes: 0,
             abstain_votes: 0,
+            veto_votes: 0,
             eta: 0,
             action_delay,
             quorum_votes,
@@ -1389,7 +1391,8 @@ module StarcoinFramework::GenesisDao {
         } else if (choice_no().choice == vote.choice) {
             proposal.no_votes = proposal.no_votes + vote.vote_weight;
         } else if ( choice_no_with_veto().choice == vote.choice) {
-            proposal.no_with_veto_votes = proposal.no_with_veto_votes + vote.vote_weight;
+            proposal.no_votes = proposal.no_votes + vote.vote_weight;
+            proposal.veto_votes = proposal.veto_votes + vote.vote_weight;
         } else if (choice_abstain().choice == vote.choice) {
             proposal.abstain_votes = proposal.abstain_votes + vote.vote_weight;
         } else {
@@ -1470,7 +1473,7 @@ module StarcoinFramework::GenesisDao {
             // Active
             ACTIVE
             //TODO need restrict yes votes ratio with (no/no_with_veto/abstain) ?
-        } else if (proposal.yes_votes <= (proposal.no_votes + proposal.no_with_veto_votes + proposal.abstain_votes) ||
+        } else if (proposal.yes_votes <= (proposal.no_votes  + proposal.abstain_votes) ||
                    proposal.yes_votes < proposal.quorum_votes) {
             // Defeated
             DEFEATED
@@ -1488,14 +1491,14 @@ module StarcoinFramework::GenesisDao {
     }
 
     /// get proposal's information.
-    /// return: (id, proposer, start_time, end_time, yes_votes, no_votes, no_with_veto_votes, abstain_votes, block_number, state_root).
+    /// return: (id, proposer, start_time, end_time, yes_votes, no_votes, abstain_votes, veto_votes, block_number, state_root).
     public fun proposal_info<DaoT: store>(
         proposal_id: u64,
     ): (u64, address, u64, u64, u128, u128, u128, u128, u64, vector<u8>) acquires GlobalProposals {
         let dao_address = DaoRegistry::dao_address<DaoT>();
         let proposals = borrow_global_mut<GlobalProposals>(dao_address);
         let proposal = borrow_proposal(proposals, proposal_id);
-        (proposal.id, proposal.proposer, proposal.start_time, proposal.end_time, proposal.yes_votes, proposal.no_votes, proposal.no_with_veto_votes, proposal.abstain_votes, proposal.block_number, *&proposal.state_root)
+        (proposal.id, proposal.proposer, proposal.start_time, proposal.end_time, proposal.yes_votes, proposal.no_votes, proposal.abstain_votes, proposal.veto_votes, proposal.block_number, *&proposal.state_root)
     }
 
     fun borrow_proposal_mut(proposals: &mut GlobalProposals, proposal_id: u64): &mut Proposal{
