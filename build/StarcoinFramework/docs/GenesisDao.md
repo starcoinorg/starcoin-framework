@@ -4768,6 +4768,9 @@ get vote info by proposal_id
     <b>if</b>(<b>exists</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>&lt;DaoT&gt;&gt;(voter)){
         <b>let</b> my_votes = <b>borrow_global</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>&lt;DaoT&gt;&gt;(voter);
         <b>let</b> vote_option = <a href="GenesisDao.md#0x1_GenesisDao_vote_info">vote_info</a>&lt;DaoT&gt;(my_votes, proposal_id);
+        <b>if</b>(!<a href="Option.md#0x1_Option_is_some">Option::is_some</a>(&vote_option)){
+            <b>return</b> (0, 0, 0)
+        };
         <b>let</b> vote = <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> vote_option);
         (vote.proposal_id, vote.choice, vote.vote_weight)
     }<b>else</b>{

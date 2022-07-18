@@ -1434,6 +1434,9 @@ module StarcoinFramework::GenesisDao {
         if(exists<MyVotes<DaoT>>(voter)){
             let my_votes = borrow_global<MyVotes<DaoT>>(voter);
             let vote_option = vote_info<DaoT>(my_votes, proposal_id);
+            if(!Option::is_some(&vote_option)){
+                return (0, 0, 0)
+            };
             let vote = Option::extract(&mut vote_option);
             (vote.proposal_id, vote.choice, vote.vote_weight)
         }else{
