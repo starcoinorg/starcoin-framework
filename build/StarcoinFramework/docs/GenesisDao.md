@@ -160,6 +160,7 @@
 -  [Function `convert_option_bytes_vector`](#0x1_GenesisDao_convert_option_bytes_vector)
 -  [Function `dao_signer`](#0x1_GenesisDao_dao_signer)
 -  [Function `dao_address`](#0x1_GenesisDao_dao_address)
+-  [Function `dao_id`](#0x1_GenesisDao_dao_id)
 
 
 <pre><code><b>use</b> <a href="Account.md#0x1_Account">0x1::Account</a>;
@@ -1126,7 +1127,13 @@ member event
 
 <dl>
 <dt>
-<code>id: u64</code>
+<code>dao_id: u64</code>
+</dt>
+<dd>
+ dao id
+</dd>
+<dt>
+<code>member_id: u64</code>
 </dt>
 <dd>
 
@@ -1165,7 +1172,13 @@ member event
 
 <dl>
 <dt>
-<code>id: u64</code>
+<code>dao_id: u64</code>
+</dt>
+<dd>
+ dao id
+</dd>
+<dt>
+<code>member_id: u64</code>
 </dt>
 <dd>
 
@@ -1204,7 +1217,13 @@ member event
 
 <dl>
 <dt>
-<code>id: u64</code>
+<code>dao_id: u64</code>
+</dt>
+<dd>
+ dao id
+</dd>
+<dt>
+<code>member_id: u64</code>
 </dt>
 <dd>
 
@@ -1243,7 +1262,7 @@ member event
 
 <dl>
 <dt>
-<code>id: u64</code>
+<code>member_id: u64</code>
 </dt>
 <dd>
 
@@ -1288,7 +1307,7 @@ member event
 
 <dl>
 <dt>
-<code>id: u64</code>
+<code>member_id: u64</code>
 </dt>
 <dd>
 
@@ -2179,6 +2198,12 @@ emitted when proposal created.
 
 <dl>
 <dt>
+<code>dao_id: u64</code>
+</dt>
+<dd>
+ dao id
+</dd>
+<dt>
 <code>proposal_id: u64</code>
 </dt>
 <dd>
@@ -2212,6 +2237,12 @@ emitted when user vote/revoke_vote.
 
 
 <dl>
+<dt>
+<code>dao_id: u64</code>
+</dt>
+<dd>
+ dao id
+</dd>
 <dt>
 <code>proposal_id: u64</code>
 </dt>
@@ -2258,6 +2289,12 @@ emitted when proposal executed.
 
 
 <dl>
+<dt>
+<code>dao_id: u64</code>
+</dt>
+<dd>
+ dao id
+</dd>
 <dt>
 <code>proposal_id: u64</code>
 </dt>
@@ -3340,7 +3377,8 @@ Join Dao and get a membership
     <a href="NFT.md#0x1_IdentifierNFT_grant_to">IdentifierNFT::grant_to</a>(nft_mint_cap, to_address, nft);
     <b>let</b> memeber_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a>&lt;DaoT&gt;&gt;(dao_address);
     <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> memeber_event.member_join_event_handler, <a href="GenesisDao.md#0x1_GenesisDao_MemberJoinEvent">MemberJoinEvent</a>&lt;DaoT&gt; {
-        id : member_id,
+        dao_id: <a href="GenesisDao.md#0x1_GenesisDao_dao_id">dao_id</a>(dao_address),
+        member_id,
         addr:to_address,
         sbt: init_sbt,
     });
@@ -3367,14 +3405,15 @@ Member quit Dao by self
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_quit_member">quit_member</a>&lt;DaoT: store&gt;(sender: &signer) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_quit_member">quit_member</a>&lt;DaoT: store&gt;(sender: &signer) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a>, <a href="Dao.md#0x1_Dao">Dao</a> {
     <b>let</b> member_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
     <b>let</b> (member_id , sbt) = <a href="GenesisDao.md#0x1_GenesisDao_do_remove_member">do_remove_member</a>&lt;DaoT&gt;(member_addr);
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
 
     <b>let</b> memeber_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a>&lt;DaoT&gt;&gt;(dao_address);
     <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> memeber_event.member_quit_event_handler, <a href="GenesisDao.md#0x1_GenesisDao_MemberQuitEvent">MemberQuitEvent</a>&lt;DaoT&gt; {
-        id : member_id,
+        dao_id: <a href="GenesisDao.md#0x1_GenesisDao_dao_id">dao_id</a>(dao_address),
+        member_id,
         addr:member_addr,
         sbt: sbt,
     });
@@ -3401,13 +3440,14 @@ Revoke membership with cap
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_revoke_member">revoke_member</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, member_addr: <b>address</b>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_revoke_member">revoke_member</a>&lt;DaoT: store, PluginT&gt;(_cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoMemberCap">DaoMemberCap</a>&lt;DaoT, PluginT&gt;, member_addr: <b>address</b>) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_DaoNFTBurnCapHolder">DaoNFTBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_DaoTokenBurnCapHolder">DaoTokenBurnCapHolder</a>, <a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a>, <a href="Dao.md#0x1_Dao">Dao</a> {
     <b>let</b> (member_id , sbt) = <a href="GenesisDao.md#0x1_GenesisDao_do_remove_member">do_remove_member</a>&lt;DaoT&gt;(member_addr);
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
 
     <b>let</b> memeber_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a>&lt;DaoT&gt;&gt;(dao_address);
     <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> memeber_event.member_revoke_event_handler, <a href="GenesisDao.md#0x1_GenesisDao_MemberRevokeEvent">MemberRevokeEvent</a>&lt;DaoT&gt; {
-        id : member_id,
+        dao_id: <a href="GenesisDao.md#0x1_GenesisDao_dao_id">dao_id</a>(dao_address),
+        member_id,
         addr:member_addr,
         sbt: sbt,
     });
@@ -3488,7 +3528,7 @@ Increment the member SBT
 
     <b>let</b> memeber_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a>&lt;DaoT&gt;&gt;(dao_address);
     <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> memeber_event.member_increase_sbt_event_handler, <a href="GenesisDao.md#0x1_GenesisDao_MemberIncreaseSBTEvent">MemberIncreaseSBTEvent</a>&lt;DaoT&gt; {
-        id : member_id,
+        member_id,
         addr:member_addr,
         increase_sbt:amount,
         sbt: sbt_amount,
@@ -3536,7 +3576,7 @@ Decrement the member SBT
 
     <b>let</b> memeber_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_MemberEvent">MemberEvent</a>&lt;DaoT&gt;&gt;(dao_address);
     <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> memeber_event.member_decrease_sbt_event_handler, <a href="GenesisDao.md#0x1_GenesisDao_MemberDecreaseSBTEvent">MemberDecreaseSBTEvent</a>&lt;DaoT&gt; {
-        id : member_id,
+        member_id,
         addr:member_addr,
         decrease_sbt:amount,
         sbt: sbt_amount,
@@ -4305,9 +4345,10 @@ propose a proposal.
     };
 
     // emit event
+    <b>let</b> dao_id = <a href="GenesisDao.md#0x1_GenesisDao_dao_id">dao_id</a>(dao_address);
     <b>let</b> proposal_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>&lt;DaoT&gt;&gt;(dao_address);
     <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> proposal_event.proposal_create_event,
-        <a href="GenesisDao.md#0x1_GenesisDao_ProposalCreatedEvent">ProposalCreatedEvent</a> { proposal_id, proposer },
+        <a href="GenesisDao.md#0x1_GenesisDao_ProposalCreatedEvent">ProposalCreatedEvent</a> { dao_id, proposal_id, proposer },
     );
 
     proposal_id
@@ -4368,7 +4409,7 @@ The voting power depends on the strategy of the proposal configuration and the u
     proposal_id: u64,
     snpashot_raw_proofs: vector&lt;u8&gt;,
     choice: <a href="GenesisDao.md#0x1_GenesisDao_VotingChoice">VotingChoice</a>,
-)  <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>, <a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a> {
+)  <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>, <a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a>, <a href="Dao.md#0x1_Dao">Dao</a> {
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
     <b>let</b> proposals = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>&gt;(dao_address);
     <b>let</b> proposal = <a href="GenesisDao.md#0x1_GenesisDao_borrow_proposal_mut">borrow_proposal_mut</a>(proposals, proposal_id);
@@ -4416,9 +4457,11 @@ The voting power depends on the strategy of the proposal configuration and the u
     };
 
     // emit event
+    <b>let</b> dao_id = <a href="GenesisDao.md#0x1_GenesisDao_dao_id">dao_id</a>(dao_address);
     <b>let</b> proposal_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>&lt;DaoT&gt; &gt;(<a href="DaoRegistry.md#0x1_DaoRegistry_dao_address">DaoRegistry::dao_address</a>&lt;DaoT&gt;());
     <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> proposal_event.vote_event,
         <a href="GenesisDao.md#0x1_GenesisDao_VotedEvent">VotedEvent</a> {
+            dao_id,
             proposal_id,
             voter: sender_addr,
             choice: choice.choice,
@@ -4544,7 +4587,7 @@ The voting power depends on the strategy of the proposal configuration and the u
     _cap: &<a href="GenesisDao.md#0x1_GenesisDao_DaoProposalCap">DaoProposalCap</a>&lt;DaoT, PluginT&gt;,
     sender: &signer,
     proposal_id: u64,
-): ActionT <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a>, <a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a> {
+): ActionT <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_ProposalActions">ProposalActions</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a>, <a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>, <a href="Dao.md#0x1_Dao">Dao</a> {
     // Only executable proposal's action can be extracted.
      <b>assert</b>!(<a href="GenesisDao.md#0x1_GenesisDao_proposal_state">proposal_state</a>&lt;DaoT&gt;(proposal_id) == <a href="GenesisDao.md#0x1_GenesisDao_EXECUTABLE">EXECUTABLE</a>, <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_PROPOSAL_STATE_INVALID">ERR_PROPOSAL_STATE_INVALID</a>));
     <b>let</b> dao_address = <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;();
@@ -4554,9 +4597,10 @@ The voting power depends on the strategy of the proposal configuration and the u
     <b>let</b> actionT = <a href="GenesisDao.md#0x1_GenesisDao_take_proposal_action">take_proposal_action</a>(dao_address, proposal_id);
 
     // emit event
+    <b>let</b> dao_id = <a href="GenesisDao.md#0x1_GenesisDao_dao_id">dao_id</a>(dao_address);
     <b>let</b> proposal_event = <b>borrow_global_mut</b>&lt;<a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>&lt;DaoT&gt;&gt;(dao_address);
     <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>(&<b>mut</b> proposal_event.proposal_action_event,
-        <a href="GenesisDao.md#0x1_GenesisDao_ProposalActionEvent">ProposalActionEvent</a> { proposal_id, sender: sender_addr }
+        <a href="GenesisDao.md#0x1_GenesisDao_ProposalActionEvent">ProposalActionEvent</a> { dao_id, proposal_id, sender: sender_addr }
     );
 
     actionT
@@ -5098,7 +5142,7 @@ queue agreed proposal to execute.
     proposal_id: u64,
     snpashot_raw_proofs: vector&lt;u8&gt;,
     choice: u8,
-) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a> {
+) <b>acquires</b> <a href="GenesisDao.md#0x1_GenesisDao_MyVotes">MyVotes</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposals">GlobalProposals</a>, <a href="GenesisDao.md#0x1_GenesisDao_ProposalEvent">ProposalEvent</a>, <a href="GenesisDao.md#0x1_GenesisDao_GlobalProposalActions">GlobalProposalActions</a>, <a href="Dao.md#0x1_Dao">Dao</a> {
     <b>let</b> sender_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&sender);
     <b>if</b> (<a href="GenesisDao.md#0x1_GenesisDao_has_voted">has_voted</a>&lt;DaoT&gt;(sender_addr, proposal_id)) {
         <b>abort</b> <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="GenesisDao.md#0x1_GenesisDao_ERR_VOTED_ALREADY">ERR_VOTED_ALREADY</a>)
@@ -5823,6 +5867,35 @@ Helper to add an element to a vector.
 
 <pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_dao_address">dao_address</a>&lt;DaoT&gt;(): <b>address</b> {
     <a href="DaoRegistry.md#0x1_DaoRegistry_dao_address">DaoRegistry::dao_address</a>&lt;DaoT&gt;()
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GenesisDao_dao_id"></a>
+
+## Function `dao_id`
+
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_dao_id">dao_id</a>(dao_address: <b>address</b>): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>fun</b> <a href="GenesisDao.md#0x1_GenesisDao_dao_id">dao_id</a>(dao_address: <b>address</b>): u64 <b>acquires</b> <a href="Dao.md#0x1_Dao">Dao</a> {
+    <b>if</b> (<b>exists</b>&lt;<a href="Dao.md#0x1_Dao">Dao</a>&gt;(dao_address)){
+        <b>let</b> dao = <b>borrow_global</b>&lt;<a href="Dao.md#0x1_Dao">Dao</a>&gt;(dao_address);
+        dao.id
+    }<b>else</b>{
+        0
+    }
 }
 </code></pre>
 
