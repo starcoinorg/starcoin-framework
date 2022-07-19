@@ -14,6 +14,7 @@ This is the root document for the Move StarcoinFramework module documentation. T
 
 -  [`0x1::Account`](Account.md#0x1_Account)
 -  [`0x1::AccountScripts`](AccountScripts.md#0x1_AccountScripts)
+-  [`0x1::AnyMemberPlugin`](AnyMemberPlugin.md#0x1_AnyMemberPlugin)
 -  [`0x1::Arith`](U256.md#0x1_Arith)
 -  [`0x1::Authenticator`](Authenticator.md#0x1_Authenticator)
 -  [`0x1::BCS`](BCS.md#0x1_BCS)

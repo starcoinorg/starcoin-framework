@@ -134,7 +134,7 @@
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_execute_proposal">execute_proposal</a>&lt;DaoT: store, ToInstallPluginT&gt;(sender: &signer, proposal_id: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_execute_proposal">execute_proposal</a>&lt;DaoT: store, ToInstallPluginT&gt;(sender: signer, proposal_id: u64)
 </code></pre>
 
 
@@ -143,10 +143,10 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_execute_proposal">execute_proposal</a>&lt;DaoT: store, ToInstallPluginT&gt;(sender: &signer, proposal_id: u64){
+<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_execute_proposal">execute_proposal</a>&lt;DaoT: store, ToInstallPluginT&gt;(sender: signer, proposal_id: u64){
     <b>let</b> witness = <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">InstallPluginProposalPlugin</a>{};
     <b>let</b> proposal_cap = <a href="GenesisDao.md#0x1_GenesisDao_acquire_proposal_cap">GenesisDao::acquire_proposal_cap</a>&lt;DaoT, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">InstallPluginProposalPlugin</a>&gt;(&witness);
-    <b>let</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_InstallPluginAction">InstallPluginAction</a>{required_caps} = <a href="GenesisDao.md#0x1_GenesisDao_execute_proposal">GenesisDao::execute_proposal</a>&lt;DaoT, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">InstallPluginProposalPlugin</a>, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_InstallPluginAction">InstallPluginAction</a>&lt;ToInstallPluginT&gt;&gt;(&proposal_cap, sender, proposal_id);
+    <b>let</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_InstallPluginAction">InstallPluginAction</a>{required_caps} = <a href="GenesisDao.md#0x1_GenesisDao_execute_proposal">GenesisDao::execute_proposal</a>&lt;DaoT, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">InstallPluginProposalPlugin</a>, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_InstallPluginAction">InstallPluginAction</a>&lt;ToInstallPluginT&gt;&gt;(&proposal_cap, &sender, proposal_id);
     <b>let</b> install_plugin_cap = <a href="GenesisDao.md#0x1_GenesisDao_acquire_install_plugin_cap">GenesisDao::acquire_install_plugin_cap</a>&lt;DaoT, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">InstallPluginProposalPlugin</a>&gt;(&witness);
     <a href="GenesisDao.md#0x1_GenesisDao_install_plugin">GenesisDao::install_plugin</a>&lt;DaoT, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">InstallPluginProposalPlugin</a>, ToInstallPluginT&gt;(&install_plugin_cap, required_caps);
 }

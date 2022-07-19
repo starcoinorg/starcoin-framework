@@ -26,10 +26,10 @@ module StarcoinFramework::InstallPluginProposalPlugin{
         GenesisDao::create_proposal(&cap, sender, action, action_delay);
     }
 
-    public fun execute_proposal<DaoT: store, ToInstallPluginT>(sender: &signer, proposal_id: u64){
+    public (script) fun execute_proposal<DaoT: store, ToInstallPluginT>(sender: signer, proposal_id: u64){
         let witness = InstallPluginProposalPlugin{};
         let proposal_cap = GenesisDao::acquire_proposal_cap<DaoT, InstallPluginProposalPlugin>(&witness);
-        let InstallPluginAction{required_caps} = GenesisDao::execute_proposal<DaoT, InstallPluginProposalPlugin, InstallPluginAction<ToInstallPluginT>>(&proposal_cap, sender, proposal_id);
+        let InstallPluginAction{required_caps} = GenesisDao::execute_proposal<DaoT, InstallPluginProposalPlugin, InstallPluginAction<ToInstallPluginT>>(&proposal_cap, &sender, proposal_id);
         let install_plugin_cap = GenesisDao::acquire_install_plugin_cap<DaoT, InstallPluginProposalPlugin>(&witness);
         GenesisDao::install_plugin<DaoT, InstallPluginProposalPlugin, ToInstallPluginT>(&install_plugin_cap, required_caps);
     }

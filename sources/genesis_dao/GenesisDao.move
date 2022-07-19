@@ -517,6 +517,11 @@ module StarcoinFramework::GenesisDao {
     }
 
     /// Member quit Dao by self 
+    public (script) fun quit_member_entry<DaoT: store>(sender: signer) acquires DaoNFTBurnCapHolder, DaoTokenBurnCapHolder, MemberEvent, Dao {
+        quit_member<DaoT>(&sender);
+    }
+
+        /// Member quit Dao by self 
     public fun quit_member<DaoT: store>(sender: &signer) acquires DaoNFTBurnCapHolder, DaoTokenBurnCapHolder, MemberEvent, Dao {
         let member_addr = Signer::address_of(sender);
         let (member_id , sbt) = do_remove_member<DaoT>(member_addr);
@@ -713,7 +718,12 @@ module StarcoinFramework::GenesisDao {
     }
 
     /// withdraw token with grant 
-    public fun grant_withdraw<DaoT, PluginT, TokenT:store>(sender:&signer, amount:u128) acquires DaoAccountCapHolder, DaoGrantWithdrawTokenKey, GrantEvent{
+    public (script) fun grant_withdraw_entry<DaoT, PluginT, TokenT:store>(sender: signer, amount:u128) acquires DaoAccountCapHolder, DaoGrantWithdrawTokenKey, GrantEvent{
+        grant_withdraw<DaoT, PluginT, TokenT>(&sender, amount);
+    }
+
+    /// withdraw token with grant 
+    public fun grant_withdraw<DaoT, PluginT, TokenT:store>(sender: &signer, amount:u128) acquires DaoAccountCapHolder, DaoGrantWithdrawTokenKey, GrantEvent{
         let account_address = Signer::address_of(sender);
         assert!(exists<DaoGrantWithdrawTokenKey<DaoT, PluginT, TokenT>>(account_address) , Errors::invalid_state(ERR_NOT_HAVE_GRANT));
         
@@ -746,8 +756,6 @@ module StarcoinFramework::GenesisDao {
         let token = Account::withdraw<TokenT>(&dao_signer, amount);
         Account::deposit<TokenT>(account_address, token);
     }
-
-    
 
     /// is have DaoGrantWithdrawTokenKey
     public fun is_have_grant<DaoT, PluginT, TokenT:store>(addr:address):bool{
