@@ -1,5 +1,5 @@
 module StarcoinFramework::VoteStrategy{
-//    use StarcoinFramework::GenesisDao::{Self,  ProposalPluginCapability};
+//    use StarcoinFramework::DaoSpace::{Self,  ProposalPluginCapability};
     use StarcoinFramework::DaoRegistry;
     use StarcoinFramework::BCS;
     use StarcoinFramework::Signer;

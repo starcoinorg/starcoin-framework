@@ -75,7 +75,7 @@ task 15 'run'. lines 250-296:
         "location": {
           "Module": {
             "address": "0x00000000000000000000000000000001",
-            "name": "GenesisDao"
+            "name": "DaoSpace"
           }
         },
         "function": 16,
@@ -94,7 +94,7 @@ task 17 'run'. lines 301-313:
         "location": {
           "Module": {
             "address": "0x00000000000000000000000000000001",
-            "name": "GenesisDao"
+            "name": "DaoSpace"
           }
         },
         "function": 67,

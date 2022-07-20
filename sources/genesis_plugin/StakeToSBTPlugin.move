@@ -1,7 +1,7 @@
 module StarcoinFramework::StakeToSBTPlugin {
 
     use StarcoinFramework::Token;
-    use StarcoinFramework::GenesisDao;
+    use StarcoinFramework::DaoSpace;
     use StarcoinFramework::Vector;
     use StarcoinFramework::Signer;
     use StarcoinFramework::Errors;
@@ -17,10 +17,10 @@ module StarcoinFramework::StakeToSBTPlugin {
 
     struct StakeToSBTPlugin has drop {}
 
-    public fun required_caps(): vector<GenesisDao::CapType> {
-        let caps = Vector::singleton(GenesisDao::proposal_cap_type());
-        Vector::push_back(&mut caps, GenesisDao::member_cap_type());
-        Vector::push_back(&mut caps, GenesisDao::modify_config_cap_type());
+    public fun required_caps(): vector<DaoSpace::CapType> {
+        let caps = Vector::singleton(DaoSpace::proposal_cap_type());
+        Vector::push_back(&mut caps, DaoSpace::member_cap_type());
+        Vector::push_back(&mut caps, DaoSpace::modify_config_cap_type());
         caps
     }
 
@@ -52,15 +52,15 @@ module StarcoinFramework::StakeToSBTPlugin {
         let AcceptTokenCap<DaoT, TokenT> {} = cap;
 
         assert!(
-            !GenesisDao::exists_custom_config<DaoT, LockWeightConfig<DaoT, TokenT>>(),
+            !DaoSpace::exists_custom_config<DaoT, LockWeightConfig<DaoT, TokenT>>(),
             Errors::invalid_state(ERR_PLUGIN_CONFIG_INIT_REPEATE)
         );
 
         let witness = StakeToSBTPlugin {};
         let modify_config_cap =
-            GenesisDao::acquire_modify_config_cap<DaoT, StakeToSBTPlugin>(&witness);
+            DaoSpace::acquire_modify_config_cap<DaoT, StakeToSBTPlugin>(&witness);
 
-        GenesisDao::set_custom_config<
+        DaoSpace::set_custom_config<
             DaoT,
             StakeToSBTPlugin,
             LockWeightConfig<DaoT, TokenT>
@@ -73,12 +73,12 @@ module StarcoinFramework::StakeToSBTPlugin {
                                                  token: Token::Token<TokenT>,
                                                  lock_time: u64) {
         let sender_addr = Signer::address_of(sender);
-        assert!(GenesisDao::is_member<DaoT>(sender_addr), Errors::invalid_state(ERR_PLUGIN_USER_IS_MEMBER));
+        assert!(DaoSpace::is_member<DaoT>(sender_addr), Errors::invalid_state(ERR_PLUGIN_USER_IS_MEMBER));
         assert!(exists<Stake<DaoT, TokenT>>(sender_addr), Errors::invalid_state(ERR_PLUGIN_HAS_STAKED));
 
         // Increase SBT
         let witness = StakeToSBTPlugin {};
-        let cap = GenesisDao::acquire_member_cap<DaoT, StakeToSBTPlugin>(&witness);
+        let cap = DaoSpace::acquire_member_cap<DaoT, StakeToSBTPlugin>(&witness);
         let weight_opt = get_sbt_weight<DaoT, TokenT>(lock_time);
         let weight = if (Option::is_none(&weight_opt)) {
             1
@@ -87,7 +87,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         };
 
         let sbt_amount = (weight as u128) * Token::value<TokenT>(&token);
-        GenesisDao::increase_member_sbt(&cap, sender_addr, sbt_amount);
+        DaoSpace::increase_member_sbt(&cap, sender_addr, sbt_amount);
 
         move_to(sender, Stake<DaoT, TokenT> {
             token,
@@ -113,14 +113,14 @@ module StarcoinFramework::StakeToSBTPlugin {
 
         // Decrease SBT by weight
         let witness = StakeToSBTPlugin {};
-        let cap = GenesisDao::acquire_member_cap<DaoT, StakeToSBTPlugin>(&witness);
-        GenesisDao::decrease_member_sbt(&cap, member, sbt_amount);
+        let cap = DaoSpace::acquire_member_cap<DaoT, StakeToSBTPlugin>(&witness);
+        DaoSpace::decrease_member_sbt(&cap, member, sbt_amount);
 
         token
     }
 
     fun get_sbt_weight<DaoT: store, TokenT: store>(lock_time: u64): Option::Option<u64> {
-        let config = GenesisDao::get_custom_config<DaoT, LockWeightConfig<DaoT, TokenT>>();
+        let config = DaoSpace::get_custom_config<DaoT, LockWeightConfig<DaoT, TokenT>>();
         let c = &mut config.weight_vec;
         let len = Vector::length(c);
         let idx = 0;
@@ -136,7 +136,7 @@ module StarcoinFramework::StakeToSBTPlugin {
     }
 
     fun set_sbt_weight<DaoT: store, TokenT: store>(lock_time: u64, weight: u64) {
-        let config = GenesisDao::get_custom_config<DaoT, LockWeightConfig<DaoT, TokenT>>();
+        let config = DaoSpace::get_custom_config<DaoT, LockWeightConfig<DaoT, TokenT>>();
         let c = &mut config.weight_vec;
         let len = Vector::length(c);
         let idx = 0;
@@ -151,8 +151,8 @@ module StarcoinFramework::StakeToSBTPlugin {
 
         let witness = StakeToSBTPlugin {};
         let modify_config_cap =
-            GenesisDao::acquire_modify_config_cap<DaoT, StakeToSBTPlugin>(&witness);
-        GenesisDao::set_custom_config<
+            DaoSpace::acquire_modify_config_cap<DaoT, StakeToSBTPlugin>(&witness);
+        DaoSpace::set_custom_config<
             DaoT,
             StakeToSBTPlugin,
             LockWeightConfig<DaoT, TokenT>
@@ -169,8 +169,8 @@ module StarcoinFramework::StakeToSBTPlugin {
         let witness = StakeToSBTPlugin {};
 
         let cap =
-            GenesisDao::acquire_proposal_cap<DaoT, StakeToSBTPlugin>(&witness);
-        GenesisDao::create_proposal(&cap, &sender, LockWeight<DaoT, TokenT> {
+            DaoSpace::acquire_proposal_cap<DaoT, StakeToSBTPlugin>(&witness);
+        DaoSpace::create_proposal(&cap, &sender, LockWeight<DaoT, TokenT> {
             lock_time,
             weight,
         }, action_delay);
@@ -180,12 +180,12 @@ module StarcoinFramework::StakeToSBTPlugin {
                                                                            proposal_id: u64) {
         let witness = StakeToSBTPlugin {};
         let proposal_cap =
-            GenesisDao::acquire_proposal_cap<DaoT, StakeToSBTPlugin>(&witness);
+            DaoSpace::acquire_proposal_cap<DaoT, StakeToSBTPlugin>(&witness);
 
         let LockWeight<DaoT, TokenT> {
             lock_time,
             weight
-        } = GenesisDao::execute_proposal<
+        } = DaoSpace::execute_proposal<
             DaoT,
             StakeToSBTPlugin,
             LockWeight<DaoT, TokenT>
@@ -200,17 +200,17 @@ module StarcoinFramework::StakeToSBTPlugin {
         let witness = StakeToSBTPlugin {};
 
         let cap =
-            GenesisDao::acquire_proposal_cap<DaoT, StakeToSBTPlugin>(&witness);
-        GenesisDao::create_proposal(&cap, &sender, AcceptTokenCap<DaoT, TokenT> {}, action_delay);
+            DaoSpace::acquire_proposal_cap<DaoT, StakeToSBTPlugin>(&witness);
+        DaoSpace::create_proposal(&cap, &sender, AcceptTokenCap<DaoT, TokenT> {}, action_delay);
     }
 
     public(script) fun execute_token_accept_proposal<DaoT: store, TokenT: store>(sender: signer,
                                                                                  proposal_id: u64) {
         let witness = StakeToSBTPlugin {};
         let proposal_cap =
-            GenesisDao::acquire_proposal_cap<DaoT, StakeToSBTPlugin>(&witness);
+            DaoSpace::acquire_proposal_cap<DaoT, StakeToSBTPlugin>(&witness);
 
-        let cap = GenesisDao::execute_proposal<
+        let cap = DaoSpace::execute_proposal<
             DaoT,
             StakeToSBTPlugin,
             AcceptTokenCap<DaoT, TokenT>

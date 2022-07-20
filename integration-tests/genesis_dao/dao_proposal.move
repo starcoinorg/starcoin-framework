@@ -23,7 +23,7 @@ script{
 //# publish
 module creator::DAOHelper {
     use StarcoinFramework::DaoAccount;
-    use StarcoinFramework::GenesisDao::{Self, CapType};
+    use StarcoinFramework::DaoSpace::{Self, CapType};
     use StarcoinFramework::MemberProposalPlugin::{Self, MemberProposalPlugin};
     use StarcoinFramework::InstallPluginProposalPlugin::{Self, InstallPluginProposalPlugin};
     use StarcoinFramework::Account;
@@ -50,21 +50,21 @@ module creator::DAOHelper {
         });
 
         //let dao_signer = DaoAccount::dao_signer(&dao_account_cap);
-        let config = GenesisDao::new_dao_config(
+        let config = DaoSpace::new_dao_config(
             voting_delay,
             voting_period,
             voting_quorum_rate,
             min_action_delay,
             min_proposal_deposit,
         );
-        let dao_root_cap = GenesisDao::create_dao<X>(dao_account_cap, *&NAME, X{}, config);
+        let dao_root_cap = DaoSpace::create_dao<X>(dao_account_cap, *&NAME, X{}, config);
         
-        GenesisDao::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
-        GenesisDao::install_plugin_with_root_cap<X, MemberProposalPlugin>(&dao_root_cap, MemberProposalPlugin::required_caps());
+        DaoSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
+        DaoSpace::install_plugin_with_root_cap<X, MemberProposalPlugin>(&dao_root_cap, MemberProposalPlugin::required_caps());
 
-        GenesisDao::install_plugin_with_root_cap<X, XPlugin>(&dao_root_cap, required_caps());
+        DaoSpace::install_plugin_with_root_cap<X, XPlugin>(&dao_root_cap, required_caps());
 
-        GenesisDao::burn_root_cap(dao_root_cap);
+        DaoSpace::burn_root_cap(dao_root_cap);
 
     }
 
@@ -76,21 +76,21 @@ module creator::DAOHelper {
     }
 
     public fun required_caps():vector<CapType>{
-        let caps = Vector::singleton(GenesisDao::proposal_cap_type());
-        Vector::push_back(&mut caps, GenesisDao::install_plugin_cap_type());
-        Vector::push_back(&mut caps, GenesisDao::member_cap_type());
-        Vector::push_back(&mut caps, GenesisDao::withdraw_token_cap_type());
+        let caps = Vector::singleton(DaoSpace::proposal_cap_type());
+        Vector::push_back(&mut caps, DaoSpace::install_plugin_cap_type());
+        Vector::push_back(&mut caps, DaoSpace::member_cap_type());
+        Vector::push_back(&mut caps, DaoSpace::withdraw_token_cap_type());
         caps
     }
 
     public fun create_x_proposal<DaoT: store, TokenT:store>(sender: &signer, total: u128, receiver:address, action_delay:u64): u64 acquires Checkpoint {
         let witness = XPlugin{};
-        let cap = GenesisDao::acquire_proposal_cap<DaoT, XPlugin>(&witness);
+        let cap = DaoSpace::acquire_proposal_cap<DaoT, XPlugin>(&witness);
         let action = XAction<TokenT>{
             total,
             receiver,
         };
-        let proposal_id = GenesisDao::create_proposal(&cap, sender, action, action_delay);
+        let proposal_id = DaoSpace::create_proposal(&cap, sender, action, action_delay);
         checkpoint<DaoT>(proposal_id);
 
         proposal_id
@@ -98,17 +98,17 @@ module creator::DAOHelper {
 
     public fun execute_x_proposal<DaoT: store, TokenT:store>(sender: &signer, proposal_id: u64){
         let witness = XPlugin{};
-        let proposal_cap = GenesisDao::acquire_proposal_cap<DaoT, XPlugin>(&witness);
-        let XAction{receiver, total} = GenesisDao::execute_proposal<DaoT, XPlugin, XAction<TokenT>>(&proposal_cap, sender, proposal_id);
-        let withdraw_cap = GenesisDao::acquire_withdraw_token_cap<DaoT, XPlugin>(&witness);
-        let token = GenesisDao::withdraw_token<DaoT, XPlugin, TokenT>(&withdraw_cap, total);
+        let proposal_cap = DaoSpace::acquire_proposal_cap<DaoT, XPlugin>(&witness);
+        let XAction{receiver, total} = DaoSpace::execute_proposal<DaoT, XPlugin, XAction<TokenT>>(&proposal_cap, sender, proposal_id);
+        let withdraw_cap = DaoSpace::acquire_withdraw_token_cap<DaoT, XPlugin>(&witness);
+        let token = DaoSpace::withdraw_token<DaoT, XPlugin, TokenT>(&withdraw_cap, total);
         Account::deposit(receiver, token);
     }
 
     public fun member_join<DaoT:store>(to_address: address, init_sbt: u128){
         let witness = XPlugin{};
-        let member_cap = GenesisDao::acquire_member_cap<DaoT, XPlugin>(&witness);
-        GenesisDao::join_member<DaoT, XPlugin>(&member_cap, to_address, init_sbt);
+        let member_cap = DaoSpace::acquire_member_cap<DaoT, XPlugin>(&witness);
+        DaoSpace::join_member<DaoT, XPlugin>(&member_cap, to_address, init_sbt);
     }
 
     struct Checkpoint<phantom Daot:store> has key{
@@ -189,7 +189,7 @@ script{
 script{
     use creator::DAOHelper::{Self, X};
     use StarcoinFramework::IdentifierNFT;
-    use StarcoinFramework::GenesisDao::{DaoMember, DaoMemberBody};
+    use StarcoinFramework::DaoSpace::{DaoMember, DaoMemberBody};
     use StarcoinFramework::Signer;
 
     //alice join dao
@@ -207,7 +207,7 @@ script{
 script{
     use creator::DAOHelper::{Self, X};
     use StarcoinFramework::IdentifierNFT;
-    use StarcoinFramework::GenesisDao::{DaoMember, DaoMemberBody};
+    use StarcoinFramework::DaoSpace::{DaoMember, DaoMemberBody};
     use StarcoinFramework::Signer;
 
     //bob join dao
@@ -226,14 +226,14 @@ script{
 script{
     use StarcoinFramework::STC::STC;
     use creator::DAOHelper::{Self, X};
-    use StarcoinFramework::GenesisDao;
+    use StarcoinFramework::DaoSpace;
     use StarcoinFramework::Debug;
 
     //alice create proposal
     fun create_proposal(sender: signer){
         let proposal_id = DAOHelper::create_x_proposal<X, STC>(&sender, 100u128, @alice, 10000);
 //        (u64, address, u64, u64, u128, u128, u128, u128, u64, vector<u8>)
-        let (_id, proposer, start_time, end_time, _yes_votes, _no_votes, _no_with_veto_votes, _abstain_votes, block_number, state_root) = GenesisDao::proposal_info<X>(proposal_id);
+        let (_id, proposer, start_time, end_time, _yes_votes, _no_votes, _no_with_veto_votes, _abstain_votes, block_number, state_root) = DaoSpace::proposal_info<X>(proposal_id);
 
         Debug::print(&proposer);
         Debug::print(&start_time);
@@ -250,15 +250,15 @@ script{
 //# run --signers bob
 script{
     use creator::DAOHelper::{Self, X};
-    use StarcoinFramework::GenesisDao;
+    use StarcoinFramework::DaoSpace;
 //    use StarcoinFramework::Debug;
 
     // bob vote
     fun cast_vote(sender: signer){
         let proposal_id = DAOHelper::last_proposal_id<X>();
         let snapshot_proofs = x"";
-        let choice = GenesisDao::choice_yes();
-        GenesisDao::cast_vote<X>(&sender, proposal_id, snapshot_proofs, choice);
+        let choice = DaoSpace::choice_yes();
+        DaoSpace::cast_vote<X>(&sender, proposal_id, snapshot_proofs, choice);
     }
 }
 // check: ABORT
@@ -266,15 +266,15 @@ script{
 ////# run --signers alice
 //script{
 //    use creator::DAOHelper::{Self, X};
-//    use StarcoinFramework::GenesisDao;
+//    use StarcoinFramework::DaoSpace;
 //    //    use StarcoinFramework::Debug;
 //
 //    // alice vote
 //    fun cast_vote(sender: signer){
 //        let proposal_id = DAOHelper::last_proposal_id<X>();
 //        let snapshot_proofs = x"";
-//        let choice = GenesisDao::choice_abstain();
-//        GenesisDao::cast_vote<X>(&sender, proposal_id, snapshot_proofs, choice);
+//        let choice = DaoSpace::choice_abstain();
+//        DaoSpace::cast_vote<X>(&sender, proposal_id, snapshot_proofs, choice);
 //    }
 //}
 //// check: EXECUTED
@@ -282,15 +282,15 @@ script{
 ////# run --signers cindy
 //script{
 //    use creator::DAOHelper::{Self, X};
-//    use StarcoinFramework::GenesisDao;
+//    use StarcoinFramework::DaoSpace;
 //    //    use StarcoinFramework::Debug;
 //
 //    // cindy vote
 //    fun cast_vote(sender: signer){
 //        let proposal_id = DAOHelper::last_proposal_id<X>();
 //        let snapshot_proofs = x"";
-//        let choice = GenesisDao::choice_yes();
-//        GenesisDao::cast_vote<X>(&sender, proposal_id, snapshot_proofs, choice);
+//        let choice = DaoSpace::choice_yes();
+//        DaoSpace::cast_vote<X>(&sender, proposal_id, snapshot_proofs, choice);
 //    }
 //}
 //// check: ABORT

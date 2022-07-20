@@ -1,4 +1,4 @@
-module StarcoinFramework::GenesisDao {
+module StarcoinFramework::DaoSpace {
     use StarcoinFramework::DaoAccount::{Self, DaoAccountCap};
     use StarcoinFramework::Account;
     use StarcoinFramework::Vector;

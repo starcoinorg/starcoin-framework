@@ -5,7 +5,7 @@ module StarcoinFramework::DaoRegistry{
 
     friend StarcoinFramework::Genesis;
     friend StarcoinFramework::StdlibUpgradeScripts;
-    friend StarcoinFramework::GenesisDao;
+    friend StarcoinFramework::DaoSpace;
 
     spec module {
         pragma verify = false;
@@ -31,7 +31,7 @@ module StarcoinFramework::DaoRegistry{
         move_to(&signer, DaoRegistry{next_dao_id: 1})
     }
 
-    // This function should call from GenesisDao module
+    // This function should call from DaoSpace module
     public(friend) fun register<DaoT>(dao_address: address): u64 acquires DaoRegistry{
         let genesis_account = GenesisSignerCapability::get_genesis_signer();
         let dao_id = next_dao_id();

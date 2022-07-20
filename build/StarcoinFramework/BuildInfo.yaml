@@ -73,6 +73,9 @@ compiled_package_info:
       name: DaoRegistry
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: DaoSpace
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: DaoVoteScripts
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -104,9 +107,6 @@ compiled_package_info:
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: Genesis
-    : StarcoinFramework
-    ? address: "0x00000000000000000000000000000001"
-      name: GenesisDao
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: GenesisNFT
@@ -303,7 +303,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 2862430F143D32EAFFA62540DCC35C28841D549C26BD4731C4E66CC7094AA270
+  source_digest: 9BF7C32BFF673DDEDCF7E0DF25EEF403771E91D208F3285645CFCFADD5FC835A
   build_flags:
     dev_mode: false
     test_mode: false
