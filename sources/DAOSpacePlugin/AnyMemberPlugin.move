@@ -1,6 +1,6 @@
 //TODO find more good name
 module StarcoinFramework::AnyMemberPlugin{
-    use StarcoinFramework::DaoSpace::{Self, CapType};
+    use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Vector;
     use StarcoinFramework::Signer;
     use StarcoinFramework::InstallPluginProposalPlugin;
@@ -9,16 +9,16 @@ module StarcoinFramework::AnyMemberPlugin{
     struct AnyMemberPlugin has drop{}
 
     public fun required_caps():vector<CapType>{
-        let caps = Vector::singleton(DaoSpace::member_cap_type());  
+        let caps = Vector::singleton(DAOSpace::member_cap_type());  
         caps 
     }
 
     //TODO how to unify arguments.
     public (script) fun join<DaoT: store>(sender: signer){
         let witness = AnyMemberPlugin{};
-        let member_cap = DaoSpace::acquire_member_cap<DaoT, AnyMemberPlugin>(&witness);
-        IdentifierNFT::accept<DaoSpace::DaoMember<DaoT>,DaoSpace::DaoMemberBody<DaoT>>(&sender);
-        DaoSpace::join_member(&member_cap, Signer::address_of(&sender), 1);
+        let member_cap = DAOSpace::acquire_member_cap<DaoT, AnyMemberPlugin>(&witness);
+        IdentifierNFT::accept<DAOSpace::DaoMember<DaoT>,DAOSpace::DaoMemberBody<DaoT>>(&sender);
+        DAOSpace::join_member(&member_cap, Signer::address_of(&sender), 1);
     }
 
     public (script) fun install_plugin_proposal<DaoT:store>(sender:signer, action_delay:u64){

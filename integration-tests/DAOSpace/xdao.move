@@ -15,8 +15,8 @@ script{
 
 //# publish
 module creator::XDAO {
-    use StarcoinFramework::DaoAccount;
-    use StarcoinFramework::DaoSpace;
+    use StarcoinFramework::DAOAccount;
+    use StarcoinFramework::DAOSpace;
     use StarcoinFramework::MemberProposalPlugin::{Self, MemberProposalPlugin};
     use StarcoinFramework::InstallPluginProposalPlugin::{Self, InstallPluginProposalPlugin};
 
@@ -32,21 +32,21 @@ module creator::XDAO {
         voting_quorum_rate: u8,
         min_action_delay: u64,
         min_proposal_deposit: u128,){
-        let dao_account_cap = DaoAccount::upgrade_to_dao(sender);
-        //let dao_signer = DaoAccount::dao_signer(&dao_account_cap);
-        let config = DaoSpace::new_dao_config(
+        let dao_account_cap = DAOAccount::upgrade_to_dao(sender);
+        //let dao_signer = DAOAccount::dao_signer(&dao_account_cap);
+        let config = DAOSpace::new_dao_config(
             voting_delay,
             voting_period,
             voting_quorum_rate,
             min_action_delay,
             min_proposal_deposit,
         );
-        let dao_root_cap = DaoSpace::create_dao<X>(dao_account_cap, *&NAME, X{}, config);
+        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, X{}, config);
         
-        DaoSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
-        DaoSpace::install_plugin_with_root_cap<X, MemberProposalPlugin>(&dao_root_cap, MemberProposalPlugin::required_caps());
+        DAOSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
+        DAOSpace::install_plugin_with_root_cap<X, MemberProposalPlugin>(&dao_root_cap, MemberProposalPlugin::required_caps());
         
-        DaoSpace::burn_root_cap(dao_root_cap);
+        DAOSpace::burn_root_cap(dao_root_cap);
     }
 }
 
