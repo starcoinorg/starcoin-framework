@@ -146,7 +146,7 @@ Create a new Table.
 
 <pre><code><b>public</b> <b>fun</b> <a href="Table.md#0x1_Table_new">new</a>&lt;K: <b>copy</b> + drop, V: store&gt;(): <a href="Table.md#0x1_Table">Table</a>&lt;K, V&gt; {
     <a href="Table.md#0x1_Table">Table</a>{
-        handle: <a href="Table.md#0x1_Table_new_table_handle">new_table_handle</a>(),
+        handle: <a href="Table.md#0x1_Table_new_table_handle">new_table_handle</a>&lt;K, V&gt;(),
         length: 0,
     }
 }
@@ -401,7 +401,7 @@ Returns true iff <code>table</code> contains an entry for <code>key</code>.
 
 
 
-<pre><code><b>fun</b> <a href="Table.md#0x1_Table_new_table_handle">new_table_handle</a>(): u128
+<pre><code><b>fun</b> <a href="Table.md#0x1_Table_new_table_handle">new_table_handle</a>&lt;K, V&gt;(): u128
 </code></pre>
 
 
@@ -410,7 +410,7 @@ Returns true iff <code>table</code> contains an entry for <code>key</code>.
 <summary>Implementation</summary>
 
 
-<pre><code><b>native</b> <b>fun</b> <a href="Table.md#0x1_Table_new_table_handle">new_table_handle</a>(): u128;
+<pre><code><b>native</b> <b>fun</b> <a href="Table.md#0x1_Table_new_table_handle">new_table_handle</a>&lt;K, V&gt;(): u128;
 </code></pre>
 
 
