@@ -4,6 +4,7 @@ module StarcoinFramework::AnyMemberPlugin{
     use StarcoinFramework::Vector;
     use StarcoinFramework::Signer;
     use StarcoinFramework::InstallPluginProposalPlugin;
+    use StarcoinFramework::IdentifierNFT;
 
     struct AnyMemberPlugin has drop{}
 
