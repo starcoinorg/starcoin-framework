@@ -1,6 +1,6 @@
 module StarcoinFramework::VoteStrategy{
-//    use StarcoinFramework::GenesisDao::{Self,  ProposalPluginCapability};
-    use StarcoinFramework::DaoRegistry;
+//    use StarcoinFramework::DAOSpace::{Self,  ProposalPluginCapability};
+    use StarcoinFramework::DAORegistry;
     use StarcoinFramework::BCS;
     use StarcoinFramework::Signer;
     #[test_only]
@@ -86,7 +86,7 @@ module StarcoinFramework::VoteStrategy{
 
     public fun uninstall_vote_strategy_plugin<DaoT: copy + drop + store>(_cap: &VoteStrategyPluginCapability, _uninstaller: &signer) acquires StrategyMapping {
 //        let dao_addr = Signer::address_of(dao_signer);
-        let dao_addr = DaoRegistry::dao_address<DaoT>();
+        let dao_addr = DAORegistry::dao_address<DaoT>();
         let StrategyMapping {
             strategy_name: _,
             access_path_suffix: _,
@@ -97,7 +97,7 @@ module StarcoinFramework::VoteStrategy{
 
 
     public fun get_vote_strategy_plugin<DaoT: copy + drop + store>():(vector<u8>, vector<u8>, u64, u128) acquires StrategyMapping{
-        let dao_addr = DaoRegistry::dao_address<DaoT>();
+        let dao_addr = DAORegistry::dao_address<DaoT>();
         let strategy_mapping = borrow_global<StrategyMapping<DaoT>>(dao_addr);
         (*&strategy_mapping.strategy_name, *&strategy_mapping.access_path_suffix, strategy_mapping.offset, strategy_mapping.weight_factor)
     }
@@ -106,7 +106,7 @@ module StarcoinFramework::VoteStrategy{
     public fun get_voting_power<DaoT: store>(_sender: address, _state_root: &vector<u8>, state: &vector<u8>) : u128 acquires StrategyMapping{
         //TODO how to verify state ?
 
-        let dao_addr = DaoRegistry::dao_address<DaoT>();
+        let dao_addr = DAORegistry::dao_address<DaoT>();
         let strategy_mapping = borrow_global<StrategyMapping<DaoT>>(dao_addr);
 
         //TODO check state with access_path_suffix ?

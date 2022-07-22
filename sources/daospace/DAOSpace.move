@@ -1,12 +1,12 @@
-module StarcoinFramework::GenesisDao {
-    use StarcoinFramework::DaoAccount::{Self, DaoAccountCap};
+module StarcoinFramework::DAOSpace {
+    use StarcoinFramework::DAOAccount::{Self, DAOAccountCap};
     use StarcoinFramework::Account;
     use StarcoinFramework::Vector;
     use StarcoinFramework::NFT::{Self, NFT};
     use StarcoinFramework::NFTGallery;
     use StarcoinFramework::IdentifierNFT;
     use StarcoinFramework::Signer;
-    use StarcoinFramework::DaoRegistry;
+    use StarcoinFramework::DAORegistry;
     use StarcoinFramework::Token::{Self, Token};
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option::{Self, Option};
@@ -103,8 +103,8 @@ module StarcoinFramework::GenesisDao {
         config: ConfigT
     }
 
-    struct DaoAccountCapHolder has key {
-        cap: DaoAccountCap,
+    struct DAOAccountCapHolder has key {
+        cap: DAOAccountCap,
     }
 
     struct DaoTokenMintCapHolder<phantom DaoT> has key {
@@ -229,11 +229,11 @@ module StarcoinFramework::GenesisDao {
     }
 
     /// Create a dao with a exists Dao account
-    public fun create_dao<DaoT: store>(cap: DaoAccountCap, name: vector<u8>, ext: DaoT, config: DaoConfig): DaoRootCap<DaoT> acquires DaoEvent {
-        let dao_signer = DaoAccount::dao_signer(&cap);
+    public fun create_dao<DaoT: store>(cap: DAOAccountCap, name: vector<u8>, ext: DaoT, config: DaoConfig): DaoRootCap<DaoT> acquires DaoEvent {
+        let dao_signer = DAOAccount::dao_signer(&cap);
 
         let dao_address = Signer::address_of(&dao_signer);
-        let id = DaoRegistry::register<DaoT>(dao_address);
+        let id = DAORegistry::register<DaoT>(dao_address);
         let dao = Dao{
             id,
             name: *&name,
@@ -246,7 +246,7 @@ module StarcoinFramework::GenesisDao {
         move_to(&dao_signer, DaoExt{
             ext
         });
-        move_to(&dao_signer, DaoAccountCapHolder{
+        move_to(&dao_signer, DAOAccountCapHolder{
             cap
         });
 
@@ -319,7 +319,7 @@ module StarcoinFramework::GenesisDao {
 
     // Upgrade account to Dao account and create Dao
     public fun upgrade_to_dao<DaoT: store>(sender: signer, name: vector<u8>, ext: DaoT, config: DaoConfig): DaoRootCap<DaoT> acquires DaoEvent{
-        let cap = DaoAccount::upgrade_to_dao(sender);
+        let cap = DAOAccount::upgrade_to_dao(sender);
         create_dao<DaoT>(cap, name, ext, config)
     }
 
@@ -407,16 +407,16 @@ module StarcoinFramework::GenesisDao {
 
 
     /// Install ToInstallPluginT to Dao and grant the capabilites
-    public fun install_plugin_with_root_cap<DaoT: store, ToInstallPluginT>(_cap: &DaoRootCap<DaoT>, granted_caps: vector<CapType>) acquires DaoAccountCapHolder {
+    public fun install_plugin_with_root_cap<DaoT: store, ToInstallPluginT>(_cap: &DaoRootCap<DaoT>, granted_caps: vector<CapType>) acquires DAOAccountCapHolder {
         do_install_plugin<DaoT, ToInstallPluginT>(granted_caps);
     }
 
     /// Install plugin with DaoInstallPluginCap
-    public fun install_plugin<DaoT: store, PluginT, ToInstallPluginT>(_cap: &DaoInstallPluginCap<DaoT, PluginT>, granted_caps: vector<CapType>) acquires DaoAccountCapHolder {
+    public fun install_plugin<DaoT: store, PluginT, ToInstallPluginT>(_cap: &DaoInstallPluginCap<DaoT, PluginT>, granted_caps: vector<CapType>) acquires DAOAccountCapHolder {
         do_install_plugin<DaoT, ToInstallPluginT>(granted_caps);
     }
 
-    fun do_install_plugin<DaoT: store, ToInstallPluginT>(granted_caps: vector<CapType>) acquires DaoAccountCapHolder {
+    fun do_install_plugin<DaoT: store, ToInstallPluginT>(granted_caps: vector<CapType>) acquires DAOAccountCapHolder {
         assert_no_repeat(&granted_caps);
         let dao_signer = dao_signer<DaoT>();
         assert!(!exists<InstalledPluginInfo<ToInstallPluginT>>(Signer::address_of(&dao_signer)), Errors::already_published(ERR_PLUGIN_HAS_INSTALLED));
@@ -428,9 +428,9 @@ module StarcoinFramework::GenesisDao {
     // ModuleUpgrade functions
 
     /// Submit upgrade module plan
-    public fun submit_upgrade_plan<DaoT: store, PluginT>(_cap: &DaoUpgradeModuleCap<DaoT, PluginT>, package_hash: vector<u8>, version: u64, enforced: bool) acquires DaoAccountCapHolder {
-        let dao_account_cap = &mut borrow_global_mut<DaoAccountCapHolder>(dao_address<DaoT>()).cap;
-        DaoAccount::submit_upgrade_plan(dao_account_cap, package_hash, version, enforced);
+    public fun submit_upgrade_plan<DaoT: store, PluginT>(_cap: &DaoUpgradeModuleCap<DaoT, PluginT>, package_hash: vector<u8>, version: u64, enforced: bool) acquires DAOAccountCapHolder {
+        let dao_account_cap = &mut borrow_global_mut<DAOAccountCapHolder>(dao_address<DaoT>()).cap;
+        DAOAccount::submit_upgrade_plan(dao_account_cap, package_hash, version, enforced);
     }
 
     // Storage capability function
@@ -440,7 +440,7 @@ module StarcoinFramework::GenesisDao {
     }
 
     /// Save the item to the storage
-    public fun save<DaoT: store, PluginT, V: store>(_cap: &DaoStorageCap<DaoT, PluginT>, item: V) acquires DaoAccountCapHolder {
+    public fun save<DaoT: store, PluginT, V: store>(_cap: &DaoStorageCap<DaoT, PluginT>, item: V) acquires DAOAccountCapHolder {
         let dao_signer = dao_signer<DaoT>();
         assert!(!exists<StorageItem<PluginT, V>>(Signer::address_of(&dao_signer)), Errors::already_published(ERR_STORAGE_ERROR));
         move_to(&dao_signer, StorageItem<PluginT, V>{
@@ -459,7 +459,7 @@ module StarcoinFramework::GenesisDao {
     // Withdraw Token capability function
 
     /// Withdraw the token from the Dao account
-    public fun withdraw_token<DaoT: store, PluginT, TokenT: store>(_cap: &DaoWithdrawTokenCap<DaoT, PluginT>, amount: u128): Token<TokenT> acquires DaoAccountCapHolder {
+    public fun withdraw_token<DaoT: store, PluginT, TokenT: store>(_cap: &DaoWithdrawTokenCap<DaoT, PluginT>, amount: u128): Token<TokenT> acquires DAOAccountCapHolder {
         let dao_signer = dao_signer<DaoT>();
         //we should extract the WithdrawCapability from account, and invoke the withdraw_with_cap ?
         Account::withdraw<TokenT>(&dao_signer, amount)
@@ -468,7 +468,7 @@ module StarcoinFramework::GenesisDao {
     // NFT capability function
 
     /// Withdraw the NFT from the Dao account
-    public fun withdraw_nft<DaoT: store, PluginT, NFTMeta: store + copy + drop, NFTBody: store>(_cap: &DaoWithdrawNFTCap<DaoT, PluginT>, id: u64): NFT<NFTMeta, NFTBody> acquires DaoAccountCapHolder {
+    public fun withdraw_nft<DaoT: store, PluginT, NFTMeta: store + copy + drop, NFTBody: store>(_cap: &DaoWithdrawNFTCap<DaoT, PluginT>, id: u64): NFT<NFTMeta, NFTBody> acquires DAOAccountCapHolder {
         let dao_signer = dao_signer<DaoT>();
         let nft = NFTGallery::withdraw<NFTMeta, NFTBody>(&dao_signer, id);
         assert!(Option::is_some(&nft), Errors::not_published(ERR_NFT_ERROR));
@@ -686,7 +686,7 @@ module StarcoinFramework::GenesisDao {
     /// Grant function
 
     /// create grant and init/emit a event
-    public fun create_grant<DaoT, PluginT , TokenT:store>(_cap:&DaoGrantCap<DaoT, PluginT>, sender: &signer, total:u128, start_time:u64, period:u64) acquires DaoAccountCapHolder,GrantEvent {
+    public fun create_grant<DaoT, PluginT , TokenT:store>(_cap:&DaoGrantCap<DaoT, PluginT>, sender: &signer, total:u128, start_time:u64, period:u64) acquires DAOAccountCapHolder,GrantEvent {
         let dao_signer = dao_signer<DaoT>();
         let dao_address = dao_address<DaoT>();
         let account_address = Signer::address_of(sender);
@@ -718,12 +718,12 @@ module StarcoinFramework::GenesisDao {
     }
 
     /// withdraw token with grant 
-    public (script) fun grant_withdraw_entry<DaoT, PluginT, TokenT:store>(sender: signer, amount:u128) acquires DaoAccountCapHolder, DaoGrantWithdrawTokenKey, GrantEvent{
+    public (script) fun grant_withdraw_entry<DaoT, PluginT, TokenT:store>(sender: signer, amount:u128) acquires DAOAccountCapHolder, DaoGrantWithdrawTokenKey, GrantEvent{
         grant_withdraw<DaoT, PluginT, TokenT>(&sender, amount);
     }
 
     /// withdraw token with grant 
-    public fun grant_withdraw<DaoT, PluginT, TokenT:store>(sender: &signer, amount:u128) acquires DaoAccountCapHolder, DaoGrantWithdrawTokenKey, GrantEvent{
+    public fun grant_withdraw<DaoT, PluginT, TokenT:store>(sender: &signer, amount:u128) acquires DAOAccountCapHolder, DaoGrantWithdrawTokenKey, GrantEvent{
         let account_address = Signer::address_of(sender);
         assert!(exists<DaoGrantWithdrawTokenKey<DaoT, PluginT, TokenT>>(account_address) , Errors::invalid_state(ERR_NOT_HAVE_GRANT));
         
@@ -1080,7 +1080,7 @@ module StarcoinFramework::GenesisDao {
         sender: &signer,
         action: ActionT,
         action_delay: u64,
-    ): u64 acquires Dao, GlobalProposals, DaoAccountCapHolder, ProposalActions, ProposalEvent, GlobalProposalActions {
+    ): u64 acquires Dao, GlobalProposals, DAOAccountCapHolder, ProposalActions, ProposalEvent, GlobalProposalActions {
         // check Dao member
         let sender_addr = Signer::address_of(sender);
         assert!(is_member<DaoT>(sender_addr), Errors::requires_capability(ERR_NOT_DAO_MEMBER));
@@ -1240,7 +1240,7 @@ module StarcoinFramework::GenesisDao {
 
         // emit event
         let dao_id = dao_id(dao_address);
-        let proposal_event = borrow_global_mut<ProposalEvent<DaoT> >(DaoRegistry::dao_address<DaoT>());
+        let proposal_event = borrow_global_mut<ProposalEvent<DaoT> >(DAORegistry::dao_address<DaoT>());
         Event::emit_event(&mut proposal_event.vote_event,
             VotedEvent {
                 dao_id,
@@ -1521,7 +1521,7 @@ module StarcoinFramework::GenesisDao {
     public fun proposal_info<DaoT: store>(
         proposal_id: u64,
     ): (u64, address, u64, u64, u128, u128, u128, u128, u64, vector<u8>) acquires GlobalProposals {
-        let dao_address = DaoRegistry::dao_address<DaoT>();
+        let dao_address = DAORegistry::dao_address<DaoT>();
         let proposals = borrow_global_mut<GlobalProposals>(dao_address);
         let proposal = borrow_proposal(proposals, proposal_id);
         (proposal.id, proposal.proposer, proposal.start_time, proposal.end_time, proposal.yes_votes, proposal.no_votes, proposal.abstain_votes, proposal.veto_votes, proposal.block_number, *&proposal.state_root)
@@ -1644,7 +1644,7 @@ module StarcoinFramework::GenesisDao {
                                  ConfigT: copy + store + drop>(
         _cap: &mut DaoModifyConfigCap<DaoT, PluginT>,
         config: ConfigT)
-    acquires DaoCustomConfigModifyCapHolder, DaoAccountCapHolder {
+    acquires DaoCustomConfigModifyCapHolder, DAOAccountCapHolder {
         let dao_address = dao_address<DaoT>();
         if (Config::config_exist_by_address<ConfigT>(dao_address)) {
             let modify_config_cap =
@@ -1833,13 +1833,13 @@ module StarcoinFramework::GenesisDao {
         output
     }
 
-    fun dao_signer<DaoT>(): signer acquires DaoAccountCapHolder {
-        let cap = &borrow_global<DaoAccountCapHolder>(dao_address<DaoT>()).cap;
-        DaoAccount::dao_signer(cap)
+    fun dao_signer<DaoT>(): signer acquires DAOAccountCapHolder {
+        let cap = &borrow_global<DAOAccountCapHolder>(dao_address<DaoT>()).cap;
+        DAOAccount::dao_signer(cap)
     }
 
     fun dao_address<DaoT>(): address {
-        DaoRegistry::dao_address<DaoT>()
+        DAORegistry::dao_address<DaoT>()
     }
 
     fun dao_id(dao_address: address): u64 acquires Dao {

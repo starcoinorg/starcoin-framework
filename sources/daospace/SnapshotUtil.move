@@ -103,7 +103,7 @@ module StarcoinFramework::SnapshotUtil{
         // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember
         let dao_member_struct_tag = StructTag1 {
             addr: @0x00000000000000000000000000000001,
-            module_name: b"GenesisDao",
+            module_name: b"DAOSpace",
             name: b"DaoMember",
             types: *&dao_type_tags
         };
@@ -111,7 +111,7 @@ module StarcoinFramework::SnapshotUtil{
         // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody
         let dao_member_body_struct_tag = StructTag1 {
             addr: @0x00000000000000000000000000000001,
-            module_name: b"GenesisDao",
+            module_name: b"DAOSpace",
             name: b"DaoMemberBody",
             types: *&dao_type_tags
         };

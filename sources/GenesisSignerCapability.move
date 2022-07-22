@@ -7,7 +7,7 @@ module StarcoinFramework::GenesisSignerCapability {
     friend StarcoinFramework::Oracle;
     friend StarcoinFramework::Genesis;
     friend StarcoinFramework::StdlibUpgradeScripts;
-    friend StarcoinFramework::DaoRegistry;
+    friend StarcoinFramework::DAORegistry;
     friend StarcoinFramework::Block;
 
 
