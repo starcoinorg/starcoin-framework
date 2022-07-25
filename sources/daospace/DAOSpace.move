@@ -811,8 +811,14 @@ module StarcoinFramework::DAOSpace {
         });
     }
 
-    // Acquiring Capabilities
+    // Query address grant 
+    public fun query_grant<DaoT, PluginT , TokenT:store>(addr: address):(u128, u128, u64, u64) acquires DaoGrantWithdrawTokenKey{
+        assert!(exists<DaoGrantWithdrawTokenKey<DaoT, PluginT, TokenT>>(addr) , Errors::invalid_state(ERR_NOT_HAVE_GRANT));
+        let cap = borrow_global<DaoGrantWithdrawTokenKey<DaoT, PluginT, TokenT>>(addr);
+        (cap.total, cap.withdraw, cap.start_time, cap.period)
+    }
 
+    // Acquiring Capabilities
     fun validate_cap<DaoT: store, PluginT>(cap: CapType) acquires InstalledPluginInfo {
         let addr = dao_address<DaoT>();
         if (exists<InstalledPluginInfo<PluginT>>(addr)) {
