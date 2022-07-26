@@ -766,6 +766,17 @@ module StarcoinFramework::DAOSpace {
         Account::deposit<TokenT>(account_address, token);
     }
 
+    public fun query_grant_can_withdraw<DaoT, PluginT, TokenT:store>(addr: address):u128 acquires DaoGrantWithdrawTokenKey{
+        assert!(exists<DaoGrantWithdrawTokenKey<DaoT, PluginT, TokenT>>(addr) , Errors::invalid_state(ERR_NOT_HAVE_GRANT));
+        let cap = borrow_global<DaoGrantWithdrawTokenKey<DaoT, PluginT, TokenT>>(addr);
+        let now = Timestamp::now_seconds();
+        let elapsed_time = now - cap.start_time;
+        if (elapsed_time >= cap.period) {
+            cap.total - cap.withdraw
+        } else {
+            Math::mul_div(cap.total, (elapsed_time as u128), (cap.period as u128)) - cap.withdraw
+        }
+    }
     /// is have DaoGrantWithdrawTokenKey
     public fun is_have_grant<DaoT, PluginT, TokenT:store>(addr:address):bool{
         exists<DaoGrantWithdrawTokenKey<DaoT, PluginT, TokenT>>(addr)
