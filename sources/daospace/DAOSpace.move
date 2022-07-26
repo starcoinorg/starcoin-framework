@@ -876,6 +876,26 @@ module StarcoinFramework::DAOSpace {
         }
     }
 
+    // Query grant info total
+    public fun query_grant_info_total(grant_info: &GrantInfo):u128{
+        grant_info.total
+    }
+
+    // Query grant info withdraw
+    public fun query_grant_info_withdraw(grant_info: &GrantInfo):u128{
+        grant_info.withdraw
+    }
+    
+    // Query grant info start_time
+    public fun query_grant_info_start_time(grant_info: &GrantInfo):u64{
+        grant_info.start_time
+    }
+
+    // Query grant info period
+    public fun query_grant_info_period(grant_info: &GrantInfo):u64{
+        grant_info.period
+    }
+
     // Acquiring Capabilities
     fun validate_cap<DaoT: store, PluginT>(cap: CapType) acquires InstalledPluginInfo {
         let addr = dao_address<DaoT>();
