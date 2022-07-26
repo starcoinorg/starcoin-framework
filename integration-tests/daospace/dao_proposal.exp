@@ -34,7 +34,7 @@ task 10 'run'. lines 161-186:
 
 task 11 'run'. lines 188-204:
 {
-  "gas_used": 218703,
+  "gas_used": 221123,
   "status": {
     "Keep": "Executed"
   }
@@ -42,7 +42,7 @@ task 11 'run'. lines 188-204:
 
 task 12 'run'. lines 206-222:
 {
-  "gas_used": 218703,
+  "gas_used": 221123,
   "status": {
     "Keep": "Executed"
   }
@@ -50,7 +50,7 @@ task 12 'run'. lines 206-222:
 
 task 13 'run'. lines 225-246:
 {
-  "gas_used": 237418,
+  "gas_used": 239838,
   "status": {
     "Keep": {
       "MoveAbort": [
@@ -68,7 +68,7 @@ task 13 'run'. lines 225-246:
 
 task 15 'run'. lines 250-296:
 {
-  "gas_used": 17749,
+  "gas_used": 38453,
   "status": {
     "Keep": {
       "ExecutionFailure": {
@@ -79,7 +79,7 @@ task 15 'run'. lines 250-296:
           }
         },
         "function": 16,
-        "code_offset": 3
+        "code_offset": 8
       }
     }
   }
@@ -97,7 +97,7 @@ task 17 'run'. lines 301-313:
             "name": "DAOSpace"
           }
         },
-        "function": 67,
+        "function": 69,
         "code_offset": 3
       }
     }
