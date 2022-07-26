@@ -1,4 +1,9 @@
-module StarcoinFramework::VoteStrategy{
+//# init -n dev
+
+//# faucet --addr default
+
+//# publish
+module default::VoteStrategy{
 //    use StarcoinFramework::DAOSpace::{Self,  ProposalPluginCapability};
     use StarcoinFramework::DAORegistry;
     use StarcoinFramework::BCS;
@@ -10,7 +15,7 @@ module StarcoinFramework::VoteStrategy{
 
     const ERR_VOTING_STRATEGY_MAPPING_EXIST: u64 = 1411;
     const ERR_PRE_ORDER_TYPE_INVALID: u64 = 1413;
-    const ERR_BCS_STATE_NTFS_LENGHT_TYPE_INVALID: u64 = 1413;
+    const ERR_BCS_STATE_NTFS_LENGHT_TYPE_INVALID: u64 = 1414;
 
 
     struct VoteStrategyPluginCapability has key{
