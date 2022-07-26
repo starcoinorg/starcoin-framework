@@ -178,7 +178,7 @@ script{
         DAOSpace::grant_withdraw<X, XPlugin, STC::STC>(&sender, 377777u128);
     }
 }
-// check: MoveAbort 384519
+// check: MoveAbort 77319
 
 //# run --signers alice
 script{

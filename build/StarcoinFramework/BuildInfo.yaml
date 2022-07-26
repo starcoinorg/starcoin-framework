@@ -295,15 +295,12 @@ compiled_package_info:
       name: Version
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
-      name: VoteStrategy
-    : StarcoinFramework
-    ? address: "0x00000000000000000000000000000001"
       name: YieldFarming
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: B581DFF2982AFBAB6C29832B4352A07C72C08632935B5E758A54C03683021FC2
+  source_digest: B7B283A966C34484FA4484B96892461A67ABE2AED3E463C0384DF8EEE330B206
   build_flags:
     dev_mode: false
     test_mode: false

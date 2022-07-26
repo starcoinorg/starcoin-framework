@@ -23,60 +23,57 @@ module StarcoinFramework::DAOSpace {
     use StarcoinFramework::Block;
 
 
-    const E_NO_GRANTED: u64 = 1;
-    const ERR_REPEAT_ELEMENT: u64 = 100;
-    const ERR_PLUGIN_HAS_INSTALLED: u64 = 101;
-    const ERR_STORAGE_ERROR: u64 = 102;
-    const ERR_NFT_ERROR: u64 = 103;
-    const ERR_ALREADY_INIT: u64 = 104;
-
-    const ERR_NOT_ALREADY_MEMBER: u64 = 104;
-    const ERR_NOT_MEMBER: u64 = 105;
-
-    const ERR_NOT_AUTHORIZED: u64 = 1401;
-    const ERR_ACTION_DELAY_TOO_SMALL: u64 = 1402;
-    const ERR_CONFIG_PARAM_INVALID: u64 = 1403;
-
-    /// proposal
-    const ERR_PROPOSAL_STATE_INVALID: u64 = 1413;
-    const ERR_PROPOSAL_ID_MISMATCH: u64 = 1414;
-    const ERR_PROPOSER_MISMATCH: u64 = 1415;
-    const ERR_PROPOSAL_NOT_EXIST: u64 = 1416;
-    const ERR_QUORUM_RATE_INVALID: u64 = 1417;
-    const ERR_PROPOSAL_ACTION_INDEX_NOT_EXIST: u64 = 1418;
-
-    /// action
-    const ERR_ACTION_MUST_EXIST: u64 = 1430;
-    const ERR_ACTION_INDEX_INVALID: u64 = 1431;
-    const ERR_PROPOSAL_ACTIONS_NOT_EXIST: u64 = 1431;
+    const ERR_NO_GRANTED: u64 = 100;
+    const ERR_REPEAT_ELEMENT: u64 = 101;
+    const ERR_PLUGIN_HAS_INSTALLED: u64 = 102;
+    const ERR_STORAGE_ERROR: u64 = 103;
+    const ERR_NFT_ERROR: u64 = 104;
+    const ERR_ALREADY_INIT: u64 = 105;
 
     /// member
-    const ERR_NOT_DAO_MEMBER: u64 = 1436;
+    const ERR_EXPECT_MEMBER: u64 = 200;
+    const ERR_EXPECT_NOT_MEMBER: u64 = 2001;
+
+    /// config or arguments
+    const ERR_ACTION_DELAY_TOO_SMALL: u64 = 300;
+    const ERR_CONFIG_PARAM_INVALID: u64 = 301;
+    const ERR_INVALID_AMOUNT:u64 = 302;
+    const ERR_TOO_SMALL_TOTAL:u64 = 303;
+    const ERR_HAVE_SAME_GRANT:u64 = 304;
+    const ERR_NOT_HAVE_GRANT:u64 = 305;
+
+    /// proposal
+    const ERR_PROPOSAL_STATE_INVALID: u64 = 400;
+    const ERR_PROPOSAL_ID_MISMATCH: u64 = 401;
+    const ERR_PROPOSER_MISMATCH: u64 = 402;
+    const ERR_PROPOSAL_NOT_EXIST: u64 = 403;
+    const ERR_QUORUM_RATE_INVALID: u64 = 404;
+    const ERR_PROPOSAL_ACTION_INDEX_NOT_EXIST: u64 = 405;
+
+    /// action
+    const ERR_ACTION_MUST_EXIST: u64 = 500;
+    const ERR_ACTION_INDEX_INVALID: u64 = 501;
+    const ERR_PROPOSAL_ACTIONS_NOT_EXIST: u64 = 502;
 
     /// vote
-    const ERR_VOTE_STATE_MISMATCH: u64 = 1445;
-    const ERR_VOTED_OTHERS_ALREADY: u64 = 1446;
-    const ERR_VOTED_ALREADY: u64 = 1447;
-    const ERR_VOTE_PARAM_INVALID: u64 = 1448;
-    const ERR_SNAPSHOT_PROOF_PARAM_INVALID: u64 = 1455;
-    const ERR_STATE_PROOF_VERIFY_INVALID: u64 = 1456;
+    const ERR_VOTE_STATE_MISMATCH: u64 = 600;
+    const ERR_VOTED_OTHERS_ALREADY: u64 = 601;
+    const ERR_VOTED_ALREADY: u64 = 602;
+    const ERR_VOTE_PARAM_INVALID: u64 = 603;
+    const ERR_SNAPSHOT_PROOF_PARAM_INVALID: u64 = 604;
+    const ERR_STATE_PROOF_VERIFY_INVALID: u64 = 605;
 
-
-    const ERR_ZERO_AMOUNT:u64 = 1501;
-    const ERR_TOO_BIG_AMOUNT:u64 = 1502;
-    const ERR_TOO_SMALL_TOTAL:u64 = 1503;
-    const ERR_HAVE_SAME_GRANT:u64 = 1504;
-    const ERR_NOT_HAVE_GRANT:u64 = 1505;
-
+    /// DAO resource, every DAO has this resource at it's DAO account
     struct Dao has key {
         id: u64,
-        // maybe should use ASIIC String
+        // TODO migrate ASIIC String and use ASSIC String
         name: vector<u8>,
         dao_address: address,
         next_member_id: u64,
         next_proposal_id: u64,
     }
 
+    /// A custom extension field of the DAO resources
     struct DaoExt<DaoT: store> has key {
         ext: DaoT,
     }
@@ -95,8 +92,6 @@ module StarcoinFramework::DAOSpace {
         min_action_delay: u64,
         /// how many STC should be deposited to create a proposal.
         min_proposal_deposit: u128,
-//        /// the actual voting system, default single choice voting system
-//        voting_system: u8,
     }
 
     struct DaoCustomConfig<ConfigT> has copy, drop, store {
@@ -479,8 +474,7 @@ module StarcoinFramework::DAOSpace {
 
     /// Join Dao and get a membership
     public fun join_member<DaoT: store, PluginT>(_cap: &DaoMemberCap<DaoT, PluginT>, to_address: address, init_sbt: u128) acquires DaoNFTMintCapHolder, DaoTokenMintCapHolder, Dao, MemberEvent {
-        assert!(!is_member<DaoT>(to_address), Errors::already_published(ERR_NOT_ALREADY_MEMBER));
-
+        ensure_not_member<DaoT>(to_address);
         let member_id = next_member_id<DaoT>();
 
         let meta = DaoMember<DaoT>{
@@ -550,8 +544,16 @@ module StarcoinFramework::DAOSpace {
         });
     }
 
+    public fun ensure_member<DaoT: store>(member_addr:address){
+        assert!(is_member<DaoT>(member_addr), Errors::invalid_state(ERR_EXPECT_MEMBER));
+    }
+
+    public fun ensure_not_member<DaoT: store>(member_addr:address){
+        assert!(!is_member<DaoT>(member_addr), Errors::invalid_state(ERR_EXPECT_NOT_MEMBER));
+    }
+
     fun do_remove_member<DaoT: store>(member_addr: address):(u64,u128) acquires DaoNFTBurnCapHolder, DaoTokenBurnCapHolder {
-        assert!(is_member<DaoT>(member_addr), Errors::already_published(ERR_NOT_MEMBER));
+        ensure_member<DaoT>(member_addr);
         let dao_address = dao_address<DaoT>();
 
         let nft_burn_cap = &mut borrow_global_mut<DaoNFTBurnCapHolder<DaoT>>(dao_address).cap;
@@ -566,7 +568,7 @@ module StarcoinFramework::DAOSpace {
 
     /// Increment the member SBT
     public fun increase_member_sbt<DaoT: store, PluginT>(_cap: &DaoMemberCap<DaoT, PluginT>, member_addr: address, amount: u128) acquires DaoNFTUpdateCapHolder, DaoTokenMintCapHolder, MemberEvent {
-        assert!(is_member<DaoT>(member_addr), Errors::already_published(ERR_NOT_MEMBER));
+        ensure_member<DaoT>(member_addr);
         let dao_address = dao_address<DaoT>();
 
         let nft_update_cap = &mut borrow_global_mut<DaoNFTUpdateCapHolder<DaoT>>(dao_address).cap;
@@ -594,7 +596,7 @@ module StarcoinFramework::DAOSpace {
 
     /// Decrement the member SBT
     public fun decrease_member_sbt<DaoT: store, PluginT>(_cap: &DaoMemberCap<DaoT, PluginT>, member_addr: address, amount: u128) acquires DaoNFTUpdateCapHolder, DaoTokenBurnCapHolder, MemberEvent {
-        assert!(is_member<DaoT>(member_addr), Errors::already_published(ERR_NOT_MEMBER));
+        ensure_member<DaoT>(member_addr);
         let dao_address = dao_address<DaoT>();
 
         let nft_update_cap = &mut borrow_global_mut<DaoNFTUpdateCapHolder<DaoT>>(dao_address).cap;
@@ -623,7 +625,9 @@ module StarcoinFramework::DAOSpace {
     /// Query amount of the member SBT
     public fun query_sbt<DaoT: store, PluginT>(member_addr: address)
     : u128 acquires DaoNFTUpdateCapHolder {
-        assert!(is_member<DaoT>(member_addr), Errors::already_published(ERR_NOT_MEMBER));
+        if (!is_member<DaoT>(member_addr)) {
+            return 0
+        };
         let dao_address = dao_address<DaoT>();
 
         let nft_update_cap =
@@ -753,13 +757,13 @@ module StarcoinFramework::DAOSpace {
             Math::mul_div(cap.total, (elapsed_time as u128), (cap.period as u128)) - cap.withdraw
         };
         
-        assert!(can_amount > 0, Errors::invalid_argument(ERR_ZERO_AMOUNT));
-        assert!(can_amount >= amount, Errors::invalid_argument(ERR_TOO_BIG_AMOUNT));
+        assert!(can_amount > 0, Errors::invalid_argument(ERR_INVALID_AMOUNT));
+        assert!(can_amount >= amount, Errors::invalid_argument(ERR_INVALID_AMOUNT));
 
         let dao_signer = dao_signer<DaoT>();
         let dao_address = dao_address<DaoT>();
 
-        assert!(amount <= Account::balance<TokenT>(dao_address) , Errors::invalid_argument(ERR_TOO_BIG_AMOUNT));
+        assert!(amount <= Account::balance<TokenT>(dao_address) , Errors::invalid_argument(ERR_INVALID_AMOUNT));
         cap.withdraw = cap.withdraw + amount;
 
         let grant_event = borrow_global_mut<GrantEvent<DaoT, PluginT, TokenT>>(dao_address);
@@ -901,9 +905,9 @@ module StarcoinFramework::DAOSpace {
         let addr = dao_address<DaoT>();
         if (exists<InstalledPluginInfo<PluginT>>(addr)) {
             let plugin_info = borrow_global<InstalledPluginInfo<PluginT>>(addr);
-            assert!(Vector::contains(&plugin_info.granted_caps, &cap), Errors::requires_capability(E_NO_GRANTED));
+            assert!(Vector::contains(&plugin_info.granted_caps, &cap), Errors::requires_capability(ERR_NO_GRANTED));
         } else {
-            abort (Errors::requires_capability(E_NO_GRANTED))
+            abort (Errors::requires_capability(ERR_NO_GRANTED))
         }
     }
 
@@ -1167,8 +1171,8 @@ module StarcoinFramework::DAOSpace {
     ): u64 acquires Dao, GlobalProposals, DAOAccountCapHolder, ProposalActions, ProposalEvent, GlobalProposalActions {
         // check Dao member
         let sender_addr = Signer::address_of(sender);
-        assert!(is_member<DaoT>(sender_addr), Errors::requires_capability(ERR_NOT_DAO_MEMBER));
-
+        ensure_member<DaoT>(sender_addr);
+        
         if (action_delay == 0) {
             action_delay = min_action_delay<DaoT>();
         } else {
@@ -1276,20 +1280,19 @@ module StarcoinFramework::DAOSpace {
         snpashot_raw_proofs: vector<u8>,
         choice: VotingChoice,
     )  acquires GlobalProposals, MyVotes, ProposalEvent, GlobalProposalActions, Dao {
+        let sender_addr = Signer::address_of(sender);
+        ensure_member<DaoT>(sender_addr);
+
         let dao_address = dao_address<DaoT>();
         let proposals = borrow_global_mut<GlobalProposals>(dao_address);
         let proposal = borrow_proposal_mut(proposals, proposal_id);
 
-            {
-                let state = proposal_state_with_proposal<DaoT>(proposal);
-                // only when proposal is active, use can cast vote.
-                assert!(state == ACTIVE, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
-            };
-
-        let sender_addr = Signer::address_of(sender);
-        // check Dao member
-        assert!(is_member<DaoT>(sender_addr), Errors::requires_capability(ERR_NOT_DAO_MEMBER));
-
+        {
+            let state = proposal_state_with_proposal<DaoT>(proposal);
+            // only when proposal is active, use can cast vote.
+            assert!(state == ACTIVE, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
+        };
+     
         // verify snapshot state proof
         let snapshot_proof = deserialize_snapshot_proofs(&snpashot_raw_proofs);
         let state_proof = new_state_proof_from_proofs(&snapshot_proof);
@@ -1786,7 +1789,6 @@ module StarcoinFramework::DAOSpace {
         let modify_config_cap = &mut borrow_global_mut<DaoConfigModifyCapHolder>(
             dao_address<DaoT>(),
         ).cap;
-        //assert!(Config::account_address(cap) == Token::token_address<TokenT>(), Errors::invalid_argument(ERR_NOT_AUTHORIZED));
         Config::set_with_capability<DaoConfig>(modify_config_cap, new_config);
     }
 
