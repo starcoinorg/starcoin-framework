@@ -691,6 +691,14 @@ module StarcoinFramework::DAOSpace {
         withdraw_value:u128
     }
 
+
+    struct GrantInfo has copy, drop ,store{
+        total:u128,
+        withdraw:u128,
+        start_time:u64,
+        period:u64
+    }
+
     /// Grant function
 
     /// create grant and init/emit a event
@@ -857,10 +865,15 @@ module StarcoinFramework::DAOSpace {
     }
 
     // Query address grant 
-    public fun query_grant<DaoT, PluginT , TokenT:store>(addr: address):(u128, u128, u64, u64) acquires DaoGrantWithdrawTokenKey{
+    public fun query_grant<DaoT, PluginT , TokenT:store>(addr: address): GrantInfo acquires DaoGrantWithdrawTokenKey{
         assert!(exists<DaoGrantWithdrawTokenKey<DaoT, PluginT, TokenT>>(addr) , Errors::invalid_state(ERR_NOT_HAVE_GRANT));
         let cap = borrow_global<DaoGrantWithdrawTokenKey<DaoT, PluginT, TokenT>>(addr);
-        (cap.total, cap.withdraw, cap.start_time, cap.period)
+        GrantInfo{
+           total        :   cap.total,
+           withdraw     :   cap.withdraw,
+           start_time   :   cap.start_time,
+           period       :   cap.period
+        }
     }
 
     // Acquiring Capabilities
