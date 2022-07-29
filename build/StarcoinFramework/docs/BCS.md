@@ -12,6 +12,7 @@ published on-chain.
 -  [Function `to_bytes`](#0x1_BCS_to_bytes)
 -  [Function `to_address`](#0x1_BCS_to_address)
 -  [Function `deserialize_option_bytes_vector`](#0x1_BCS_deserialize_option_bytes_vector)
+-  [Function `deserialize_option_tuple`](#0x1_BCS_deserialize_option_tuple)
 -  [Function `deserialize_bytes_vector`](#0x1_BCS_deserialize_bytes_vector)
 -  [Function `deserialize_u64_vector`](#0x1_BCS_deserialize_u64_vector)
 -  [Function `deserialize_u128_vector`](#0x1_BCS_deserialize_u128_vector)
@@ -44,6 +45,7 @@ published on-chain.
 -  [Function `skip_u64`](#0x1_BCS_skip_u64)
 -  [Function `skip_u32`](#0x1_BCS_skip_u32)
 -  [Function `skip_u16`](#0x1_BCS_skip_u16)
+-  [Function `skip_u8`](#0x1_BCS_skip_u8)
 -  [Function `skip_address`](#0x1_BCS_skip_address)
 -  [Function `skip_bool`](#0x1_BCS_skip_bool)
 -  [Function `can_skip`](#0x1_BCS_can_skip)
@@ -179,6 +181,50 @@ Return the address of key bytes
         i = i + 1;
     };
     (vec, new_offset)
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_deserialize_option_tuple"></a>
+
+## Function `deserialize_option_tuple`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_deserialize_option_tuple">deserialize_option_tuple</a>(input: &vector&lt;u8&gt;, offset: u64): (<a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;, <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;, u64)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_deserialize_option_tuple">deserialize_option_tuple</a>(input: &vector&lt;u8&gt;, offset: u64): (<a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;, <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;, u64) {
+    <b>let</b> (tag, new_offset) = <a href="BCS.md#0x1_BCS_deserialize_option_tag">deserialize_option_tag</a>(input, offset);
+    <b>if</b> (!tag) {
+        <b>return</b> (<a href="Option.md#0x1_Option_none">Option::none</a>&lt;vector&lt;u8&gt;&gt;(), <a href="Option.md#0x1_Option_none">Option::none</a>&lt;vector&lt;u8&gt;&gt;(), new_offset)
+    } <b>else</b> {
+        <b>let</b> (bs1, new_offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes">deserialize_bytes</a>(input, new_offset);
+        <b>let</b> (bs2, new_offset) = <a href="BCS.md#0x1_BCS_deserialize_bytes">deserialize_bytes</a>(input, new_offset);
+
+        (<a href="Option.md#0x1_Option_some">Option::some</a>&lt;vector&lt;u8&gt;&gt;(bs1), <a href="Option.md#0x1_Option_some">Option::some</a>&lt;vector&lt;u8&gt;&gt;(bs2), new_offset)
+    }
 }
 </code></pre>
 
@@ -840,7 +886,7 @@ Return the address of key bytes
 
 
 <pre><code><b>fun</b> <a href="BCS.md#0x1_BCS_get_n_bytes">get_n_bytes</a>(input: &vector&lt;u8&gt;, offset: u64, n: u64): vector&lt;u8&gt; {
-    <b>assert</b>!(((offset + n) &lt;= <a href="Vector.md#0x1_Vector_length">Vector::length</a>(input)) && (offset &lt; offset + n), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="BCS.md#0x1_BCS_ERR_INPUT_NOT_LARGE_ENOUGH">ERR_INPUT_NOT_LARGE_ENOUGH</a>));
+    <b>assert</b>!(((offset + n) &lt;= <a href="Vector.md#0x1_Vector_length">Vector::length</a>(input)) && (offset &lt;= offset + n), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="BCS.md#0x1_BCS_ERR_INPUT_NOT_LARGE_ENOUGH">ERR_INPUT_NOT_LARGE_ENOUGH</a>));
     <b>let</b> i = 0;
     <b>let</b> content = <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>&lt;u8&gt;();
     <b>while</b> (i &lt; n) {
@@ -1451,6 +1497,43 @@ Return the address of key bytes
 <pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u16">skip_u16</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
     <a href="BCS.md#0x1_BCS_can_skip">can_skip</a>(input, offset, 2 );
     offset + 2
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_BCS_skip_u8"></a>
+
+## Function `skip_u8`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u8">skip_u8</a>(input: &vector&lt;u8&gt;, offset: u64): u64
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="BCS.md#0x1_BCS_skip_u8">skip_u8</a>(input: &vector&lt;u8&gt;, offset: u64): u64 {
+    <a href="BCS.md#0x1_BCS_can_skip">can_skip</a>(input, offset, 1 );
+    offset + 1
 }
 </code></pre>
 

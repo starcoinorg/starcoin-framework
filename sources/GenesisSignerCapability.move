@@ -7,6 +7,8 @@ module StarcoinFramework::GenesisSignerCapability {
     friend StarcoinFramework::Oracle;
     friend StarcoinFramework::Genesis;
     friend StarcoinFramework::StdlibUpgradeScripts;
+    friend StarcoinFramework::DAORegistry;
+    friend StarcoinFramework::Block;
 
 
     const ENOT_GENESIS_ACCOUNT: u64 = 11;

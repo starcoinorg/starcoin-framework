@@ -25,6 +25,7 @@ The module for StdlibUpgrade init scripts
 <b>use</b> <a href="Collection.md#0x1_Collection">0x1::Collection</a>;
 <b>use</b> <a href="Config.md#0x1_Config">0x1::Config</a>;
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
+<b>use</b> <a href="DAORegistry.md#0x1_DAORegistry">0x1::DAORegistry</a>;
 <b>use</b> <a href="GenesisNFT.md#0x1_GenesisNFT">0x1::GenesisNFT</a>;
 <b>use</b> <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability">0x1::GenesisSignerCapability</a>;
 <b>use</b> <a href="LanguageVersion.md#0x1_LanguageVersion">0x1::LanguageVersion</a>;
@@ -304,7 +305,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12">upgrade_from_v11_to_v12</a>(sender: signer)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12">upgrade_from_v11_to_v12</a>()
 </code></pre>
 
 
@@ -313,8 +314,8 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12">upgrade_from_v11_to_v12</a>(sender: signer) {
-    <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>(&sender);
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12">upgrade_from_v11_to_v12</a>() {
+    <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>();
 }
 </code></pre>
 
@@ -328,7 +329,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>(sender: &signer)
+<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>()
 </code></pre>
 
 
@@ -337,10 +338,9 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>(sender: &signer) {
-    {
-        <a href="Block.md#0x1_Block_checkpoints_init">Block::checkpoints_init</a>(sender);
-    };
+<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>() {
+    <a href="Block.md#0x1_Block_checkpoints_init">Block::checkpoints_init</a>();
+    <a href="DAORegistry.md#0x1_DAORegistry_initialize">DAORegistry::initialize</a>();
 }
 </code></pre>
 

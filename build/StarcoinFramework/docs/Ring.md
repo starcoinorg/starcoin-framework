@@ -120,7 +120,7 @@ Create a Ring with capacity.
 
 
 
-<pre><code><b>pragma</b> intrinsic = <b>true</b>;
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -157,7 +157,7 @@ is Ring full
 
 
 
-<pre><code><b>pragma</b> intrinsic = <b>true</b>;
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -194,7 +194,7 @@ Return the capacity of the Ring.
 
 
 
-<pre><code><b>pragma</b> intrinsic = <b>true</b>;
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -240,7 +240,7 @@ Add element <code>e</code> to the insertion_index of the Ring <code>r</code>.
 
 
 
-<pre><code><b>pragma</b> intrinsic = <b>true</b>;
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -284,7 +284,7 @@ Return a reference to the <code>i</code>th element in the Ring <code>r</code>.
 
 
 
-<pre><code><b>pragma</b> intrinsic = <b>true</b>;
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -329,7 +329,7 @@ Return a mutable reference to the <code>i</code>th element in the Ring <code>r</
 
 
 
-<pre><code><b>pragma</b> intrinsic = <b>true</b>;
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -373,7 +373,7 @@ Otherwise, returns <code><a href="Option.md#0x1_Option_none">Option::none</a>&lt
 
 
 
-<pre><code><b>pragma</b> intrinsic = <b>true</b>;
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -429,7 +429,7 @@ Returns the vector<Element> saved by ring
 
 
 
-<pre><code><b>pragma</b> intrinsic = <b>true</b>;
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 

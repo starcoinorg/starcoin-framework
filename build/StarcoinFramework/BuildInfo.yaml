@@ -13,6 +13,9 @@ compiled_package_info:
       name: AccountScripts
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: AnyMemberPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: Arith
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -49,6 +52,9 @@ compiled_package_info:
       name: Config
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: ConfigProposalPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: ConsensusConfig
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -56,6 +62,15 @@ compiled_package_info:
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: CoreAddresses
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: DAOAccount
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: DAORegistry
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: DAOSpace
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: Dao
@@ -103,6 +118,9 @@ compiled_package_info:
       name: GenesisSignerCapability
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: GrantProposalPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: Hash
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -112,10 +130,16 @@ compiled_package_info:
       name: IdentifierNFTScripts
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: InstallPluginProposalPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: LanguageVersion
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: Math
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: MemberProposalPlugin
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: MerkleNFTDistributor
@@ -178,6 +202,9 @@ compiled_package_info:
       name: Ring
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: SBTVoteStrategy
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: SIP_2
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -190,6 +217,9 @@ compiled_package_info:
       name: STCUSDOracle
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: SalaryGovPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: SharedEd25519PublicKey
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -200,6 +230,12 @@ compiled_package_info:
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: Signer
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: SnapshotUtil
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: StakeToSBTPlugin
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: StarcoinVerifier
@@ -264,7 +300,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 9D5BEAD2A40807817B23BF8C474DA0D8ADC2A14B229B1CF06B74F8726614B3F9
+  source_digest: F9241307430FF1A2E3FD6619CD353E517FA033F5A7F0BC8E8C0A16FBD164E6D5
   build_flags:
     dev_mode: false
     test_mode: false

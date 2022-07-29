@@ -48,6 +48,43 @@ module BCS {
         pragma verify = false;
     }
 
+    public fun deserialize_option_tuple(input: &vector<u8>, offset: u64): (Option::Option<vector<u8>>, Option::Option<vector<u8>>, u64) {
+        let (tag, new_offset) = deserialize_option_tag(input, offset);
+        if (!tag) {
+            return (Option::none<vector<u8>>(), Option::none<vector<u8>>(), new_offset)
+        } else {
+            let (bs1, new_offset) = deserialize_bytes(input, new_offset);
+            let (bs2, new_offset) = deserialize_bytes(input, new_offset);
+
+            (Option::some<vector<u8>>(bs1), Option::some<vector<u8>>(bs2), new_offset)
+        }
+    }
+    spec deserialize_option_tuple {
+        pragma verify = false;
+    }
+
+    #[test]
+    fun test_deserialize_option_tuple() {
+        let tuple_bytes = Vector::empty<u8>();
+        let tuple1_bytes = x"01020304";
+        let tuple2_bytes = x"05060708";
+        let tuple1_bcs = to_bytes(&tuple1_bytes);
+        let tuple2_bcs = to_bytes(&tuple2_bytes);
+        Vector::append(&mut tuple_bytes, tuple1_bcs);
+        Vector::append(&mut tuple_bytes, tuple2_bcs);
+
+        let tuple_option_bcs = Vector::empty<u8>();
+        Vector::append(&mut tuple_option_bcs, x"01");
+        Vector::append(&mut tuple_option_bcs, tuple_bytes);
+
+        let offset = 0;
+        let (tuple1, tuple2, _offset) = deserialize_option_tuple(&tuple_option_bcs, offset);
+        let tuple1_option = Option::some(tuple1_bytes);
+        let tuple2_option = Option::some(tuple2_bytes);
+        assert!(tuple1 == tuple1_option, 999);
+        assert!(tuple2 == tuple2_option, 1000);
+    }
+
     public fun deserialize_bytes_vector(input: &vector<u8>, offset: u64): (vector<vector<u8>>, u64) {
         let (len, new_offset) = deserialize_len(input, offset);
         let i = 0;
@@ -320,7 +357,7 @@ module BCS {
     }
 
     fun get_n_bytes(input: &vector<u8>, offset: u64, n: u64): vector<u8> {
-        assert!(((offset + n) <= Vector::length(input)) && (offset < offset + n), Errors::invalid_state(ERR_INPUT_NOT_LARGE_ENOUGH));
+        assert!(((offset + n) <= Vector::length(input)) && (offset <= offset + n), Errors::invalid_state(ERR_INPUT_NOT_LARGE_ENOUGH));
         let i = 0;
         let content = Vector::empty<u8>();
         while (i < n) {
@@ -652,6 +689,16 @@ module BCS {
     }
 
     spec skip_u16 {
+        pragma verify = false;
+    }
+
+    // skip u8
+    public fun skip_u8(input: &vector<u8>, offset: u64): u64 {
+        can_skip(input, offset, 1 );
+        offset + 1
+    }
+
+    spec skip_u8 {
         pragma verify = false;
     }
 
