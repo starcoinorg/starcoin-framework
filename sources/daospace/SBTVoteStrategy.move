@@ -69,7 +69,7 @@ module StarcoinFramework::SBTVoteStrategy{
     #[test]
     fun test_deserialize_sbt_value_from_bcs_state() {
         // https://stcscan.io/barnard/address/0x6bfb460477adf9dd0455d3de2fc7f211/resources
-        // 0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>, 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>>
+        // 0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DAOMember<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>, 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DAOMemberBody<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>>
         // {"json":{"nft":{"vec":[{"base_meta":{"description":"0x","image":"0x","image_data":"0x69616d67655f64617461","name":"0x64616f313031"},"body":{"sbt":{"value":100}},"creator":"0x6bfb460477adf9dd0455d3de2fc7f211","id":1,"type_meta":{"id":1111}}]}},"raw":"0x016bfb460477adf9dd0455d3de2fc7f21101000000000000000664616f313031000a69616d67655f6461746100570400000000000064000000000000000000000000000000"}
         let bs = x"016bfb460477adf9dd0455d3de2fc7f21101000000000000000664616f313031000a69616d67655f6461746100570400000000000064000000000000000000000000000000";
         Debug::print<vector<u8>>(&bs);

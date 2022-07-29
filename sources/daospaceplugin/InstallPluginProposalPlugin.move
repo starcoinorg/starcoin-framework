@@ -16,21 +16,21 @@ module StarcoinFramework::InstallPluginProposalPlugin{
     }
 
     //TODO how to unify arguments.
-    public fun create_proposal<DaoT: store, ToInstallPluginT>(sender: &signer, required_caps: vector<CapType>, action_delay: u64){
+    public fun create_proposal<DAOT: store, ToInstallPluginT>(sender: &signer, required_caps: vector<CapType>, action_delay: u64){
         let witness = InstallPluginProposalPlugin{};
 
-        let cap = DAOSpace::acquire_proposal_cap<DaoT, InstallPluginProposalPlugin>(&witness);
+        let cap = DAOSpace::acquire_proposal_cap<DAOT, InstallPluginProposalPlugin>(&witness);
         let action = InstallPluginAction<ToInstallPluginT>{
             required_caps,
         };
         DAOSpace::create_proposal(&cap, sender, action, action_delay);
     }
 
-    public (script) fun execute_proposal<DaoT: store, ToInstallPluginT>(sender: signer, proposal_id: u64){
+    public (script) fun execute_proposal<DAOT: store, ToInstallPluginT>(sender: signer, proposal_id: u64){
         let witness = InstallPluginProposalPlugin{};
-        let proposal_cap = DAOSpace::acquire_proposal_cap<DaoT, InstallPluginProposalPlugin>(&witness);
-        let InstallPluginAction{required_caps} = DAOSpace::execute_proposal<DaoT, InstallPluginProposalPlugin, InstallPluginAction<ToInstallPluginT>>(&proposal_cap, &sender, proposal_id);
-        let install_plugin_cap = DAOSpace::acquire_install_plugin_cap<DaoT, InstallPluginProposalPlugin>(&witness);
-        DAOSpace::install_plugin<DaoT, InstallPluginProposalPlugin, ToInstallPluginT>(&install_plugin_cap, required_caps);
+        let proposal_cap = DAOSpace::acquire_proposal_cap<DAOT, InstallPluginProposalPlugin>(&witness);
+        let InstallPluginAction{required_caps} = DAOSpace::execute_proposal<DAOT, InstallPluginProposalPlugin, InstallPluginAction<ToInstallPluginT>>(&proposal_cap, &sender, proposal_id);
+        let install_plugin_cap = DAOSpace::acquire_install_plugin_cap<DAOT, InstallPluginProposalPlugin>(&witness);
+        DAOSpace::install_plugin<DAOT, InstallPluginProposalPlugin, ToInstallPluginT>(&install_plugin_cap, required_caps);
     }
 }

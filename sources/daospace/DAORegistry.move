@@ -14,13 +14,13 @@ module StarcoinFramework::DAORegistry{
 
     const ERR_ALREADY_INITIALIZED: u64 = 100;
 
-    /// Global Dao registry info
+    /// Global DAO registry info
     struct DAORegistry has key{
         next_dao_id: u64,
     }
 
-    /// Registry Entry for record the mapping between `DaoT` and `dao_address`
-    struct DAORegistryEntry<phantom DaoT> has key{
+    /// Registry Entry for record the mapping between `DAOT` and `dao_address`
+    struct DAORegistryEntry<phantom DAOT> has key{
         dao_id: u64,
         dao_address: address,
     }
@@ -32,10 +32,10 @@ module StarcoinFramework::DAORegistry{
     }
 
     // This function should call from DAOSpace module
-    public(friend) fun register<DaoT>(dao_address: address): u64 acquires DAORegistry{
+    public(friend) fun register<DAOT>(dao_address: address): u64 acquires DAORegistry{
         let genesis_account = GenesisSignerCapability::get_genesis_signer();
         let dao_id = next_dao_id();
-        move_to(&genesis_account, DAORegistryEntry<DaoT>{
+        move_to(&genesis_account, DAORegistryEntry<DAOT>{
             dao_id,
             dao_address,
         });
@@ -50,8 +50,8 @@ module StarcoinFramework::DAORegistry{
     
     }
   
-    public fun dao_address<DaoT>():address acquires DAORegistryEntry{
-        *&borrow_global<DAORegistryEntry<DaoT>>(CoreAddresses::GENESIS_ADDRESS()).dao_address
+    public fun dao_address<DAOT>():address acquires DAORegistryEntry{
+        *&borrow_global<DAORegistryEntry<DAOT>>(CoreAddresses::GENESIS_ADDRESS()).dao_address
     }   
 
 }

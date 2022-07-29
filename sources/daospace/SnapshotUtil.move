@@ -85,14 +85,14 @@ module StarcoinFramework::SnapshotUtil{
         types: vector<TypeTag1>,
     }
 
-    public fun get_sturct_tag<DaoT: store>(): vector<u8> {
-        let struct_tags = generate_struct_tag<DaoT>();
+    public fun get_sturct_tag<DAOT: store>(): vector<u8> {
+        let struct_tags = generate_struct_tag<DAOT>();
         BCS::to_bytes(&struct_tags)
     }
 
-    //  0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>, 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>>
-    fun generate_struct_tag<DaoT: store>(): StructTag2{
-        let dao_struct_tag = get_dao_struct_tag<DaoT>();
+    //  0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DAOMember<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>, 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DAOMemberBody<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>>
+    fun generate_struct_tag<DAOT: store>(): StructTag2{
+        let dao_struct_tag = get_dao_struct_tag<DAOT>();
         let dao_type_tag = TypeTag0 {
             variant_index: 7,
             struct_tag: dao_struct_tag,
@@ -100,19 +100,19 @@ module StarcoinFramework::SnapshotUtil{
         let dao_type_tags = Vector::empty<TypeTag0>();
         Vector::push_back(&mut dao_type_tags, dao_type_tag);
 
-        // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember
+        // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DAOMember
         let dao_member_struct_tag = StructTag1 {
             addr: @0x00000000000000000000000000000001,
             module_name: b"DAOSpace",
-            name: b"DaoMember",
+            name: b"DAOMember",
             types: *&dao_type_tags
         };
 
-        // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody
+        // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DAOMemberBody
         let dao_member_body_struct_tag = StructTag1 {
             addr: @0x00000000000000000000000000000001,
             module_name: b"DAOSpace",
-            name: b"DaoMemberBody",
+            name: b"DAOMemberBody",
             types: *&dao_type_tags
         };
 
@@ -136,9 +136,9 @@ module StarcoinFramework::SnapshotUtil{
         }
     }
 
-    fun get_dao_struct_tag<DaoT: store>(): StructTag0{
-        // DaoT is also TokenT
-        let token_code = Token::token_code<DaoT>();
+    fun get_dao_struct_tag<DAOT: store>(): StructTag0{
+        // DAOT is also TokenT
+        let token_code = Token::token_code<DAOT>();
         let token_code_bcs = BCS::to_bytes(&token_code);
 
         let offset = 0;
@@ -171,19 +171,19 @@ module StarcoinFramework::SnapshotUtil{
         let dao_type_tags = Vector::empty<TypeTag0>();
         Vector::push_back(&mut dao_type_tags, dao_type_tag);
 
-        // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember
+        // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DAOMember
         let dao_member_struct_tag = StructTag1 {
             addr: @0x6bfb460477adf9dd0455d3de2fc7f211,
             module_name: b"SBTModule",
-            name: b"DaoMember",
+            name: b"DAOMember",
             types: *&dao_type_tags
         };
 
-        // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody
+        // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DAOMemberBody
         let dao_member_body_struct_tag = StructTag1 {
             addr: @0x6bfb460477adf9dd0455d3de2fc7f211,
             module_name: b"SBTModule",
-            name: b"DaoMemberBody",
+            name: b"DAOMemberBody",
             types: *&dao_type_tags
         };
 
@@ -214,8 +214,8 @@ module StarcoinFramework::SnapshotUtil{
         Debug::print(&b"IdentifierNFT");
         Debug::print(&x"6bfb460477adf9dd0455d3de2fc7f211");
         Debug::print(&b"SBTModule");
-        Debug::print(&b"DaoMember");
-        Debug::print(&b"DaoMemberBody");
+        Debug::print(&b"DAOMember");
+        Debug::print(&b"DAOMemberBody");
 
         assert!(expect_resource_struct_tags == resource_struct_tags, 8010);
     }

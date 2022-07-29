@@ -16,33 +16,33 @@ module StarcoinFramework::ConfigProposalPlugin {
         caps
     }
 
-    public fun create_proposal<DaoT: store, ConfigT: store>(sender: signer, action_delay: u64, config: ConfigT) {
+    public fun create_proposal<DAOT: store, ConfigT: store>(sender: signer, action_delay: u64, config: ConfigT) {
         let witness = ConfigProposalPlugin{};
-        let cap = DAOSpace::acquire_proposal_cap<DaoT, ConfigProposalPlugin>(&witness);
+        let cap = DAOSpace::acquire_proposal_cap<DAOT, ConfigProposalPlugin>(&witness);
         let action = ConfigProposalAction<ConfigT>{
             config
         };
         DAOSpace::create_proposal<
-            DaoT,
+            DAOT,
             ConfigProposalPlugin,
             ConfigProposalAction<ConfigT>>(&cap, &sender, action, action_delay);
     }
 
-    public (script) fun execute_proposal<DaoT: store, ConfigT: copy + drop + store>(sender: signer, proposal_id: u64) {
+    public (script) fun execute_proposal<DAOT: store, ConfigT: copy + drop + store>(sender: signer, proposal_id: u64) {
         let witness = ConfigProposalPlugin{};
         let proposal_cap =
-            DAOSpace::acquire_proposal_cap<DaoT, ConfigProposalPlugin>(&witness);
+            DAOSpace::acquire_proposal_cap<DAOT, ConfigProposalPlugin>(&witness);
         let modify_config_cap =
-            DAOSpace::acquire_modify_config_cap<DaoT, ConfigProposalPlugin>(&witness);
+            DAOSpace::acquire_modify_config_cap<DAOT, ConfigProposalPlugin>(&witness);
 
         let ConfigProposalAction<ConfigT>{ config } = DAOSpace::execute_proposal<
-            DaoT,
+            DAOT,
             ConfigProposalPlugin,
             ConfigProposalAction<ConfigT>>(&proposal_cap, &sender, proposal_id);
-        DAOSpace::set_custom_config<DaoT, ConfigProposalPlugin, ConfigT>(&mut modify_config_cap, config);
+        DAOSpace::set_custom_config<DAOT, ConfigProposalPlugin, ConfigT>(&mut modify_config_cap, config);
     }
 
-    public (script) fun install_plugin_proposal<DaoT:store>(sender:signer, action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DaoT, ConfigProposalPlugin>(&sender, required_caps(), action_delay);
+    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, ConfigProposalPlugin>(&sender, required_caps(), action_delay);
     } 
 }
