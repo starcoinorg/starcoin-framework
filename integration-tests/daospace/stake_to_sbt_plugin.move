@@ -146,10 +146,8 @@ script {
 
     fun stake_again(sender: signer) {
         let user_addr = Signer::address_of(&sender);
-
         let token = Account::withdraw<STC::STC>(&sender, 1 * Token::scaling_factor<STC::STC>());
         StakeToSBTPlugin::stake<XDAO::X, STC::STC>(&sender, token, 10);
-
         assert!(StakeToSBTPlugin::query_stake_count<XDAO::X, STC::STC>(user_addr) > 0, 10002);
     }
 }
@@ -167,7 +165,44 @@ script {
     fun stake_again(sender: signer) {
         let sender_addr = Signer::address_of(&sender);
         StakeToSBTPlugin::unstake_by_id<XDAO::X, STC::STC>(sender_addr, 2);
-        assert!(StakeToSBTPlugin::query_stake_count<XDAO::X, STC::STC>(sender_addr) <= 0, 10002);
+        assert!(StakeToSBTPlugin::query_stake_count<XDAO::X, STC::STC>(sender_addr) <= 0, 10003);
+    }
+}
+// check: CHECKED
+
+//# run --signers alice
+script {
+    use creator::XDAO;
+    use StarcoinFramework::StakeToSBTPlugin;
+    use StarcoinFramework::STC;
+    use StarcoinFramework::Token;
+    use StarcoinFramework::Account;
+    use StarcoinFramework::DAOSpace;
+
+    fun stake_for_quit(sender: signer) {
+        let token = Account::withdraw<STC::STC>(&sender, 1 * Token::scaling_factor<STC::STC>());
+
+        assert!(StakeToSBTPlugin::stake<XDAO::X, STC::STC>(&sender, token, 10) == 3, 10004);
+        DAOSpace::quit_member<XDAO::X>(&sender);
+    }
+}
+// check: CHECKED
+
+//# block --author 0x1 --timestamp 89500000
+
+//# run --signers alice
+script {
+    use creator::XDAO;
+    use StarcoinFramework::StakeToSBTPlugin;
+    use StarcoinFramework::STC;
+    use StarcoinFramework::Signer;
+    use StarcoinFramework::DAOSpace;
+
+    fun quit_and_unstake(sender: signer) {
+        let sender_addr = Signer::address_of(&sender);
+        assert!(!DAOSpace::is_member<XDAO::X>(sender_addr), 10005);
+        StakeToSBTPlugin::unstake_by_id<XDAO::X, STC::STC>(sender_addr, 3);
+        assert!(StakeToSBTPlugin::query_stake_count<XDAO::X, STC::STC>(sender_addr) <= 0, 10006);
     }
 }
 // check: CHECKED

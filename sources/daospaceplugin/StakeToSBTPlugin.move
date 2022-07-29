@@ -91,7 +91,7 @@ module StarcoinFramework::StakeToSBTPlugin {
 
     public fun stake<DaoT: store, TokenT: store>(sender: &signer,
                                                  token: Token::Token<TokenT>,
-                                                 lock_time: u64) acquires StakeList {
+                                                 lock_time: u64): u64 acquires StakeList {
         let sender_addr = Signer::address_of(sender);
         // Increase SBT
         let witness = StakeToSBTPlugin {};
@@ -133,6 +133,8 @@ module StarcoinFramework::StakeToSBTPlugin {
                 sbt_amount
             });
         stake_list.next_id = id;
+
+        id
     }
 
     public fun query_stake<DaoT: store, TokenT: store>(member: address, id: u64)
