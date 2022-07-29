@@ -1734,12 +1734,15 @@ module StarcoinFramework::DAOSpace {
     acquires DaoCustomConfigModifyCapHolder, DAOAccountCapHolder {
         let dao_address = dao_address<DaoT>();
         if (Config::config_exist_by_address<ConfigT>(dao_address)) {
-            let modify_config_cap =
-                &mut borrow_global_mut<DaoCustomConfigModifyCapHolder<DaoT, ConfigT>>(dao_address).cap;
+            let cap_holder =
+                borrow_global_mut<DaoCustomConfigModifyCapHolder<DaoT, ConfigT>>(dao_address);
+            let modify_config_cap = &mut cap_holder.cap;
             Config::set_with_capability(modify_config_cap, config);
         } else {
             let signer = dao_signer<DaoT>();
-            Config::publish_new_config<ConfigT>(&signer, config);
+            move_to(&signer, DaoCustomConfigModifyCapHolder<DaoT, ConfigT> {
+                cap: Config::publish_new_config_with_capability<ConfigT>(&signer, config)
+            });
         }
     }
 

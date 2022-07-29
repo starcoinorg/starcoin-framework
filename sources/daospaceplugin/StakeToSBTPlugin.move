@@ -9,6 +9,8 @@ module StarcoinFramework::StakeToSBTPlugin {
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::Option;
     use StarcoinFramework::InstallPluginProposalPlugin;
+    use StarcoinFramework::IdentifierNFT;
+    use StarcoinFramework::Debug;
 
     const ERR_PLUGIN_USER_IS_MEMBER: u64 = 1001;
     const ERR_PLUGIN_HAS_STAKED: u64 = 1002;
@@ -95,8 +97,8 @@ module StarcoinFramework::StakeToSBTPlugin {
         let witness = StakeToSBTPlugin {};
         let member_cap = DAOSpace::acquire_member_cap<DaoT, StakeToSBTPlugin>(&witness);
 
-        //assert!(DAOSpace::is_member<DaoT>(sender_addr), Errors::invalid_state(ERR_PLUGIN_USER_IS_MEMBER));
         if (!DAOSpace::is_member<DaoT>(sender_addr)) {
+            IdentifierNFT::accept<DAOSpace::DaoMember<DaoT>, DAOSpace::DaoMemberBody<DaoT>>(sender);
             DAOSpace::join_member<DaoT, StakeToSBTPlugin>(&member_cap, sender_addr, 0);
         };
 
@@ -119,6 +121,7 @@ module StarcoinFramework::StakeToSBTPlugin {
 
         let stake_list = borrow_global_mut<StakeList<DaoT, TokenT>>(sender_addr);
         let id = stake_list.next_id + 1;
+        Debug::print(&id);
         Vector::push_back(
             &mut stake_list.items,
             Stake<DaoT, TokenT> {
@@ -132,19 +135,44 @@ module StarcoinFramework::StakeToSBTPlugin {
         stake_list.next_id = id;
     }
 
-    /// Unstake from staking
-    public fun unstake_by_id<DaoT: store, TokenT: store>(id: u64, member: address)
-    : Token::Token<TokenT> acquires StakeList {
+    public fun query_stake<DaoT: store, TokenT: store>(member: address, id: u64)
+    : (u64, u64, u64, u128, u128) acquires StakeList {
         let stake_list = borrow_global_mut<StakeList<DaoT, TokenT>>(member);
         let item_index = find_item(id, &stake_list.items);
 
         // Check item in item container
-        assert!(!Option::is_some(&item_index), Errors::invalid_state(ERR_PLUGIN_ITEM_CANT_FOUND));
+        assert!(Option::is_some(&item_index), Errors::invalid_state(ERR_PLUGIN_ITEM_CANT_FOUND));
+
+        let stake =
+            Vector::borrow(&mut stake_list.items, Option::destroy_some(item_index));
+        (
+            stake.stake_time,
+            stake.lock_time,
+            stake.weight,
+            stake.sbt_amount,
+            Token::value(&stake.token),
+        )
+    }
+
+    /// Query stake count from stake list
+    public fun query_stake_count<DaoT: store, TokenT: store>(member: address): u64 acquires StakeList {
+        let stake_list = borrow_global<StakeList<DaoT, TokenT>>(member);
+        Debug::print(&stake_list.items);
+        Vector::length(&stake_list.items)
+    }
+
+    /// Unstake from staking
+    public fun unstake_by_id<DaoT: store, TokenT: store>(member: address, id: u64) acquires StakeList {
+        let stake_list = borrow_global_mut<StakeList<DaoT, TokenT>>(member);
+        let item_index = find_item(id, &stake_list.items);
+
+        // Check item in item container
+        assert!(Option::is_some(&item_index), Errors::invalid_state(ERR_PLUGIN_ITEM_CANT_FOUND));
 
         let poped_item =
             Vector::remove(&mut stake_list.items, Option::destroy_some(item_index));
 
-        unstake_item(member, poped_item)
+        Account::deposit<TokenT>(member, unstake_item(member, poped_item));
     }
 
     /// Unstake all staking items from member address,
@@ -189,6 +217,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         let c = &mut config.weight_vec;
         let len = Vector::length(c);
         let idx = 0;
+
         while (idx < len) {
             let e = Vector::borrow(c, idx);
             if (e.lock_time == lock_time) {
@@ -205,18 +234,28 @@ module StarcoinFramework::StakeToSBTPlugin {
         let c = &mut config.weight_vec;
         let len = Vector::length(c);
         let idx = 0;
+        let new_el = true;
         while (idx < len) {
-            let borrowed_c = Vector::borrow_mut(c, idx);
-            if (borrowed_c.lock_time == lock_time) {
-                borrowed_c.weight = weight;
-                return
+            let lock_weight = Vector::borrow_mut(c, idx);
+            if (lock_weight.lock_time == lock_time) {
+                lock_weight.weight = weight;
+                new_el = false;
+                break
             };
             idx = idx + 1;
+        };
+
+        if (new_el) {
+            Vector::push_back(c, LockWeight<DaoT, TokenT> {
+                lock_time,
+                weight,
+            });
         };
 
         let witness = StakeToSBTPlugin {};
         let modify_config_cap =
             DAOSpace::acquire_modify_config_cap<DaoT, StakeToSBTPlugin>(&witness);
+
         DAOSpace::set_custom_config<
             DaoT,
             StakeToSBTPlugin,
