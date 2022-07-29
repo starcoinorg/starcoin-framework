@@ -85,14 +85,14 @@ module StarcoinFramework::SnapshotUtil{
         types: vector<TypeTag1>,
     }
 
-    public fun get_sturct_tag<DaoT: store>(): vector<u8> {
-        let struct_tags = generate_struct_tag<DaoT>();
+    public fun get_sturct_tag<DAOT: store>(): vector<u8> {
+        let struct_tags = generate_struct_tag<DAOT>();
         BCS::to_bytes(&struct_tags)
     }
 
-    //  0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>, 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>>
-    fun generate_struct_tag<DaoT: store>(): StructTag2{
-        let dao_struct_tag = get_dao_struct_tag<DaoT>();
+    //  0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DAOMember<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>, 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DAOMemberBody<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>>
+    fun generate_struct_tag<DAOT: store>(): StructTag2{
+        let dao_struct_tag = get_dao_struct_tag<DAOT>();
         let dao_type_tag = TypeTag0 {
             variant_index: 7,
             struct_tag: dao_struct_tag,
@@ -100,19 +100,19 @@ module StarcoinFramework::SnapshotUtil{
         let dao_type_tags = Vector::empty<TypeTag0>();
         Vector::push_back(&mut dao_type_tags, dao_type_tag);
 
-        // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember
+        // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DAOMember
         let dao_member_struct_tag = StructTag1 {
             addr: @0x00000000000000000000000000000001,
             module_name: b"DAOSpace",
-            name: b"DaoMember",
+            name: b"DAOMember",
             types: *&dao_type_tags
         };
 
-        // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody
+        // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DAOMemberBody
         let dao_member_body_struct_tag = StructTag1 {
             addr: @0x00000000000000000000000000000001,
             module_name: b"DAOSpace",
-            name: b"DaoMemberBody",
+            name: b"DAOMemberBody",
             types: *&dao_type_tags
         };
 
@@ -136,9 +136,9 @@ module StarcoinFramework::SnapshotUtil{
         }
     }
 
-    fun get_dao_struct_tag<DaoT: store>(): StructTag0{
-        // DaoT is also TokenT
-        let token_code = Token::token_code<DaoT>();
+    fun get_dao_struct_tag<DAOT: store>(): StructTag0{
+        // DAOT is also TokenT
+        let token_code = Token::token_code<DAOT>();
         let token_code_bcs = BCS::to_bytes(&token_code);
 
         let offset = 0;
@@ -171,19 +171,19 @@ module StarcoinFramework::SnapshotUtil{
         let dao_type_tags = Vector::empty<TypeTag0>();
         Vector::push_back(&mut dao_type_tags, dao_type_tag);
 
-        // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember
+        // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DAOMember
         let dao_member_struct_tag = StructTag1 {
             addr: @0x6bfb460477adf9dd0455d3de2fc7f211,
             module_name: b"SBTModule",
-            name: b"DaoMember",
+            name: b"DAOMember",
             types: *&dao_type_tags
         };
 
-        // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody
+        // 0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DAOMemberBody
         let dao_member_body_struct_tag = StructTag1 {
             addr: @0x6bfb460477adf9dd0455d3de2fc7f211,
             module_name: b"SBTModule",
-            name: b"DaoMemberBody",
+            name: b"DAOMemberBody",
             types: *&dao_type_tags
         };
 
@@ -208,14 +208,14 @@ module StarcoinFramework::SnapshotUtil{
 
         let resource_struct_tags = BCS::to_bytes(&struct_tags);
         Debug::print(&resource_struct_tags);
-        let expect_resource_struct_tags = x"000000000000000000000000000000010d4964656e7469666965724e46540d4964656e7469666965724e465402076bfb460477adf9dd0455d3de2fc7f211095342544d6f64756c650944616f4d656d62657201076bfb460477adf9dd0455d3de2fc7f211095342544d6f64756c650a5362745465737444414f00076bfb460477adf9dd0455d3de2fc7f211095342544d6f64756c650d44616f4d656d626572426f647901076bfb460477adf9dd0455d3de2fc7f211095342544d6f64756c650a5362745465737444414f00";
+        let expect_resource_struct_tags = x"000000000000000000000000000000010d4964656e7469666965724e46540d4964656e7469666965724e465402076bfb460477adf9dd0455d3de2fc7f211095342544d6f64756c650944414f4d656d62657201076bfb460477adf9dd0455d3de2fc7f211095342544d6f64756c650a5362745465737444414f00076bfb460477adf9dd0455d3de2fc7f211095342544d6f64756c650d44414f4d656d626572426f647901076bfb460477adf9dd0455d3de2fc7f211095342544d6f64756c650a5362745465737444414f00";
         Debug::print(&expect_resource_struct_tags);
 
         Debug::print(&b"IdentifierNFT");
         Debug::print(&x"6bfb460477adf9dd0455d3de2fc7f211");
         Debug::print(&b"SBTModule");
-        Debug::print(&b"DaoMember");
-        Debug::print(&b"DaoMemberBody");
+        Debug::print(&b"DAOMember");
+        Debug::print(&b"DAOMemberBody");
 
         assert!(expect_resource_struct_tags == resource_struct_tags, 8010);
     }

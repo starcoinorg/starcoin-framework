@@ -21,13 +21,13 @@ module StarcoinFramework::DAOAccount{
         upgrade_plan_cap: UpgradePlanCapability,
     }
 
-    /// This capability can control the Dao account
+    /// This capability can control the DAO account
     struct DAOAccountCap has store, key{
         dao_address: address,
     }
     
-    /// Create a new Dao Account and return DAOAccountCap
-    /// Dao Account is a delegate account, the `creator` has the `DAOAccountCap` 
+    /// Create a new DAO Account and return DAOAccountCap
+    /// DAO Account is a delegate account, the `creator` has the `DAOAccountCap`
     public fun create_account(creator: &signer): DAOAccountCap {
         let (_dao_address, signer_cap) = Account::create_delegate_account(creator);
         upgrade_to_dao_with_signer_cap(signer_cap)
@@ -51,13 +51,13 @@ module StarcoinFramework::DAOAccount{
         move_to(sender, cap)
     }
 
-    /// Upgrade `sender` account to Dao account
+    /// Upgrade `sender` account to DAO account
     public fun upgrade_to_dao(sender: signer): DAOAccountCap {
         let signer_cap = Account::remove_signer_capability(&sender);
         upgrade_to_dao_with_signer_cap(signer_cap)
     }
 
-     /// Upgrade the account which have the `signer_cap` to a Dao Account
+     /// Upgrade the account which have the `signer_cap` to a DAO Account
     public fun upgrade_to_dao_with_signer_cap(signer_cap: SignerCapability): DAOAccountCap {
        let dao_signer = Account::create_signer_with_cap(&signer_cap);
        let dao_address = Signer::address_of(&dao_signer);
@@ -87,14 +87,14 @@ module StarcoinFramework::DAOAccount{
         Account::create_signer_with_cap(signer_cap)
     }
     
-    /// Sumbit upgrade plan for the Dao account
+    /// Sumbit upgrade plan for the DAO account
     /// This function is a shortcut for create signer with DAOAccountCap and invoke `PackageTxnManager::submit_upgrade_plan_v2`
     public fun submit_upgrade_plan(cap: &DAOAccountCap, package_hash: vector<u8>, version:u64, enforced: bool) acquires DAOAccount{
         let upgrade_plan_cap = &borrow_global<DAOAccount>(cap.dao_address).upgrade_plan_cap;
         PackageTxnManager::submit_upgrade_plan_with_cap_v2(upgrade_plan_cap, package_hash, version, enforced);
     }
 
-    /// Sumbit upgrade plan for the Dao account, sender must hold the `DAOAccountCap`
+    /// Sumbit upgrade plan for the DAO account, sender must hold the `DAOAccountCap`
     public(script) fun submit_upgrade_plan_entry(sender: signer, package_hash: vector<u8>, version:u64, enforced: bool) acquires DAOAccount, DAOAccountCap{
         let addr = Signer::address_of(&sender);
         let cap = borrow_global<DAOAccountCap>(addr);

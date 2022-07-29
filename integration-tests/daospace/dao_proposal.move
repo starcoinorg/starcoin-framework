@@ -83,46 +83,46 @@ module creator::DAOHelper {
         caps
     }
 
-    public fun create_x_proposal<DaoT: store, TokenT:store>(sender: &signer, total: u128, receiver:address, action_delay:u64): u64 acquires Checkpoint {
+    public fun create_x_proposal<DAOT: store, TokenT:store>(sender: &signer, total: u128, receiver:address, action_delay:u64): u64 acquires Checkpoint {
         let witness = XPlugin{};
-        let cap = DAOSpace::acquire_proposal_cap<DaoT, XPlugin>(&witness);
+        let cap = DAOSpace::acquire_proposal_cap<DAOT, XPlugin>(&witness);
         let action = XAction<TokenT>{
             total,
             receiver,
         };
         let proposal_id = DAOSpace::create_proposal(&cap, sender, action, action_delay);
-        checkpoint<DaoT>(proposal_id);
+        checkpoint<DAOT>(proposal_id);
 
         proposal_id
     }
 
-    public fun execute_x_proposal<DaoT: store, TokenT:store>(sender: &signer, proposal_id: u64){
+    public fun execute_x_proposal<DAOT: store, TokenT:store>(sender: &signer, proposal_id: u64){
         let witness = XPlugin{};
-        let proposal_cap = DAOSpace::acquire_proposal_cap<DaoT, XPlugin>(&witness);
-        let XAction{receiver, total} = DAOSpace::execute_proposal<DaoT, XPlugin, XAction<TokenT>>(&proposal_cap, sender, proposal_id);
-        let withdraw_cap = DAOSpace::acquire_withdraw_token_cap<DaoT, XPlugin>(&witness);
-        let token = DAOSpace::withdraw_token<DaoT, XPlugin, TokenT>(&withdraw_cap, total);
+        let proposal_cap = DAOSpace::acquire_proposal_cap<DAOT, XPlugin>(&witness);
+        let XAction{receiver, total} = DAOSpace::execute_proposal<DAOT, XPlugin, XAction<TokenT>>(&proposal_cap, sender, proposal_id);
+        let withdraw_cap = DAOSpace::acquire_withdraw_token_cap<DAOT, XPlugin>(&witness);
+        let token = DAOSpace::withdraw_token<DAOT, XPlugin, TokenT>(&withdraw_cap, total);
         Account::deposit(receiver, token);
     }
 
-    public fun member_join<DaoT:store>(to_address: address, init_sbt: u128){
+    public fun member_join<DAOT:store>(to_address: address, init_sbt: u128){
         let witness = XPlugin{};
-        let member_cap = DAOSpace::acquire_member_cap<DaoT, XPlugin>(&witness);
-        DAOSpace::join_member<DaoT, XPlugin>(&member_cap, to_address, init_sbt);
+        let member_cap = DAOSpace::acquire_member_cap<DAOT, XPlugin>(&witness);
+        DAOSpace::join_member<DAOT, XPlugin>(&member_cap, to_address, init_sbt);
     }
 
-    struct Checkpoint<phantom Daot:store> has key{
+    struct Checkpoint<phantom DAOt:store> has key{
         //last proposal id
         proposal_id: u64,
     }
 
-    public fun checkpoint<DaoT:store>(proposal_id: u64) acquires Checkpoint {
-        let checkpoint = borrow_global_mut<Checkpoint<DaoT>>(@creator);
+    public fun checkpoint<DAOT:store>(proposal_id: u64) acquires Checkpoint {
+        let checkpoint = borrow_global_mut<Checkpoint<DAOT>>(@creator);
         checkpoint.proposal_id = proposal_id;
     }
 
-    public fun last_proposal_id<DaoT:store>(): u64 acquires Checkpoint {
-        let checkpoint = borrow_global<Checkpoint<DaoT>>(@creator);
+    public fun last_proposal_id<DAOT:store>(): u64 acquires Checkpoint {
+        let checkpoint = borrow_global<Checkpoint<DAOT>>(@creator);
         checkpoint.proposal_id
     }
 }
@@ -189,13 +189,13 @@ script{
 script{
     use creator::DAOHelper::{Self, X};
     use StarcoinFramework::IdentifierNFT;
-    use StarcoinFramework::DAOSpace::{DaoMember, DaoMemberBody};
+    use StarcoinFramework::DAOSpace::{DAOMember, DAOMemberBody};
     use StarcoinFramework::Signer;
 
     //alice join dao
     fun member_join(sender: signer){
         //nft must be accept before grant
-        IdentifierNFT::accept<DaoMember<X>, DaoMemberBody<X>>(&sender);
+        IdentifierNFT::accept<DAOMember<X>, DAOMemberBody<X>>(&sender);
 
         let user_add = Signer::address_of(&sender);
         DAOHelper::member_join<X>(user_add, 1000u128);
@@ -207,13 +207,13 @@ script{
 script{
     use creator::DAOHelper::{Self, X};
     use StarcoinFramework::IdentifierNFT;
-    use StarcoinFramework::DAOSpace::{DaoMember, DaoMemberBody};
+    use StarcoinFramework::DAOSpace::{DAOMember, DAOMemberBody};
     use StarcoinFramework::Signer;
 
     //bob join dao
     fun member_join(sender: signer){
         //nft must be accept before grant
-        IdentifierNFT::accept<DaoMember<X>, DaoMemberBody<X>>(&sender);
+        IdentifierNFT::accept<DAOMember<X>, DAOMemberBody<X>>(&sender);
 
         let user_add = Signer::address_of(&sender);
         DAOHelper::member_join<X>(user_add, 3000u128);
