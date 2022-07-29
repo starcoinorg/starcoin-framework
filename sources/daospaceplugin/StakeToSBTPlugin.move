@@ -10,7 +10,6 @@ module StarcoinFramework::StakeToSBTPlugin {
     use StarcoinFramework::Option;
     use StarcoinFramework::InstallPluginProposalPlugin;
     use StarcoinFramework::IdentifierNFT;
-    use StarcoinFramework::Debug;
 
     const ERR_PLUGIN_USER_IS_MEMBER: u64 = 1001;
     const ERR_PLUGIN_HAS_STAKED: u64 = 1002;
@@ -121,7 +120,6 @@ module StarcoinFramework::StakeToSBTPlugin {
 
         let stake_list = borrow_global_mut<StakeList<DAOT, TokenT>>(sender_addr);
         let id = stake_list.next_id + 1;
-        Debug::print(&id);
         Vector::push_back(
             &mut stake_list.items,
             Stake<DAOT, TokenT> {
@@ -159,7 +157,6 @@ module StarcoinFramework::StakeToSBTPlugin {
     /// Query stake count from stake list
     public fun query_stake_count<DAOT: store, TokenT: store>(member: address): u64 acquires StakeList {
         let stake_list = borrow_global<StakeList<DAOT, TokenT>>(member);
-        Debug::print(&stake_list.items);
         Vector::length(&stake_list.items)
     }
 
