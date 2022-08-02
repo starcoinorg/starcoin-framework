@@ -658,6 +658,7 @@ module StarcoinFramework::DAOSpace {
     }
 
     struct GrantCreateEvent has drop, store{
+        dao_id: u64,
         total:u128,
         start_time:u64,
         period:u64,
@@ -667,6 +668,7 @@ module StarcoinFramework::DAOSpace {
     }
 
     struct GrantRevokeEvent  has drop, store{
+        dao_id: u64,
         total:u128,
         withdraw:u128,
         start_time:u64,
@@ -676,6 +678,7 @@ module StarcoinFramework::DAOSpace {
     }
 
     struct GrantRefundEvent  has drop, store{
+        dao_id: u64,
         total:u128,
         withdraw:u128,
         start_time:u64,
@@ -685,6 +688,7 @@ module StarcoinFramework::DAOSpace {
     }
 
     struct GrantConfigEvent  has drop, store{
+        dao_id: u64,
         old_grantee:address,
         new_grantee:address,
         total:u128,
@@ -696,6 +700,7 @@ module StarcoinFramework::DAOSpace {
     }
 
     struct GrantWithdrawEvent  has drop, store{
+        dao_id: u64,
         total:u128,
         withdraw:u128,
         start_time:u64,
@@ -716,7 +721,7 @@ module StarcoinFramework::DAOSpace {
     /// Grant function
 
     /// create grant and init/emit a event
-    public fun create_grant<DAOT, PluginT:store , TokenT:store>(_cap:&DAOGrantCap<DAOT, PluginT>, sender: &signer, total:u128, start_time:u64, period:u64) acquires DAOAccountCapHolder,GrantEvent {
+    public fun create_grant<DAOT, PluginT:store , TokenT:store>(_cap:&DAOGrantCap<DAOT, PluginT>, sender: &signer, total:u128, start_time:u64, period:u64) acquires DAOAccountCapHolder, GrantEvent, DAO {
         let dao_signer = dao_signer<DAOT>();
         let dao_address = dao_address<DAOT>();
         let account_address = Signer::address_of(sender);
@@ -733,6 +738,7 @@ module StarcoinFramework::DAOSpace {
         let grant_event = borrow_global_mut<GrantEvent>(dao_address);
 
         Event::emit_event(&mut grant_event.create_grant_event_handler, GrantCreateEvent {
+            dao_id:dao_id(dao_address),
             total:total,
             start_time:start_time,
             period:period,
@@ -751,12 +757,12 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// withdraw token with grant 
-    public (script) fun grant_withdraw_entry<DAOT, PluginT:store, TokenT:store>(sender: signer, amount:u128) acquires DAOAccountCapHolder, DAOGrantWithdrawTokenKey, GrantEvent{
+    public (script) fun grant_withdraw_entry<DAOT, PluginT:store, TokenT:store>(sender: signer, amount:u128) acquires DAOAccountCapHolder, DAOGrantWithdrawTokenKey, GrantEvent, DAO{
         grant_withdraw<DAOT, PluginT, TokenT>(&sender, amount);
     }
 
     /// withdraw token with grant 
-    public fun grant_withdraw<DAOT, PluginT:store, TokenT:store>(sender: &signer, amount:u128) acquires DAOAccountCapHolder, DAOGrantWithdrawTokenKey, GrantEvent{
+    public fun grant_withdraw<DAOT, PluginT:store, TokenT:store>(sender: &signer, amount:u128) acquires DAOAccountCapHolder, DAOGrantWithdrawTokenKey, GrantEvent, DAO{
         let account_address = Signer::address_of(sender);
         assert!(exists<DAOGrantWithdrawTokenKey<DAOT, PluginT, TokenT>>(account_address) , Errors::invalid_state(ERR_NOT_HAVE_GRANT));
         
@@ -780,6 +786,7 @@ module StarcoinFramework::DAOSpace {
 
         let grant_event = borrow_global_mut<GrantEvent>(dao_address);
         Event::emit_event(&mut grant_event.withdraw_grant_event_handler, GrantWithdrawEvent {
+            dao_id:dao_id(dao_address),
             total:cap.total,
             withdraw:cap.withdraw,
             start_time:cap.start_time,
@@ -808,7 +815,7 @@ module StarcoinFramework::DAOSpace {
         exists<DAOGrantWithdrawTokenKey<DAOT, PluginT, TokenT>>(addr)
     }
     /// revoke grant 
-    public fun grant_revoke<DAOT, PluginT:store , TokenT:store>(_cap:&DAOGrantCap<DAOT, PluginT>, grantee: address) acquires DAOGrantWithdrawTokenKey, GrantEvent{
+    public fun grant_revoke<DAOT, PluginT:store , TokenT:store>(_cap:&DAOGrantCap<DAOT, PluginT>, grantee: address) acquires DAOGrantWithdrawTokenKey, GrantEvent, DAO{
         let dao_address = dao_address<DAOT>();
         assert!(exists<DAOGrantWithdrawTokenKey<DAOT, PluginT, TokenT>>(grantee) , Errors::invalid_state(ERR_NOT_HAVE_GRANT));
         
@@ -821,6 +828,7 @@ module StarcoinFramework::DAOSpace {
 
         let grant_event = borrow_global_mut<GrantEvent>(dao_address);
         Event::emit_event(&mut grant_event.revoke_grant_event_handler, GrantRevokeEvent {
+            dao_id:dao_id(dao_address),
             total:total,
             withdraw:withdraw,
             start_time:start_time,
@@ -831,7 +839,7 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// Reset the parameters of the grant 
-    public fun grant_config<DAOT, PluginT:store , TokenT:store>(_cap:&DAOGrantCap<DAOT, PluginT>, old_grantee: address, sender: &signer, total:u128, start_time:u64, period:u64) acquires DAOGrantWithdrawTokenKey, GrantEvent {
+    public fun grant_config<DAOT, PluginT:store , TokenT:store>(_cap:&DAOGrantCap<DAOT, PluginT>, old_grantee: address, sender: &signer, total:u128, start_time:u64, period:u64) acquires DAOGrantWithdrawTokenKey, GrantEvent, DAO {
         let dao_address = dao_address<DAOT>();
         let new_grantee = Signer::address_of(sender);
         assert!(exists<DAOGrantWithdrawTokenKey<DAOT, PluginT, TokenT>>(old_grantee) , Errors::invalid_state(ERR_NOT_HAVE_GRANT));
@@ -850,6 +858,7 @@ module StarcoinFramework::DAOSpace {
         let grant_event = borrow_global_mut<GrantEvent>(dao_address);
         
         Event::emit_event(&mut grant_event.config_grant_event_handler, GrantConfigEvent {
+            dao_id:dao_id(dao_address),
             old_grantee:old_grantee,
             new_grantee:new_grantee,
             total:cap.total,
@@ -862,7 +871,7 @@ module StarcoinFramework::DAOSpace {
     }
 
     // Refund the grant
-    public fun refund_grant<DAOT, PluginT:store , TokenT:store>(sender: &signer) acquires DAOGrantWithdrawTokenKey, GrantEvent {
+    public fun refund_grant<DAOT, PluginT:store , TokenT:store>(sender: &signer) acquires DAOGrantWithdrawTokenKey, GrantEvent, DAO {
         let dao_address = dao_address<DAOT>();
         let grantee = Signer::address_of(sender);
         assert!(exists<DAOGrantWithdrawTokenKey<DAOT, PluginT, TokenT>>(grantee) , Errors::invalid_state(ERR_NOT_HAVE_GRANT));
@@ -875,6 +884,7 @@ module StarcoinFramework::DAOSpace {
 
         let grant_event = borrow_global_mut<GrantEvent>(dao_address);
         Event::emit_event(&mut grant_event.refund_grant_event_handler, GrantRefundEvent {
+            dao_id:dao_id(dao_address),
             total:total,
             withdraw:withdraw,
             start_time:start_time,
@@ -884,7 +894,7 @@ module StarcoinFramework::DAOSpace {
         });
     }
 
-    public (script) fun refund_grant_entry<DAOT, PluginT:store , TokenT:store>(sender: signer) acquires DAOGrantWithdrawTokenKey, GrantEvent {
+    public (script) fun refund_grant_entry<DAOT, PluginT:store , TokenT:store>(sender: signer) acquires DAOGrantWithdrawTokenKey, GrantEvent, DAO {
         refund_grant<DAOT, PluginT, TokenT>(&sender);
     }
 
