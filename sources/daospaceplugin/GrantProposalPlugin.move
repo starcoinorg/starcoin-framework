@@ -6,7 +6,7 @@ module StarcoinFramework::GrantProposalPlugin{
     use StarcoinFramework::Vector;
     use StarcoinFramework::InstallPluginProposalPlugin;
 
-    struct GrantProposalPlugin has drop{}
+    struct GrantProposalPlugin has store, drop{}
 
     struct GrantCreateAction<phantom TokenT:store> has store {
         grantee: address,

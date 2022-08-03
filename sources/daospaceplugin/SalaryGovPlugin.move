@@ -12,7 +12,7 @@ module SalaryGovPlugin {
     const ERR_PLUGIN_USER_IS_MEMBER: u64 = 1003;
     const ERR_PLUGIN_USER_NOT_PRIVILEGE: u64 = 1004;
 
-    struct SalaryGovPlugin has drop {}
+    struct SalaryGovPlugin has store, drop{}
 
     struct PluginBossCap<phantom DAOT> has key, store, drop {}
 

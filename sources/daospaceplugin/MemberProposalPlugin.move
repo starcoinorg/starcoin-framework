@@ -4,7 +4,7 @@ module StarcoinFramework::MemberProposalPlugin{
     use StarcoinFramework::Vector;
     use StarcoinFramework::InstallPluginProposalPlugin;
 
-    struct MemberProposalPlugin has drop{}
+    struct MemberProposalPlugin has store, drop{}
 
     struct MemberJoinAction has store {
         member: address,
