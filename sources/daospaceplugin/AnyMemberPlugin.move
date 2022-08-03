@@ -6,7 +6,7 @@ module StarcoinFramework::AnyMemberPlugin{
     use StarcoinFramework::InstallPluginProposalPlugin;
     use StarcoinFramework::IdentifierNFT;
 
-    struct AnyMemberPlugin has drop{}
+    struct AnyMemberPlugin has store, drop{}
 
     public fun required_caps():vector<CapType>{
         let caps = Vector::singleton(DAOSpace::member_cap_type());  

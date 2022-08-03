@@ -18,7 +18,7 @@ module StarcoinFramework::StakeToSBTPlugin {
     const ERR_PLUGIN_CONFIG_INIT_REPEATE: u64 = 1005;
     const ERR_PLUGIN_ITEM_CANT_FOUND: u64 = 1006;
 
-    struct StakeToSBTPlugin has drop {}
+    struct StakeToSBTPlugin has store, drop{}
 
     public fun required_caps(): vector<DAOSpace::CapType> {
         let caps = Vector::singleton(DAOSpace::proposal_cap_type());
