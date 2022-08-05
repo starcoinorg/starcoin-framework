@@ -1389,18 +1389,18 @@ module StarcoinFramework::DAOSpace {
         let (account_state_option, offset) = BCS::deserialize_option_bytes(snpashot_raw_proofs, offset);
 
         let (account_proof_leaf1_option, account_proof_leaf2_option, offset) = BCS::deserialize_option_tuple(snpashot_raw_proofs, offset);
-        let account_proof_leaf1 = Option::extract(&mut account_proof_leaf1_option);
-        let account_proof_leaf2 = Option::extract(&mut account_proof_leaf2_option);
+        let account_proof_leaf1 = Option::get_with_default(&mut account_proof_leaf1_option, Vector::empty());
+        let account_proof_leaf2 = Option::get_with_default(&mut account_proof_leaf2_option, Vector::empty());
         let (account_proof_siblings, offset) = BCS::deserialize_bytes_vector(snpashot_raw_proofs, offset);
 
         let (account_state_proof_leaf1_option, account_state_proof_leaf2_option, offset) = BCS::deserialize_option_tuple(snpashot_raw_proofs, offset);
-        let account_state_proof_leaf1 = Option::extract(&mut account_state_proof_leaf1_option);
-        let account_state_proof_leaf2 = Option::extract(&mut account_state_proof_leaf2_option);
+        let account_state_proof_leaf1 = Option::get_with_default(&mut account_state_proof_leaf1_option, Vector::empty());
+        let account_state_proof_leaf2 = Option::get_with_default(&mut account_state_proof_leaf2_option, Vector::empty());
         let (account_state_proof_siblings, _offset) = BCS::deserialize_bytes_vector(snpashot_raw_proofs, offset);
 
         SnapshotProof {
-            state: Option::extract(&mut state_option),
-            account_state: Option::extract(&mut account_state_option),
+            state: Option::get_with_default(&mut state_option, Vector::empty()),
+            account_state: Option::get_with_default(&mut account_state_option, Vector::empty()),
             account_proof_leaf: HashNode {
                 hash1: account_proof_leaf1,
                 hash2: account_proof_leaf2,
