@@ -18,10 +18,10 @@ The <code>string</code> module defines the <code><a href="String.md#0x1_String">
 -  [Function `insert`](#0x1_String_insert)
 -  [Function `sub_string`](#0x1_String_sub_string)
 -  [Function `index_of`](#0x1_String_index_of)
--  [Function `internal_check_utf8`](#0x1_String_internal_check_utf8)
--  [Function `internal_is_char_boundary`](#0x1_String_internal_is_char_boundary)
--  [Function `internal_sub_string`](#0x1_String_internal_sub_string)
--  [Function `internal_index_of`](#0x1_String_internal_index_of)
+-  [Function `native_check_utf8`](#0x1_String_native_check_utf8)
+-  [Function `native_is_char_boundary`](#0x1_String_native_is_char_boundary)
+-  [Function `native_sub_string`](#0x1_String_native_sub_string)
+-  [Function `native_index_of`](#0x1_String_native_index_of)
 
 
 <pre><code><b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
@@ -100,7 +100,7 @@ Creates a new string from a sequence of bytes. Aborts if the bytes do not repres
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="String.md#0x1_String_utf8">utf8</a>(bytes: vector&lt;u8&gt;): <a href="String.md#0x1_String">String</a> {
-    <b>assert</b>!(<a href="String.md#0x1_String_internal_check_utf8">internal_check_utf8</a>(&bytes), <a href="String.md#0x1_String_EINVALID_UTF8">EINVALID_UTF8</a>);
+    <b>assert</b>!(<a href="String.md#0x1_String_native_check_utf8">native_check_utf8</a>(&bytes), <a href="String.md#0x1_String_EINVALID_UTF8">EINVALID_UTF8</a>);
     <a href="String.md#0x1_String">String</a>{bytes}
 }
 </code></pre>
@@ -126,7 +126,7 @@ Tries to create a new string from a sequence of bytes.
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="String.md#0x1_String_try_utf8">try_utf8</a>(bytes: vector&lt;u8&gt;): <a href="Option.md#0x1_Option">Option</a>&lt;<a href="String.md#0x1_String">String</a>&gt; {
-    <b>if</b> (<a href="String.md#0x1_String_internal_check_utf8">internal_check_utf8</a>(&bytes)) {
+    <b>if</b> (<a href="String.md#0x1_String_native_check_utf8">native_check_utf8</a>(&bytes)) {
         <a href="Option.md#0x1_Option_some">Option::some</a>(<a href="String.md#0x1_String">String</a>{bytes})
     } <b>else</b> {
         <a href="Option.md#0x1_Option_none">Option::none</a>()
@@ -282,7 +282,7 @@ boundary.
 
 <pre><code><b>public</b> <b>fun</b> <a href="String.md#0x1_String_insert">insert</a>(s: &<b>mut</b> <a href="String.md#0x1_String">String</a>, at: u64, o: <a href="String.md#0x1_String">String</a>) {
     <b>let</b> bytes = &s.bytes;
-    <b>assert</b>!(at &lt;= <a href="Vector.md#0x1_Vector_length">Vector::length</a>(bytes) && <a href="String.md#0x1_String_internal_is_char_boundary">internal_is_char_boundary</a>(bytes, at), <a href="String.md#0x1_String_EINVALID_INDEX">EINVALID_INDEX</a>);
+    <b>assert</b>!(at &lt;= <a href="Vector.md#0x1_Vector_length">Vector::length</a>(bytes) && <a href="String.md#0x1_String_native_is_char_boundary">native_is_char_boundary</a>(bytes, at), <a href="String.md#0x1_String_EINVALID_INDEX">EINVALID_INDEX</a>);
     <b>let</b> l = <a href="String.md#0x1_String_length">length</a>(s);
     <b>let</b> front = <a href="String.md#0x1_String_sub_string">sub_string</a>(s, 0, at);
     <b>let</b> end = <a href="String.md#0x1_String_sub_string">sub_string</a>(s, at, l);
@@ -318,10 +318,10 @@ guaranteeing that the result is valid utf8.
     <b>let</b> bytes = &s.bytes;
     <b>let</b> l = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(bytes);
     <b>assert</b>!(
-        j &lt;= l && i &lt;= j && <a href="String.md#0x1_String_internal_is_char_boundary">internal_is_char_boundary</a>(bytes, i) && <a href="String.md#0x1_String_internal_is_char_boundary">internal_is_char_boundary</a>(bytes, j),
+        j &lt;= l && i &lt;= j && <a href="String.md#0x1_String_native_is_char_boundary">native_is_char_boundary</a>(bytes, i) && <a href="String.md#0x1_String_native_is_char_boundary">native_is_char_boundary</a>(bytes, j),
         <a href="String.md#0x1_String_EINVALID_INDEX">EINVALID_INDEX</a>
     );
-    <a href="String.md#0x1_String">String</a>{bytes: <a href="String.md#0x1_String_internal_sub_string">internal_sub_string</a>(bytes, i, j)}
+    <a href="String.md#0x1_String">String</a>{bytes: <a href="String.md#0x1_String_native_sub_string">native_sub_string</a>(bytes, i, j)}
 }
 </code></pre>
 
@@ -346,7 +346,7 @@ Computes the index of the first occurrence of a string. Returns <code><a href="S
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="String.md#0x1_String_index_of">index_of</a>(s: &<a href="String.md#0x1_String">String</a>, r: &<a href="String.md#0x1_String">String</a>): u64 {
-    <a href="String.md#0x1_String_internal_index_of">internal_index_of</a>(&s.bytes, &r.bytes)
+    <a href="String.md#0x1_String_native_index_of">native_index_of</a>(&s.bytes, &r.bytes)
 }
 </code></pre>
 
@@ -354,13 +354,13 @@ Computes the index of the first occurrence of a string. Returns <code><a href="S
 
 </details>
 
-<a name="0x1_String_internal_check_utf8"></a>
+<a name="0x1_String_native_check_utf8"></a>
 
-## Function `internal_check_utf8`
+## Function `native_check_utf8`
 
 
 
-<pre><code><b>fun</b> <a href="String.md#0x1_String_internal_check_utf8">internal_check_utf8</a>(v: &vector&lt;u8&gt;): bool
+<pre><code><b>fun</b> <a href="String.md#0x1_String_native_check_utf8">native_check_utf8</a>(v: &vector&lt;u8&gt;): bool
 </code></pre>
 
 
@@ -369,20 +369,20 @@ Computes the index of the first occurrence of a string. Returns <code><a href="S
 <summary>Implementation</summary>
 
 
-<pre><code><b>native</b> <b>fun</b> <a href="String.md#0x1_String_internal_check_utf8">internal_check_utf8</a>(v: &vector&lt;u8&gt;): bool;
+<pre><code><b>native</b> <b>fun</b> <a href="String.md#0x1_String_native_check_utf8">native_check_utf8</a>(v: &vector&lt;u8&gt;): bool;
 </code></pre>
 
 
 
 </details>
 
-<a name="0x1_String_internal_is_char_boundary"></a>
+<a name="0x1_String_native_is_char_boundary"></a>
 
-## Function `internal_is_char_boundary`
+## Function `native_is_char_boundary`
 
 
 
-<pre><code><b>fun</b> <a href="String.md#0x1_String_internal_is_char_boundary">internal_is_char_boundary</a>(v: &vector&lt;u8&gt;, i: u64): bool
+<pre><code><b>fun</b> <a href="String.md#0x1_String_native_is_char_boundary">native_is_char_boundary</a>(v: &vector&lt;u8&gt;, i: u64): bool
 </code></pre>
 
 
@@ -391,20 +391,20 @@ Computes the index of the first occurrence of a string. Returns <code><a href="S
 <summary>Implementation</summary>
 
 
-<pre><code><b>native</b> <b>fun</b> <a href="String.md#0x1_String_internal_is_char_boundary">internal_is_char_boundary</a>(v: &vector&lt;u8&gt;, i: u64): bool;
+<pre><code><b>native</b> <b>fun</b> <a href="String.md#0x1_String_native_is_char_boundary">native_is_char_boundary</a>(v: &vector&lt;u8&gt;, i: u64): bool;
 </code></pre>
 
 
 
 </details>
 
-<a name="0x1_String_internal_sub_string"></a>
+<a name="0x1_String_native_sub_string"></a>
 
-## Function `internal_sub_string`
+## Function `native_sub_string`
 
 
 
-<pre><code><b>fun</b> <a href="String.md#0x1_String_internal_sub_string">internal_sub_string</a>(v: &vector&lt;u8&gt;, i: u64, j: u64): vector&lt;u8&gt;
+<pre><code><b>fun</b> <a href="String.md#0x1_String_native_sub_string">native_sub_string</a>(v: &vector&lt;u8&gt;, i: u64, j: u64): vector&lt;u8&gt;
 </code></pre>
 
 
@@ -413,20 +413,20 @@ Computes the index of the first occurrence of a string. Returns <code><a href="S
 <summary>Implementation</summary>
 
 
-<pre><code><b>native</b> <b>fun</b> <a href="String.md#0x1_String_internal_sub_string">internal_sub_string</a>(v: &vector&lt;u8&gt;, i: u64, j: u64): vector&lt;u8&gt;;
+<pre><code><b>native</b> <b>fun</b> <a href="String.md#0x1_String_native_sub_string">native_sub_string</a>(v: &vector&lt;u8&gt;, i: u64, j: u64): vector&lt;u8&gt;;
 </code></pre>
 
 
 
 </details>
 
-<a name="0x1_String_internal_index_of"></a>
+<a name="0x1_String_native_index_of"></a>
 
-## Function `internal_index_of`
+## Function `native_index_of`
 
 
 
-<pre><code><b>fun</b> <a href="String.md#0x1_String_internal_index_of">internal_index_of</a>(v: &vector&lt;u8&gt;, r: &vector&lt;u8&gt;): u64
+<pre><code><b>fun</b> <a href="String.md#0x1_String_native_index_of">native_index_of</a>(v: &vector&lt;u8&gt;, r: &vector&lt;u8&gt;): u64
 </code></pre>
 
 
@@ -435,7 +435,7 @@ Computes the index of the first occurrence of a string. Returns <code><a href="S
 <summary>Implementation</summary>
 
 
-<pre><code><b>native</b> <b>fun</b> <a href="String.md#0x1_String_internal_index_of">internal_index_of</a>(v: &vector&lt;u8&gt;, r: &vector&lt;u8&gt;): u64;
+<pre><code><b>native</b> <b>fun</b> <a href="String.md#0x1_String_native_index_of">native_index_of</a>(v: &vector&lt;u8&gt;, r: &vector&lt;u8&gt;): u64;
 </code></pre>
 
 
