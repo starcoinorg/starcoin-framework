@@ -1,4 +1,4 @@
-processed 5 tasks
+processed 6 tasks
 
 task 2 'run'. lines 5-25:
 {
@@ -21,5 +21,23 @@ task 4 'run'. lines 52-87:
   "gas_used": 170726,
   "status": {
     "Keep": "Executed"
+  }
+}
+
+task 5 'run'. lines 91-120:
+{
+  "gas_used": 99515,
+  "status": {
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "Option"
+          }
+        },
+        263
+      ]
+    }
   }
 }

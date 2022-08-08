@@ -85,3 +85,36 @@ script {
         assert!(Option::is_none<EVMAddress>(&receover_address_opt), 1005);
     }
 }
+
+
+
+//# run --signers creator
+
+// test secp256k1_verify
+script {
+    use StarcoinFramework::Signature;
+    // use StarcoinFramework::EVMAddress::{Self, EVMAddress};
+    // use StarcoinFramework::Option::{Self, Option};
+
+    fun main() {
+        //test success
+        let signature = x"90a938f7457df6e8f741264c32697fc52f9a8f867c52dd70713d9d2d472f2e415d9c94148991bbe1f4a1818d1dff09165782749c877f5cf1eff4ef126e55714d1c";
+        let msg_hash = x"b453bd4e271eed985cbab8231da609c4ce0a9cf1f763b6c1594e76315510e0f1";
+        let address_bytes = x"29c76e6ad8f28bb1004902578fb108c507be341b";
+        assert!(Signature::secp256k1_verify(copy signature, copy address_bytes, copy msg_hash), 1010);
+
+        //test empty data failed
+        let empty_signature = x"";
+        let empty_msg_hash = x"";
+        assert!(!Signature::secp256k1_verify(empty_signature,  copy address_bytes, empty_msg_hash), 1011);
+
+        //test invalid hash, change the last char from 1 to 0
+        let invalid_msg_hash = x"b453bd4e271eed985cbab8231da609c4ce0a9cf1f763b6c1594e76315510e0f0";
+        assert!(!Signature::secp256k1_verify(signature,  copy address_bytes, invalid_msg_hash), 1013);
+
+        // //test invalid signature, change the last char from 1 to 0
+        let invalid_signature = x"90a938f7457df6e8f741264c32697fc52f9a8f867c52dd70713d9d2d472f2e415d9c94148991bbe1f4a1818d1dff09165782749c877f5cf1eff4ef126e55714d10";
+        assert!(!Signature::secp256k1_verify(invalid_signature, address_bytes, msg_hash), 1014);
+    
+    }
+}
