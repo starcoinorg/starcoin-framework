@@ -103,6 +103,23 @@ module creator::XMembership {
             //do other membership jobs
         }
     }
+
+    //check borrow
+    public fun add(sender: &signer, fee: u128) acquires XMembershipUpdateCapability, XMembershipInfo{
+        let cap = borrow_global_mut<XMembershipUpdateCapability>(@creator);
+        let addr = Signer::address_of(sender);
+        let borrow_nft = IdentifierNFT::borrow_out<XMembership, XMembershipBody>(&mut cap.cap, addr);
+        let nft = IdentifierNFT::borrow_nft_mut<XMembership, XMembershipBody>(&mut borrow_nft);
+        let nft_base_meta = *NFT::get_base_meta(nft);
+        let nft_meta = *NFT::get_type_meta(nft);
+        let nft_body = NFT::borrow_body_mut_with_cap(&mut cap.cap, nft);
+        Token::deposit<STC>(&mut nft_body.fee, Account::withdraw<STC>(sender, fee)); 
+        let info = borrow_global<XMembershipInfo>(@creator);
+        nft_meta.end_time = nft_meta.join_time + ((Token::value(&nft_body.fee)/info.price_per_millis) as u64);
+        
+        NFT::update_meta_with_cap<XMembership, XMembershipBody>(&mut cap.cap, nft ,nft_base_meta, nft_meta);
+        IdentifierNFT::return_back(borrow_nft);
+    }
 }
 
 // check: EXECUTED
@@ -127,6 +144,15 @@ script {
 
 // check: EXECUTED
 
+//# run --signers bob
+script {
+    use creator::XMembership;
+    fun main(sender: signer) {
+        XMembership::add(&sender, 100000);
+    }
+}
+
+// check: EXECUTED
 
 
 //# run --signers bob

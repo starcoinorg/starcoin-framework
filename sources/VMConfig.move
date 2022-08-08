@@ -290,6 +290,22 @@ module VMConfig {
         Vector::push_back(&mut table, new_gas_cost(20, 1));
         // Vector::reverse 32
         Vector::push_back(&mut table, new_gas_cost(10, 1));
+        // Table::new_table_handle 33
+        Vector::push_back(&mut table, new_gas_cost(4, 1));
+        // Table::add_box 34
+        Vector::push_back(&mut table, new_gas_cost(4, 1));
+        // Table::borrow_box 35
+        Vector::push_back(&mut table, new_gas_cost(10, 1));
+        // Table::borrow_box_mut 36
+        Vector::push_back(&mut table, new_gas_cost(10, 1));
+        // Table::remove_box 37
+        Vector::push_back(&mut table, new_gas_cost(8, 1));
+        // Table::contains_box 38
+        Vector::push_back(&mut table, new_gas_cost(40, 1));
+        // Table::destroy_empty_box 39
+        Vector::push_back(&mut table, new_gas_cost(20, 1));
+        // Table::drop_unchecked_box 40
+        Vector::push_back(&mut table, new_gas_cost(0, 1));
 
         table
     }

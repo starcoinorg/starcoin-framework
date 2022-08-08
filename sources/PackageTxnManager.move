@@ -350,7 +350,7 @@ address StarcoinFramework {
             }else if(strategy == STRATEGY_NEW_MODULE){
                 //do check at VM runtime.
             }else if(strategy == STRATEGY_FREEZE){
-                abort(ESTRATEGY_FREEZED)
+                Errors::invalid_argument(ESTRATEGY_FREEZED);
             };
         }
 
@@ -373,7 +373,7 @@ address StarcoinFramework {
                 //do check at VM runtime.
                 assert!(txn_sender == package_address, Errors::requires_address(ESENDER_AND_PACKAGE_ADDRESS_MISMATCH));
             }else if(strategy == STRATEGY_FREEZE){
-                abort(ESTRATEGY_FREEZED)
+                Errors::invalid_argument(ESTRATEGY_FREEZED);
             };
         }
 
