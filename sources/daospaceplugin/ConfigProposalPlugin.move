@@ -4,7 +4,7 @@ module StarcoinFramework::ConfigProposalPlugin {
     use StarcoinFramework::Vector;
     use StarcoinFramework::InstallPluginProposalPlugin;
 
-    struct ConfigProposalPlugin has drop {}
+    struct ConfigProposalPlugin has store, drop{}
 
     struct ConfigProposalAction<ConfigT> has store {
         config: ConfigT,

@@ -63,7 +63,7 @@ module creator::DAOHelper {
 
     }
 
-    struct XPlugin has drop{}
+    struct XPlugin has store, drop{}
 
     public fun required_caps():vector<CapType>{
         let caps = Vector::singleton(DAOSpace::proposal_cap_type());
