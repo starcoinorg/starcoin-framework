@@ -199,6 +199,9 @@ compiled_package_info:
       name: StdlibUpgradeScripts
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: String
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: Table
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -255,7 +258,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 0605591B78060E5464E7A2621865404EDE972BDE6579427A8E1E09B11F5A4294
+  source_digest: 69D915108840A0928724B94F61C5459B768F9C361C6FF48ECF840184A7D825F9
   build_flags:
     dev_mode: false
     test_mode: false
