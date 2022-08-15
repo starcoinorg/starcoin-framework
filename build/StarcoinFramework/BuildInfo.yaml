@@ -2,6 +2,7 @@
 compiled_package_info:
   package_name: StarcoinFramework
   address_alias_instantiation:
+    SFT: "0x6bfb460477adf9dd0455d3de2fc7f211"
     StarcoinAssociation: "0x0000000000000000000000000a550c18"
     StarcoinFramework: "0x00000000000000000000000000000001"
     VMReserved: "0x00000000000000000000000000000000"
@@ -300,7 +301,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 909CE74C85980EFA85EC499713FA015307F578F64A8BB1B25942B9F63440DBA4
+  source_digest: 48F7EA072735F1A33704ECD909B5DEA333994F75A3F8885FC08E865130CD4417
   build_flags:
     dev_mode: false
     test_mode: false

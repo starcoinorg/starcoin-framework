@@ -245,7 +245,17 @@ script{
 }
 // check: EXECUTED
 
+
 //# block --author 0x1 --timestamp 86420000
+
+//# call-api chain.info
+
+//# call-api state.get_with_proof_by_root_raw ["0x6bfb460477adf9dd0455d3de2fc7f211/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>,0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>>",{{$.call-api[0].head.state_root}}]
+
+//TODO how to convert the type.
+//# run --signers creator --args {{$.call-api[0]}}
+
+//# run --signers creator --args {{$.call-api[1].head.number}}u64
 
 //# run --signers bob
 script{
@@ -262,6 +272,7 @@ script{
     }
 }
 // check: ABORT
+
 
 ////# run --signers alice
 //script{

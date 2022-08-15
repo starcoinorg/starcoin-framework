@@ -232,5 +232,162 @@ module StarcoinFramework::SnapshotUtil{
         assert!(expect_resource_struct_tags == resource_struct_tags, 8010);
     }
 
+    //    "0x6bfb460477adf9dd0455d3de2fc7f211/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>,0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>>"
+    public fun get_access_path<DaoT: store>(user_addr: address): vector<u8> {
+
+        //    0x6bfb460477adf9dd0455d3de2fc7f211/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<
+        //        0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>
+        //        ,0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>>
+
+        let access_path_slice_0 = b"/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT";
+        let access_path_bytes = Vector::empty();
+        Vector::append(&mut access_path_bytes, address_to_hex_string(*&user_addr));
+        Vector::append(&mut access_path_bytes, access_path_slice_0);
+        Vector::append(&mut access_path_bytes, b"<");
+        Vector::append(&mut access_path_bytes, get_access_path_dao_member_slice<DaoT>());
+        Vector::append(&mut access_path_bytes, b",");
+        Vector::append(&mut access_path_bytes, get_access_path_dao_member_body_slice<DaoT>());
+        Vector::append(&mut access_path_bytes, b">");
+
+        access_path_bytes
+    }
+
+    #[test]
+    fun test_get_access_path(){
+        let user_addr = @0x6bfb460477adf9dd0455d3de2fc7f211;
+
+        let module_addr = @0x6bfb460477adf9dd0455d3de2fc7f211;
+        let struct_tag_slice = Vector::empty();
+        Vector::append(&mut struct_tag_slice, address_to_hex_string(*&module_addr));
+        Vector::append(&mut struct_tag_slice, b"::");
+        Vector::append(&mut struct_tag_slice, b"SBTModule");
+        Vector::append(&mut struct_tag_slice, b"::");
+        Vector::append(&mut struct_tag_slice, b"SbtTestDAO");
+
+
+        let dao_member_slice_0 = b"0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember";
+        let dao_member_slice = Vector::empty();
+        Vector::append(&mut dao_member_slice, dao_member_slice_0);
+        Vector::append(&mut dao_member_slice, b"<");
+        Vector::append(&mut dao_member_slice, copy struct_tag_slice);
+        Vector::append(&mut dao_member_slice, b">");
+
+        let dao_member_body_slice_0 = b"0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody";
+        let dao_member_body_slice = Vector::empty();
+        Vector::append(&mut dao_member_body_slice, dao_member_body_slice_0);
+        Vector::append(&mut dao_member_body_slice, b"<");
+        Vector::append(&mut dao_member_body_slice, copy struct_tag_slice);
+        Vector::append(&mut dao_member_body_slice, b">");
+
+
+
+        let access_path_slice_0 = b"/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT";
+        let access_path_bytes = Vector::empty();
+        Vector::append(&mut access_path_bytes, address_to_hex_string(*&user_addr));
+        Vector::append(&mut access_path_bytes, access_path_slice_0);
+        Vector::append(&mut access_path_bytes, b"<");
+        Vector::append(&mut access_path_bytes, dao_member_slice);
+        Vector::append(&mut access_path_bytes, b",");
+        Vector::append(&mut access_path_bytes, dao_member_body_slice);
+        Vector::append(&mut access_path_bytes, b">");
+
+        let expect_access_path = b"0x6bfb460477adf9dd0455d3de2fc7f211/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>,0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>>";
+        Debug::print(&expect_access_path);
+        Debug::print(&access_path_bytes);
+        assert!(expect_access_path == access_path_bytes, 8012);
+    }
+
+
+    fun get_access_path_dao_member_slice<DaoT:store>(): vector<u8>{
+        let dao_member_slice_0 = b"0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember";
+        let slice = Vector::empty();
+        Vector::append(&mut slice, dao_member_slice_0);
+        Vector::append(&mut slice, b"<");
+        Vector::append(&mut slice, struct_tag_to_string<DaoT>());
+        Vector::append(&mut slice, b">");
+
+        slice
+    }
+
+
+    fun get_access_path_dao_member_body_slice<DaoT:store>(): vector<u8>{
+        let dao_member_body_slice_0 = b"0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody";
+        let slice = Vector::empty();
+        Vector::append(&mut slice, dao_member_body_slice_0);
+        Vector::append(&mut slice, b"<");
+        Vector::append(&mut slice, struct_tag_to_string<DaoT>());
+        Vector::append(&mut slice, b">");
+
+        slice
+    }
+
+    fun struct_tag_to_string<DaoT:store>(): vector<u8> {
+        let struct_tag = get_dao_struct_tag<DaoT>();
+        let struct_tag_slice = Vector::empty();
+        Vector::append(&mut struct_tag_slice, address_to_hex_string(*&struct_tag.addr));
+        Vector::append(&mut struct_tag_slice, b"::");
+        Vector::append(&mut struct_tag_slice, *&struct_tag.module_name);
+        Vector::append(&mut struct_tag_slice, b"::");
+        Vector::append(&mut struct_tag_slice, *&struct_tag.name);
+
+        struct_tag_slice
+    }
+
+    const HEX_SYMBOLS: vector<u8> = b"0123456789abcdef";
+
+    /// Converts a `u8` to its  hexadecimal representation with fixed length (in whole bytes).
+    /// so the returned String is `2 * length`  in size
+    public fun to_hex_string_without_prefix(value: u8): vector<u8> {
+        if (value == 0) {
+            return b"00"
+        };
+
+        let buffer = Vector::empty<u8>();
+        let len = 1;
+        let i: u64 = 0;
+        while (i < len * 2) {
+            Vector::push_back(&mut buffer, *Vector::borrow(&mut HEX_SYMBOLS, (value & 0xf as u64)));
+            value = value >> 4;
+            i = i + 1;
+        };
+        assert!(value == 0, 1);
+        Vector::reverse(&mut buffer);
+        buffer
+    }
+
+    /// Converts a `address` to its  hexadecimal representation with fixed length (in whole bytes).
+    /// so the returned String is `2 * length + 2`(with '0x') in size
+    fun address_to_hex_string(addr: address): vector<u8>{
+        let hex_string = Vector::empty<u8>();
+        Vector::append(&mut hex_string, b"0x");
+        let addr_bytes = BCS::to_bytes<address>(&addr);
+        let i = 0;
+        let len = Vector::length(&addr_bytes);
+        while (i < len) {
+            let hex_slice = to_hex_string_without_prefix(*Vector::borrow(&addr_bytes, i));
+            Vector::append(&mut hex_string, hex_slice);
+            i = i + 1;
+        };
+        hex_string
+    }
+
+    #[test]
+    fun test_address_to_byte(){
+        let user_addr = @0x6bfb460477adf9dd0455d3de2fc7f211;
+        let user_addr_b = b"0x6bfb460477adf9dd0455d3de2fc7f211";
+        let user_addr_hex = address_to_hex_string(user_addr);
+        Debug::print(&user_addr);
+        Debug::print(&user_addr_b);
+        Debug::print(&user_addr_hex);
+
+        let str1 = b"0x6bfb460477adf9dd0455d3de2fc7f211/1/";
+        let str2 = Vector::empty();
+        Vector::append(&mut str2, user_addr_hex);
+        Vector::append(&mut str2, b"/1/");
+        Debug::print(&str1);
+        Debug::print(&str2);
+        assert!(str1 == str2, 8013)
+    }
+
 
 }

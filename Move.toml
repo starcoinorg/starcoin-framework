@@ -6,6 +6,7 @@ version = "0.1.0"
 StarcoinFramework = "0x1"
 StarcoinAssociation = "0xA550C18"
 VMReserved = "0x0"
+SFT = "0x6bfb460477adf9dd0455d3de2fc7f211"
 
 [dev-dependencies]
 UnitTest = {local = "./unit-test"}
