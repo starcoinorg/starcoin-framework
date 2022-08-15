@@ -77,7 +77,7 @@ module creator::DAOHelper {
     public fun create_grant(sender:&signer, total:u128, start_time:u64,period:u64){
         let witness = XPlugin{};
         let grant_cap = DAOSpace::acquire_grant_cap<X, XPlugin>(&witness);
-        DAOSpace::create_grant<X,XPlugin,STC::STC>(&grant_cap, sender, total, start_time, period);
+        DAOSpace::create_grant<X,XPlugin,STC::STC>(&grant_cap,sender, total, start_time, period);
     }
 
     public fun grant_revoke(grantee:address){

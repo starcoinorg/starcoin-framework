@@ -1040,6 +1040,8 @@ module StarcoinFramework::DAOSpace {
         id: u64,
         /// creator of the proposal
         proposer: address,
+        /// description of proposal , ipfs://
+        description:vector<u8>,
         /// when voting begins.
         start_time: u64,
         /// when voting ends.
@@ -1156,6 +1158,8 @@ module StarcoinFramework::DAOSpace {
         dao_id: u64,
         /// the proposal id.
         proposal_id: u64,
+        /// description of proposal , ipfs://
+        description: vector<u8>,
         /// proposer is the user who create the proposal.
         proposer: address,
     }
@@ -1192,6 +1196,7 @@ module StarcoinFramework::DAOSpace {
         _cap: &DAOProposalCap<DAOT, PluginT>,
         sender: &signer,
         action: ActionT,
+        description: vector<u8>,
         action_delay: u64,
     ): u64 acquires DAO, GlobalProposals, DAOAccountCapHolder, ProposalActions, ProposalEvent, GlobalProposalActions {
         // check DAO member
@@ -1218,6 +1223,7 @@ module StarcoinFramework::DAOSpace {
         let proposal = Proposal {
             id: proposal_id,
             proposer,
+            description: copy description,
             start_time,
             end_time: start_time + voting_period,
             yes_votes: 0,
@@ -1282,7 +1288,7 @@ module StarcoinFramework::DAOSpace {
         let dao_id = dao_id(dao_address);
         let proposal_event = borrow_global_mut<ProposalEvent<DAOT>>(dao_address);
         Event::emit_event(&mut proposal_event.proposal_create_event,
-            ProposalCreatedEvent { dao_id, proposal_id, proposer },
+            ProposalCreatedEvent { dao_id, proposal_id, description: copy description, proposer },
         );
 
         proposal_id
