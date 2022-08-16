@@ -52,7 +52,7 @@ module creator::DAOHelper {
             min_action_delay,
             min_proposal_deposit,
         );
-        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, X{}, config);
+        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, b"ipfs://description", X{}, config);
         
         DAOSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
         DAOSpace::install_plugin_with_root_cap<X, AnyMemberPlugin>(&dao_root_cap, AnyMemberPlugin::required_caps());
@@ -77,7 +77,7 @@ module creator::DAOHelper {
     public fun create_grant(sender:&signer, total:u128, start_time:u64,period:u64){
         let witness = XPlugin{};
         let grant_cap = DAOSpace::acquire_grant_cap<X, XPlugin>(&witness);
-        DAOSpace::create_grant<X,XPlugin,STC::STC>(&grant_cap, sender, total, start_time, period);
+        DAOSpace::create_grant<X,XPlugin,STC::STC>(&grant_cap,sender, total, start_time, period);
     }
 
     public fun grant_revoke(grantee:address){
