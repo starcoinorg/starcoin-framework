@@ -250,7 +250,7 @@ script{
 
 //# call-api chain.info
 
-//# call-api state.get_with_proof_by_root_raw ["0x6bfb460477adf9dd0455d3de2fc7f211/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>,0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>>",{{$.call-api[0].head.state_root}}]
+//# call-api state.get_with_proof_by_root_raw ["0x6bfb460477adf9dd0455d3de2fc7f211/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>,0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>>","{{$.call-api[0].head.state_root}}"]
 
 //TODO how to convert the type.
 //# run --signers creator --args {{$.call-api[0]}}
@@ -264,11 +264,10 @@ script{
 //    use StarcoinFramework::Debug;
 
     // bob vote
-    fun cast_vote(sender: signer){
+    fun cast_vote(sender: signer, snpashot_raw_proofs: vector<u8>){
         let proposal_id = DAOHelper::last_proposal_id<X>();
-        let snapshot_proofs = x"";
         let choice = DAOSpace::choice_yes();
-        DAOSpace::cast_vote<X>(&sender, proposal_id, snapshot_proofs, choice);
+        DAOSpace::cast_vote<X>(&sender, proposal_id, snpashot_raw_proofs, choice);
     }
 }
 // check: ABORT
