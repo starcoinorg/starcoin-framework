@@ -23,6 +23,13 @@ module Signature {
         }
     }
 
+    // verify eth secp256k1 sign and compare addr, if add equal return true
+    public fun secp256k1_verify(signature: vector<u8>, addr: vector<u8>, message: vector<u8>) : bool{
+      let receover_address_opt:Option<EVMAddress>  = ecrecover(message, signature);
+      let expect_address =  EVMAddress::new(addr);
+      &Option::destroy_some<EVMAddress>(receover_address_opt) == &expect_address
+   } 
+
     spec module {
         pragma intrinsic = true;
     }
