@@ -6,17 +6,16 @@
 
 //# call-api chain.info
 
-//# run --signers alice --args {{$.call-api[0].head.number}}u64
+//# run --signers alice --args {{$.call-api[0].head.parent_hash}}
 script {
     use StarcoinFramework::Block;
     use StarcoinFramework::Debug;
 
-    fun checkpoint(_account: signer, block_number: u64) {
-        let parent_block_number = Block::get_current_block_number() - 1;
-        let expect_block_number= (block_number - 1);
-        Debug::print(&parent_block_number);
-        Debug::print(&expect_block_number);
-        assert!( expect_block_number == parent_block_number, 1001);
+    fun checkpoint(_account: signer, parent_hash: vector<u8>) {
+        let expect_parent_hash = Block::get_parent_hash();
+        Debug::print(&expect_parent_hash);
+        Debug::print(&parent_hash);
+        assert!( expect_parent_hash == parent_hash, 1001);
         Block::checkpoint();
     }
 }
@@ -24,7 +23,7 @@ script {
 
 //# call-api chain.get_block_by_hash ["{{$.call-api[0].head.parent_hash}}",{"raw":true}]
 
-//# run --signers alice  --args -x"{{$.call-api[1].raw.header}}"
+//# run --signers alice  --args {{$.call-api[1].raw.header}}
 
 script {
     use StarcoinFramework::Block;
