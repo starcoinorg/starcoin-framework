@@ -13,11 +13,11 @@ module StarcoinFramework::UpgradeModulePlugin {
 
     public fun required_caps(): vector<CapType> {
         let caps = Vector::singleton(DAOSpace::proposal_cap_type());
-        Vector::push_back(&mut caps, DAOSpace::modify_config_cap_type());
+        Vector::push_back(&mut caps, DAOSpace::upgrade_module_cap_type());
         caps
     }
 
-    public fun create_proposal<DAOT: store>(sender: signer, description: vector<u8>, action_delay:u64, package_hash: vector<u8>, version: u64, enforced: bool) {
+    public (script) fun create_proposal<DAOT: store>(sender: signer, description: vector<u8>, action_delay:u64, package_hash: vector<u8>, version: u64, enforced: bool) {
         let witness = UpgradeModulePlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, UpgradeModulePlugin>(&witness);
         let action = UpgradeModuleAction{
