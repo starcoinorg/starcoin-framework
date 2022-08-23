@@ -241,6 +241,9 @@ compiled_package_info:
       name: StakeToSBTPlugin
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: StarcoinDAO
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: StarcoinVerifier
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -290,6 +293,9 @@ compiled_package_info:
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: UpgradeModuleDaoProposal
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: UpgradeModulePlugin
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: VMConfig
