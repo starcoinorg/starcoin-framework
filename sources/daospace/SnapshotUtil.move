@@ -299,7 +299,7 @@ module StarcoinFramework::SnapshotUtil{
 
 
     fun get_access_path_dao_member_slice<DaoT:store>(): vector<u8>{
-        let dao_member_slice_0 = b"0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember";
+        let dao_member_slice_0 = b"0x00000000000000000000000000000001::DAOSpace::DAOMember";
         let slice = Vector::empty();
         Vector::append(&mut slice, dao_member_slice_0);
         Vector::append(&mut slice, b"<");
@@ -311,7 +311,7 @@ module StarcoinFramework::SnapshotUtil{
 
 
     fun get_access_path_dao_member_body_slice<DaoT:store>(): vector<u8>{
-        let dao_member_body_slice_0 = b"0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody";
+        let dao_member_body_slice_0 = b"0x00000000000000000000000000000001::DAOSpace::DAOMemberBody";
         let slice = Vector::empty();
         Vector::append(&mut slice, dao_member_body_slice_0);
         Vector::append(&mut slice, b"<");

@@ -43,56 +43,39 @@ script {
         Block::update_state_root(raw_header);
     }
 }
-// check: EXECUTED
+// check: ABORT. reason: Block from call-api[0] is not in checkpoint, its parent is in.
 
 
+//# block --author=0x3
 
+//# call-api chain.get_block_by_hash ["{{$.call-api[0].head.parent_hash}}",{"raw":true}]
 
-////# call-api chain.get_block_by_number [(2-1),{"raw":true}]
-//# call-api chain.get_block_by_number ["{{$.call-api[0].head.number}}u64",{"raw":true}]
+//# run --signers alice  --args {{$.call-api[2].raw.header}}
 
-//# run --signers alice  --args x"01"
-
-////# run --signers alice  --args {{$.call-api[1].raw.header}}
-
-script {
-//    use StarcoinFramework::Block;
-    use StarcoinFramework::Debug;
-
-    fun update(_account: signer, raw_header: vector<u8>) {
-        Debug::print(&raw_header);
-//        Block::update_state_root(raw_header);
-    }
-}
-// check: EXECUTED
-
-////# block --author=0x3
-//
-////# call-api chain.get_block_by_hash ["{{$.call-api[0].head.parent_hash}}",{"raw":true}]
-//
-////# run --signers alice  --args {{$.call-api[1].raw.header}}
-//
-//script {
-//    use StarcoinFramework::Block;
-//    use StarcoinFramework::Debug;
-//
-//    fun update(_account: signer, raw_header: vector<u8>) {
-//        Debug::print(&raw_header);
-//        Block::update_state_root(raw_header);
-//    }
-//}
-//// check: EXECUTED
-
-//# run --signers alice
 script {
     use StarcoinFramework::Block;
     use StarcoinFramework::Debug;
 
-    fun latest(_account: signer) {
-        let (number ,state_root) = Block::latest_state_root();
+    fun update(_account: signer, raw_header: vector<u8>) {
+        Debug::print(&raw_header);
+        Block::update_state_root(raw_header);
+    }
+}
+// check: EXECUTED
+
+//# call-api chain.get_block_by_hash ["{{$.call-api[0].head.parent_hash}}"]
+
+//# run --signers alice --args {{$.call-api[3].header.state_root}}
+script {
+    use StarcoinFramework::Block;
+    use StarcoinFramework::Debug;
+
+    fun latest(_account: signer, expect_state_root: vector<u8>) {
+        let (number, state_root) = Block::latest_state_root();
         Debug::print(&number);
         Debug::print(&state_root);
+        Debug::print(&expect_state_root);
+        assert!(state_root == expect_state_root, 1002)
     }
-
 }
 // check: EXECUTED

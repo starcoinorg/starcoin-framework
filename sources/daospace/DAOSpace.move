@@ -1285,9 +1285,7 @@ module StarcoinFramework::DAOSpace {
 
     /// get lastest block number and state root
     fun block_number_and_state_root(): (u64, vector<u8>) {
-        //        (101, x"5981f1a692a6d9f4772e69a46d1380158a0e1b2c31654aa9df4b0e591e8faab0")
         Block::latest_state_root()
-
     }
 
 
@@ -1321,7 +1319,6 @@ module StarcoinFramework::DAOSpace {
         let verify = StarcoinVerifier::verify_state_proof(&state_proof, &proposal.state_root, sender_addr, &resource_struct_tag, &snapshot_proof.state);
         assert!(verify, Errors::invalid_state(ERR_STATE_PROOF_VERIFY_INVALID));
 
-        // TODO is allowed just use part of weight?
         // decode sbt value from snapshot state
         let vote_weight = SBTVoteStrategy::get_voting_power(&snapshot_proof.state);
 
@@ -1683,6 +1680,14 @@ module StarcoinFramework::DAOSpace {
     /// queue agreed proposal to execute.
     public(script) fun queue_proposal_action<DAOT:store>(
         _signer: signer,
+        proposal_id: u64,
+    ) acquires GlobalProposalActions, GlobalProposals {
+        do_queue_proposal_action<DAOT>(&_signer, proposal_id)
+    }
+
+    /// queue agreed proposal to execute.
+    public fun do_queue_proposal_action<DAOT:store>(
+        _signer: &signer,
         proposal_id: u64,
     ) acquires GlobalProposalActions, GlobalProposals {
         // Only agreed proposal can be submitted.
