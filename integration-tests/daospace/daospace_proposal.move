@@ -1,29 +1,30 @@
-//# init -n dev
+//# init -n dev --debug
 
+//// creator address is 0x662ba5a1a1da0f1c70a9762c7eeb7aaf
 //# faucet --addr creator --amount 100000000000
 
 //# faucet --addr alice --amount 10000000000
 
+//// bob address is 0xb5d577dc9ce59725e29886632e69ecdf
 //# faucet --addr bob --amount 10000000000
 
 //# faucet --addr cindy --amount 10000000000
 
-// TODO figure out how to call genesis init script in integration tests
 
-//# run --signers creator
-script{
-    use StarcoinFramework::StdlibUpgradeScripts;
-    
-    fun main(){
-        StdlibUpgradeScripts::upgrade_from_v11_to_v12();
-    }
-}
-// check: EXECUTED
+////# run --signers creator
+//script{
+//    use StarcoinFramework::StdlibUpgradeScripts;
+//
+//    fun main(){
+//        StdlibUpgradeScripts::upgrade_from_v11_to_v12();
+//    }
+//}
+//// check: EXECUTED
 
 //# publish
 module creator::DAOHelper {
     use StarcoinFramework::DAOAccount;
-    use StarcoinFramework::DAOSpace::{Self, CapType};
+    use StarcoinFramework::DAOSpace::{Self, CapType, Proposal};
     use StarcoinFramework::MemberProposalPlugin::{Self, MemberProposalPlugin};
     use StarcoinFramework::InstallPluginProposalPlugin::{Self, InstallPluginProposalPlugin};
     use StarcoinFramework::Account;
@@ -105,6 +106,10 @@ module creator::DAOHelper {
         Account::deposit(receiver, token);
     }
 
+    public fun queue_proposal_action<DAOT: store>(sender: &signer, proposal_id: u64){
+        DAOSpace::do_queue_proposal_action<DAOT>(sender, proposal_id);
+    }
+
     public fun member_join<DAOT:store>(to_address: address, init_sbt: u128){
         let witness = XPlugin{};
         let member_cap = DAOSpace::acquire_member_cap<DAOT, XPlugin>(&witness);
@@ -125,9 +130,21 @@ module creator::DAOHelper {
         let checkpoint = borrow_global<Checkpoint<DAOT>>(@creator);
         checkpoint.proposal_id
     }
+
+    public fun proposal_state<DAOT:store>(proposal_id: u64): u8 {
+        DAOSpace::proposal_state<DAOT>(proposal_id)
+    }
+
+    public fun proposal_info<DAOT:store>(proposal_id: u64): (u64, address, u64, u64, u128, u128, u128, u128, u64, vector<u8>) {
+        DAOSpace::proposal_info<DAOT>(proposal_id)
+    }
+
+    public fun proposal<DAOT:store>(proposal_id: u64): Proposal {
+        DAOSpace::proposal<DAOT>(proposal_id)
+    }
 }
 
-//# block --author 0x1 --timestamp 86400000
+//# block --author 0x1 --timestamp 86410000
 
 //# run --signers creator
 script{
@@ -135,7 +152,7 @@ script{
 
     fun main(sender: signer){
         // time unit is millsecond
-        DAOHelper::create_dao(sender, 10000, 3600000, 2, 10000, 10);
+        DAOHelper::create_dao(sender, 10000, 600000, 2, 10000, 10);
     }
 }
 // check: EXECUTED
@@ -185,6 +202,9 @@ script{
 }
 // check: EXECUTED
 
+
+//# block --author=0x2 --timestamp 86415000
+
 //# run --signers alice
 script{
     use creator::DAOHelper::{Self, X};
@@ -198,7 +218,7 @@ script{
         IdentifierNFT::accept<DAOMember<X>, DAOMemberBody<X>>(&sender);
 
         let user_add = Signer::address_of(&sender);
-        DAOHelper::member_join<X>(user_add, 1000u128);
+        DAOHelper::member_join<X>(user_add, 10000u128);
     }
 }
 // check: EXECUTED
@@ -216,7 +236,67 @@ script{
         IdentifierNFT::accept<DAOMember<X>, DAOMemberBody<X>>(&sender);
 
         let user_add = Signer::address_of(&sender);
-        DAOHelper::member_join<X>(user_add, 3000u128);
+        DAOHelper::member_join<X>(user_add, 30000u128);
+    }
+}
+// check: EXECUTED
+
+//# block --author=0x2 --timestamp 86418000
+
+//# block --author=0x2 --timestamp 86420000
+
+//# call-api chain.info
+
+//# run --signers alice --args {{$.call-api[0].head.parent_hash}}
+script {
+    use StarcoinFramework::Block;
+    use StarcoinFramework::Debug;
+
+    fun checkpoint(_account: signer, parent_hash: vector<u8>) {
+        let expect_parent_hash = Block::get_parent_hash();
+        Debug::print(&expect_parent_hash);
+        Debug::print(&parent_hash);
+        assert!(expect_parent_hash == parent_hash, 1001);
+
+        Block::checkpoint();
+    }
+}
+// check: EXECUTED
+
+
+//# block --author=0x2 --timestamp 86430000
+
+//# call-api chain.get_block_by_hash ["{{$.call-api[0].head.block_hash}}",{"raw":true}]
+
+//# run --signers alice  --args {{$.call-api[1].raw.header}}
+
+script {
+    use StarcoinFramework::Block;
+    use StarcoinFramework::Debug;
+
+    fun update(_account: signer, raw_header: vector<u8>) {
+        let current_block_number = Block::get_current_block_number();
+        Debug::print(&current_block_number);
+        Debug::print(&raw_header);
+        Block::update_state_root(raw_header);
+    }
+}
+// check: ABORT. reason: Block from call-api[0] is not in checkpoint, its parent is in.
+
+
+//# block --author=0x3 --timestamp 86450000
+
+//# call-api chain.get_block_by_hash ["{{$.call-api[0].head.parent_hash}}",{"raw":true}]
+
+//# run --signers alice  --args {{$.call-api[2].raw.header}}
+
+script {
+    use StarcoinFramework::Block;
+    use StarcoinFramework::Debug;
+
+    fun update(_account: signer, raw_header: vector<u8>) {
+        Debug::print(&raw_header);
+        Block::update_state_root(raw_header);
     }
 }
 // check: EXECUTED
@@ -232,7 +312,6 @@ script{
     //alice create proposal
     fun create_proposal(sender: signer){
         let proposal_id = DAOHelper::create_x_proposal<X, STC>(&sender, 100u128, @alice, 10000);
-//        (u64, address, u64, u64, u128, u128, u128, u128, u64, vector<u8>)
         let (_id, proposer, start_time, end_time, _yes_votes, _no_votes, _no_with_veto_votes, _abstain_votes, block_number, state_root) = DAOSpace::proposal_info<X>(proposal_id);
 
         Debug::print(&proposer);
@@ -240,26 +319,80 @@ script{
         Debug::print(&end_time);
         Debug::print(&block_number);
         Debug::print(&state_root);
+    }
+}
+// check: EXECUTED
 
+//# block --author=0x3 --timestamp 86461000
+
+//# run --signers bob --args {{$.faucet[0].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}} --args {{$.faucet[2].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}
+script{
+    use StarcoinFramework::Debug;
+
+    /// faucet address generated from a hash of the faucet name
+    fun print_faucet(_sender: signer, address1: address, address2: address){
+        Debug::print(&address1);
+        Debug::print(&address2);
+    }
+}
+
+//# call 0x1::SnapshotUtil::get_access_path --type-args 0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X --args {{$.faucet[2].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}
+
+//# call-api state.get_with_proof_by_root_raw ["{{$.call[0]}}","{{$.call-api[2].header.state_root}}"]
+
+//# run --signers bob --args {{$.call-api[3]}}
+script{
+    use creator::DAOHelper::{Self, X};
+    use StarcoinFramework::DAOSpace;
+    use StarcoinFramework::Debug;
+
+    // bob vote
+    fun cast_vote(sender: signer, snpashot_raw_proofs: vector<u8>){
+        let proposal_id = DAOHelper::last_proposal_id<X>();
+        let choice = DAOSpace::choice_yes();
+        Debug::print(&snpashot_raw_proofs);
+
+        //deserize sbt
+        // decode sbt value from snapshot state
+//        let vote_weight = SBTVoteStrategy::get_voting_power(&snapshot_proof.state);
+
+        DAOSpace::cast_vote<X>(&sender, proposal_id, snpashot_raw_proofs, choice);
     }
 }
 // check: EXECUTED
 
 
-//# block --author 0x1 --timestamp 86420000
+//# call 0x1::SnapshotUtil::get_access_path --type-args 0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X --args {{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}
 
-//# call-api chain.info
+//# call-api state.get_with_proof_by_root_raw ["{{$.call[1]}}","{{$.call-api[2].header.state_root}}"]
 
-//# call-api state.get_with_proof_by_root_raw ["0x6bfb460477adf9dd0455d3de2fc7f211/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMember<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>,0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::DaoMemberBody<0x6bfb460477adf9dd0455d3de2fc7f211::SBTModule::SbtTestDAO>>","{{$.call-api[0].head.state_root}}"]
-
-//# run --signers bob --args {{$.call-api[0]}}
-
+//# run --signers alice --args {{$.call-api[4]}}
 script{
     use creator::DAOHelper::{Self, X};
     use StarcoinFramework::DAOSpace;
-//    use StarcoinFramework::Debug;
+    //    use StarcoinFramework::Debug;
 
-    // bob vote
+    // alice vote
+    fun cast_vote(sender: signer, snpashot_raw_proofs: vector<u8>){
+        let proposal_id = DAOHelper::last_proposal_id<X>();
+        let choice = DAOSpace::choice_abstain();
+        DAOSpace::cast_vote<X>(&sender, proposal_id, snpashot_raw_proofs, choice);
+    }
+}
+// check: EXECUTED
+
+
+//# call 0x1::SnapshotUtil::get_access_path --type-args 0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X --args {{$.faucet[3].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}
+
+//# call-api state.get_with_proof_by_root_raw ["{{$.call[2]}}","{{$.call-api[2].header.state_root}}"]
+
+//# run --signers cindy --args {{$.call-api[5]}}
+script{
+    use creator::DAOHelper::{Self, X};
+    use StarcoinFramework::DAOSpace;
+    //    use StarcoinFramework::Debug;
+
+    // cindy vote
     fun cast_vote(sender: signer, snpashot_raw_proofs: vector<u8>){
         let proposal_id = DAOHelper::last_proposal_id<X>();
         let choice = DAOSpace::choice_yes();
@@ -269,40 +402,52 @@ script{
 // check: ABORT
 
 
-////# run --signers alice
-//script{
-//    use creator::DAOHelper::{Self, X};
-//    use StarcoinFramework::DAOSpace;
-//    //    use StarcoinFramework::Debug;
-//
-//    // alice vote
-//    fun cast_vote(sender: signer){
-//        let proposal_id = DAOHelper::last_proposal_id<X>();
-//        let snapshot_proofs = x"";
-//        let choice = DAOSpace::choice_abstain();
-//        DAOSpace::cast_vote<X>(&sender, proposal_id, snapshot_proofs, choice);
-//    }
-//}
-//// check: EXECUTED
-//
-////# run --signers cindy
-//script{
-//    use creator::DAOHelper::{Self, X};
-//    use StarcoinFramework::DAOSpace;
-//    //    use StarcoinFramework::Debug;
-//
-//    // cindy vote
-//    fun cast_vote(sender: signer){
-//        let proposal_id = DAOHelper::last_proposal_id<X>();
-//        let snapshot_proofs = x"";
-//        let choice = DAOSpace::choice_yes();
-//        DAOSpace::cast_vote<X>(&sender, proposal_id, snapshot_proofs, choice);
-//    }
-//}
-//// check: ABORT
+//# block --author 0x4 --timestamp 90060000
+
+//# run --signers bob
+script{
+    use creator::DAOHelper::{Self, X};
+    use StarcoinFramework::Debug;
+
+    fun get_proposal_info(_sender: signer){
+        let proposal_id = DAOHelper::last_proposal_id<X>();
+        let proposal_state = DAOHelper::proposal_state<X>(proposal_id);
+        Debug::print(&120100);
+        Debug::print(&proposal_state);
+
+        let (_id, _proposer, _start_time, _end_time, _yes_votes, _no_votes, _abstain_votes, _veto_votes, _block_number, _state_root) = DAOHelper::proposal_info<X>(proposal_id);
+        Debug::print(&_yes_votes);
+        Debug::print(&_no_votes);
+        Debug::print(&_abstain_votes);
+        Debug::print(&_veto_votes);
+
+        let proposal = DAOHelper::proposal<X>(proposal_id);
+        Debug::print(&proposal);
+    }
+}
+// check: EXECUTED
 
 
-//# block --author 0x1 --timestamp 90015000
+////# call-api state.list_resource ["$.faucet[2].txn.raw_txn.decoded_payload.ScriptFunction.args[0]"]
+//# call-api state.list_resource ["0xb5d577dc9ce59725e29886632e69ecdf",{"decode":true}]
+
+//# call-api state.get_resource ["0xb5d577dc9ce59725e29886632e69ecdf","0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X>>",{"decode":true}]
+
+
+//# run --signers bob
+script{
+    use creator::DAOHelper::{Self, X};
+
+    // execute action
+    fun queue_proposal_action(sender: signer){
+        let proposal_id = DAOHelper::last_proposal_id<X>();
+        DAOHelper::queue_proposal_action<X>(&sender, proposal_id);
+    }
+}
+// check: EXECUTED
+
+
+//# block --author 0x4 --timestamp 90100000
 
 //# run --signers bob
 script{
@@ -316,4 +461,4 @@ script{
         DAOHelper::execute_x_proposal<X, STC>(&sender, proposal_id);
     }
 }
-// check: ABORT
+// check: EXECUTED
