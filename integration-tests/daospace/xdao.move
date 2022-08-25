@@ -4,14 +4,14 @@
 
 // TODO figure out how to call genesis init script in integration tests
 
-//# run --signers creator
-script{
-    use StarcoinFramework::StdlibUpgradeScripts;
-    
-    fun main(){
-        StdlibUpgradeScripts::upgrade_from_v11_to_v12();
-    }
-}
+////# run --signers creator
+//script{
+//    use StarcoinFramework::StdlibUpgradeScripts;
+//
+//    fun main(){
+//        StdlibUpgradeScripts::upgrade_from_v11_to_v12();
+//    }
+//}
 
 //# publish
 module creator::XDAO {
@@ -41,7 +41,7 @@ module creator::XDAO {
             min_action_delay,
             min_proposal_deposit,
         );
-        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, X{}, config);
+        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, b"ipfs://description", X{}, config);
         
         DAOSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
         DAOSpace::install_plugin_with_root_cap<X, MemberProposalPlugin>(&dao_root_cap, MemberProposalPlugin::required_caps());

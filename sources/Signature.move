@@ -23,8 +23,23 @@ module Signature {
         }
     }
 
+    // verify eth secp256k1 sign and compare addr, if add equal return true
+    public fun secp256k1_verify(signature: vector<u8>, addr: vector<u8>, message: vector<u8>) : bool{
+      let receover_address_opt:Option<EVMAddress>  = ecrecover(message, signature);
+      let expect_address =  EVMAddress::new(addr);
+      &Option::destroy_some<EVMAddress>(receover_address_opt) == &expect_address
+   } 
+
     spec module {
         pragma intrinsic = true;
+    }
+
+    #[test]
+    fun test_ecrecover_invalid(){
+        let h = b"00";
+        let s = b"00";
+        let addr = ecrecover(h, s);
+        assert!(Option::is_none(&addr), 1001);
     }
 }
 
@@ -52,6 +67,7 @@ module EVMAddress{
             let i = 0;
             while (i < EVM_ADDR_LENGTH) {
                 Vector::push_back(&mut new_bytes, *Vector::borrow(&bytes, i));
+                i = i + 1;
             };
             new_bytes
         }else if (len == EVM_ADDR_LENGTH){
@@ -62,6 +78,7 @@ module EVMAddress{
             while (i < EVM_ADDR_LENGTH - len) {
                 // pad zero to address
                 Vector::push_back(&mut new_bytes, 0);
+                i = i + 1;
             };
             Vector::append(&mut new_bytes, bytes);
             new_bytes
@@ -95,6 +112,20 @@ module EVMAddress{
     spec into_bytes {
         pragma verify = false;
         //TODO
+    }
+
+    #[test]
+    fun test_evm_address_padding(){
+        let addr1 = new(x"00");
+        let addr2 = new(x"0000");
+        assert!(&addr1.bytes == &addr2.bytes, 1001);
+    }
+
+    #[test]
+    fun test_evm_address_crop(){
+        let addr1 = new(x"01234567890123456789012345678901234567891111");
+        let addr2 = new(x"01234567890123456789012345678901234567892222");
+        assert!(&addr1.bytes == &addr2.bytes, 1001);
     }
 }
 }

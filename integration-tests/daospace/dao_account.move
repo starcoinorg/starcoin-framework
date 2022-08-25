@@ -1,6 +1,6 @@
 //# init -n dev
 
-//# faucet --addr alice --amount 1000000
+//# faucet --addr alice --amount 10000000
 
 
 //# run --signers alice
@@ -38,3 +38,24 @@ script {
     }
 }
 // check: EXECUTED
+
+//# run --signers alice
+script {
+    use StarcoinFramework::DAOAccount;
+
+    fun main(sender: signer) {
+        let dao_cap = DAOAccount::create_account(&sender);
+        DAOAccount::restore_dao_account_cap(&sender, dao_cap);
+    }
+}
+// check: ABORT, code 25862. Reason:  alice already has a DAOAccountCap
+
+//# run --signers alice
+script {
+    use StarcoinFramework::DAOAccount;
+
+    fun main(sender: signer) {
+        DAOAccount::create_account_entry(sender);
+    }
+}
+// check: ABORT, code 25862. Reason:  alice already has a DAOAccountCap 

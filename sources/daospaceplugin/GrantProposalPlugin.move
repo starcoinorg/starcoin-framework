@@ -37,7 +37,7 @@ module StarcoinFramework::GrantProposalPlugin{
     const ERR_GRANTTREASURY_WITHDRAW_TOO_MORE :u64 = 102;
     const ERR_SENDER_NOT_SAME :u64 = 103;
 
-    public (script) fun create_grant_proposal<DAOT: store, TokenT:store>(sender: signer, grantee: address, total: u128, start_time:u64, period: u64, action_delay:u64){
+    public (script) fun create_grant_proposal<DAOT: store, TokenT:store>(sender: signer, description: vector<u8>,grantee: address, total: u128, start_time:u64, period: u64, action_delay:u64){
         let witness = GrantProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, GrantProposalPlugin>(&witness);
         let action = GrantCreateAction<TokenT>{
@@ -46,7 +46,7 @@ module StarcoinFramework::GrantProposalPlugin{
             start_time:start_time,
             period:period
         };
-        DAOSpace::create_proposal(&cap, &sender, action, action_delay);
+        DAOSpace::create_proposal(&cap, &sender, action, description, action_delay);
     }
 
     public (script) fun execute_grant_proposal<DAOT: store, TokenT:store>(sender: signer, proposal_id: u64){
@@ -58,11 +58,11 @@ module StarcoinFramework::GrantProposalPlugin{
         DAOSpace::create_grant<DAOT, GrantProposalPlugin, TokenT>(&grant_cap, &sender, total, start_time, period);
     }
 
-    public (script) fun create_grant_revoke_proposal<DAOT: store, TokenT:store>(sender: signer, grantee:address, action_delay:u64){
+    public (script) fun create_grant_revoke_proposal<DAOT: store, TokenT:store>(sender: signer, description: vector<u8>, grantee:address, action_delay:u64){
         let witness = GrantProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, GrantProposalPlugin>(&witness);
         let action = GrantRevokeAction<TokenT>{ grantee };
-        DAOSpace::create_proposal(&cap, &sender, action, action_delay);
+        DAOSpace::create_proposal(&cap, &sender, action, description, action_delay);
     }
 
     public (script) fun execute_grant_revoke_proposal<DAOT: store, TokenT:store>(sender: signer, proposal_id: u64){
@@ -73,7 +73,7 @@ module StarcoinFramework::GrantProposalPlugin{
         DAOSpace::grant_revoke<DAOT, GrantProposalPlugin, TokenT>(&grant_cap , grantee);
     }
 
-    public (script) fun create_grant_config_proposal<DAOT: store, TokenT:store>(sender: signer, old_grantee: address, new_grantee: address, total: u128, period: u64,start_time:u64, action_delay:u64){
+    public (script) fun create_grant_config_proposal<DAOT: store, TokenT:store>(sender: signer, description: vector<u8>, old_grantee: address, new_grantee: address, total: u128, period: u64,start_time:u64, action_delay:u64){
         let witness = GrantProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, GrantProposalPlugin>(&witness);
         let action = GrantConfigAction<TokenT>{
@@ -83,7 +83,7 @@ module StarcoinFramework::GrantProposalPlugin{
             start_time:start_time,
             period:period
         };
-        DAOSpace::create_proposal(&cap, &sender, action, action_delay);
+        DAOSpace::create_proposal(&cap, &sender, action, description,action_delay);
     }
 
     public (script) fun execute_grant_config_proposal<DAOT: store, TokenT:store>(sender: signer, proposal_id: u64){
@@ -101,7 +101,7 @@ module StarcoinFramework::GrantProposalPlugin{
         DAOSpace::grant_config<DAOT, GrantProposalPlugin, TokenT>(&grant_cap , old_grantee , &sender, total, start_time, period);
     }
 
-    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, GrantProposalPlugin>(&sender, required_caps(), action_delay);
+    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, description: vector<u8>, action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, GrantProposalPlugin>(&sender, required_caps(), description, action_delay);
     } 
 }

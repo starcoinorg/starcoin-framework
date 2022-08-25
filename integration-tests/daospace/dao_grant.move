@@ -52,7 +52,7 @@ module creator::DAOHelper {
             min_action_delay,
             min_proposal_deposit,
         );
-        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, X{}, config);
+        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, b"ipfs://description", X{}, config);
         
         DAOSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
         DAOSpace::install_plugin_with_root_cap<X, AnyMemberPlugin>(&dao_root_cap, AnyMemberPlugin::required_caps());
@@ -77,7 +77,7 @@ module creator::DAOHelper {
     public fun create_grant(sender:&signer, total:u128, start_time:u64,period:u64){
         let witness = XPlugin{};
         let grant_cap = DAOSpace::acquire_grant_cap<X, XPlugin>(&witness);
-        DAOSpace::create_grant<X,XPlugin,STC::STC>(&grant_cap, sender, total, start_time, period);
+        DAOSpace::create_grant<X,XPlugin,STC::STC>(&grant_cap,sender, total, start_time, period);
     }
 
     public fun grant_revoke(grantee:address){
@@ -222,6 +222,22 @@ script{
         assert!(DAOSpace::query_grant_info_withdraw(&grant_info)== 1000000000,1004);
         assert!(DAOSpace::query_grant_info_start_time(&grant_info) == 86400,1005);
         assert!(DAOSpace::query_grant_info_period(&grant_info) == 3600,1006);
+    }
+}
+// check: EXECUTED
+
+//# run --signers cindy
+script{
+    use creator::DAOHelper::{Self, X, XPlugin};
+    use StarcoinFramework::DAOSpace;
+    use StarcoinFramework::STC;
+
+    //alice create grant to cindy
+    fun create_grant(sender: signer){
+        DAOHelper::create_grant(&sender, 1000000000u128, 90000u64, 3600u64);
+        assert!(DAOSpace::is_have_grant<X, XPlugin, STC::STC>(@cindy) == true, 1001);
+        DAOSpace::refund_grant<X, XPlugin, STC::STC>(&sender);
+        assert!(DAOSpace::is_have_grant<X, XPlugin, STC::STC>(@cindy) == false, 1002);
     }
 }
 // check: EXECUTED

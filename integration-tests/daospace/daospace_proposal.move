@@ -58,7 +58,7 @@ module creator::DAOHelper {
             min_action_delay,
             min_proposal_deposit,
         );
-        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, X{}, config);
+        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, b"ipfs://description", X{}, config);
         
         DAOSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
         DAOSpace::install_plugin_with_root_cap<X, MemberProposalPlugin>(&dao_root_cap, MemberProposalPlugin::required_caps());
@@ -91,7 +91,7 @@ module creator::DAOHelper {
             total,
             receiver,
         };
-        let proposal_id = DAOSpace::create_proposal(&cap, sender, action, action_delay);
+        let proposal_id = DAOSpace::create_proposal(&cap, sender, action, b"ipfs://description", action_delay);
         checkpoint<DAOT>(proposal_id);
 
         proposal_id
