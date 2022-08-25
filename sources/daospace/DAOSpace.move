@@ -163,6 +163,9 @@ module StarcoinFramework::DAOSpace {
     /// Creates a grant capability type.
     public fun grant_cap_type(): CapType { CapType{ code: 8 } }
 
+    /// Creates a grant capability type.
+    public fun plugin_event_cap_type(): CapType { CapType{ code: 9 } }
+
     /// Creates all capability types.
     public fun all_caps(): vector<CapType> {
         let caps = Vector::singleton(install_plugin_cap_type());
@@ -174,6 +177,7 @@ module StarcoinFramework::DAOSpace {
         Vector::push_back(&mut caps, member_cap_type());
         Vector::push_back(&mut caps, proposal_cap_type());
         Vector::push_back(&mut caps, grant_cap_type());
+        Vector::push_back(&mut caps, plugin_event_cap_type());
         caps
     }
 
@@ -197,6 +201,8 @@ module StarcoinFramework::DAOSpace {
     struct DAOProposalCap<phantom DAOT, phantom PluginT> has drop {}
 
     struct DAOGrantCap<phantom DAOT, phantom PluginT> has drop {}
+
+    struct DAOPluginEventCap<phantom DAOT, phantom PluginT> has drop {}
 
     struct DAOGrantWithdrawTokenKey<phantom DAOT, phantom PluginT ,phantom TokenT> has key, store{
         /// The total amount of tokens that can be withdrawn by this capability
@@ -456,6 +462,13 @@ module StarcoinFramework::DAOSpace {
         item
     }
 
+    /// Check the item has exists in storage
+    public fun exists_storage<DAOT: store, PluginT, V: store>(): bool {
+        let dao_address = dao_address<DAOT>();
+        assert!(exists<StorageItem<PluginT, V>>(dao_address), Errors::not_published(ERR_STORAGE_ERROR));
+        exists<StorageItem<PluginT, V>>(dao_address)
+    }
+
     // Withdraw Token capability function
 
     /// Withdraw the token from the DAO account
@@ -651,6 +664,29 @@ module StarcoinFramework::DAOSpace {
     public fun is_member<DAOT: store>(member_addr: address): bool {
         IdentifierNFT::owns<DAOMember<DAOT>, DAOMemberBody<DAOT>>(member_addr)
     }
+
+    struct PluginEvent<phantom DAOT, phantom PluginT, phantom EventT> has key, store {
+        event_handle: Event::EventHandle<EventT>,
+    }
+
+    /// Plugin event
+    public fun init_plugin_event<DAOT: store, PluginT: store, EventT: store + drop>(_cap: &DAOPluginEventCap<DAOT, PluginT>)
+    acquires DAOAccountCapHolder {
+        let dao_signer = dao_signer<DAOT>();
+        if (!exists<PluginEvent<DAOT, PluginT, EventT>>(dao_address<DAOT>())) {
+            move_to(&dao_signer, PluginEvent<DAOT, PluginT, EventT> {
+                event_handle: Event::new_event_handle<EventT>(&dao_signer)
+            });
+        };
+    }
+
+    public fun emit_plugin_event<DAOT: store, PluginT: store, EventT: store + drop>(_cap: &DAOPluginEventCap<DAOT, PluginT>,
+                                                                                    event: EventT) acquires PluginEvent {
+        let dao_address = dao_address<DAOT>();
+        let plugin_event = borrow_global_mut<PluginEvent<DAOT, PluginT, EventT>>(dao_address);
+        Event::emit_event(&mut plugin_event.event_handle, event);
+    }
+
 
     /// Grant Event
 
@@ -997,6 +1033,13 @@ module StarcoinFramework::DAOSpace {
     public fun acquire_grant_cap<DAOT: store, PluginT>(_witness: &PluginT): DAOGrantCap<DAOT, PluginT> acquires InstalledPluginInfo {
         validate_cap<DAOT, PluginT>(grant_cap_type());
         DAOGrantCap<DAOT, PluginT>{}
+    }
+
+    /// Acquire the plugin event capability
+    /// _witness parameter ensures that the caller is the module which define PluginT
+    public fun acquire_plugin_event_cap<DAOT: store, PluginT>(_witness: &PluginT): DAOPluginEventCap<DAOT, PluginT> acquires InstalledPluginInfo {
+        validate_cap<DAOT, PluginT>(plugin_event_cap_type());
+        DAOPluginEventCap<DAOT, PluginT> {}
     }
 
     /// Proposal
@@ -1971,11 +2014,11 @@ module StarcoinFramework::DAOSpace {
         DAOAccount::dao_signer(cap)
     }
 
-    fun dao_address<DAOT>(): address {
+    public fun dao_address<DAOT>(): address {
         DAORegistry::dao_address<DAOT>()
     }
 
-    fun dao_id(dao_address: address): u64 acquires DAO {
+    public fun dao_id(dao_address: address): u64 acquires DAO {
         if (exists<DAO>(dao_address)){
             let dao = borrow_global<DAO>(dao_address);
             dao.id
