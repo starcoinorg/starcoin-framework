@@ -428,7 +428,6 @@ script{
 // check: EXECUTED
 
 
-////# call-api state.list_resource ["$.faucet[2].txn.raw_txn.decoded_payload.ScriptFunction.args[0]"]
 //# call-api state.list_resource ["0xb5d577dc9ce59725e29886632e69ecdf",{"decode":true}]
 
 //# call-api state.get_resource ["0xb5d577dc9ce59725e29886632e69ecdf","0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X>>",{"decode":true}]

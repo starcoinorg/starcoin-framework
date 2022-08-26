@@ -346,7 +346,7 @@ module StarcoinFramework::SnapshotUtil{
         let len = 1;
         let i: u64 = 0;
         while (i < len * 2) {
-            Vector::push_back(&mut buffer, *Vector::borrow(&mut HEX_SYMBOLS, (value & 0xf as u64)));
+            Vector::push_back(&mut buffer, *Vector::borrow(&HEX_SYMBOLS, (value & 0xf as u64)));
             value = value >> 4;
             i = i + 1;
         };
