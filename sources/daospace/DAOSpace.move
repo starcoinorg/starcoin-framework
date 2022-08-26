@@ -226,7 +226,7 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// Create a dao with a exists DAO account
-    public fun create_dao<DAOT: store>(cap: DAOAccountCap, name: vector<u8>, description: vector<u8>, ext: DAOT, config: DAOConfig): DAORootCap<DAOT> acquires DAOEvent {
+    public fun create_dao<DAOT: store>(cap: DAOAccountCap, name: vector<u8>, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, description: vector<u8>, ext: DAOT, config: DAOConfig): DAORootCap<DAOT> acquires DAOEvent {
         let dao_signer = DAOAccount::dao_signer(&cap);
 
         let dao_address = Signer::address_of(&dao_signer);
@@ -260,10 +260,15 @@ module StarcoinFramework::DAOSpace {
         });
 
         let nft_name = copy name;
-        //TODO generate a svg NFT image.
-        let nft_image = b"SVG image";
         let nft_description = copy name;
-        let basemeta = NFT::new_meta_with_image_data(nft_name, nft_image, nft_description);
+        let basemeta = if(Option::is_some(&image_data)){
+            NFT::new_meta_with_image_data(nft_name, Option::destroy_some(image_data), nft_description)
+        }else if(Option::is_some(&image_url)){
+            NFT::new_meta_with_image(nft_name, Option::destroy_some(image_url), nft_description)
+        }else{
+            NFT::new_meta(nft_name, nft_description)
+        };
+        
 
         NFT::register_v2<DAOMember<DAOT>>(&dao_signer, basemeta);
         let nft_mint_cap = NFT::remove_mint_capability<DAOMember<DAOT>>(&dao_signer);
@@ -317,9 +322,9 @@ module StarcoinFramework::DAOSpace {
     }
 
     // Upgrade account to DAO account and create DAO
-    public fun upgrade_to_dao<DAOT: store>(sender: signer, name: vector<u8>, description:vector<u8>, ext: DAOT, config: DAOConfig): DAORootCap<DAOT> acquires DAOEvent{
+    public fun upgrade_to_dao<DAOT: store>(sender: signer, name: vector<u8>, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, description:vector<u8>, ext: DAOT, config: DAOConfig): DAORootCap<DAOT> acquires DAOEvent{
         let cap = DAOAccount::upgrade_to_dao(sender);
-        create_dao<DAOT>(cap, name, description, ext, config)
+        create_dao<DAOT>(cap, name, image_data, image_url, description, ext, config)
     }
 
     /// Burn the root cap after init the DAO
@@ -478,7 +483,7 @@ module StarcoinFramework::DAOSpace {
     // Membership function
 
     /// Join DAO and get a membership
-    public fun join_member<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, to_address: address, init_sbt: u128) acquires DAONFTMintCapHolder, DAOTokenMintCapHolder, DAO, MemberEvent {
+    public fun join_member<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOTokenMintCapHolder, DAO, MemberEvent {
         ensure_not_member<DAOT>(to_address);
         let member_id = next_member_id<DAOT>();
 
@@ -497,11 +502,15 @@ module StarcoinFramework::DAOSpace {
 
         let dao = borrow_global<DAO>(dao_address);
         let nft_name = *&dao.name;
-        //TODO generate a svg NFT image.
-        let nft_image = b"SVG image";
         let nft_description = *&dao.name;
-        let basemeta = NFT::new_meta_with_image_data(nft_name, nft_image, nft_description);
 
+        let basemeta = if(Option::is_some(&image_data)){
+            NFT::new_meta_with_image_data(nft_name, Option::destroy_some(image_data), nft_description)
+        }else if(Option::is_some(&image_url)){
+            NFT::new_meta_with_image(nft_name, Option::destroy_some(image_url), nft_description)
+        }else{
+            NFT::new_meta(nft_name, nft_description)
+        };
         let nft_mint_cap = &mut borrow_global_mut<DAONFTMintCapHolder<DAOT>>(dao_address).cap;
 
         let nft = NFT::mint_with_cap_v2(dao_address, nft_mint_cap, basemeta, meta, body);
@@ -625,6 +634,11 @@ module StarcoinFramework::DAOSpace {
             decrease_sbt:amount,
             sbt: sbt_amount,
         });
+    }
+
+    public fun set_member_image<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, member_addr: address, image_data:vector<u8>, image_url:vector<u8>){
+        ensure_not_member<DAOT>(member_addr);
+        
     }
 
     /// Query amount of the member SBT
@@ -1789,6 +1803,27 @@ module StarcoinFramework::DAOSpace {
         dao.description = description;
     }
 
+
+    /// Update DAO NFT image
+    public fun set_dao_image<DAOT: store,
+                                 PluginT: drop,
+                                 ConfigT: copy + store + drop>(
+        _cap: &mut DAOModifyConfigCap<DAOT, PluginT>,
+        image_data:Option::Option<vector<u8>>, 
+        image_url:Option::Option<vector<u8>>) 
+    acquires DAONFTUpdateCapHolder{
+        let dao_address = dao_address<DAOT>();
+        let nft_update_cap = &mut borrow_global_mut<DAONFTUpdateCapHolder<DAOT>>(dao_address).cap;
+        let old_meta = NFT::nft_type_info_meta<DAOMember<DAOT>>();
+        let new_meta = if(Option::is_some(&image_data)){
+            NFT::new_meta_with_image_data(NFT::meta_name(&old_meta), Option::destroy_some(image_data), NFT::meta_description(&old_meta))
+        }else if(Option::is_some(&image_url)){
+            NFT::new_meta_with_image(NFT::meta_name(&old_meta), Option::destroy_some(image_url), NFT::meta_description(&old_meta))
+        }else{
+            NFT::new_meta(NFT::meta_name(&old_meta), NFT::meta_description(&old_meta))
+        };
+        NFT::update_nft_type_info_meta_with_cap<DAOMember<DAOT>>(nft_update_cap, new_meta);
+    }
 
     /// get default voting delay of the DAO.
     public fun voting_delay<DAOT: store>(): u64 {

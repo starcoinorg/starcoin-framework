@@ -15,6 +15,7 @@
 
 <pre><code><b>use</b> <a href="DAOSpace.md#0x1_DAOSpace">0x1::DAOSpace</a>;
 <b>use</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">0x1::InstallPluginProposalPlugin</a>;
+<b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
 <b>use</b> <a href="Vector.md#0x1_Vector">0x1::Vector</a>;
 </code></pre>
 
@@ -75,6 +76,18 @@
 <dd>
 
 </dd>
+<dt>
+<code>image_url: vector&lt;u8&gt;</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>image_data: vector&lt;u8&gt;</code>
+</dt>
+<dd>
+
+</dd>
 </dl>
 
 
@@ -112,7 +125,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store&gt;(sender: signer, description: vector&lt;u8&gt;, member: <b>address</b>, init_sbt: u128, action_delay: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store&gt;(sender: signer, description: vector&lt;u8&gt;, member: <b>address</b>, image_data: vector&lt;u8&gt;, image_url: vector&lt;u8&gt;, init_sbt: u128, action_delay: u64)
 </code></pre>
 
 
@@ -121,12 +134,14 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store&gt;(sender: signer, description: vector&lt;u8&gt;, member: <b>address</b>, init_sbt: u128, action_delay: u64){
+<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store&gt;(sender: signer, description: vector&lt;u8&gt;, member: <b>address</b>, image_data:vector&lt;u8&gt;, image_url:vector&lt;u8&gt;, init_sbt: u128, action_delay: u64){
     <b>let</b> witness = <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>{};
     <b>let</b> cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_proposal_cap">DAOSpace::acquire_proposal_cap</a>&lt;DAOT, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>&gt;(&witness);
     <b>let</b> action = <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_MemberJoinAction">MemberJoinAction</a>{
         member,
         init_sbt,
+        image_data,
+        image_url
     };
     <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, &sender, action, description, action_delay);
 }
@@ -154,9 +169,9 @@
 <pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_execute_proposal">execute_proposal</a>&lt;DAOT: store&gt;(sender: signer, proposal_id: u64){
     <b>let</b> witness = <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>{};
     <b>let</b> proposal_cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_proposal_cap">DAOSpace::acquire_proposal_cap</a>&lt;DAOT, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>&gt;(&witness);
-    <b>let</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_MemberJoinAction">MemberJoinAction</a>{member, init_sbt} = <a href="DAOSpace.md#0x1_DAOSpace_execute_proposal">DAOSpace::execute_proposal</a>&lt;DAOT, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_MemberJoinAction">MemberJoinAction</a>&gt;(&proposal_cap, &sender, proposal_id);
+    <b>let</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_MemberJoinAction">MemberJoinAction</a>{member, init_sbt, image_data, image_url} = <a href="DAOSpace.md#0x1_DAOSpace_execute_proposal">DAOSpace::execute_proposal</a>&lt;DAOT, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_MemberJoinAction">MemberJoinAction</a>&gt;(&proposal_cap, &sender, proposal_id);
     <b>let</b> member_cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_member_cap">DAOSpace::acquire_member_cap</a>&lt;DAOT, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>&gt;(&witness);
-    <a href="DAOSpace.md#0x1_DAOSpace_join_member">DAOSpace::join_member</a>(&member_cap, member, init_sbt);
+    <a href="DAOSpace.md#0x1_DAOSpace_join_member">DAOSpace::join_member</a>(&member_cap, member, <a href="Option.md#0x1_Option_some">Option::some</a>(image_data), <a href="Option.md#0x1_Option_some">Option::some</a>(image_url) , init_sbt);
 }
 </code></pre>
 
