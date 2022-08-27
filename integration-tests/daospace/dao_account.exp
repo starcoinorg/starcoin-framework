@@ -3,33 +3,27 @@ processed 6 tasks
 task 2 'run'. lines 6-23:
 {
   "gas_used": 837509,
-  "status": {
-    "Keep": "Executed"
-  }
+  "status": "Executed"
 }
 
 task 3 'run'. lines 28-40:
 {
   "gas_used": 84519,
-  "status": {
-    "Keep": "Executed"
-  }
+  "status": "Executed"
 }
 
 task 4 'run'. lines 42-51:
 {
   "gas_used": 712879,
   "status": {
-    "Keep": {
-      "MoveAbort": [
-        {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "DAOAccount"
-          }
-        },
-        25862
-      ]
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOAccount"
+        }
+      },
+      "abort_code": "25862"
     }
   }
 }
@@ -38,16 +32,14 @@ task 5 'run'. lines 53-61:
 {
   "gas_used": 711648,
   "status": {
-    "Keep": {
-      "MoveAbort": [
-        {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "DAOAccount"
-          }
-        },
-        25862
-      ]
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOAccount"
+        }
+      },
+      "abort_code": "25862"
     }
   }
 }
