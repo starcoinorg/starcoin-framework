@@ -2,16 +2,22 @@ processed 5 tasks
 
 task 2 'run'. lines 7-14:
 {
-  "gas_used": 491764,
+  "gas_used": 17743,
   "status": {
-    "Keep": "Executed"
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Block"
+        }
+      },
+      "abort_code": "5382"
+    }
   }
 }
 
 task 4 'run'. lines 54-61:
 {
   "gas_used": 1053290,
-  "status": {
-    "Keep": "Executed"
-  }
+  "status": "Executed"
 }

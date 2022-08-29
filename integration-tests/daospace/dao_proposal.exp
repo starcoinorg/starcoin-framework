@@ -2,66 +2,67 @@ processed 18 tasks
 
 task 5 'run'. lines 13-21:
 {
-  "gas_used": 491764,
+  "gas_used": 17743,
   "status": {
-    "Keep": "Executed"
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Block"
+        }
+      },
+      "abort_code": "5382"
+    }
   }
 }
 
 task 8 'run'. lines 133-142:
 {
   "gas_used": 1171921,
-  "status": {
-    "Keep": "Executed"
-  }
+  "status": "Executed"
 }
 
 task 9 'run'. lines 146-160:
 {
   "gas_used": 0,
   "status": {
-    "Discard": 506
+    "Discard": {
+      "status_code": "506",
+      "status_code_name": "SIGNER_ALREADY_DELEGATED"
+    }
   }
 }
 
 task 10 'run'. lines 162-187:
 {
   "gas_used": 306386,
-  "status": {
-    "Keep": "Executed"
-  }
+  "status": "Executed"
 }
 
 task 11 'run'. lines 189-205:
 {
   "gas_used": 235032,
-  "status": {
-    "Keep": "Executed"
-  }
+  "status": "Executed"
 }
 
 task 12 'run'. lines 207-223:
 {
   "gas_used": 235032,
-  "status": {
-    "Keep": "Executed"
-  }
+  "status": "Executed"
 }
 
 task 13 'run'. lines 226-247:
 {
   "gas_used": 240459,
   "status": {
-    "Keep": {
-      "MoveAbort": [
-        {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "Block"
-          }
-        },
-        4609
-      ]
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Block"
+        }
+      },
+      "abort_code": "4609"
     }
   }
 }
@@ -70,17 +71,15 @@ task 15 'run'. lines 251-297:
 {
   "gas_used": 38453,
   "status": {
-    "Keep": {
-      "ExecutionFailure": {
-        "location": {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "DAOSpace"
-          }
-        },
-        "function": 16,
-        "code_offset": 8
-      }
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOSpace"
+        }
+      },
+      "function": 16,
+      "code_offset": 8
     }
   }
 }
@@ -89,17 +88,15 @@ task 17 'run'. lines 302-314:
 {
   "gas_used": 46317,
   "status": {
-    "Keep": {
-      "ExecutionFailure": {
-        "location": {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "DAOSpace"
-          }
-        },
-        "function": 70,
-        "code_offset": 3
-      }
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOSpace"
+        }
+      },
+      "function": 70,
+      "code_offset": 3
     }
   }
 }

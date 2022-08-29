@@ -2,50 +2,50 @@ processed 17 tasks
 
 task 5 'run'. lines 13-21:
 {
-  "gas_used": 491764,
+  "gas_used": 17743,
   "status": {
-    "Keep": "Executed"
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Block"
+        }
+      },
+      "abort_code": "5382"
+    }
   }
 }
 
 task 8 'run'. lines 100-109:
 {
   "gas_used": 1174718,
-  "status": {
-    "Keep": "Executed"
-  }
+  "status": "Executed"
 }
 
 task 9 'run'. lines 111-130:
 {
   "gas_used": 315396,
-  "status": {
-    "Keep": "Executed"
-  }
+  "status": "Executed"
 }
 
 task 10 'run'. lines 132-166:
 {
   "gas_used": 561697,
-  "status": {
-    "Keep": "Executed"
-  }
+  "status": "Executed"
 }
 
 task 12 'run'. lines 170-182:
 {
   "gas_used": 52853,
   "status": {
-    "Keep": {
-      "MoveAbort": [
-        {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "DAOSpace"
-          }
-        },
-        77319
-      ]
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOSpace"
+        }
+      },
+      "abort_code": "77319"
     }
   }
 }
@@ -53,23 +53,17 @@ task 12 'run'. lines 170-182:
 task 13 'run'. lines 184-204:
 {
   "gas_used": 241369,
-  "status": {
-    "Keep": "Executed"
-  }
+  "status": "Executed"
 }
 
 task 15 'run'. lines 208-228:
 {
   "gas_used": 229003,
-  "status": {
-    "Keep": "Executed"
-  }
+  "status": "Executed"
 }
 
 task 16 'run'. lines 230-244:
 {
   "gas_used": 192361,
-  "status": {
-    "Keep": "Executed"
-  }
+  "status": "Executed"
 }
