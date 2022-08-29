@@ -1,43 +1,44 @@
-processed 17 tasks
+processed 42 tasks
 
-task 7 'run'. lines 134-143:
+task 7 'run'. lines 150-159:
 {
   "gas_used": 1171921,
   "status": "Executed"
 }
 
-task 8 'run'. lines 147-161:
+task 8 'run'. lines 163-177:
 {
-  "gas_used": 0,
-  "status": {
-    "Discard": {
-      "status_code": "506",
-      "status_code_name": "SIGNER_ALREADY_DELEGATED"
-    }
-  }
+  "gas_used": 109239,
+  "status": "Executed"
 }
 
-task 9 'run'. lines 163-188:
+task 9 'run'. lines 179-204:
 {
   "gas_used": 306386,
   "status": "Executed"
 }
 
-task 10 'run'. lines 190-206:
+task 11 'run'. lines 209-225:
 {
   "gas_used": 235032,
   "status": "Executed"
 }
 
-task 11 'run'. lines 208-224:
+task 12 'run'. lines 227-243:
 {
   "gas_used": 235032,
   "status": "Executed"
 }
 
-task 12 'run'. lines 227-248:
+task 16 'run'. lines 251-265:
 {
-  "gas_used": 240459,
+  "gas_used": 104944,
+  "status": "Executed"
+}
+
+task 19 'run'. lines 272-285:
+{
+  "gas_used": 532278,
   "status": {
     "MoveAbort": {
       "location": {
@@ -51,36 +52,75 @@ task 12 'run'. lines 227-248:
   }
 }
 
-task 14 'run'. lines 252-298:
+task 22 'run'. lines 292-303:
 {
-  "gas_used": 38453,
+  "gas_used": 577624,
+  "status": "Executed"
+}
+
+task 23 'run'. lines 306-325:
+{
+  "gas_used": 461617,
+  "status": "Executed"
+}
+
+task 25 'run'. lines 329-338:
+{
+  "gas_used": 11943,
+  "status": "Executed"
+}
+
+task 26 'call'. lines 340-340:
+"0xb5d577dc9ce59725e29886632e69ecdf/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X>>"
+
+task 28 'run'. lines 344-363:
+{
+  "gas_used": 6523189,
+  "status": "Executed"
+}
+
+task 29 'call'. lines 366-366:
+"0xa7dcef9aef26202fce82a7c7d6672afb/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X>>"
+
+task 31 'run'. lines 370-383:
+{
+  "gas_used": 6195892,
+  "status": "Executed"
+}
+
+task 32 'call'. lines 386-386:
+"0x3d4926eeda5b14b0ac979269ee79e40e/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X>>"
+
+task 34 'run'. lines 390-403:
+{
+  "gas_used": 35135,
   "status": {
-    "ExecutionFailure": {
+    "MoveAbort": {
       "location": {
         "Module": {
           "address": "0x00000000000000000000000000000001",
           "name": "DAOSpace"
         }
       },
-      "function": 16,
-      "code_offset": 8
+      "abort_code": "51201"
     }
   }
 }
 
-task 16 'run'. lines 303-315:
+task 36 'run'. lines 408-429:
 {
-  "gas_used": 46317,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOSpace"
-        }
-      },
-      "function": 70,
-      "code_offset": 3
-    }
-  }
+  "gas_used": 134454,
+  "status": "Executed"
+}
+
+task 39 'run'. lines 437-447:
+{
+  "gas_used": 115663,
+  "status": "Executed"
+}
+
+task 41 'run'. lines 452-464:
+{
+  "gas_used": 450922,
+  "status": "Executed"
 }
