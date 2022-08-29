@@ -636,9 +636,26 @@ module StarcoinFramework::DAOSpace {
         });
     }
 
-    public fun set_member_image<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, member_addr: address, image_data:vector<u8>, image_url:vector<u8>){
+    public fun set_member_image<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, member_addr: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>) acquires DAONFTUpdateCapHolder{
         ensure_not_member<DAOT>(member_addr);
-        
+
+        let dao_address = dao_address<DAOT>();
+
+        let nft_update_cap = &mut borrow_global_mut<DAONFTUpdateCapHolder<DAOT>>(dao_address).cap;
+        let borrow_nft = IdentifierNFT::borrow_out<DAOMember<DAOT>, DAOMemberBody<DAOT>>(nft_update_cap, member_addr);
+        let nft = IdentifierNFT::borrow_nft_mut(&mut borrow_nft);
+        let metadata = *NFT::get_type_meta<DAOMember<DAOT>, DAOMemberBody<DAOT>>(nft);
+        let old_basemeta = NFT::get_base_meta<DAOMember<DAOT>, DAOMemberBody<DAOT>>(nft);
+        let new_basemeta = if(Option::is_some(&image_data)){
+            NFT::new_meta_with_image_data(NFT::meta_name(old_basemeta), Option::destroy_some(image_data), NFT::meta_description(old_basemeta))
+        }else if(Option::is_some(&image_url)){
+            NFT::new_meta_with_image(NFT::meta_name(old_basemeta), Option::destroy_some(image_url), NFT::meta_description(old_basemeta))
+        }else{
+            NFT::new_meta(NFT::meta_name(old_basemeta), NFT::meta_description(old_basemeta))
+        };
+        NFT::update_meta_with_cap(nft_update_cap, nft, new_basemeta, metadata);
+
+        IdentifierNFT::return_back(borrow_nft);
     }
 
     /// Query amount of the member SBT
