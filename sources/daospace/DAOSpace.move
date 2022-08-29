@@ -670,7 +670,9 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// Plugin event
-    public fun init_plugin_event<DAOT: store, PluginT: store, EventT: store + drop>(_cap: &DAOPluginEventCap<DAOT, PluginT>)
+    public fun init_plugin_event<DAOT: store,
+                                 PluginT: store,
+                                 EventT: store + drop>(_cap: &DAOPluginEventCap<DAOT, PluginT>)
     acquires DAOAccountCapHolder {
         let dao_signer = dao_signer<DAOT>();
         if (!exists<PluginEvent<DAOT, PluginT, EventT>>(dao_address<DAOT>())) {
@@ -680,8 +682,10 @@ module StarcoinFramework::DAOSpace {
         };
     }
 
-    public fun emit_plugin_event<DAOT: store, PluginT: store, EventT: store + drop>(_cap: &DAOPluginEventCap<DAOT, PluginT>,
-                                                                                    event: EventT) acquires PluginEvent {
+    public fun emit_plugin_event<DAOT: store,
+                                 PluginT: store,
+                                 EventT: store + drop>(_cap: &DAOPluginEventCap<DAOT, PluginT>,
+                                                       event: EventT) acquires PluginEvent {
         let dao_address = dao_address<DAOT>();
         let plugin_event = borrow_global_mut<PluginEvent<DAOT, PluginT, EventT>>(dao_address);
         Event::emit_event(&mut plugin_event.event_handle, event);

@@ -103,6 +103,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         let witness = StakeToSBTPlugin {};
         let plugin_event_cap =
             DAOSpace::acquire_plugin_event_cap<DAOT, StakeToSBTPlugin>(&witness);
+
         DAOSpace::init_plugin_event<DAOT, StakeToSBTPlugin, SBTTokenAcceptedEvent>(&plugin_event_cap);
         DAOSpace::init_plugin_event<DAOT, StakeToSBTPlugin, SBTWeightChangedEvent>(&plugin_event_cap);
         DAOSpace::init_plugin_event<DAOT, StakeToSBTPlugin, SBTStakeEvent>(&plugin_event_cap);
@@ -111,7 +112,11 @@ module StarcoinFramework::StakeToSBTPlugin {
 
     /// Set sbt weight by given DAO root capability
     public fun set_sbt_weight_with_root_cap<DAOT: store,
-                                            TokenT: store>(_cap: &DAOSpace::DAORootCap<DAOT>, lock_time: u64, weight: u64) {
+                                            TokenT: store>(
+        _cap: &DAOSpace::DAORootCap<DAOT>,
+        lock_time: u64,
+        weight: u64
+    ) {
         set_sbt_weight<DAOT, TokenT>(lock_time, weight);
     }
 
@@ -139,7 +144,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         let plugin_event_cap =
             DAOSpace::acquire_plugin_event_cap<DAOT, StakeToSBTPlugin>(&witness);
 
-        DAOSpace::emit_plugin_event<DAOT, StakeToSBTPlugin,  SBTTokenAcceptedEvent>(
+        DAOSpace::emit_plugin_event<DAOT, StakeToSBTPlugin, SBTTokenAcceptedEvent>(
             &plugin_event_cap,
             SBTTokenAcceptedEvent {
                 dao_id: DAOSpace::dao_id(DAOSpace::dao_address<DAOT>()),
@@ -195,7 +200,7 @@ module StarcoinFramework::StakeToSBTPlugin {
 
         let witness = StakeToSBTPlugin {};
         let plugin_event_cap = DAOSpace::acquire_plugin_event_cap<DAOT, StakeToSBTPlugin>(&witness);
-        DAOSpace::emit_plugin_event<DAOT, StakeToSBTPlugin,  SBTStakeEvent>(
+        DAOSpace::emit_plugin_event<DAOT, StakeToSBTPlugin, SBTStakeEvent>(
             &plugin_event_cap,
             SBTStakeEvent {
                 dao_id: DAOSpace::dao_id(DAOSpace::dao_address<DAOT>()),
@@ -373,7 +378,7 @@ module StarcoinFramework::StakeToSBTPlugin {
 
     /// Create proposal that to specific a weight for a locktime
     public(script) fun create_weight_proposal<DAOT: store, TokenT: store>(sender: signer,
-                                                                          description:vector<u8>,
+                                                                          description: vector<u8>,
                                                                           lock_time: u64,
                                                                           weight: u64,
                                                                           action_delay: u64) {
@@ -384,9 +389,9 @@ module StarcoinFramework::StakeToSBTPlugin {
         DAOSpace::create_proposal(&cap, &sender, LockWeight<DAOT, TokenT> {
             lock_time,
             weight,
-        }, 
-        description,
-        action_delay);
+        },
+            description,
+            action_delay);
     }
 
     public(script) fun execute_weight_proposal<DAOT: store, TokenT: store>(sender: signer,
@@ -409,7 +414,7 @@ module StarcoinFramework::StakeToSBTPlugin {
 
     /// Create proposal that to accept a token type, which allow user to convert amount of token to SBT
     public(script) fun create_token_accept_proposal<DAOT: store, TokenT: store>(sender: signer,
-                                                                                description:vector<u8>,
+                                                                                description: vector<u8>,
                                                                                 action_delay: u64) {
         let witness = StakeToSBTPlugin {};
 
@@ -441,21 +446,21 @@ module StarcoinFramework::StakeToSBTPlugin {
     }
 
     /// Called by script
-    public(script) fun install_plugin_proposal<DAOT: store>(sender: signer, description:vector<u8>, action_delay: u64) {
-        InstallPluginProposalPlugin::create_proposal<DAOT, StakeToSBTPlugin>(&sender, required_caps(), description,action_delay);
+    public(script) fun install_plugin_proposal<DAOT: store>(sender: signer, description: vector<u8>, action_delay: u64) {
+        InstallPluginProposalPlugin::create_proposal<DAOT, StakeToSBTPlugin>(&sender, required_caps(), description, action_delay);
     }
 
     /// Called by script
-    public(script) fun stake_by_script<DAOT: store, TokenT: store>(sender: signer,
-                                                                   amount: u128,
-                                                                   lock_time: u64) acquires StakeList {
+    public(script) fun stake_entry<DAOT: store, TokenT: store>(sender: signer,
+                                                               amount: u128,
+                                                               lock_time: u64) acquires StakeList {
         let token = Account::withdraw<TokenT>(&sender, amount);
         stake<DAOT, TokenT>(&sender, token, lock_time);
     }
 
     /// Called by script
-    public(script) fun unstake_item_by_script<DAOT: store, TokenT: store>(member: address,
-                                                                          id: u64) acquires StakeList {
+    public(script) fun unstake_item_entry<DAOT: store, TokenT: store>(member: address,
+                                                                      id: u64) acquires StakeList {
         unstake_by_id<DAOT, TokenT>(member, id);
     }
 }
