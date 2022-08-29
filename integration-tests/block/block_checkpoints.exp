@@ -3,16 +3,23 @@ processed 16 tasks
 task 3 'run'. lines 7-17:
 {
   "gas_used": 16339,
-  "status": {
-    "Keep": "Executed"
-  }
+  "status": "Executed"
 }
 
 task 5 'run'. lines 22-30:
 {
-  "gas_used": 450121,
+  "gas_used": 437303,
   "status": {
-    "Keep": "Executed"
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Block"
+        }
+      },
+      "function": 4,
+      "code_offset": 10
+    }
   }
 }
 
@@ -20,16 +27,14 @@ task 6 'run'. lines 32-40:
 {
   "gas_used": 20027,
   "status": {
-    "Keep": {
-      "MoveAbort": [
-        {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "Block"
-          }
-        },
-        4609
-      ]
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Block"
+        }
+      },
+      "abort_code": "4609"
     }
   }
 }
@@ -37,33 +42,27 @@ task 6 'run'. lines 32-40:
 task 7 'run'. lines 42-50:
 {
   "gas_used": 87834,
-  "status": {
-    "Keep": "Executed"
-  }
+  "status": "Executed"
 }
 
 task 13 'run'. lines 64-72:
 {
   "gas_used": 94920,
-  "status": {
-    "Keep": "Executed"
-  }
+  "status": "Executed"
 }
 
 task 14 'run'. lines 74-83:
 {
   "gas_used": 553900,
   "status": {
-    "Keep": {
-      "MoveAbort": [
-        {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "Block"
-          }
-        },
-        4609
-      ]
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Block"
+        }
+      },
+      "abort_code": "4609"
     }
   }
 }
@@ -72,16 +71,14 @@ task 15 'run'. lines 86-97:
 {
   "gas_used": 95673,
   "status": {
-    "Keep": {
-      "MoveAbort": [
-        {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "Block"
-          }
-        },
-        4609
-      ]
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Block"
+        }
+      },
+      "abort_code": "4609"
     }
   }
 }

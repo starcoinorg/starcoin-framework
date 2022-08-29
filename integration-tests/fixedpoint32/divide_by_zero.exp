@@ -4,16 +4,14 @@ task 2 'run'. lines 5-18:
 {
   "gas_used": 14235,
   "status": {
-    "Keep": {
-      "MoveAbort": [
-        {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "FixedPoint32"
-          }
-        },
-        26631
-      ]
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "FixedPoint32"
+        }
+      },
+      "abort_code": "26631"
     }
   }
 }

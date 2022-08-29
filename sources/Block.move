@@ -347,6 +347,44 @@ module Block {
     }
 
     #[test]
+    fun test_header2(){
+        // Block header Unit test
+        // Use BlockHeader in integration test
+        //"number":"2",
+        //"block_hash":"0x9433bb7b56333dfc33e012f3b22b67277a3026448eb5043747d59284f648343d"
+        //"parent_hash":"0x9be97e678afa8a0a4cf9ca612be6f64810a6f7d5f8b4b4ddf5e4971ef4b5eb48"
+        //"state_root":"0xd2df4c8c579f9e05b0adf14b53785379fb245465d703834eb19fba74d9114a9a"
+        //"header":"0x209be97e678afa8a0a4cf9ca612be6f64810a6f7d5f8b4b4ddf5e4971ef4b5eb4820aa26050000000002000000000000000000000000000000000000000000000200205c79e9493845327132ab3011c7c6c9d8bddcfde5553abb90cf5ef7fdfb39a4aa20c4d8e6cdb52520794dad5241f51a4eed46a5e5264dd148032cc3bdb8e3bdbe7a20d2df4c8c579f9e05b0adf14b53785379fb245465d703834eb19fba74d9114a9a0000000000000000000000000000000000000000000000000000000000000000000000000000000020c01e0329de6d899348a8ef4bd51db56175b3fa0988e57c3dcec8eaf13a164d97fe0000000000000000"
+
+        let prefix = Hash::sha3_256(b"STARCOIN::BlockHeader");
+        let header = x"209be97e678afa8a0a4cf9ca612be6f64810a6f7d5f8b4b4ddf5e4971ef4b5eb4820aa26050000000002000000000000000000000000000000000000000000000200205c79e9493845327132ab3011c7c6c9d8bddcfde5553abb90cf5ef7fdfb39a4aa20c4d8e6cdb52520794dad5241f51a4eed46a5e5264dd148032cc3bdb8e3bdbe7a20d2df4c8c579f9e05b0adf14b53785379fb245465d703834eb19fba74d9114a9a0000000000000000000000000000000000000000000000000000000000000000000000000000000020c01e0329de6d899348a8ef4bd51db56175b3fa0988e57c3dcec8eaf13a164d97fe0000000000000000";
+        let (_parent_hash,new_offset) = BCS::deserialize_bytes(&header,0);
+        let (_timestamp,new_offset) = BCS::deserialize_u64(&header,new_offset);
+        let (number,new_offset) = BCS::deserialize_u64(&header,new_offset);
+        let (_author,new_offset) = BCS::deserialize_address(&header,new_offset);
+        let (_author_auth_key,new_offset) = BCS::deserialize_option_bytes(&header,new_offset);
+        let (_txn_accumulator_root,new_offset) = BCS::deserialize_bytes(&header,new_offset);
+        let (_block_accumulator_root,new_offset) = BCS::deserialize_bytes(&header,new_offset);
+        let (state_root,new_offset) = BCS::deserialize_bytes(&header,new_offset);
+        let (_gas_used,new_offset) = BCS::deserialize_u64(&header,new_offset);
+        let (_difficultyfirst,new_offset) = BCS::deserialize_u128(&header,new_offset);
+        let (_difficultylast,new_offset) = BCS::deserialize_u128(&header,new_offset);
+        let (_body_hash,new_offset) = BCS::deserialize_bytes(&header,new_offset);
+        let (_chain_id,new_offset) = BCS::deserialize_u8(&header,new_offset);
+        let (_nonce,new_offset) = BCS::deserialize_u32(&header,new_offset);
+        let (_extra1,new_offset) = BCS::deserialize_u8(&header,new_offset);
+        let (_extra2,new_offset) = BCS::deserialize_u8(&header,new_offset);
+        let (_extra3,new_offset) = BCS::deserialize_u8(&header,new_offset);
+        let (_extra4,_new_offset) = BCS::deserialize_u8(&header,new_offset);
+
+        Vector::append(&mut prefix,header);
+        let block_hash = Hash::sha3_256(prefix);
+        assert!(block_hash == x"9433bb7b56333dfc33e012f3b22b67277a3026448eb5043747d59284f648343d" ,1001);
+        assert!(number == 2,1002);
+        assert!(state_root == x"d2df4c8c579f9e05b0adf14b53785379fb245465d703834eb19fba74d9114a9a",1003);
+    }
+
+    #[test]
     fun test_checkpoint(){
         let checkpoints = Checkpoints {
                                 checkpoints  : Ring::create_with_capacity<Checkpoint>(3),
