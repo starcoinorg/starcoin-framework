@@ -1,24 +1,25 @@
-//# init -n dev
+//# init -n dev --debug
 
+//// creator address is 0x662ba5a1a1da0f1c70a9762c7eeb7aaf
 //# faucet --addr creator --amount 100000000000
 
 //# faucet --addr alice --amount 10000000000
 
+//// bob address is 0xb5d577dc9ce59725e29886632e69ecdf
 //# faucet --addr bob --amount 10000000000
 
 //# faucet --addr cindy --amount 10000000000
 
-// TODO figure out how to call genesis init script in integration tests
 
-//# run --signers creator
-script{
-    use StarcoinFramework::StdlibUpgradeScripts;
-    
-    fun main(){
-        StdlibUpgradeScripts::upgrade_from_v11_to_v12();
-    }
-}
-// check: EXECUTED
+////# run --signers creator
+//script{
+//    use StarcoinFramework::StdlibUpgradeScripts;
+//
+//    fun main(){
+//        StdlibUpgradeScripts::upgrade_from_v11_to_v12();
+//    }
+//}
+//// check: EXECUTED
 
 //# publish
 module creator::DAOHelper {
