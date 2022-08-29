@@ -637,7 +637,7 @@ module StarcoinFramework::DAOSpace {
     }
 
     public fun set_member_image<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, member_addr: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>) acquires DAONFTUpdateCapHolder{
-        ensure_not_member<DAOT>(member_addr);
+        ensure_member<DAOT>(member_addr);
 
         let dao_address = dao_address<DAOT>();
 
