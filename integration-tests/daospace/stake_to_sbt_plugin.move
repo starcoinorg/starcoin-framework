@@ -23,6 +23,7 @@ module creator::XDAO {
     use StarcoinFramework::StakeToSBTPlugin::StakeToSBTPlugin;
     use StarcoinFramework::StakeToSBTPlugin;
     use StarcoinFramework::STC;
+    use StarcoinFramework::Option;
 
     struct X has store {}
 
@@ -45,7 +46,7 @@ module creator::XDAO {
             min_action_delay,
             min_proposal_deposit,
         );
-        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, b"ipfs://description", X {}, config);
+        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(),b"ipfs://description", X {}, config);
 
         DAOSpace::install_plugin_with_root_cap<X, StakeToSBTPlugin>(&dao_root_cap, StakeToSBTPlugin::required_caps());
         StakeToSBTPlugin::accept_token_with_root_cap<X, STC::STC>(&dao_root_cap);

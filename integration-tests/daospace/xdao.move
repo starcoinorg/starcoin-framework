@@ -17,6 +17,7 @@
 module creator::XDAO {
     use StarcoinFramework::DAOAccount;
     use StarcoinFramework::DAOSpace;
+    use StarcoinFramework::Option;
     use StarcoinFramework::MemberProposalPlugin::{Self, MemberProposalPlugin};
     use StarcoinFramework::InstallPluginProposalPlugin::{Self, InstallPluginProposalPlugin};
 
@@ -41,7 +42,7 @@ module creator::XDAO {
             min_action_delay,
             min_proposal_deposit,
         );
-        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, b"ipfs://description", X{}, config);
+        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(),b"ipfs://description", X{}, config);
         
         DAOSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
         DAOSpace::install_plugin_with_root_cap<X, MemberProposalPlugin>(&dao_root_cap, MemberProposalPlugin::required_caps());

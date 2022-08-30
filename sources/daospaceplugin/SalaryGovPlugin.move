@@ -7,6 +7,7 @@ module SalaryGovPlugin {
     use StarcoinFramework::Account;
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::Errors;
+    use StarcoinFramework::Option;
 
     const ERR_PLUGIN_USER_NOT_MEMBER: u64 = 1002;
     const ERR_PLUGIN_USER_IS_MEMBER: u64 = 1003;
@@ -50,13 +51,13 @@ module SalaryGovPlugin {
         });
     }
 
-    public(script) fun join<DAOT: store, TokenT: store>(sender: signer) {
+    public(script) fun join<DAOT: store, TokenT: store>(sender: signer, image_data:vector<u8>, image_url:vector<u8>) {
         let member = Signer::address_of(&sender);
         assert!(!DAOSpace::is_member<DAOT>(member), Errors::invalid_state(ERR_PLUGIN_USER_IS_MEMBER));
 
         let witness = SalaryGovPlugin{};
         let cap = DAOSpace::acquire_member_cap<DAOT, SalaryGovPlugin>(&witness);
-        DAOSpace::join_member<DAOT, SalaryGovPlugin>(&cap, member, 0);
+        DAOSpace::join_member<DAOT, SalaryGovPlugin>(&cap, member, Option::some(image_data), Option::some(image_url), 0);
 
         move_to(&sender, SalaryReceive<DAOT, TokenT>{
             last_receive_time: Timestamp::now_seconds(),
