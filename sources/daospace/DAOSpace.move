@@ -29,6 +29,7 @@ module StarcoinFramework::DAOSpace {
     const ERR_STORAGE_ERROR: u64 = 103;
     const ERR_NFT_ERROR: u64 = 104;
     const ERR_ALREADY_INIT: u64 = 105;
+    const ERR_TOKEN_ERROR: u64 = 106;
 
     /// member
     const ERR_EXPECT_MEMBER: u64 = 200;
@@ -104,12 +105,24 @@ module StarcoinFramework::DAOSpace {
         cap: DAOAccountCap,
     }
 
-    struct DAOTokenMintCapHolder<phantom DAOT> has key {
+    /// Capability for minting SBT.
+    struct DAOSBTMintCapHolder<phantom DAOT> has key {
         cap: Token::MintCapability<DAOT>,
     }
 
-    struct DAOTokenBurnCapHolder<phantom DAOT> has key {
+    /// Capability for burning SBT.
+    struct DAOSBTBurnCapHolder<phantom DAOT> has key {
         cap: Token::BurnCapability<DAOT>,
+    }
+
+    /// Capability for minting any tokens.
+    struct DAOTokenMintCapHolder<phantom DAOT, phantom TokenT> has key {
+        cap: Token::MintCapability<TokenT>,
+    }
+
+    /// Capability for burning any tokens.
+    struct DAOTokenBurnCapHolder<phantom DAOT, phantom TokenT> has key {
+        cap: Token::BurnCapability<TokenT>,
     }
 
     struct DAONFTMintCapHolder<phantom DAOT> has key {
@@ -135,35 +148,41 @@ module StarcoinFramework::DAOSpace {
     /// A type describing a capability. 
     struct CapType has copy, drop, store { code: u8 }
 
-    /// Creates a install plugin capability type.
+    /// Create a install plugin capability type.
     public fun install_plugin_cap_type(): CapType { CapType{ code: 0 } }
 
-    /// Creates a upgrade module capability type.
+    /// Create a upgrade module capability type.
     public fun upgrade_module_cap_type(): CapType { CapType{ code: 1 } }
 
-    /// Creates a modify dao config capability type.
+    /// Create a modify dao config capability type.
     public fun modify_config_cap_type(): CapType { CapType{ code: 2 } }
 
-    /// Creates a withdraw Token capability type.
+    /// Create a withdraw Token capability type.
     public fun withdraw_token_cap_type(): CapType { CapType{ code: 3 } }
 
-    /// Creates a withdraw NFT capability type.
+    /// Create a withdraw NFT capability type.
     public fun withdraw_nft_cap_type(): CapType { CapType{ code: 4 } }
 
-    /// Creates a write data to DAO account capability type.
+    /// Create a write data to DAO account capability type.
     public fun storage_cap_type(): CapType { CapType{ code: 5 } }
 
-    /// Creates a member capability type.
+    /// Create a member capability type.
     /// This cap can issue DAO member NFT or update member's SBT
     public fun member_cap_type(): CapType { CapType{ code: 6 } }
 
-    /// Creates a vote capability type.
+    /// Create a vote capability type.
     public fun proposal_cap_type(): CapType { CapType{ code: 7 } }
 
-    /// Creates a grant capability type.
+    /// Create a grant capability type.
     public fun grant_cap_type(): CapType { CapType{ code: 8 } }
 
-    /// Creates all capability types.
+    /// Create a token minting capability type.
+    public fun token_mint_cap_type(): CapType { CapType{code: 9 } }
+
+    /// Create a token burning capability type.
+    public fun token_burn_cap_type(): CapType { CapType{code: 10 } }
+
+    /// Create all capability types.
     public fun all_caps(): vector<CapType> {
         let caps = Vector::singleton(install_plugin_cap_type());
         Vector::push_back(&mut caps, upgrade_module_cap_type());
@@ -252,10 +271,10 @@ module StarcoinFramework::DAOSpace {
         let token_mint_cap = Token::remove_mint_capability<DAOT>(&dao_signer);
         let token_burn_cap = Token::remove_burn_capability<DAOT>(&dao_signer);
 
-        move_to(&dao_signer, DAOTokenMintCapHolder{
+        move_to(&dao_signer, DAOSBTMintCapHolder{
             cap: token_mint_cap,
         });
-        move_to(&dao_signer, DAOTokenBurnCapHolder{
+        move_to(&dao_signer, DAOSBTBurnCapHolder{
             cap: token_burn_cap,
         });
 
@@ -483,7 +502,7 @@ module StarcoinFramework::DAOSpace {
     // Membership function
 
     /// Join DAO and get a membership
-    public fun join_member<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOTokenMintCapHolder, DAO, MemberEvent {
+    public fun join_member<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
         ensure_not_member<DAOT>(to_address);
         let member_id = next_member_id<DAOT>();
 
@@ -493,7 +512,7 @@ module StarcoinFramework::DAOSpace {
 
         let dao_address = dao_address<DAOT>();
 
-        let token_mint_cap = &borrow_global_mut<DAOTokenMintCapHolder<DAOT>>(dao_address).cap;
+        let token_mint_cap = &borrow_global_mut<DAOSBTMintCapHolder<DAOT>>(dao_address).cap;
         let sbt = Token::mint_with_capability<DAOT>(token_mint_cap, init_sbt);
 
         let body = DAOMemberBody<DAOT>{
@@ -525,12 +544,12 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// Member quit DAO by self
-    public (script) fun quit_member_entry<DAOT: store>(sender: signer) acquires DAONFTBurnCapHolder, DAOTokenBurnCapHolder, MemberEvent, DAO {
+    public (script) fun quit_member_entry<DAOT: store>(sender: signer) acquires DAONFTBurnCapHolder, DAOSBTBurnCapHolder, MemberEvent, DAO {
         quit_member<DAOT>(&sender);
     }
 
         /// Member quit DAO by self
-    public fun quit_member<DAOT: store>(sender: &signer) acquires DAONFTBurnCapHolder, DAOTokenBurnCapHolder, MemberEvent, DAO {
+    public fun quit_member<DAOT: store>(sender: &signer) acquires DAONFTBurnCapHolder, DAOSBTBurnCapHolder, MemberEvent, DAO {
         let member_addr = Signer::address_of(sender);
         let (member_id , sbt) = do_remove_member<DAOT>(member_addr);
         let dao_address = dao_address<DAOT>();
@@ -545,7 +564,7 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// Revoke membership with cap
-    public fun revoke_member<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, member_addr: address) acquires DAONFTBurnCapHolder, DAOTokenBurnCapHolder, MemberEvent, DAO {
+    public fun revoke_member<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, member_addr: address) acquires DAONFTBurnCapHolder, DAOSBTBurnCapHolder, MemberEvent, DAO {
         let (member_id , sbt) = do_remove_member<DAOT>(member_addr);
         let dao_address = dao_address<DAOT>();
         
@@ -566,7 +585,7 @@ module StarcoinFramework::DAOSpace {
         assert!(!is_member<DAOT>(member_addr), Errors::invalid_state(ERR_EXPECT_NOT_MEMBER));
     }
 
-    fun do_remove_member<DAOT: store>(member_addr: address):(u64,u128) acquires DAONFTBurnCapHolder, DAOTokenBurnCapHolder {
+    fun do_remove_member<DAOT: store>(member_addr: address):(u64,u128) acquires DAONFTBurnCapHolder, DAOSBTBurnCapHolder {
         ensure_member<DAOT>(member_addr);
         let dao_address = dao_address<DAOT>();
 
@@ -575,13 +594,13 @@ module StarcoinFramework::DAOSpace {
         let member_id = NFT::get_type_meta<DAOMember<DAOT>, DAOMemberBody<DAOT>>(&nft).id;
         let DAOMemberBody<DAOT>{ sbt } = NFT::burn_with_cap(nft_burn_cap, nft);
         let sbt_amount = Token::value<DAOT>(&sbt);
-        let token_burn_cap = &mut borrow_global_mut<DAOTokenBurnCapHolder<DAOT>>(dao_address).cap;
+        let token_burn_cap = &mut borrow_global_mut<DAOSBTBurnCapHolder<DAOT>>(dao_address).cap;
         Token::burn_with_capability(token_burn_cap, sbt);
         (member_id, sbt_amount)
     }
 
     /// Increment the member SBT
-    public fun increase_member_sbt<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, member_addr: address, amount: u128) acquires DAONFTUpdateCapHolder, DAOTokenMintCapHolder, MemberEvent {
+    public fun increase_member_sbt<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, member_addr: address, amount: u128) acquires DAONFTUpdateCapHolder, DAOSBTMintCapHolder, MemberEvent {
         ensure_member<DAOT>(member_addr);
         let dao_address = dao_address<DAOT>();
 
@@ -592,7 +611,7 @@ module StarcoinFramework::DAOSpace {
         
         let body = NFT::borrow_body_mut_with_cap(nft_update_cap, nft);
 
-        let token_mint_cap = &mut borrow_global_mut<DAOTokenMintCapHolder<DAOT>>(dao_address).cap;
+        let token_mint_cap = &mut borrow_global_mut<DAOSBTMintCapHolder<DAOT>>(dao_address).cap;
         let increase_sbt = Token::mint_with_capability<DAOT>(token_mint_cap, amount);
         Token::deposit(&mut body.sbt, increase_sbt);
 
@@ -609,7 +628,7 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// Decrement the member SBT
-    public fun decrease_member_sbt<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, member_addr: address, amount: u128) acquires DAONFTUpdateCapHolder, DAOTokenBurnCapHolder, MemberEvent {
+    public fun decrease_member_sbt<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, member_addr: address, amount: u128) acquires DAONFTUpdateCapHolder, DAOSBTBurnCapHolder, MemberEvent {
         ensure_member<DAOT>(member_addr);
         let dao_address = dao_address<DAOT>();
 
@@ -620,7 +639,7 @@ module StarcoinFramework::DAOSpace {
         
         let body = NFT::borrow_body_mut_with_cap(nft_update_cap, nft);
 
-        let token_burn_cap = &mut borrow_global_mut<DAOTokenBurnCapHolder<DAOT>>(dao_address).cap;
+        let token_burn_cap = &mut borrow_global_mut<DAOSBTBurnCapHolder<DAOT>>(dao_address).cap;
         let decrease_sbt = Token::withdraw(&mut body.sbt, amount);
         let sbt_amount = Token::value<DAOT>(&body.sbt);
        
@@ -1028,6 +1047,54 @@ module StarcoinFramework::DAOSpace {
     public fun acquire_grant_cap<DAOT: store, PluginT>(_witness: &PluginT): DAOGrantCap<DAOT, PluginT> acquires InstalledPluginInfo {
         validate_cap<DAOT, PluginT>(grant_cap_type());
         DAOGrantCap<DAOT, PluginT>{}
+    }
+
+    /// Acquire the token mint capability
+    /// _witness parameter ensures that the caller is the module which define PluginT
+    public fun acquire_token_mint_cap<DAOT: store, PluginT, TokenT: store>(_witness: &PluginT): Token::MintCapability<TokenT>
+    acquires InstalledPluginInfo, DAOTokenMintCapHolder {
+        validate_cap<DAOT, PluginT>(token_mint_cap_type());
+        let dao_addr = dao_address<DAOT>();
+        let DAOTokenMintCapHolder<DAOT, TokenT> { cap } =
+            move_from<DAOTokenMintCapHolder<DAOT, TokenT>>(dao_addr);
+        cap
+    }
+
+    /// Acquire the token burn capability
+    /// _witness parameter ensures that the caller is the module which define PluginT
+    public fun acquire_token_burn_cap<DAOT: store, PluginT, TokenT: store>(_witness: &PluginT): Token::BurnCapability<TokenT>
+    acquires InstalledPluginInfo, DAOTokenBurnCapHolder {
+        validate_cap<DAOT, PluginT>(token_burn_cap_type());
+        let dao_addr = dao_address<DAOT>();
+        let DAOTokenBurnCapHolder<DAOT, TokenT> { cap } =
+            move_from<DAOTokenBurnCapHolder<DAOT, TokenT>>(dao_addr);
+        cap
+    }
+
+    /// Delegate the token mint capability to DAO
+    /// _witness parameter ensures that the caller is the module which define PluginT
+    public fun delegate_token_mint_cap<DAOT: store, PluginT, TokenT: store>(cap: Token::MintCapability<TokenT>, _witness: &PluginT)
+    acquires DAOAccountCapHolder {
+        let dao_addr = dao_address<DAOT>();
+        assert!(!exists<DAOTokenMintCapHolder<DAOT, TokenT>>(dao_addr), Errors::custom(ERR_TOKEN_ERROR));
+        let dao_signer = dao_signer<DAOT>();
+        move_to<DAOTokenMintCapHolder<DAOT, TokenT>>(
+            &dao_signer,
+            DAOTokenMintCapHolder<DAOT, TokenT> { cap },
+        );
+    }
+
+    /// Delegate the token burn capability to DAO
+    /// _witness parameter ensures that the caller is the module which define PluginT
+    public fun delegate_token_burn_cap<DAOT: store, PluginT, TokenT: store>(cap: Token::BurnCapability<TokenT>, _witness: &PluginT)
+    acquires DAOAccountCapHolder {
+        let dao_addr = dao_address<DAOT>();
+        assert!(!exists<DAOTokenBurnCapHolder<DAOT, TokenT>>(dao_addr), Errors::custom(ERR_TOKEN_ERROR));
+        let dao_signer = dao_signer<DAOT>();
+        move_to<DAOTokenBurnCapHolder<DAOT, TokenT>>(
+            &dao_signer,
+            DAOTokenBurnCapHolder<DAOT, TokenT> { cap },
+        );
     }
 
     /// Proposal
