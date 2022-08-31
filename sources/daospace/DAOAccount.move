@@ -1,12 +1,15 @@
 module StarcoinFramework::DAOAccount{
     use StarcoinFramework::Account::{Self, SignerCapability};
     use StarcoinFramework::PackageTxnManager::{Self, UpgradePlanCapability};
+    use StarcoinFramework::UpgradeModuleDaoProposal;
     use StarcoinFramework::Option;
     use StarcoinFramework::Signer;
     use StarcoinFramework::Errors;
     use StarcoinFramework::Version;
     use StarcoinFramework::Config;
+    use StarcoinFramework::STC::STC;
 
+    friend StarcoinFramework::StarcoinDAO;
     spec module {
         pragma verify = false;
         pragma aborts_if_is_strict = true;
@@ -59,6 +62,20 @@ module StarcoinFramework::DAOAccount{
     public fun upgrade_to_dao(sender: signer): DAOAccountCap {
         let signer_cap = Account::remove_signer_capability(&sender);
         upgrade_to_dao_with_signer_cap(signer_cap)
+    }
+
+    public (friend) fun upgrade_starcoin_dao(sender:signer): DAOAccountCap{
+        let signer_cap = Account::remove_signer_capability(&sender);
+        let dao_address = Signer::address_of(&sender);
+        let upgrade_plan_cap = UpgradeModuleDaoProposal::get_genesis_upgrade_cap<STC>();
+        move_to(&sender, DAOAccount{
+            dao_address,
+            signer_cap,
+            upgrade_plan_cap,
+        });
+         DAOAccountCap{
+            dao_address
+        }
     }
 
      /// Upgrade the account which have the `signer_cap` to a DAO Account

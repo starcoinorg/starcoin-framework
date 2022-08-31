@@ -22,7 +22,7 @@ module StarcoinFramework::StarcoinDAO{
         min_proposal_deposit: u128
     ){
         CoreAddresses::assert_genesis_address(&sender);
-        let dao_account_cap = DAOAccount::upgrade_to_dao(sender);
+        let dao_account_cap = DAOAccount::upgrade_starcoin_dao(sender);
 
         let config = DAOSpace::new_dao_config(
             voting_delay,
@@ -32,7 +32,6 @@ module StarcoinFramework::StarcoinDAO{
             min_proposal_deposit,
         );
 
-        //TODO description ipfs updata
         let dao_root_cap = DAOSpace::create_dao<STARCOINDAO>(dao_account_cap, *&NAME,Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", STARCOINDAO{}, config);
         DAOSpace::install_plugin_with_root_cap<STARCOINDAO, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
         DAOSpace::install_plugin_with_root_cap<STARCOINDAO, UpgradeModulePlugin>(&dao_root_cap,UpgradeModulePlugin::required_caps());

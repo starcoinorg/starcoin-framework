@@ -21,6 +21,7 @@ module StdlibUpgradeScripts {
         use StarcoinFramework::Account;
         use StarcoinFramework::Block;
         use StarcoinFramework::DAORegistry;
+        use StarcoinFramework::StarcoinDAO;
 
         spec module {
             pragma verify = false;
@@ -108,6 +109,13 @@ module StdlibUpgradeScripts {
         public fun do_upgrade_from_v11_to_v12() {
             Block::checkpoints_init();
             DAORegistry::initialize();
+        }
+
+        public(script) fun upgrade_from_v12_to_v12_1(sender: signer)  {
+            do_upgrade_from_v12_to_v12_1(sender);
+        }
+        public fun do_upgrade_from_v12_to_v12_1(sender: signer) {
+            StarcoinDAO::create_dao(sender, 60000, 120000, 10, 10000, 0);
         }
 }
 }
