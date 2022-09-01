@@ -1049,28 +1049,6 @@ module StarcoinFramework::DAOSpace {
         DAOGrantCap<DAOT, PluginT>{}
     }
 
-    /// Acquire the token mint capability
-    /// _witness parameter ensures that the caller is the module which define PluginT
-    public fun acquire_token_mint_cap<DAOT: store, PluginT, TokenT: store>(_witness: &PluginT): Token::MintCapability<TokenT>
-    acquires InstalledPluginInfo, DAOTokenMintCapHolder {
-        validate_cap<DAOT, PluginT>(token_mint_cap_type());
-        let dao_addr = dao_address<DAOT>();
-        let DAOTokenMintCapHolder<DAOT, TokenT> { cap } =
-            move_from<DAOTokenMintCapHolder<DAOT, TokenT>>(dao_addr);
-        cap
-    }
-
-    /// Acquire the token burn capability
-    /// _witness parameter ensures that the caller is the module which define PluginT
-    public fun acquire_token_burn_cap<DAOT: store, PluginT, TokenT: store>(_witness: &PluginT): Token::BurnCapability<TokenT>
-    acquires InstalledPluginInfo, DAOTokenBurnCapHolder {
-        validate_cap<DAOT, PluginT>(token_burn_cap_type());
-        let dao_addr = dao_address<DAOT>();
-        let DAOTokenBurnCapHolder<DAOT, TokenT> { cap } =
-            move_from<DAOTokenBurnCapHolder<DAOT, TokenT>>(dao_addr);
-        cap
-    }
-
     /// Delegate the token mint capability to DAO
     /// _witness parameter ensures that the caller is the module which define PluginT
     public fun delegate_token_mint_cap<DAOT: store, PluginT, TokenT: store>(cap: Token::MintCapability<TokenT>, _witness: &PluginT)
@@ -1095,6 +1073,29 @@ module StarcoinFramework::DAOSpace {
             &dao_signer,
             DAOTokenBurnCapHolder<DAOT, TokenT> { cap },
         );
+    }
+
+    /// Mint token
+    public fun mint_token<DAOT: store, PluginT, TokenT: store>(amount: u128, _witness: &PluginT): Token<TokenT>
+    acquires InstalledPluginInfo, DAOTokenMintCapHolder {
+        validate_cap<DAOT, PluginT>(token_mint_cap_type());
+        let dao_addr = dao_address<DAOT>();
+        assert!(exists<DAOTokenMintCapHolder<DAOT, TokenT>>(dao_addr), Errors::custom(ERR_TOKEN_ERROR));
+        let DAOTokenMintCapHolder<DAOT, TokenT> { cap } =
+            borrow_global<DAOTokenMintCapHolder<DAOT, TokenT>>(dao_addr);
+        let tokens = Token::mint_with_capability<TokenT>(cap, amount);
+        tokens
+    }
+
+    /// Burn token
+    public fun burn_token<DAOT: store, PluginT, TokenT: store>(tokens: Token<TokenT>, _witness: &PluginT)
+    acquires InstalledPluginInfo, DAOTokenBurnCapHolder {
+        validate_cap<DAOT, PluginT>(token_burn_cap_type());
+        let dao_addr = dao_address<DAOT>();
+        assert!(exists<DAOTokenBurnCapHolder<DAOT, TokenT>>(dao_addr), Errors::custom(ERR_TOKEN_ERROR));
+        let DAOTokenBurnCapHolder<DAOT, TokenT> { cap } =
+            borrow_global<DAOTokenBurnCapHolder<DAOT, TokenT>>(dao_addr);   
+        Token::burn_with_capability<TokenT>(cap, tokens);
     }
 
     /// Proposal

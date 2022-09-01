@@ -20,11 +20,17 @@ module StarcoinFramework::MintProposalPlugin{
     public fun required_caps():vector<CapType>{
         let caps = Vector::singleton(DAOSpace::proposal_cap_type());
         Vector::push_back(&mut caps, DAOSpace::token_mint_cap_type());
-        Vector::push_back(&mut caps, DAOSpace::token_burn_cap_type());
         caps 
     }
 
     const ERR_NOT_RECEIVER :u64 = 101;
+    const ERR_NO_MINT_CAP: u64 = 102;
+
+    public (script) fun delegate_token_mint_cap<DAOT: store, TokenT: store>(sender: signer) {        
+        let witness = MintProposalPlugin {};
+        let mint_cap = Token::remove_mint_capability<TokenT>(&sender);
+        DAOSpace::delegate_token_mint_cap<DAOT, MintProposalPlugin, TokenT>(mint_cap, &witness);
+    }
 
     public (script) fun create_mint_proposal<DAOT: store, TokenT:store>(sender: signer, description: vector<u8>, receiver: address, amount: u128, action_delay: u64){
         let witness = MintProposalPlugin{};
@@ -41,9 +47,8 @@ module StarcoinFramework::MintProposalPlugin{
         let proposal_cap = DAOSpace::acquire_proposal_cap<DAOT, MintProposalPlugin>(&witness);
         let MintTokenAction<TokenT>{receiver, amount} = DAOSpace::execute_proposal<DAOT, MintProposalPlugin, MintTokenAction<TokenT>>(&proposal_cap, &sender, proposal_id);
         assert!(receiver == Signer::address_of(&sender),Errors::not_published(ERR_NOT_RECEIVER));
-        let cap = DAOSpace::acquire_token_mint_cap<DAOT, MintProposalPlugin, TokenT>(&witness);
-        let tokens = Token::mint_with_capability<TokenT>(&cap, amount);
-        Account::deposit(receiver, tokens);
+        let tokens = DAOSpace::mint_token<DAOT, MintProposalPlugin, TokenT>(amount, &witness);
+        Account::deposit<TokenT>(receiver, tokens);
     }
 
     public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, description: vector<u8>, action_delay:u64){

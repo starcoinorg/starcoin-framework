@@ -151,6 +151,9 @@ compiled_package_info:
       name: MintDaoProposal
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: MintProposalPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: MintScripts
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -300,7 +303,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: C3F10D8763E687130581034F694C48F86494655044F4BC0919B011480303FC2C
+  source_digest: E8F4C2D757DBC28D89103F9FDD5E561BEE5FE19A48365FE92F34E53621150C80
   build_flags:
     dev_mode: false
     test_mode: false
