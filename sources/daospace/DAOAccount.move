@@ -8,6 +8,9 @@ module StarcoinFramework::DAOAccount{
     use StarcoinFramework::Version;
     use StarcoinFramework::Config;
     use StarcoinFramework::STC::STC;
+    use StarcoinFramework::GenesisSignerCapability;
+    use StarcoinFramework::Token;
+
 
     friend StarcoinFramework::StarcoinDAO;
     spec module {
@@ -64,10 +67,11 @@ module StarcoinFramework::DAOAccount{
         upgrade_to_dao_with_signer_cap(signer_cap)
     }
 
-    public (friend) fun upgrade_starcoin_dao(sender:signer): DAOAccountCap{
-        let signer_cap = Account::remove_signer_capability(&sender);
-        let dao_address = Signer::address_of(&sender);
+    public (friend) fun upgrade_starcoin_dao(): DAOAccountCap{
+        let signer_cap = Account::get_genesis_capability();
+        let dao_address = Token::token_address<STC>();
         let upgrade_plan_cap = UpgradeModuleDaoProposal::get_genesis_upgrade_cap<STC>();
+        let sender = GenesisSignerCapability::get_genesis_signer();
         move_to(&sender, DAOAccount{
             dao_address,
             signer_cap,

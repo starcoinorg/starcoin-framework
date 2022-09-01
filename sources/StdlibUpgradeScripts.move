@@ -111,11 +111,11 @@ module StdlibUpgradeScripts {
             DAORegistry::initialize();
         }
 
-        public(script) fun upgrade_from_v12_to_v12_1(sender: signer)  {
-            do_upgrade_from_v12_to_v12_1(sender);
+        public(script) fun upgrade_from_v12_to_v12_1()  {
+            do_upgrade_from_v12_to_v12_1();
         }
-        public fun do_upgrade_from_v12_to_v12_1(sender: signer) {
-            StarcoinDAO::create_dao(sender, 60000, 120000, 10, 10000, 0);
+        public fun do_upgrade_from_v12_to_v12_1() {
+            StarcoinDAO::create_dao( 60000, 120000, 10, 10000, 0);
         }
 }
 }

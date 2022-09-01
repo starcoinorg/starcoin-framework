@@ -16,6 +16,8 @@ module Account {
     use StarcoinFramework::STC::{Self, STC};
     use StarcoinFramework::BCS;
 
+    friend StarcoinFramework::DAOAccount;
+
     spec module {
         pragma verify = false;
         pragma aborts_if_is_strict = true;
@@ -188,6 +190,11 @@ module Account {
         };
 
         let signer_cap = SignerCapability {addr: signer_addr };
+        signer_cap
+    }
+
+    public (friend) fun get_genesis_capability():SignerCapability{
+        let signer_cap = SignerCapability {addr: Token::token_address<STC>() };
         signer_cap
     }
 

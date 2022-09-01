@@ -1,7 +1,6 @@
 module StarcoinFramework::StarcoinDAO{
     use StarcoinFramework::DAOAccount;
     use StarcoinFramework::DAOSpace;
-    use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::UpgradeModulePlugin::{Self, UpgradeModulePlugin};
     use StarcoinFramework::ConfigProposalPlugin::{Self, ConfigProposalPlugin};
     use StarcoinFramework::StakeToSBTPlugin::{Self, StakeToSBTPlugin};  
@@ -9,20 +8,21 @@ module StarcoinFramework::StarcoinDAO{
     use StarcoinFramework::STC::STC;
     use StarcoinFramework::Option;
 
+    friend StarcoinFramework::Genesis;
+    friend StarcoinFramework::StdlibUpgradeScripts;
+
     struct STARCOINDAO has store{}
 
     const NAME: vector<u8> = b"StarcoinDAO";
     
-    public fun create_dao(
-        sender: signer, 
+    public (friend) fun create_dao(
         voting_delay: u64,
         voting_period: u64,
         voting_quorum_rate: u8,
         min_action_delay: u64,
         min_proposal_deposit: u128
     ){
-        CoreAddresses::assert_genesis_address(&sender);
-        let dao_account_cap = DAOAccount::upgrade_starcoin_dao(sender);
+        let dao_account_cap = DAOAccount::upgrade_starcoin_dao();
 
         let config = DAOSpace::new_dao_config(
             voting_delay,
