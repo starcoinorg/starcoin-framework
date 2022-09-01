@@ -1053,8 +1053,6 @@ module StarcoinFramework::DAOSpace {
     /// _witness parameter ensures that the caller is the module which define PluginT
     public fun delegate_token_mint_cap<DAOT: store, PluginT, TokenT: store>(cap: Token::MintCapability<TokenT>, _witness: &PluginT)
     acquires DAOAccountCapHolder {
-        let dao_addr = dao_address<DAOT>();
-        assert!(!exists<DAOTokenMintCapHolder<DAOT, TokenT>>(dao_addr), Errors::custom(ERR_TOKEN_ERROR));
         let dao_signer = dao_signer<DAOT>();
         move_to<DAOTokenMintCapHolder<DAOT, TokenT>>(
             &dao_signer,
@@ -1066,8 +1064,6 @@ module StarcoinFramework::DAOSpace {
     /// _witness parameter ensures that the caller is the module which define PluginT
     public fun delegate_token_burn_cap<DAOT: store, PluginT, TokenT: store>(cap: Token::BurnCapability<TokenT>, _witness: &PluginT)
     acquires DAOAccountCapHolder {
-        let dao_addr = dao_address<DAOT>();
-        assert!(!exists<DAOTokenBurnCapHolder<DAOT, TokenT>>(dao_addr), Errors::custom(ERR_TOKEN_ERROR));
         let dao_signer = dao_signer<DAOT>();
         move_to<DAOTokenBurnCapHolder<DAOT, TokenT>>(
             &dao_signer,
@@ -1080,7 +1076,7 @@ module StarcoinFramework::DAOSpace {
     acquires InstalledPluginInfo, DAOTokenMintCapHolder {
         validate_cap<DAOT, PluginT>(token_mint_cap_type());
         let dao_addr = dao_address<DAOT>();
-        assert!(exists<DAOTokenMintCapHolder<DAOT, TokenT>>(dao_addr), Errors::custom(ERR_TOKEN_ERROR));
+        assert!(exists<DAOTokenMintCapHolder<DAOT, TokenT>>(dao_addr), Errors::not_published(ERR_TOKEN_ERROR));
         let DAOTokenMintCapHolder<DAOT, TokenT> { cap } =
             borrow_global<DAOTokenMintCapHolder<DAOT, TokenT>>(dao_addr);
         let tokens = Token::mint_with_capability<TokenT>(cap, amount);
@@ -1092,7 +1088,7 @@ module StarcoinFramework::DAOSpace {
     acquires InstalledPluginInfo, DAOTokenBurnCapHolder {
         validate_cap<DAOT, PluginT>(token_burn_cap_type());
         let dao_addr = dao_address<DAOT>();
-        assert!(exists<DAOTokenBurnCapHolder<DAOT, TokenT>>(dao_addr), Errors::custom(ERR_TOKEN_ERROR));
+        assert!(exists<DAOTokenBurnCapHolder<DAOT, TokenT>>(dao_addr), Errors::not_published(ERR_TOKEN_ERROR));
         let DAOTokenBurnCapHolder<DAOT, TokenT> { cap } =
             borrow_global<DAOTokenBurnCapHolder<DAOT, TokenT>>(dao_addr);   
         Token::burn_with_capability<TokenT>(cap, tokens);
