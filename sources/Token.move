@@ -505,7 +505,7 @@ module Token {
     spec fun spec_token_code<TokenType>(): TokenCode;
 
     /// Return Token's module address, module name, and type name of `TokenType`.
-    native fun name_of<TokenType: store>(): (address, vector<u8>, vector<u8>);
+    public native fun name_of<TokenType: store>(): (address, vector<u8>, vector<u8>);
 
     spec name_of {
         pragma opaque = true;

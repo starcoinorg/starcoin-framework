@@ -1718,7 +1718,7 @@ does not matter for the verification of callers.
 Return Token's module address, module name, and type name of <code>TokenType</code>.
 
 
-<pre><code><b>fun</b> <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;TokenType: store&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;)
+<pre><code><b>public</b> <b>fun</b> <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;TokenType: store&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;)
 </code></pre>
 
 
@@ -1727,7 +1727,7 @@ Return Token's module address, module name, and type name of <code>TokenType</co
 <summary>Implementation</summary>
 
 
-<pre><code><b>native</b> <b>fun</b> <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;TokenType: store&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;);
+<pre><code><b>public</b> <b>native</b> <b>fun</b> <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;TokenType: store&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;);
 </code></pre>
 
 
