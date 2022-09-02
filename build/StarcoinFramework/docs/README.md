@@ -60,6 +60,7 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::MerkleNFTDistributor`](MerkleNFT.md#0x1_MerkleNFTDistributor)
 -  [`0x1::MerkleProof`](MerkleNFT.md#0x1_MerkleProof)
 -  [`0x1::MintDaoProposal`](MintDaoProposal.md#0x1_MintDaoProposal)
+-  [`0x1::MintProposalPlugin`](MintProposalPlugin.md#0x1_MintProposalPlugin)
 -  [`0x1::MintScripts`](MintScripts.md#0x1_MintScripts)
 -  [`0x1::ModifyDaoConfigProposal`](ModifyDaoConfigProposal.md#0x1_ModifyDaoConfigProposal)
 -  [`0x1::ModuleUpgradeScripts`](ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts)
