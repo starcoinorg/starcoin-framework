@@ -26,10 +26,14 @@ module StarcoinFramework::MintProposalPlugin{
     const ERR_NOT_RECEIVER :u64 = 101;
     const ERR_NO_MINT_CAP: u64 = 102;
 
-    public (script) fun delegate_token_mint_cap<DAOT: store, TokenT: store>(sender: signer) {        
+    public fun delegate_token_mint_cap<DAOT: store, TokenT: store>(sender: &signer) {    
         let witness = MintProposalPlugin {};
-        let mint_cap = Token::remove_mint_capability<TokenT>(&sender);
+        let mint_cap = Token::remove_mint_capability<TokenT>(sender);
         DAOSpace::delegate_token_mint_cap<DAOT, MintProposalPlugin, TokenT>(mint_cap, &witness);
+    }
+
+    public (script) fun delegate_token_mint_cap_entry<DAOT: store, TokenT: store>(sender: signer) {        
+        delegate_token_mint_cap<DAOT, TokenT>(&sender);
     }
 
     public (script) fun create_mint_proposal<DAOT: store, TokenT:store>(sender: signer, description: vector<u8>, receiver: address, amount: u128, action_delay: u64){

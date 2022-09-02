@@ -102,7 +102,7 @@ script {
     use StarcoinFramework::MintProposalPlugin;
 
     fun main(sender: signer) {
-        MintProposalPlugin::delegate_token_mint_cap<XDAO, AliceToken>(sender);
+        MintProposalPlugin::delegate_token_mint_cap_entry<XDAO, AliceToken>(sender);
     }
 }
 // check: EXECUTED
