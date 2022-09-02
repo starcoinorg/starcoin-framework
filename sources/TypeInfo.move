@@ -19,7 +19,7 @@ module StarcoinFramework::TypeInfo{
         *&type_info.struct_name
     }
 
-    public fun type_of<T:store>():TypeInfo{
+    public fun type_of<T>():TypeInfo{
         let (account_address, module_name, struct_name) = Token::type_of<T>();
         TypeInfo {
             account_address,

@@ -1718,7 +1718,7 @@ does not matter for the verification of callers.
 
 
 
-<pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="Token.md#0x1_Token_type_of">type_of</a>&lt;T: store&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;)
+<pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="Token.md#0x1_Token_type_of">type_of</a>&lt;T&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;)
 </code></pre>
 
 
@@ -1727,7 +1727,7 @@ does not matter for the verification of callers.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> (<b>friend</b>) <b>fun</b> <a href="Token.md#0x1_Token_type_of">type_of</a>&lt;T: store&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;){
+<pre><code><b>public</b> (<b>friend</b>) <b>fun</b> <a href="Token.md#0x1_Token_type_of">type_of</a>&lt;T&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;){
     <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;T&gt;()
 }
 </code></pre>
@@ -1743,7 +1743,7 @@ does not matter for the verification of callers.
 Return Token's module address, module name, and type name of <code>TokenType</code>.
 
 
-<pre><code><b>fun</b> <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;TokenType: store&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;)
+<pre><code><b>fun</b> <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;TokenType&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;)
 </code></pre>
 
 
@@ -1752,7 +1752,7 @@ Return Token's module address, module name, and type name of <code>TokenType</co
 <summary>Implementation</summary>
 
 
-<pre><code><b>native</b> <b>fun</b> <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;TokenType: store&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;);
+<pre><code><b>native</b> <b>fun</b> <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;TokenType&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;);
 </code></pre>
 
 
