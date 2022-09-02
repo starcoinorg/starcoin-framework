@@ -283,6 +283,9 @@ compiled_package_info:
       name: TreasuryWithdrawDaoProposal
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: TypeInfo
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: U256
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -303,7 +306,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 2F6686B5BAFFE5E5DEB6F001CD6D0D8FA93121DB944E71F0E3DCBAB51D81FA90
+  source_digest: 392DFE7EF40AE0509C6F2BFF4565011A59D6F6AB2EAD34782F4F9F842F85FA43
   build_flags:
     dev_mode: false
     test_mode: false
