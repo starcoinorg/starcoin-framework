@@ -8,50 +8,62 @@ module SalaryGovPlugin {
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option;
+    use StarcoinFramework::Math;
 
     const ERR_PLUGIN_USER_NOT_MEMBER: u64 = 1002;
     const ERR_PLUGIN_USER_IS_MEMBER: u64 = 1003;
     const ERR_PLUGIN_USER_NOT_PRIVILEGE: u64 = 1004;
+    const ERR_PLUGIN_PERIOD_NOT_SAME: u64 = 1005;
+    const ERR_PLUGIN_PERIOD_APPLICATION: u64 = 1006;
 
     struct SalaryGovPlugin has store, drop{}
 
     struct PluginBossCap<phantom DAOT> has key, store, drop {}
 
-    struct SalaryConfig<phantom DAOT, phantom TokenT> has store {
-        period: u64,
-    }
-
     struct SalaryReceive<phantom DAOT, phantom TokenT> has key {
         last_receive_time: u64,
+        period: u64,
     }
 
     struct BossProposalAction<phantom DAOT> has key, store {
         boss: address,
     }
 
+    struct PeriodApplication<phantom DAOT> has key {
+        /// new period
+        period: u64,
+    }
+
     public fun required_caps(): vector<DAOSpace::CapType> {
         let caps = Vector::singleton(DAOSpace::proposal_cap_type());
         Vector::push_back(&mut caps, DAOSpace::member_cap_type());
         Vector::push_back(&mut caps, DAOSpace::withdraw_token_cap_type());
-        Vector::push_back(&mut caps, DAOSpace::storage_cap_type());
         caps
     }
 
-    public(script) fun set_salary_period<DAOT: store, TokenT>(sender: signer, period: u64) {
-        assert_boss<DAOT>(&sender);
-
-        let witness = SalaryGovPlugin{};
-        let cap = DAOSpace::acquire_storage_cap<DAOT, SalaryGovPlugin>(&witness);
-        let SalaryConfig<DAOT, TokenT>{
-            period: _
-        } = DAOSpace::take<DAOT, SalaryGovPlugin, SalaryConfig<DAOT, TokenT>>(&cap);
-
-        DAOSpace::save(&cap, SalaryConfig<DAOT, TokenT>{
-            period
-        });
+    /// Members apply for changing period.
+    public (script) fun member_apply_period<DAOT: store, TokenT>(sender: signer, period: u64) {
+        let member = Signer::address_of(&sender);
+        assert!(DAOSpace::is_member<DAOT>(member), Errors::invalid_state(ERR_PLUGIN_USER_NOT_MEMBER));
+        assert!(!exists<PeriodApplication<DAOT>>(member), Errors::already_published(ERR_PLUGIN_PERIOD_APPLICATION));
+        move_to<PeriodApplication<DAOT>>(&sender, PeriodApplication<DAOT> { period });
     }
 
-    public(script) fun join<DAOT: store, TokenT: store>(sender: signer, image_data:vector<u8>, image_url:vector<u8>) {
+    /// Boss confirm the changing period application.
+    public (script) fun boss_confirm_period<DAOT: store, TokenT: store>(boss: signer, member: address, period: u64)
+    acquires PeriodApplication, SalaryReceive {
+        assert_boss<DAOT>(&boss);
+        assert!(exists<PeriodApplication<DAOT>>(member), Errors::not_published(ERR_PLUGIN_PERIOD_APPLICATION));
+        let PeriodApplication<DAOT> { period: applied_period } = move_from<PeriodApplication<DAOT>>(member);
+        assert!(applied_period == period, Errors::invalid_state(ERR_PLUGIN_PERIOD_NOT_SAME));
+        receive_with_amount<DAOT, TokenT>(member,
+            compute_salary_amount<DAOT, TokenT>(member));
+
+        let receive = borrow_global_mut<SalaryReceive<DAOT, TokenT>>(member);
+        receive.period = period;
+    }
+
+    public(script) fun join<DAOT: store, TokenT: store>(sender: signer, period: u64, image_data:vector<u8>, image_url:vector<u8>) {
         let member = Signer::address_of(&sender);
         assert!(!DAOSpace::is_member<DAOT>(member), Errors::invalid_state(ERR_PLUGIN_USER_IS_MEMBER));
 
@@ -61,6 +73,7 @@ module SalaryGovPlugin {
 
         move_to(&sender, SalaryReceive<DAOT, TokenT>{
             last_receive_time: Timestamp::now_seconds(),
+            period,
         });
     }
 
@@ -77,11 +90,12 @@ module SalaryGovPlugin {
             compute_salary_amount<DAOT, TokenT>(member));
 
         let SalaryReceive<DAOT, TokenT>{
-            last_receive_time: _
+            last_receive_time: _,
+            period: _,
         } = move_from<SalaryReceive<DAOT, TokenT>>(member);
     }
 
-    public(script) fun add_sbt<DAOT: store, TokenT: store>(sender: signer, member: address, amount: u128)
+    public(script) fun increase_salary<DAOT: store, TokenT: store>(sender: signer, member: address, amount: u128)
     acquires SalaryReceive {
         assert_boss<DAOT>(&sender);
         assert!(DAOSpace::is_member<DAOT>(member), Errors::invalid_state(ERR_PLUGIN_USER_NOT_MEMBER));
@@ -93,7 +107,7 @@ module SalaryGovPlugin {
         DAOSpace::increase_member_sbt(&cap, member, amount);
     }
 
-    public(script) fun remove_sbt<DAOT: store, TokenT: store>(sender: signer, member: address, amount: u128)
+    public(script) fun decrease_salary<DAOT: store, TokenT: store>(sender: signer, member: address, amount: u128)
     acquires SalaryReceive {
         assert_boss<DAOT>(&sender);
         assert!(DAOSpace::is_member<DAOT>(member), Errors::invalid_state(ERR_PLUGIN_USER_NOT_MEMBER));
@@ -102,7 +116,7 @@ module SalaryGovPlugin {
 
         let witness = SalaryGovPlugin{};
         let cap = DAOSpace::acquire_member_cap<DAOT, SalaryGovPlugin>(&witness);
-        DAOSpace::increase_member_sbt(&cap, member, amount);
+        DAOSpace::decrease_member_sbt(&cap, member, amount);
     }
 
     public(script) fun receive<DAOT: store, TokenT: store>(member: address) acquires SalaryReceive {
@@ -118,19 +132,8 @@ module SalaryGovPlugin {
         let sbt_amount = DAOSpace::query_sbt<DAOT, SalaryGovPlugin>(member);
         let receive = borrow_global<SalaryReceive<DAOT, TokenT>>(member);
 
-        let witness = SalaryGovPlugin{};
-        let storage_cap =
-            DAOSpace::acquire_storage_cap<DAOT, SalaryGovPlugin>(&witness);
-
-        // TODO: Need implementing borrow function
-        let SalaryConfig<DAOT, TokenT>{
-            period
-        } = DAOSpace::take<DAOT, SalaryGovPlugin, SalaryConfig<DAOT, TokenT>>(&storage_cap);
-        DAOSpace::save(&storage_cap, SalaryConfig<DAOT, TokenT>{
-            period,
-        });
-
-        sbt_amount * ((Timestamp::now_seconds() - receive.last_receive_time) as u128) / (period as u128)
+        let period = receive.period;
+        Math::mul_div(sbt_amount, ((Timestamp::now_seconds() - receive.last_receive_time) as u128), (period as u128))
     }
 
     /// Calling by member that receive salary
