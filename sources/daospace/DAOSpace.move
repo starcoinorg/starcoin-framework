@@ -183,6 +183,9 @@ module StarcoinFramework::DAOSpace {
     /// Create a token burning capability type.
     public fun token_burn_cap_type(): CapType { CapType{code: 10 } }
 
+    /// Create a modifying DAOExt capability type.
+    public fun modify_ext_cap_type(): CapType { CapType{code: 11 } }
+
     /// Create all capability types.
     public fun all_caps(): vector<CapType> {
         let caps = Vector::singleton(install_plugin_cap_type());
@@ -194,6 +197,9 @@ module StarcoinFramework::DAOSpace {
         Vector::push_back(&mut caps, member_cap_type());
         Vector::push_back(&mut caps, proposal_cap_type());
         Vector::push_back(&mut caps, grant_cap_type());
+        Vector::push_back(&mut caps, token_mint_cap_type());
+        Vector::push_back(&mut caps, token_burn_cap_type());
+        Vector::push_back(&mut caps, modify_ext_cap_type());
         caps
     }
 
@@ -217,6 +223,8 @@ module StarcoinFramework::DAOSpace {
     struct DAOProposalCap<phantom DAOT, phantom PluginT> has drop {}
 
     struct DAOGrantCap<phantom DAOT, phantom PluginT> has drop {}
+
+    struct DAOModifyExtCap<phantom DAOT, phantom PluginT> has drop {}
 
     struct DAOGrantWithdrawTokenKey<phantom DAOT, phantom PluginT ,phantom TokenT> has key, store{
         /// The total amount of tokens that can be withdrawn by this capability
@@ -341,8 +349,8 @@ module StarcoinFramework::DAOSpace {
         DAORootCap<DAOT>{}
     }
 
-    /// Update DAOExt with new ext and return the old one.
-    public fun update_dao_ext_with_root_cap<DAOT: store>(_cap: &DAORootCap<DAOT>, ext: DAOT): DAOT
+    /// Modify DAOExt with new ext and return the old one.
+    public fun modify_ext_with_cap<DAOT: store, PluginT>(_cap: &DAOModifyExtCap<DAOT, PluginT>, ext: DAOT): DAOT
     acquires DAOAccountCapHolder, DAOExt {
         let dao_addr = dao_address<DAOT>();
         assert!(exists<DAOExt<DAOT>>(dao_addr), Errors::not_published(ERR_DAO_EXT));
@@ -1062,6 +1070,13 @@ module StarcoinFramework::DAOSpace {
     public fun acquire_grant_cap<DAOT: store, PluginT>(_witness: &PluginT): DAOGrantCap<DAOT, PluginT> acquires InstalledPluginInfo {
         validate_cap<DAOT, PluginT>(grant_cap_type());
         DAOGrantCap<DAOT, PluginT>{}
+    }
+
+    /// Acquire the modifying DAOExt capability
+    /// _witness parameter ensures that the caller is the module which define PluginT
+    public fun acquire_modify_ext_cap<DAOT: store, PluginT>(_witness: &PluginT): DAOModifyExtCap<DAOT, PluginT> acquires InstalledPluginInfo {
+        validate_cap<DAOT, PluginT>(modify_ext_cap_type());
+        DAOModifyExtCap<DAOT, PluginT>{}
     }
 
     /// Delegate the token mint capability to DAO
