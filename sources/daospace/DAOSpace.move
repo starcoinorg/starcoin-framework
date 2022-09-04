@@ -220,8 +220,6 @@ module StarcoinFramework::DAOSpace {
 
     struct DAOGrantCap<phantom DAOT, phantom PluginT> has drop {}
 
-    struct DAOModifyExtCap<phantom DAOT, phantom PluginT> has drop {}
-
     struct DAOGrantWithdrawTokenKey<phantom DAOT, phantom PluginT ,phantom TokenT> has key, store{
         /// The total amount of tokens that can be withdrawn by this capability
         total: u128,
