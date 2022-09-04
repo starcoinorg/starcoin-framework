@@ -9,8 +9,7 @@
 //# publish
 module creator::DAOHelper {
     use StarcoinFramework::DAOAccount;
-    use StarcoinFramework::DAOSpace::{Self, CapType};
-    use StarcoinFramework::Vector;
+    use StarcoinFramework::DAOSpace;
     use StarcoinFramework::Option;
 
     struct X has store, copy, drop {
@@ -40,23 +39,15 @@ module creator::DAOHelper {
         );
         let dao_ext = X { value: 0};
         let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", dao_ext, config);
-        DAOSpace::install_plugin_with_root_cap<X, XPlugin>(&dao_root_cap, required_caps());
 
         DAOSpace::burn_root_cap(dao_root_cap);
     }
 
-    struct XPlugin has store, drop {}
-
-    public fun required_caps(): vector<CapType> {
-        let caps = Vector::singleton(DAOSpace::modify_ext_cap_type());
-        caps
-    }
-
     public fun modify_ext(value: u64): u64 {
-        let witness = XPlugin {};
-        let ext_cap = DAOSpace::acquire_modify_ext_cap<X, XPlugin>(&witness);
-        let X { value } = DAOSpace::modify_ext_with_cap<X, XPlugin>(&ext_cap, X { value });
-        value
+        let witness = X { value: 0 };
+        let X { value: old_value } = DAOSpace::take_ext(&witness);
+        DAOSpace::save_ext(X { value });
+        old_value
     }
 }
 

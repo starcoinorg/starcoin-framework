@@ -183,9 +183,6 @@ module StarcoinFramework::DAOSpace {
     /// Create a token burning capability type.
     public fun token_burn_cap_type(): CapType { CapType{code: 10 } }
 
-    /// Create a modifying DAOExt capability type.
-    public fun modify_ext_cap_type(): CapType { CapType{code: 11 } }
-
     /// Create all capability types.
     public fun all_caps(): vector<CapType> {
         let caps = Vector::singleton(install_plugin_cap_type());
@@ -199,7 +196,6 @@ module StarcoinFramework::DAOSpace {
         Vector::push_back(&mut caps, grant_cap_type());
         Vector::push_back(&mut caps, token_mint_cap_type());
         Vector::push_back(&mut caps, token_burn_cap_type());
-        Vector::push_back(&mut caps, modify_ext_cap_type());
         caps
     }
 
@@ -349,24 +345,29 @@ module StarcoinFramework::DAOSpace {
         DAORootCap<DAOT>{}
     }
 
-    /// Modify DAOExt with new ext and return the old one.
-    public fun modify_ext_with_cap<DAOT: store, PluginT>(_cap: &DAOModifyExtCap<DAOT, PluginT>, ext: DAOT): DAOT
-    acquires DAOAccountCapHolder, DAOExt {
-        let dao_addr = dao_address<DAOT>();
-        assert!(exists<DAOExt<DAOT>>(dao_addr), Errors::not_published(ERR_DAO_EXT));
-        let DAOExt { ext: old_ext } = move_from<DAOExt<DAOT>>(dao_addr);
-
-        let dao_signer = dao_signer<DAOT>();
-        move_to(&dao_signer, DAOExt{
-            ext
-        });
-        old_ext
-    }
-
     /// Upgrade account to DAO account and create DAO
     public fun upgrade_to_dao<DAOT: store>(sender: signer, name: vector<u8>, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, description:vector<u8>, ext: DAOT, config: DAOConfig): DAORootCap<DAOT> acquires DAOEvent{
         let cap = DAOAccount::upgrade_to_dao(sender);
         create_dao<DAOT>(cap, name, image_data, image_url, description, ext, config)
+    }
+
+    /// Take ext from DAOExt
+    public fun take_ext<DAOT: store>(_witness: &DAOT): DAOT
+    acquires DAOExt {
+        let dao_addr = dao_address<DAOT>();
+        assert!(exists<DAOExt<DAOT>>(dao_addr), Errors::not_published(ERR_DAO_EXT));
+        let DAOExt<DAOT> { ext } = move_from<DAOExt<DAOT>>(dao_addr);
+        ext
+    }
+
+    /// Save ext to DAOExt
+    public fun save_ext<DAOT: store>(ext: DAOT) acquires DAOAccountCapHolder {
+        let dao_addr = dao_address<DAOT>();
+        assert!(!exists<DAOExt<DAOT>>(dao_addr), Errors::already_published(ERR_DAO_EXT));
+        let dao_signer = dao_signer<DAOT>();
+        move_to(&dao_signer, DAOExt{
+            ext
+        });
     }
 
     /// Burn the root cap after init the DAO
@@ -1070,13 +1071,6 @@ module StarcoinFramework::DAOSpace {
     public fun acquire_grant_cap<DAOT: store, PluginT>(_witness: &PluginT): DAOGrantCap<DAOT, PluginT> acquires InstalledPluginInfo {
         validate_cap<DAOT, PluginT>(grant_cap_type());
         DAOGrantCap<DAOT, PluginT>{}
-    }
-
-    /// Acquire the modifying DAOExt capability
-    /// _witness parameter ensures that the caller is the module which define PluginT
-    public fun acquire_modify_ext_cap<DAOT: store, PluginT>(_witness: &PluginT): DAOModifyExtCap<DAOT, PluginT> acquires InstalledPluginInfo {
-        validate_cap<DAOT, PluginT>(modify_ext_cap_type());
-        DAOModifyExtCap<DAOT, PluginT>{}
     }
 
     /// Delegate the token mint capability to DAO
