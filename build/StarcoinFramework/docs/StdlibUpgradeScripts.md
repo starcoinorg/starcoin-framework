@@ -17,6 +17,8 @@ The module for StdlibUpgrade init scripts
 -  [Function `do_upgrade_from_v7_to_v8`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v7_to_v8)
 -  [Function `upgrade_from_v11_to_v12`](#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12)
 -  [Function `do_upgrade_from_v11_to_v12`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12)
+-  [Function `upgrade_from_v12_to_v12_1`](#0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v12_1)
+-  [Function `do_upgrade_from_v12_to_v12_1`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1)
 -  [Module Specification](#@Module_Specification_0)
 
 
@@ -35,6 +37,7 @@ The module for StdlibUpgrade init scripts
 <b>use</b> <a href="Oracle.md#0x1_Oracle">0x1::Oracle</a>;
 <b>use</b> <a href="STC.md#0x1_STC">0x1::STC</a>;
 <b>use</b> <a href="Oracle.md#0x1_STCUSDOracle">0x1::STCUSDOracle</a>;
+<b>use</b> <a href="StarcoinDAO.md#0x1_StarcoinDAO">0x1::StarcoinDAO</a>;
 <b>use</b> <a href="Timestamp.md#0x1_Timestamp">0x1::Timestamp</a>;
 <b>use</b> <a href="Token.md#0x1_Token">0x1::Token</a>;
 <b>use</b> <a href="Treasury.md#0x1_Treasury">0x1::Treasury</a>;
@@ -341,6 +344,54 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 <pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>() {
     <a href="Block.md#0x1_Block_checkpoints_init">Block::checkpoints_init</a>();
     <a href="DAORegistry.md#0x1_DAORegistry_initialize">DAORegistry::initialize</a>();
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v12_1"></a>
+
+## Function `upgrade_from_v12_to_v12_1`
+
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v12_1">upgrade_from_v12_to_v12_1</a>()
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v12_1">upgrade_from_v12_to_v12_1</a>()  {
+    <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1">do_upgrade_from_v12_to_v12_1</a>();
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1"></a>
+
+## Function `do_upgrade_from_v12_to_v12_1`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1">do_upgrade_from_v12_to_v12_1</a>()
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1">do_upgrade_from_v12_to_v12_1</a>() {
+    <a href="StarcoinDAO.md#0x1_StarcoinDAO_create_dao">StarcoinDAO::create_dao</a>( 60000, 120000, 10, 10000, 0);
 }
 </code></pre>
 

@@ -11,6 +11,7 @@ UpgradeModuleDaoProposal is a proposal moudle used to upgrade contract codes und
 -  [Struct `UpgradeModuleV2`](#0x1_UpgradeModuleDaoProposal_UpgradeModuleV2)
 -  [Constants](#@Constants_0)
 -  [Function `plugin`](#0x1_UpgradeModuleDaoProposal_plugin)
+-  [Function `get_genesis_upgrade_cap`](#0x1_UpgradeModuleDaoProposal_get_genesis_upgrade_cap)
 -  [Function `propose_module_upgrade_v2`](#0x1_UpgradeModuleDaoProposal_propose_module_upgrade_v2)
 -  [Function `submit_module_upgrade_plan`](#0x1_UpgradeModuleDaoProposal_submit_module_upgrade_plan)
 -  [Module Specification](#@Module_Specification_1)
@@ -213,16 +214,28 @@ If this goverment can upgrade module, call this to register capability.
 
 
 
+</details>
 
-<a name="0x1_UpgradeModuleDaoProposal_AbortIfUnableUpgrade"></a>
+<a name="0x1_UpgradeModuleDaoProposal_get_genesis_upgrade_cap"></a>
+
+## Function `get_genesis_upgrade_cap`
 
 
-<pre><code><b>schema</b> <a href="UpgradeModuleDaoProposal.md#0x1_UpgradeModuleDaoProposal_AbortIfUnableUpgrade">AbortIfUnableUpgrade</a>&lt;TokenT&gt; {
-    module_address: <b>address</b>;
-    <b>let</b> token_issuer = <a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">Token::SPEC_TOKEN_TEST_ADDRESS</a>();
-    <b>aborts_if</b> !<b>exists</b>&lt;<a href="UpgradeModuleDaoProposal.md#0x1_UpgradeModuleDaoProposal_UpgradeModuleCapability">UpgradeModuleCapability</a>&lt;TokenT&gt;&gt;(token_issuer);
-    <b>let</b> cap = <b>global</b>&lt;<a href="UpgradeModuleDaoProposal.md#0x1_UpgradeModuleDaoProposal_UpgradeModuleCapability">UpgradeModuleCapability</a>&lt;TokenT&gt;&gt;(token_issuer).cap;
-    <b>aborts_if</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_account_address">PackageTxnManager::account_address</a>(cap) != module_address;
+
+<pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="UpgradeModuleDaoProposal.md#0x1_UpgradeModuleDaoProposal_get_genesis_upgrade_cap">get_genesis_upgrade_cap</a>&lt;TokenT: store&gt;(): <a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanCapability">PackageTxnManager::UpgradePlanCapability</a>
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> (<b>friend</b>) <b>fun</b> <a href="UpgradeModuleDaoProposal.md#0x1_UpgradeModuleDaoProposal_get_genesis_upgrade_cap">get_genesis_upgrade_cap</a>&lt;TokenT:store&gt;():<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanCapability">PackageTxnManager::UpgradePlanCapability</a> <b>acquires</b> <a href="UpgradeModuleDaoProposal.md#0x1_UpgradeModuleDaoProposal_UpgradeModuleCapability">UpgradeModuleCapability</a>{
+    <b>let</b> <a href="UpgradeModuleDaoProposal.md#0x1_UpgradeModuleDaoProposal_UpgradeModuleCapability">UpgradeModuleCapability</a>&lt;TokenT&gt;{
+        cap
+    } = <b>move_from</b>(<a href="Token.md#0x1_Token_token_address">Token::token_address</a>&lt;TokenT&gt;());
+    cap
 }
 </code></pre>
 
