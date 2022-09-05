@@ -30,6 +30,7 @@ module StarcoinFramework::DAOSpace {
     const ERR_NFT_ERROR: u64 = 104;
     const ERR_ALREADY_INIT: u64 = 105;
     const ERR_TOKEN_ERROR: u64 = 106;
+    const ERR_DAO_EXT: u64 = 107;
 
     /// member
     const ERR_EXPECT_MEMBER: u64 = 200;
@@ -193,6 +194,8 @@ module StarcoinFramework::DAOSpace {
         Vector::push_back(&mut caps, member_cap_type());
         Vector::push_back(&mut caps, proposal_cap_type());
         Vector::push_back(&mut caps, grant_cap_type());
+        Vector::push_back(&mut caps, token_mint_cap_type());
+        Vector::push_back(&mut caps, token_burn_cap_type());
         caps
     }
 
@@ -340,10 +343,29 @@ module StarcoinFramework::DAOSpace {
         DAORootCap<DAOT>{}
     }
 
-    // Upgrade account to DAO account and create DAO
+    /// Upgrade account to DAO account and create DAO
     public fun upgrade_to_dao<DAOT: store>(sender: signer, name: vector<u8>, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, description:vector<u8>, ext: DAOT, config: DAOConfig): DAORootCap<DAOT> acquires DAOEvent{
         let cap = DAOAccount::upgrade_to_dao(sender);
         create_dao<DAOT>(cap, name, image_data, image_url, description, ext, config)
+    }
+
+    /// Take ext from DAOExt
+    public fun take_ext<DAOT: store>(_witness: &DAOT): DAOT
+    acquires DAOExt {
+        let dao_addr = dao_address<DAOT>();
+        assert!(exists<DAOExt<DAOT>>(dao_addr), Errors::not_published(ERR_DAO_EXT));
+        let DAOExt<DAOT> { ext } = move_from<DAOExt<DAOT>>(dao_addr);
+        ext
+    }
+
+    /// Save ext to DAOExt
+    public fun save_ext<DAOT: store>(ext: DAOT) acquires DAOAccountCapHolder {
+        let dao_addr = dao_address<DAOT>();
+        assert!(!exists<DAOExt<DAOT>>(dao_addr), Errors::already_published(ERR_DAO_EXT));
+        let dao_signer = dao_signer<DAOT>();
+        move_to(&dao_signer, DAOExt{
+            ext
+        });
     }
 
     /// Burn the root cap after init the DAO
