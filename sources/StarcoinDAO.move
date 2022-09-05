@@ -43,13 +43,15 @@ module StarcoinFramework::StarcoinDAO{
             min_proposal_deposit,
         );
 
+
+        let dao_root_cap = DAOSpace::create_dao<StarcoinDAO>(dao_account_cap, *&NAME,Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", StarcoinDAO{}, config);
+        
         DAOSpace::set_custom_config_cap<StarcoinDAO, TransactionPublishOption::TransactionPublishOption>(OnChainConfigDao::config_cap<STC, TransactionPublishOption::TransactionPublishOption>());
         DAOSpace::set_custom_config_cap<StarcoinDAO, VMConfig::VMConfig>(OnChainConfigDao::config_cap<STC, VMConfig::VMConfig>());
         DAOSpace::set_custom_config_cap<StarcoinDAO, ConsensusConfig::ConsensusConfig>(OnChainConfigDao::config_cap<STC, ConsensusConfig::ConsensusConfig>());
         DAOSpace::set_custom_config_cap<StarcoinDAO, RewardConfig::RewardConfig>(OnChainConfigDao::config_cap<STC, RewardConfig::RewardConfig>());
         DAOSpace::set_custom_config_cap<StarcoinDAO, TransactionTimeoutConfig::TransactionTimeoutConfig>(OnChainConfigDao::config_cap<STC, TransactionTimeoutConfig::TransactionTimeoutConfig>());
 
-        let dao_root_cap = DAOSpace::create_dao<StarcoinDAO>(dao_account_cap, *&NAME,Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", StarcoinDAO{}, config);
         DAOSpace::install_plugin_with_root_cap<StarcoinDAO, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
         DAOSpace::install_plugin_with_root_cap<StarcoinDAO, UpgradeModulePlugin>(&dao_root_cap,UpgradeModulePlugin::required_caps());
         DAOSpace::install_plugin_with_root_cap<StarcoinDAO, ConfigProposalPlugin>(&dao_root_cap, ConfigProposalPlugin::required_caps());
