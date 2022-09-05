@@ -8,6 +8,7 @@ module StarcoinFramework::GenesisSignerCapability {
     friend StarcoinFramework::Genesis;
     friend StarcoinFramework::StdlibUpgradeScripts;
     friend StarcoinFramework::DAORegistry;
+    friend StarcoinFramework::DAOExtensionPoint;
     friend StarcoinFramework::Block;
 
 

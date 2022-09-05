@@ -5,7 +5,7 @@ module StarcoinFramework::DAOExtensionPoint {
     use StarcoinFramework::Vector;
     use StarcoinFramework::NFT;
     use StarcoinFramework::NFTGallery;
-    use StarcoinFramework::Option::{ Self, Option};
+    use StarcoinFramework::GenesisSignerCapability;
 
     const CONTRACT_ACCOUNT:address = @StarcoinFramework;
 
@@ -22,18 +22,18 @@ module StarcoinFramework::DAOExtensionPoint {
        created_at: u64,
     }
 
-    struct DAOExtensionPoint has store  {
+    struct DAOExtensionPoint<ExtInfo: store> has key, store  {
        id: u64,
        name: vector<u8>,
        describe: vector<u8>,
        next_version_number: u64,
        versions: vector<Version>,
+       ext: ExtInfo,
        created_at: u64,
     }
 
     struct Registry has key, store  {
        next_id: u64,
-       items: vector<DAOExtensionPoint>,
     }
 
     struct OwnerNFTMeta has copy, store, drop {
@@ -54,52 +54,10 @@ module StarcoinFramework::DAOExtensionPoint {
         extpoint_id
     }
 
-    fun next_extpoint_version_number(extpoint: &mut DAOExtensionPoint): u64 {
+    fun next_extpoint_version_number<ExtInfo: store>(extpoint: &mut DAOExtensionPoint<ExtInfo>): u64 {
         let version_number = extpoint.next_version_number;
         extpoint.next_version_number = version_number + 1;
         version_number
-    }
-
-    fun find_by_id(
-        c: &vector<DAOExtensionPoint>,
-        id: u64
-    ): Option<u64> {
-        let len = Vector::length(c);
-        if (len == 0) {
-            return Option::none()
-        };
-        let idx = len - 1;
-        loop {
-            let extpoint = Vector::borrow(c, idx);
-            if (extpoint.id == id) {
-                return Option::some(idx)
-            };
-            if (idx == 0) {
-                return Option::none()
-            };
-            idx = idx - 1;
-        }
-    }
-
-    fun find_by_name(
-        c: &vector<DAOExtensionPoint>,
-        name: vector<u8>
-    ): Option<u64> {
-        let len = Vector::length(c);
-        if (len == 0) {
-            return Option::none()
-        };
-        let idx = len - 1;
-        loop {
-            let extpoint = Vector::borrow(c, idx);
-            if (*&extpoint.name == *&name) {
-                return Option::some(idx)
-            };
-            if (idx == 0) {
-                return Option::none()
-            };
-            idx = idx - 1;
-        }
     }
 
     fun has_extpoint_nft(sender_addr: address, extpoint_id: u64): bool {
@@ -151,16 +109,13 @@ module StarcoinFramework::DAOExtensionPoint {
 
         move_to(sender, Registry{
             next_id: 1,
-            items: Vector::empty<DAOExtensionPoint>(),
         });
     }
 
-    public fun register(sender: &signer, name: vector<u8>, describe: vector<u8>, protobuf:vector<u8>, pb_doc:vector<u8>):u64 acquires Registry, NFTMintCapHolder {
+    public fun register<ExtInfo: store>(sender: &signer, name: vector<u8>, describe: vector<u8>, protobuf:vector<u8>, pb_doc:vector<u8>, extInfo: ExtInfo):u64 acquires Registry, NFTMintCapHolder {
         let registry = borrow_global_mut<Registry>(CONTRACT_ACCOUNT);
-        let idx = find_by_name(&registry.items, *&name);
-        assert!(Option::is_none(&idx), Errors::invalid_argument(ERR_ALREADY_EXISTS_NAME));
-
         let extpoint_id = next_extpoint_id(registry);
+
         let version = Version {
             number: 1,
             protobuf: protobuf,
@@ -168,12 +123,14 @@ module StarcoinFramework::DAOExtensionPoint {
             created_at: Timestamp::now_milliseconds(),
         };
 
-        Vector::push_back<DAOExtensionPoint>(&mut registry.items, DAOExtensionPoint{
+        let genesis_account = GenesisSignerCapability::get_genesis_signer();
+        move_to(&genesis_account, DAOExtensionPoint{
             id: extpoint_id, 
             name: name, 
             describe: describe,
             next_version_number: 1,
             versions: Vector::singleton<Version>(version), 
+            ext: extInfo,
             created_at: Timestamp::now_milliseconds(),
         });
 
@@ -189,30 +146,6 @@ module StarcoinFramework::DAOExtensionPoint {
 
         extpoint_id
     }
-
-    public fun publish_version(
-        sender: &signer, 
-        extp_id: u64,
-        protobuf:vector<u8>,
-        pb_doc: vector<u8>, 
-    ) acquires Registry {
-        ensure_exists_extpoint_nft(Signer::address_of(sender), extp_id);
-
-        let registry = borrow_global_mut<Registry>(CONTRACT_ACCOUNT);
-        let idx = find_by_id(&registry.items, extp_id);
-        assert!(Option::is_some(&idx), Errors::invalid_argument(ERR_NOT_FOUND_EXT_POINT));
-
-        let i = Option::extract(&mut idx);
-        let extp = Vector::borrow_mut<DAOExtensionPoint>(&mut registry.items, i);
-        
-        let number = next_extpoint_version_number(extp);
-        Vector::push_back<Version>(&mut extp.versions, Version{
-            number: number,
-            protobuf: protobuf,
-            document: pb_doc,
-            created_at: Timestamp::now_milliseconds(),
-        });
-    }
 }
 
 
@@ -221,13 +154,5 @@ module StarcoinFramework::DAOExtensionPointScript {
 
     public(script) fun initialize(sender: signer) {
         DAOExtensionPoint::initialize(&sender)
-    }
-
-    public(script) fun register(sender: signer, name: vector<u8>, describe: vector<u8>, protobuf: vector<u8>, pb_doc: vector<u8>) {
-        DAOExtensionPoint::register(&sender, name, describe, protobuf, pb_doc);
-    }
-
-    public(script) fun publish_version(sender: signer, extp_id: u64, protobuf:vector<u8>, pb_doc: vector<u8>) {
-        DAOExtensionPoint::publish_version(&sender, extp_id, protobuf, pb_doc);
     }
 }
