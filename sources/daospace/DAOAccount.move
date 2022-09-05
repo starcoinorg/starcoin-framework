@@ -18,6 +18,7 @@ module StarcoinFramework::DAOAccount{
 
     const ERR_ACCOUNT_CAP_NOT_EXISTS:u64 = 100;
     const ERR_ACCOUNT_CAP_EXISTS: u64 = 101;
+    const ERR_ACCOUNT_IS_NOT_SAME:u64 = 102;
 
     /// DAOAccount
     struct DAOAccount has key{
@@ -68,8 +69,7 @@ module StarcoinFramework::DAOAccount{
     public (friend) fun upgrade_starcoin_dao(): DAOAccountCap{
         let signer_cap = Account::get_genesis_capability();
         let upgrade_plan_cap = UpgradeModuleDaoProposal::get_genesis_upgrade_cap<STC>();
-        let sender = Account::create_signer_with_cap(&signer_cap);
-        upgrade_to_dao_with_signer_cap_and_upgrade_plan_cap(sender, signer_cap, upgrade_plan_cap)
+        upgrade_to_dao_with_signer_cap_and_upgrade_plan_cap(signer_cap, upgrade_plan_cap)
     }
 
      /// Upgrade the account which have the `signer_cap` to a DAO Account
@@ -85,13 +85,16 @@ module StarcoinFramework::DAOAccount{
             PackageTxnManager::update_module_upgrade_strategy(&dao_signer, PackageTxnManager::get_strategy_two_phase(), Option::some(1));
             PackageTxnManager::extract_submit_upgrade_plan_cap(&dao_signer)
         };
-        upgrade_to_dao_with_signer_cap_and_upgrade_plan_cap(dao_signer, signer_cap, upgrade_plan_cap)
+        upgrade_to_dao_with_signer_cap_and_upgrade_plan_cap(signer_cap, upgrade_plan_cap)
     }
 
     /// Upgrade the account which have the `signer_cap` to a DAO Account
-    public (friend) fun upgrade_to_dao_with_signer_cap_and_upgrade_plan_cap(dao_signer: signer, signer_cap: SignerCapability, upgrade_plan_cap:UpgradePlanCapability): DAOAccountCap {
+    public fun upgrade_to_dao_with_signer_cap_and_upgrade_plan_cap(signer_cap: SignerCapability, upgrade_plan_cap:UpgradePlanCapability): DAOAccountCap {
+        let dao_signer = Account::create_signer_with_cap(&signer_cap);
         let dao_address = Signer::address_of(&dao_signer);
 
+        assert!(Account::signer_address(&signer_cap) == PackageTxnManager::account_address(&upgrade_plan_cap), Errors::already_published(ERR_ACCOUNT_IS_NOT_SAME));
+        
         move_to(&dao_signer, DAOAccount{
             dao_address,
             signer_cap,
