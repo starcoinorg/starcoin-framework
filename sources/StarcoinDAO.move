@@ -11,7 +11,7 @@ module StarcoinFramework::StarcoinDAO{
     friend StarcoinFramework::Genesis;
     friend StarcoinFramework::StdlibUpgradeScripts;
 
-    struct STARCOINDAO has store{}
+    struct StarcoinDAO has store{}
 
     const NAME: vector<u8> = b"StarcoinDAO";
     
@@ -32,14 +32,14 @@ module StarcoinFramework::StarcoinDAO{
             min_proposal_deposit,
         );
 
-        let dao_root_cap = DAOSpace::create_dao<STARCOINDAO>(dao_account_cap, *&NAME,Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", STARCOINDAO{}, config);
-        DAOSpace::install_plugin_with_root_cap<STARCOINDAO, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
-        DAOSpace::install_plugin_with_root_cap<STARCOINDAO, UpgradeModulePlugin>(&dao_root_cap,UpgradeModulePlugin::required_caps());
-        DAOSpace::install_plugin_with_root_cap<STARCOINDAO, ConfigProposalPlugin>(&dao_root_cap, ConfigProposalPlugin::required_caps());
+        let dao_root_cap = DAOSpace::create_dao<StarcoinDAO>(dao_account_cap, *&NAME,Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", StarcoinDAO{}, config);
+        DAOSpace::install_plugin_with_root_cap<StarcoinDAO, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
+        DAOSpace::install_plugin_with_root_cap<StarcoinDAO, UpgradeModulePlugin>(&dao_root_cap,UpgradeModulePlugin::required_caps());
+        DAOSpace::install_plugin_with_root_cap<StarcoinDAO, ConfigProposalPlugin>(&dao_root_cap, ConfigProposalPlugin::required_caps());
         
-        DAOSpace::install_plugin_with_root_cap<STARCOINDAO, StakeToSBTPlugin>(&dao_root_cap, StakeToSBTPlugin::required_caps());
-        StakeToSBTPlugin::accept_token_with_root_cap<STARCOINDAO, STC>(&dao_root_cap);
-        StakeToSBTPlugin::set_sbt_weight_with_root_cap<STARCOINDAO, STC>(&dao_root_cap, 10, 2000);
+        DAOSpace::install_plugin_with_root_cap<StarcoinDAO, StakeToSBTPlugin>(&dao_root_cap, StakeToSBTPlugin::required_caps());
+        StakeToSBTPlugin::accept_token_with_root_cap<StarcoinDAO, STC>(&dao_root_cap);
+        StakeToSBTPlugin::set_sbt_weight_with_root_cap<StarcoinDAO, STC>(&dao_root_cap, 10, 2000);
         
         DAOSpace::burn_root_cap(dao_root_cap);
 

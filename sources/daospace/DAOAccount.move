@@ -8,8 +8,6 @@ module StarcoinFramework::DAOAccount{
     use StarcoinFramework::Version;
     use StarcoinFramework::Config;
     use StarcoinFramework::STC::STC;
-    use StarcoinFramework::GenesisSignerCapability;
-    use StarcoinFramework::Token;
 
 
     friend StarcoinFramework::StarcoinDAO;
@@ -69,24 +67,16 @@ module StarcoinFramework::DAOAccount{
 
     public (friend) fun upgrade_starcoin_dao(): DAOAccountCap{
         let signer_cap = Account::get_genesis_capability();
-        let dao_address = Token::token_address<STC>();
         let upgrade_plan_cap = UpgradeModuleDaoProposal::get_genesis_upgrade_cap<STC>();
-        let sender = GenesisSignerCapability::get_genesis_signer();
-        move_to(&sender, DAOAccount{
-            dao_address,
-            signer_cap,
-            upgrade_plan_cap,
-        });
-         DAOAccountCap{
-            dao_address
-        }
+        let sender = Account::create_signer_with_cap(&signer_cap);
+        upgrade_to_dao_with_signer_cap_and_upgrade_plan_cap(sender, signer_cap, upgrade_plan_cap)
     }
 
      /// Upgrade the account which have the `signer_cap` to a DAO Account
     public fun upgrade_to_dao_with_signer_cap(signer_cap: SignerCapability): DAOAccountCap {
-       let dao_signer = Account::create_signer_with_cap(&signer_cap);
-       let dao_address = Signer::address_of(&dao_signer);
- 
+        let dao_signer = Account::create_signer_with_cap(&signer_cap);
+        let dao_address = Signer::address_of(&dao_signer);
+        
         let upgrade_plan_cap = if(Config::config_exist_by_address<Version::Version>(dao_address)){
             //TODO if the account has extract the upgrade plan cap
             PackageTxnManager::extract_submit_upgrade_plan_cap(&dao_signer)
@@ -95,16 +85,23 @@ module StarcoinFramework::DAOAccount{
             PackageTxnManager::update_module_upgrade_strategy(&dao_signer, PackageTxnManager::get_strategy_two_phase(), Option::some(1));
             PackageTxnManager::extract_submit_upgrade_plan_cap(&dao_signer)
         };
+        upgrade_to_dao_with_signer_cap_and_upgrade_plan_cap(dao_signer, signer_cap, upgrade_plan_cap)
+    }
+
+    /// Upgrade the account which have the `signer_cap` to a DAO Account
+    public (friend) fun upgrade_to_dao_with_signer_cap_and_upgrade_plan_cap(dao_signer: signer, signer_cap: SignerCapability, upgrade_plan_cap:UpgradePlanCapability): DAOAccountCap {
+        let dao_address = Signer::address_of(&dao_signer);
+
         move_to(&dao_signer, DAOAccount{
             dao_address,
             signer_cap,
             upgrade_plan_cap,
         });
-         DAOAccountCap{
+
+        DAOAccountCap{
             dao_address
         }
     }
-
     
     /// Provide a function to create signer with `DAOAccountCap`
     public fun dao_signer(cap: &DAOAccountCap): signer acquires DAOAccount {
