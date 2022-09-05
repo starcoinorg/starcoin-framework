@@ -67,6 +67,12 @@ compiled_package_info:
       name: DAOAccount
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: DAOExtensionPoint
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: DAOExtensionPointScript
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: DAORegistry
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -306,7 +312,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: A710EE5A9CB99AFE86615AD5840E39342DB78E8FB0F5F9509550D55526BF054D
+  source_digest: 8B79A8FF54EB179E79FC7B727E44467E7D7D2E23C00E4D21C0BDCA70E1197C47
   build_flags:
     dev_mode: false
     test_mode: false

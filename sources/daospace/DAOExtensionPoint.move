@@ -22,7 +22,7 @@ module StarcoinFramework::DAOExtensionPoint {
        created_at: u64,
     }
 
-    struct ExtensionPoint has store  {
+    struct DAOExtensionPoint has store  {
        id: u64,
        name: vector<u8>,
        describe: vector<u8>,
@@ -33,7 +33,7 @@ module StarcoinFramework::DAOExtensionPoint {
 
     struct Registry has key, store  {
        next_id: u64,
-       items: vector<ExtensionPoint>,
+       items: vector<DAOExtensionPoint>,
     }
 
     struct OwnerNFTMeta has copy, store, drop {
@@ -54,14 +54,14 @@ module StarcoinFramework::DAOExtensionPoint {
         extpoint_id
     }
 
-    fun next_extpoint_version_number(extpoint: &mut ExtensionPoint): u64 {
+    fun next_extpoint_version_number(extpoint: &mut DAOExtensionPoint): u64 {
         let version_number = extpoint.next_version_number;
         extpoint.next_version_number = version_number + 1;
         version_number
     }
 
     fun find_by_id(
-        c: &vector<ExtensionPoint>,
+        c: &vector<DAOExtensionPoint>,
         id: u64
     ): Option<u64> {
         let len = Vector::length(c);
@@ -82,7 +82,7 @@ module StarcoinFramework::DAOExtensionPoint {
     }
 
     fun find_by_name(
-        c: &vector<ExtensionPoint>,
+        c: &vector<DAOExtensionPoint>,
         name: vector<u8>
     ): Option<u64> {
         let len = Vector::length(c);
@@ -151,7 +151,7 @@ module StarcoinFramework::DAOExtensionPoint {
 
         move_to(sender, Registry{
             next_id: 1,
-            items: Vector::empty<ExtensionPoint>(),
+            items: Vector::empty<DAOExtensionPoint>(),
         });
     }
 
@@ -168,7 +168,7 @@ module StarcoinFramework::DAOExtensionPoint {
             created_at: Timestamp::now_milliseconds(),
         };
 
-        Vector::push_back<ExtensionPoint>(&mut registry.items, ExtensionPoint{
+        Vector::push_back<DAOExtensionPoint>(&mut registry.items, DAOExtensionPoint{
             id: extpoint_id, 
             name: name, 
             describe: describe,
@@ -203,7 +203,7 @@ module StarcoinFramework::DAOExtensionPoint {
         assert!(Option::is_some(&idx), Errors::invalid_argument(ERR_NOT_FOUND_EXT_POINT));
 
         let i = Option::extract(&mut idx);
-        let extp = Vector::borrow_mut<ExtensionPoint>(&mut registry.items, i);
+        let extp = Vector::borrow_mut<DAOExtensionPoint>(&mut registry.items, i);
         
         let number = next_extpoint_version_number(extp);
         Vector::push_back<Version>(&mut extp.versions, Version{

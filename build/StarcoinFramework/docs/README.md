@@ -32,6 +32,8 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::ConsensusStrategy`](ConsensusStrategy.md#0x1_ConsensusStrategy)
 -  [`0x1::CoreAddresses`](CoreAddresses.md#0x1_CoreAddresses)
 -  [`0x1::DAOAccount`](DAOAccount.md#0x1_DAOAccount)
+-  [`0x1::DAOExtensionPoint`](DAOExtensionPoint.md#0x1_DAOExtensionPoint)
+-  [`0x1::DAOExtensionPointScript`](DAOExtensionPoint.md#0x1_DAOExtensionPointScript)
 -  [`0x1::DAORegistry`](DAORegistry.md#0x1_DAORegistry)
 -  [`0x1::DAOSpace`](DAOSpace.md#0x1_DAOSpace)
 -  [`0x1::Dao`](Dao.md#0x1_Dao)
