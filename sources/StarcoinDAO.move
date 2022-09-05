@@ -9,6 +9,12 @@ module StarcoinFramework::StarcoinDAO{
     use StarcoinFramework::InstallPluginProposalPlugin::{Self, InstallPluginProposalPlugin};
     use StarcoinFramework::STC::STC;
     use StarcoinFramework::Option;
+    use StarcoinFramework::OnChainConfigDao;
+    use StarcoinFramework::TransactionPublishOption;
+    use StarcoinFramework::VMConfig;
+    use StarcoinFramework::ConsensusConfig;
+    use StarcoinFramework::RewardConfig;
+    use StarcoinFramework::TransactionTimeoutConfig;
 
     friend StarcoinFramework::Genesis;
     friend StarcoinFramework::StdlibUpgradeScripts;
@@ -36,6 +42,12 @@ module StarcoinFramework::StarcoinDAO{
             min_action_delay,
             min_proposal_deposit,
         );
+
+        DAOSpace::set_custom_config_cap<StarcoinDAO, TransactionPublishOption::TransactionPublishOption>(OnChainConfigDao::config_cap<STC, TransactionPublishOption::TransactionPublishOption>());
+        DAOSpace::set_custom_config_cap<StarcoinDAO, VMConfig::VMConfig>(OnChainConfigDao::config_cap<STC, VMConfig::VMConfig>());
+        DAOSpace::set_custom_config_cap<StarcoinDAO, ConsensusConfig::ConsensusConfig>(OnChainConfigDao::config_cap<STC, ConsensusConfig::ConsensusConfig>());
+        DAOSpace::set_custom_config_cap<StarcoinDAO, RewardConfig::RewardConfig>(OnChainConfigDao::config_cap<STC, RewardConfig::RewardConfig>());
+        DAOSpace::set_custom_config_cap<StarcoinDAO, TransactionTimeoutConfig::TransactionTimeoutConfig>(OnChainConfigDao::config_cap<STC, TransactionTimeoutConfig::TransactionTimeoutConfig>());
 
         let dao_root_cap = DAOSpace::create_dao<StarcoinDAO>(dao_account_cap, *&NAME,Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", StarcoinDAO{}, config);
         DAOSpace::install_plugin_with_root_cap<StarcoinDAO, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 

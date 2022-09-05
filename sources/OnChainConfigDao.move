@@ -6,7 +6,9 @@ module OnChainConfigDao {
     use StarcoinFramework::Config;
     use StarcoinFramework::Dao;
     use StarcoinFramework::Errors;
+    use StarcoinFramework::CoreAddresses;
 
+    friend StarcoinFramework::StarcoinDAO;
     spec module {
         pragma verify = false; // break after enabling v2 compilation scheme
         pragma aborts_if_is_strict;
@@ -92,6 +94,12 @@ module OnChainConfigDao {
         let expected_states = vec<u8>(6);
         include Dao::CheckProposalStates<TokenT, OnChainConfigUpdate<ConfigT>>{expected_states};
         aborts_if !exists<WrappedConfigModifyCapability<TokenT, ConfigT>>(Token::SPEC_TOKEN_TEST_ADDRESS());
+    }
+
+    //StarcoinDAO init need Config Cap
+    public (friend) fun config_cap<TokenT: store, ConfigT: copy + drop + store>():Config::ModifyConfigCapability<ConfigT>acquires WrappedConfigModifyCapability{
+        let WrappedConfigModifyCapability <TokenT, ConfigT>{cap} = move_from<WrappedConfigModifyCapability<TokenT, ConfigT>>(CoreAddresses::GENESIS_ADDRESS());
+        cap
     }
 }
 }
