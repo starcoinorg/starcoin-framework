@@ -8,7 +8,7 @@ module UpgradeModuleDaoProposal {
     use StarcoinFramework::Dao;
     use StarcoinFramework::Errors;
 
-    friend StarcoinFramework::DAOAccount;
+    friend StarcoinFramework::StarcoinDAO;
     spec module {
         pragma verify = false; // break after enabling v2 compilation scheme
         pragma aborts_if_is_strict;

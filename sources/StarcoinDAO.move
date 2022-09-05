@@ -1,6 +1,8 @@
 module StarcoinFramework::StarcoinDAO{
     use StarcoinFramework::DAOAccount;
+    use StarcoinFramework::Account;
     use StarcoinFramework::DAOSpace;
+    use StarcoinFramework::UpgradeModuleDaoProposal;
     use StarcoinFramework::UpgradeModulePlugin::{Self, UpgradeModulePlugin};
     use StarcoinFramework::ConfigProposalPlugin::{Self, ConfigProposalPlugin};
     use StarcoinFramework::StakeToSBTPlugin::{Self, StakeToSBTPlugin};  
@@ -22,7 +24,10 @@ module StarcoinFramework::StarcoinDAO{
         min_action_delay: u64,
         min_proposal_deposit: u128
     ){
-        let dao_account_cap = DAOAccount::upgrade_starcoin_dao();
+
+        let signer_cap = Account::get_genesis_capability();
+        let upgrade_plan_cap = UpgradeModuleDaoProposal::get_genesis_upgrade_cap<STC>();
+        let dao_account_cap = DAOAccount::upgrade_to_dao_with_signer_cap_and_upgrade_plan_cap(signer_cap, upgrade_plan_cap);
 
         let config = DAOSpace::new_dao_config(
             voting_delay,
