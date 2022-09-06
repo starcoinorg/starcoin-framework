@@ -2,9 +2,33 @@
 
 //# faucet --addr Genesis
 
+//# faucet --addr creator --amount 100000000000
+
 //# faucet --addr bob --amount 2000000000
 
 //# faucet --addr alice --amount 2000000000
+
+//# publish
+module creator::TestExtentionPoint {
+    use StarcoinFramework::DAOExtensionPoint;
+
+    struct ExtInfo has store, copy, drop {}
+
+    const NAME: vector<u8> = b"X";
+
+    /// directly upgrade the sender account to DAOAccount and create DAO
+    public(script) fun initialize(sender: signer) {
+        let extInfo = ExtInfo{};
+        DAOExtensionPoint::register<ExtInfo>(
+            &sender,
+            NAME, 
+            b"ipfs://description",
+            b"ipfs://protobuf",
+            b"ipfs://pb_doc",
+            extInfo,
+        );
+    }
+}
 
 //# run --signers Genesis
 script {
@@ -16,44 +40,16 @@ script {
 }
 // check: EXECUTED
 
-//# run --signers bob
+//# run --signers creator
 script {
-    use StarcoinFramework::DAOExtensionPointScript;
+    use creator::TestExtentionPoint;
 
     fun main(sender: signer) {
-        DAOExtensionPointScript::register(sender, b"0x1::ExtensionPoint::IApp", b"ipfs:://xxxxxx", b"ipfs:://xxxxxx", b"ipfs:://xxxxxx");
+        TestExtentionPoint::initialize(sender);
     }
 }
 // check: EXECUTED
 
 //# view --address Genesis --resource 0x1::DAOExtensionPoint::Registry
 
-//# run --signers alice
-script {
-    use StarcoinFramework::DAOExtensionPointScript;
-
-    fun main(sender: signer) {
-        DAOExtensionPointScript::register(sender, b"0x1::ExtensionPoint::IApp", b"ipfs:://xxxxxx", b"ipfs:://xxxxxx", b"ipfs:://xxxxxx");
-    }
-}
-// check: EXECUTED
-
-//# view --address Genesis --resource 0x1::DAOExtensionPoint::Registry
-
-//# run --signers alice
-script {
-    use StarcoinFramework::DAOExtensionPointScript;
-
-    fun main(sender: signer) {
-        DAOExtensionPointScript::register(sender, b"0x1::ExtensionPoint::IToken", b"ipfs:://xxxxxx", b"ipfs:://xxxxxx", b"ipfs:://xxxxxx");
-    }
-}
-// check: EXECUTED
-
-//# view --address Genesis --resource 0x1::DAOExtensionPoint::Registry
-
-
-
-
-
-
+//# view --address Genesis --resource 0x1::DAOExtensionPoint::DAOExtensionPoint
