@@ -36,7 +36,7 @@ The module for the account resource that governs every account
 -  [Function `create_account_with_initial_amount`](#0x1_Account_create_account_with_initial_amount)
 -  [Function `create_account_with_initial_amount_v2`](#0x1_Account_create_account_with_initial_amount_v2)
 -  [Function `create_delegate_account`](#0x1_Account_create_delegate_account)
--  [Function `create_fresh_address`](#0x1_Account_create_fresh_address)
+-  [Function `generate_fresh_address`](#0x1_Account_generate_fresh_address)
 -  [Function `deposit_to_self`](#0x1_Account_deposit_to_self)
 -  [Function `deposit`](#0x1_Account_deposit)
 -  [Function `deposit_with_metadata`](#0x1_Account_deposit_with_metadata)
@@ -1303,7 +1303,7 @@ Generate an new address and create a new account, then delegate the account and 
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_create_delegate_account">create_delegate_account</a>(sender: &signer) : (<b>address</b>, <a href="Account.md#0x1_Account_SignerCapability">SignerCapability</a>) <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_EventStore">EventStore</a> {
-    <b>let</b> new_address = <a href="Account.md#0x1_Account_create_fresh_address">create_fresh_address</a>(sender);
+    <b>let</b> new_address = <a href="Account.md#0x1_Account_generate_fresh_address">generate_fresh_address</a>(sender);
     <a href="Account.md#0x1_Account_create_account_with_address">Self::create_account_with_address</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(new_address);
     <b>let</b> new_signer = <a href="Account.md#0x1_Account_create_signer">Self::create_signer</a>(new_address);
     (new_address, <a href="Account.md#0x1_Account_remove_signer_capability">Self::remove_signer_capability</a>(&new_signer))
@@ -1326,13 +1326,14 @@ Generate an new address and create a new account, then delegate the account and 
 
 </details>
 
-<a name="0x1_Account_create_fresh_address"></a>
+<a name="0x1_Account_generate_fresh_address"></a>
 
-## Function `create_fresh_address`
+## Function `generate_fresh_address`
+
+Generate a fresh address from the sender address and the sender's sequence number, and ensure the generated address is not exists onchain.
 
 
-
-<pre><code><b>fun</b> <a href="Account.md#0x1_Account_create_fresh_address">create_fresh_address</a>(sender: &signer): <b>address</b>
+<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_generate_fresh_address">generate_fresh_address</a>(sender: &signer): <b>address</b>
 </code></pre>
 
 
@@ -1341,7 +1342,7 @@ Generate an new address and create a new account, then delegate the account and 
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="Account.md#0x1_Account_create_fresh_address">create_fresh_address</a>(sender: &signer) : <b>address</b> <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account">Account</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_generate_fresh_address">generate_fresh_address</a>(sender: &signer) : <b>address</b> <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account">Account</a> {
     <b>let</b> try_times = 0u64;
     <b>while</b>(<b>true</b>){
         <b>let</b> sender_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
