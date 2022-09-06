@@ -128,7 +128,7 @@ module StarcoinFramework::DAOExtensionPoint {
             id: extpoint_id, 
             name: name, 
             describe: describe,
-            next_version_number: 1,
+            next_version_number: 2,
             versions: Vector::singleton<Version>(version), 
             ext: extInfo,
             created_at: Timestamp::now_milliseconds(),
@@ -145,6 +145,25 @@ module StarcoinFramework::DAOExtensionPoint {
         NFTGallery::deposit(sender, nft);
 
         extpoint_id
+    }
+
+    public fun publish_version<ExtInfo: store>(
+        sender: &signer, 
+        extp_id: u64,
+        protobuf:vector<u8>,
+        pb_doc: vector<u8>, 
+    ) acquires DAOExtensionPoint {
+        ensure_exists_extpoint_nft(Signer::address_of(sender), extp_id);
+
+        let extp = borrow_global_mut<DAOExtensionPoint<ExtInfo>>(CONTRACT_ACCOUNT);
+        let number = next_extpoint_version_number(extp);
+
+        Vector::push_back<Version>(&mut extp.versions, Version{
+            number: number,
+            protobuf: protobuf,
+            document: pb_doc,
+            created_at: Timestamp::now_milliseconds(),
+        });
     }
 }
 

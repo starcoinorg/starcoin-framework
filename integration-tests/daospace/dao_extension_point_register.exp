@@ -1,7 +1,55 @@
-processed 7 tasks
+processed 10 tasks
 
-task 6 'run'. lines 33-41:
+task 4 'run'. lines 29-37:
 {
   "gas_used": 146793,
   "status": "Executed"
+}
+
+task 5 'run'. lines 39-47:
+{
+  "gas_used": 196674,
+  "status": "Executed"
+}
+
+task 6 'view'. lines 49-49:
+store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
+    next_id: 2
+}
+
+task 8 'view'. lines 53-53:
+store key 0x00000000000000000000000000000001::DAOExtensionPoint::DAOExtensionPoint<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::ExtInfo> {
+    id: 1
+    name: 54657374457874656e74696f6e506f696e74
+    describe: 697066733a2f2f6465736372697074696f6e
+    next_version_number: 2
+    versions: [
+        store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
+            number: 1
+            protobuf: 697066733a2f2f70726f746f627566
+            document: 697066733a2f2f70625f646f63
+            created_at: 10000
+        },
+    ]
+    ext: copy drop store 0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::ExtInfo {
+        dummy_field: false
+    }
+    created_at: 10000
+}
+
+task 9 'run'. lines 55-63:
+{
+  "gas_used": 45894,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOExtensionPoint"
+        }
+      },
+      "function": 6,
+      "code_offset": 24
+    }
+  }
 }
