@@ -1,4 +1,4 @@
-//# init -n dev --debug
+//# init -n dev
 
 //# faucet --addr Genesis
 
@@ -30,8 +30,8 @@ module creator::TestExtentionPoint {
 script {
     use StarcoinFramework::DAOExtensionPointScript;
 
-    fun main(sender: signer) {
-        DAOExtensionPointScript::initialize(sender);
+    fun main(_sender: signer) {
+        DAOExtensionPointScript::initialize();
     }
 }
 // check: EXECUTED
@@ -48,9 +48,7 @@ script {
 
 //# view --address Genesis --resource 0x1::DAOExtensionPoint::Registry
 
-//# call-api state.list_resource ["0x00000000000000000000000000000001",{"resource_types":["0x00000000000000000000000000000001::DAOExtensionPoint::DAOExtensionPoint"],"decode":true}]
-
-//# view --address Genesis --resource 0x00000000000000000000000000000001::DAOExtensionPoint::DAOExtensionPoint<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::ExtInfo>
+//# view --address Genesis --resource 0x1::DAOExtensionPoint::DAOExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::ExtInfo>
 
 //# run --signers creator
 script {
@@ -61,3 +59,5 @@ script {
     }
 }
 // check: EXECUTED
+
+//# view --address Genesis --resource 0x1::DAOExtensionPoint::DAOExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::ExtInfo>

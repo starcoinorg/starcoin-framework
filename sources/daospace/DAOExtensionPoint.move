@@ -1,13 +1,12 @@
 module StarcoinFramework::DAOExtensionPoint {
-    use StarcoinFramework::Signer;
+    use StarcoinFramework::GenesisSignerCapability;
+    use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Errors;
+    use StarcoinFramework::Signer;
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::Vector;
     use StarcoinFramework::NFT;
     use StarcoinFramework::NFTGallery;
-    use StarcoinFramework::GenesisSignerCapability;
-
-    const CONTRACT_ACCOUNT:address = @StarcoinFramework;
 
     const ERR_ALREADY_INITIALIZED: u64 = 100;
     const ERR_NOT_CONTRACT_OWNER: u64 = 101;
@@ -91,29 +90,30 @@ module StarcoinFramework::DAOExtensionPoint {
         assert!(has_extpoint_nft(sender_addr, extpoint_id), Errors::invalid_state(ERR_EXPECT_EXT_POINT_NFT));
     }
 
-	public fun initialize(sender: &signer) {
-        assert!(Signer::address_of(sender)==CONTRACT_ACCOUNT, Errors::requires_address(ERR_NOT_CONTRACT_OWNER));
-        assert!(!exists<Registry>(Signer::address_of(sender)), Errors::already_published(ERR_ALREADY_INITIALIZED));
+	public fun initialize() {
+        assert!(!exists<Registry>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
+        let signer = GenesisSignerCapability::get_genesis_signer();
 
         let nft_name = b"EPO";
         let nft_image = b"SVG image";
-        let nft_description = b"The extension point owner";
+        let nft_description = b"The extension point owner NFT";
         let basemeta = NFT::new_meta_with_image_data(nft_name, nft_image, nft_description);
         let basemeta_bak = *&basemeta;
-        NFT::register_v2<OwnerNFTMeta>(sender, basemeta);
-        let nft_mint_cap = NFT::remove_mint_capability<OwnerNFTMeta>(sender);
-        move_to(sender, NFTMintCapHolder{
+        NFT::register_v2<OwnerNFTMeta>(&signer, basemeta);
+
+        let nft_mint_cap = NFT::remove_mint_capability<OwnerNFTMeta>(&signer);
+        move_to(&signer, NFTMintCapHolder{
             cap: nft_mint_cap,
             nft_metadata: basemeta_bak,
         });
 
-        move_to(sender, Registry{
+        move_to(&signer, Registry{
             next_id: 1,
         });
     }
 
     public fun register<ExtInfo: store>(sender: &signer, name: vector<u8>, describe: vector<u8>, protobuf:vector<u8>, pb_doc:vector<u8>, extInfo: ExtInfo):u64 acquires Registry, NFTMintCapHolder {
-        let registry = borrow_global_mut<Registry>(CONTRACT_ACCOUNT);
+        let registry = borrow_global_mut<Registry>(CoreAddresses::GENESIS_ADDRESS());
         let extpoint_id = next_extpoint_id(registry);
 
         let version = Version {
@@ -135,13 +135,13 @@ module StarcoinFramework::DAOExtensionPoint {
         });
 
         // grant owner NFT to sender
-        let nft_mint_cap = borrow_global_mut<NFTMintCapHolder>(CONTRACT_ACCOUNT);
+        let nft_mint_cap = borrow_global_mut<NFTMintCapHolder>(CoreAddresses::GENESIS_ADDRESS());
         let meta = OwnerNFTMeta{
-            registry_address: CONTRACT_ACCOUNT,
+            registry_address: CoreAddresses::GENESIS_ADDRESS(),
             extpoint_id: extpoint_id,
         };
 
-        let nft = NFT::mint_with_cap_v2(CONTRACT_ACCOUNT, &mut nft_mint_cap.cap, *&nft_mint_cap.nft_metadata, meta, OwnerNFTBody{});
+        let nft = NFT::mint_with_cap_v2(CoreAddresses::GENESIS_ADDRESS(), &mut nft_mint_cap.cap, *&nft_mint_cap.nft_metadata, meta, OwnerNFTBody{});
         NFTGallery::deposit(sender, nft);
 
         extpoint_id
@@ -155,7 +155,7 @@ module StarcoinFramework::DAOExtensionPoint {
     ) acquires DAOExtensionPoint {
         ensure_exists_extpoint_nft(Signer::address_of(sender), extp_id);
 
-        let extp = borrow_global_mut<DAOExtensionPoint<ExtInfo>>(CONTRACT_ACCOUNT);
+        let extp = borrow_global_mut<DAOExtensionPoint<ExtInfo>>(CoreAddresses::GENESIS_ADDRESS());
         let number = next_extpoint_version_number(extp);
 
         Vector::push_back<Version>(&mut extp.versions, Version{
@@ -171,7 +171,7 @@ module StarcoinFramework::DAOExtensionPoint {
 module StarcoinFramework::DAOExtensionPointScript {
     use StarcoinFramework::DAOExtensionPoint;
 
-    public(script) fun initialize(sender: signer) {
-        DAOExtensionPoint::initialize(&sender)
+    public(script) fun initialize() {
+        DAOExtensionPoint::initialize();
     }
 }
