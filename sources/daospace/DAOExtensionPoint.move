@@ -126,7 +126,7 @@ module StarcoinFramework::DAOExtensionPoint {
         let genesis_account = GenesisSignerCapability::get_genesis_signer();
         move_to(&genesis_account, DAOExtensionPoint{
             id: extpoint_id, 
-            name: name, 
+            name: name,
             describe: describe,
             next_version_number: 2,
             versions: Vector::singleton<Version>(version), 
