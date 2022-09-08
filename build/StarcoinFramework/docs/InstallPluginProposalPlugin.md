@@ -10,6 +10,7 @@
 -  [Function `required_caps`](#0x1_InstallPluginProposalPlugin_required_caps)
 -  [Function `create_proposal`](#0x1_InstallPluginProposalPlugin_create_proposal)
 -  [Function `execute_proposal`](#0x1_InstallPluginProposalPlugin_execute_proposal)
+-  [Function `execute_proposal_entry`](#0x1_InstallPluginProposalPlugin_execute_proposal_entry)
 
 
 <pre><code><b>use</b> <a href="DAOSpace.md#0x1_DAOSpace">0x1::DAOSpace</a>;
@@ -134,7 +135,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_execute_proposal">execute_proposal</a>&lt;DAOT: store, ToInstallPluginT: store&gt;(sender: signer, proposal_id: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_execute_proposal">execute_proposal</a>&lt;DAOT: store, ToInstallPluginT: store&gt;(sender: &signer, proposal_id: u64)
 </code></pre>
 
 
@@ -143,12 +144,36 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_execute_proposal">execute_proposal</a>&lt;DAOT: store, ToInstallPluginT: store&gt;(sender: signer, proposal_id: u64){
+<pre><code><b>public</b> <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_execute_proposal">execute_proposal</a>&lt;DAOT: store, ToInstallPluginT: store&gt;(sender: &signer, proposal_id: u64){
     <b>let</b> witness = <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">InstallPluginProposalPlugin</a>{};
     <b>let</b> proposal_cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_proposal_cap">DAOSpace::acquire_proposal_cap</a>&lt;DAOT, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">InstallPluginProposalPlugin</a>&gt;(&witness);
-    <b>let</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_InstallPluginAction">InstallPluginAction</a>{required_caps} = <a href="DAOSpace.md#0x1_DAOSpace_execute_proposal">DAOSpace::execute_proposal</a>&lt;DAOT, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">InstallPluginProposalPlugin</a>, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_InstallPluginAction">InstallPluginAction</a>&lt;ToInstallPluginT&gt;&gt;(&proposal_cap, &sender, proposal_id);
+    <b>let</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_InstallPluginAction">InstallPluginAction</a>{required_caps} = <a href="DAOSpace.md#0x1_DAOSpace_execute_proposal">DAOSpace::execute_proposal</a>&lt;DAOT, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">InstallPluginProposalPlugin</a>, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_InstallPluginAction">InstallPluginAction</a>&lt;ToInstallPluginT&gt;&gt;(&proposal_cap, sender, proposal_id);
     <b>let</b> install_plugin_cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_install_plugin_cap">DAOSpace::acquire_install_plugin_cap</a>&lt;DAOT, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">InstallPluginProposalPlugin</a>&gt;(&witness);
     <a href="DAOSpace.md#0x1_DAOSpace_install_plugin">DAOSpace::install_plugin</a>&lt;DAOT, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">InstallPluginProposalPlugin</a>, ToInstallPluginT&gt;(&install_plugin_cap, required_caps);
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_InstallPluginProposalPlugin_execute_proposal_entry"></a>
+
+## Function `execute_proposal_entry`
+
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_execute_proposal_entry">execute_proposal_entry</a>&lt;DAOT: store, ToInstallPluginT: <b>copy</b>, drop, store&gt;(sender: signer, proposal_id: u64)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_execute_proposal_entry">execute_proposal_entry</a>&lt;DAOT: store, ToInstallPluginT: <b>copy</b> + drop + store&gt;(sender: signer, proposal_id: u64) {
+    <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_execute_proposal">execute_proposal</a>&lt;DAOT, ToInstallPluginT&gt;(&sender, proposal_id);
 }
 </code></pre>
 
