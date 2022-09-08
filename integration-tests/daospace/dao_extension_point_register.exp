@@ -18,7 +18,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
 }
 
 task 7 'view'. lines 51-51:
-store key 0x00000000000000000000000000000001::DAOExtensionPoint::DAOExtensionPoint<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::ExtInfo> {
+store key 0x00000000000000000000000000000001::DAOExtensionPoint::ExtensionPoint<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::ExtInfo> {
     id: 1
     name: 54657374457874656e74696f6e506f696e74
     describe: 697066733a2f2f6465736372697074696f6e
@@ -26,7 +26,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::DAOExtensionPoi
     versions: [
         store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
             number: 1
-            protobuf: 697066733a2f2f70726f746f627566
+            types_d_ts: 697066733a2f2f70726f746f627566
             document: 697066733a2f2f70625f646f63
             created_at: 10000
         },
@@ -54,7 +54,7 @@ task 8 'run'. lines 53-61:
 }
 
 task 9 'view'. lines 63-63:
-store key 0x00000000000000000000000000000001::DAOExtensionPoint::DAOExtensionPoint<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::ExtInfo> {
+store key 0x00000000000000000000000000000001::DAOExtensionPoint::ExtensionPoint<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::ExtInfo> {
     id: 1
     name: 54657374457874656e74696f6e506f696e74
     describe: 697066733a2f2f6465736372697074696f6e
@@ -62,7 +62,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::DAOExtensionPoi
     versions: [
         store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
             number: 1
-            protobuf: 697066733a2f2f70726f746f627566
+            types_d_ts: 697066733a2f2f70726f746f627566
             document: 697066733a2f2f70625f646f63
             created_at: 10000
         },

@@ -44,14 +44,14 @@ module StarcoinFramework::DAOPluginMarketplace {
     struct PluginEntry<phantom PluginT> has key, store {
         id: u64, //Plugin ID
         name: vector<u8>, //plugin name
-        describe: vector<u8>, //Plugin description
+        description: vector<u8>, //Plugin description
         git_repo: vector<u8>, //git repository code
         next_version_number: u64, //next version number
         versions: vector<PluginVersion>, //All versions of the plugin
         stars: vector<Star>,//All stars of the plugin
         comments: vector<Comment>, //All comments for plugins
         created_at: u64, //Plugin creation time
-        update_at: u64, //Plugin last update time
+        updated_at: u64, //Plugin last update time
     }
 
     /// Plugin Owner NFT
@@ -132,7 +132,7 @@ module StarcoinFramework::DAOPluginMarketplace {
         });
     }
 
-    public fun register_plugin<PluginT: store>(sender: &signer, name: vector<u8>, describe: vector<u8>): u64 acquires PluginRegistry, PluginOwnerNFTMintCapHolder {
+    public fun register_plugin<PluginT: store>(sender: &signer, name: vector<u8>, description: vector<u8>): u64 acquires PluginRegistry, PluginOwnerNFTMintCapHolder {
         assert!(!exists<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_PLUGIN_ALREADY_EXISTS));
         let plugin_registry = borrow_global_mut<PluginRegistry>(CoreAddresses::GENESIS_ADDRESS());
         let plugin_id = next_plugin_id(plugin_registry);
@@ -141,14 +141,14 @@ module StarcoinFramework::DAOPluginMarketplace {
         move_to(&genesis_account, PluginEntry<PluginT>{
             id: plugin_id, 
             name: name, 
-            describe: describe,
+            description: description,
             git_repo: Vector::empty<u8>(),
             next_version_number: 1,
             versions: Vector::empty<PluginVersion>(), 
             stars: Vector::empty<Star>(),
             comments: Vector::empty<Comment>(),
             created_at: Timestamp::now_milliseconds(),
-            update_at: Timestamp::now_milliseconds(),
+            updated_at: Timestamp::now_milliseconds(),
         });
 
         // grant owner NFT to sender
@@ -191,6 +191,8 @@ module StarcoinFramework::DAOPluginMarketplace {
             js_entry_uri: js_entry_uri,
             created_at: Timestamp::now_milliseconds(),
         });
+
+        plugin.updated_at = Timestamp::now_milliseconds();
     }
 
     public fun exists_plugin_version<PluginT>(

@@ -16,23 +16,24 @@ module StarcoinFramework::DAOExtensionPoint {
 
     struct Version has store  {
        number: u64,
-       protobuf: vector<u8>,
+       types_d_ts: vector<u8>,
        document: vector<u8>,
-       created_at: u64,
-    }
-
-    struct DAOExtensionPoint<ExtInfo: store> has key, store  {
-       id: u64,
-       name: vector<u8>,
-       describe: vector<u8>,
-       next_version_number: u64,
-       versions: vector<Version>,
-       ext: ExtInfo,
        created_at: u64,
     }
 
     struct Registry has key, store  {
        next_id: u64,
+    }
+
+    struct ExtensionPoint<ExtInfo: store> has key, store  {
+       id: u64,
+       name: vector<u8>,
+       description: vector<u8>,
+       next_version_number: u64,
+       versions: vector<Version>,
+       ext: ExtInfo,
+       created_at: u64,
+       updated_at: u64,
     }
 
     struct OwnerNFTMeta has copy, store, drop {
@@ -53,7 +54,7 @@ module StarcoinFramework::DAOExtensionPoint {
         extpoint_id
     }
 
-    fun next_extpoint_version_number<ExtInfo: store>(extpoint: &mut DAOExtensionPoint<ExtInfo>): u64 {
+    fun next_extpoint_version_number<ExtInfo: store>(extpoint: &mut ExtensionPoint<ExtInfo>): u64 {
         let version_number = extpoint.next_version_number;
         extpoint.next_version_number = version_number + 1;
         version_number
@@ -112,27 +113,28 @@ module StarcoinFramework::DAOExtensionPoint {
         });
     }
 
-    public fun register<ExtInfo: store>(sender: &signer, name: vector<u8>, describe: vector<u8>, protobuf:vector<u8>, pb_doc:vector<u8>, extInfo: ExtInfo):u64 acquires Registry, NFTMintCapHolder {
-        assert!(!exists<DAOExtensionPoint<ExtInfo>>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_REGISTERED));
+    public fun register<ExtInfo: store>(sender: &signer, name: vector<u8>, description: vector<u8>, types_d_ts:vector<u8>, dts_doc:vector<u8>, extInfo: ExtInfo):u64 acquires Registry, NFTMintCapHolder {
+        assert!(!exists<ExtensionPoint<ExtInfo>>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_REGISTERED));
         let registry = borrow_global_mut<Registry>(CoreAddresses::GENESIS_ADDRESS());
         let extpoint_id = next_extpoint_id(registry);
 
         let version = Version {
             number: 1,
-            protobuf: protobuf,
-            document: pb_doc,
+            types_d_ts: types_d_ts,
+            document: dts_doc,
             created_at: Timestamp::now_milliseconds(),
         };
 
         let genesis_account = GenesisSignerCapability::get_genesis_signer();
-        move_to(&genesis_account, DAOExtensionPoint<ExtInfo>{
+        move_to(&genesis_account, ExtensionPoint<ExtInfo>{
             id: extpoint_id, 
             name: name,
-            describe: describe,
+            description: description,
             next_version_number: 2,
             versions: Vector::singleton<Version>(version), 
             ext: extInfo,
             created_at: Timestamp::now_milliseconds(),
+            updated_at: Timestamp::now_milliseconds(),
         });
 
         // grant owner NFT to sender
@@ -151,20 +153,22 @@ module StarcoinFramework::DAOExtensionPoint {
     public fun publish_version<ExtInfo: store>(
         sender: &signer, 
         extp_id: u64,
-        protobuf:vector<u8>,
-        pb_doc: vector<u8>, 
-    ) acquires DAOExtensionPoint {
+        types_d_ts:vector<u8>,
+        dts_doc: vector<u8>, 
+    ) acquires ExtensionPoint {
         ensure_exists_extpoint_nft(Signer::address_of(sender), extp_id);
 
-        let extp = borrow_global_mut<DAOExtensionPoint<ExtInfo>>(CoreAddresses::GENESIS_ADDRESS());
+        let extp = borrow_global_mut<ExtensionPoint<ExtInfo>>(CoreAddresses::GENESIS_ADDRESS());
         let number = next_extpoint_version_number(extp);
 
         Vector::push_back<Version>(&mut extp.versions, Version{
             number: number,
-            protobuf: protobuf,
-            document: pb_doc,
+            types_d_ts: types_d_ts,
+            document: dts_doc,
             created_at: Timestamp::now_milliseconds(),
         });
+
+        extp.updated_at = Timestamp::now_milliseconds();
     }
 }
 
