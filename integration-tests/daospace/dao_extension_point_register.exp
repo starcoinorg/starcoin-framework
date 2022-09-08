@@ -8,7 +8,7 @@ task 4 'run'. lines 29-37:
 
 task 5 'run'. lines 39-47:
 {
-  "gas_used": 208906,
+  "gas_used": 215347,
   "status": "Executed"
 }
 
@@ -39,17 +39,16 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::DAOExtensionPoi
 
 task 8 'run'. lines 53-61:
 {
-  "gas_used": 48799,
+  "gas_used": 18064,
   "status": {
-    "ExecutionFailure": {
+    "MoveAbort": {
       "location": {
         "Module": {
           "address": "0x00000000000000000000000000000001",
           "name": "DAOExtensionPoint"
         }
       },
-      "function": 6,
-      "code_offset": 24
+      "abort_code": "26630"
     }
   }
 }

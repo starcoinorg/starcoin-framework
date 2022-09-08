@@ -12,7 +12,7 @@ module StarcoinFramework::DAOExtensionPoint {
     const ERR_NOT_CONTRACT_OWNER: u64 = 101;
     const ERR_EXPECT_EXT_POINT_NFT: u64 = 102;
     const ERR_NOT_FOUND_EXT_POINT: u64 = 103;
-    const ERR_ALREADY_EXISTS_NAME: u64 = 104;
+    const ERR_ALREADY_REGISTERED: u64 = 104;
 
     struct Version has store  {
        number: u64,
@@ -113,6 +113,7 @@ module StarcoinFramework::DAOExtensionPoint {
     }
 
     public fun register<ExtInfo: store>(sender: &signer, name: vector<u8>, describe: vector<u8>, protobuf:vector<u8>, pb_doc:vector<u8>, extInfo: ExtInfo):u64 acquires Registry, NFTMintCapHolder {
+        assert!(!exists<DAOExtensionPoint<ExtInfo>>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_REGISTERED));
         let registry = borrow_global_mut<Registry>(CoreAddresses::GENESIS_ADDRESS());
         let extpoint_id = next_extpoint_id(registry);
 
@@ -124,7 +125,7 @@ module StarcoinFramework::DAOExtensionPoint {
         };
 
         let genesis_account = GenesisSignerCapability::get_genesis_signer();
-        move_to(&genesis_account, DAOExtensionPoint{
+        move_to(&genesis_account, DAOExtensionPoint<ExtInfo>{
             id: extpoint_id, 
             name: name,
             describe: describe,

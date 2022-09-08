@@ -10,18 +10,52 @@
 
 //# publish
 module creator::TestPlugin {
+    use StarcoinFramework::Vector;
     use StarcoinFramework::DAOPluginMarketplace;
 
     struct TestPlugin has store, copy, drop {}
 
     const NAME: vector<u8> = b"TestPlugin";
 
-    /// directly upgrade the sender account to DAOAccount and create DAO
     public(script) fun register(sender: signer) {
         DAOPluginMarketplace::register_plugin<TestPlugin>(
             &sender,
             NAME, 
             b"ipfs://description",
+        );
+    }
+
+    public(script) fun publish_version(sender: signer) {
+        let vec = Vector::empty<vector<u8>>();
+        Vector::push_back<vector<u8>>(&mut vec, b"test_plugin");
+
+        DAOPluginMarketplace::publish_plugin_version<TestPlugin>(
+            &sender, 
+            1,
+            b"v0.1.0", 
+            *&vec, 
+            *&vec, 
+            *&vec, 
+            *&vec, 
+            b"0x1::TestPlugin", 
+            b"ipfs://js_entry_uri"
+        );
+    }
+
+    public(script) fun publish_version_for_plugin_id2(sender: signer) {
+        let vec = Vector::empty<vector<u8>>();
+        Vector::push_back<vector<u8>>(&mut vec, b"test_plugin");
+
+        DAOPluginMarketplace::publish_plugin_version<TestPlugin>(
+            &sender, 
+            2,
+            b"v0.1.0", 
+            *&vec, 
+            *&vec, 
+            *&vec, 
+            *&vec, 
+            b"0x1::TestPlugin", 
+            b"ipfs://js_entry_uri"
         );
     }
 }
@@ -36,71 +70,42 @@ script {
 }
 // check: EXECUTED
 
-//# run --signers creator
-script {
-    use creator::TestPlugin;
-    
-    fun main(sender: signer) {
-        TestPlugin::register(sender);
-    }
-}
-// check: EXECUTED
-
-//# run --signers creator
-script {
-    use creator::TestPlugin;
-    
-    fun main(sender: signer) {
-        TestPlugin::register(sender);
-    }
-}
-// check: EXECUTED
-
 //# run --signers bob
 script {
     use creator::TestPlugin;
     
     fun main(sender: signer) {
         TestPlugin::register(sender);
-    }
-}
-// check: EXECUTED
-
-
-//# publish
-module creator::TestPlugin2 {
-    use StarcoinFramework::DAOPluginMarketplace;
-
-    struct TestPlugin2 has store, copy, drop {}
-
-    const NAME: vector<u8> = b"TestPlugin2";
-
-    /// directly upgrade the sender account to DAOAccount and create DAO
-    public(script) fun register(sender: signer) {
-        DAOPluginMarketplace::register_plugin<TestPlugin2>(
-            &sender,
-            NAME, 
-            b"ipfs://description",
-        );
-    }
-}
-
-//# run --signers bob
-script {
-    use creator::TestPlugin2;
-    
-    fun main(sender: signer) {
-        TestPlugin2::register(sender);
     }
 }
 // check: EXECUTED
 
 //# run --signers alice
 script {
-    use creator::TestPlugin2;
+    use creator::TestPlugin;
     
     fun main(sender: signer) {
-        TestPlugin2::register(sender);
+        TestPlugin::publish_version(sender);
+    }
+}
+// check: EXECUTED
+
+//# run --signers bob
+script {
+    use creator::TestPlugin;
+    
+    fun main(sender: signer) {
+        TestPlugin::publish_version(sender);
+    }
+}
+// check: EXECUTED
+
+//# run --signers bob
+script {
+    use creator::TestPlugin;
+    
+    fun main(sender: signer) {
+        TestPlugin::publish_version_for_plugin_id2(sender);
     }
 }
 // check: EXECUTED
