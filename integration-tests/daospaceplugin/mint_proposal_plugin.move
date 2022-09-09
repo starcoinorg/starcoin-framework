@@ -229,11 +229,11 @@ script{
     use StarcoinFramework::DAOSpace;
 
     // execute action
-    fun queue_proposal_action(sender: signer){
+    fun queue_proposal_action(_sender: signer){
         let proposal_id = 1;
         let proposal_state = DAOSpace::proposal_state<XDAO>(proposal_id);
         assert!(proposal_state == 4, 105); // DAOSpace::AGREED
-        DAOSpace::do_queue_proposal_action<XDAO>(&sender, proposal_id);
+        DAOSpace::queue_proposal_action<XDAO>(proposal_id);
 
     }
 }
