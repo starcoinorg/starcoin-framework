@@ -30,14 +30,6 @@ module StarcoinFramework::DAOPluginMarketplace {
         user: address, //Star's wallet address, which can be a short address, such as zhangsan.stc
         star: u8, // Star value
         created_at: u64, //creation time
-        updated_at: u64, //update time
-    }
-    
-    struct Comment has store {
-        addr: address, //The commenter's wallet address, which can be a short address, such as zhangsan.stc
-        content: vector<u8>, //comments
-        created_at: u64, //creation time
-        updated_at: u64, //update time
     }
     
     struct PluginRegistry has key, store {
@@ -52,7 +44,6 @@ module StarcoinFramework::DAOPluginMarketplace {
         next_version_number: u64, //next version number
         versions: vector<PluginVersion>, //All versions of the plugin
         stars: vector<Star>,//All stars of the plugin
-        comments: vector<Comment>, //All comments for plugins
         created_at: u64, //Plugin creation time
         updated_at: u64, //Plugin last update time
     }
@@ -113,6 +104,28 @@ module StarcoinFramework::DAOPluginMarketplace {
         assert!(has_plugin_owner_nft(sender_addr, plugin_id), Errors::invalid_state(ERR_EXPECT_PLUGIN_NFT));
     }
 
+    fun has_star<PluginT>(sender_addr: address): bool acquires PluginEntry {
+        let plugin = borrow_global<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
+
+        let len = Vector::length(&plugin.stars);
+
+        let idx = 0;
+        while (idx < len) {
+            let star = Vector::borrow(&plugin.stars, idx);
+            if (star.user == sender_addr) {
+                return true
+            };
+
+            idx = idx + 1;
+        };
+
+        return false
+    }
+
+    fun ensure_not_star<PluginT>(sender_addr: address) acquires PluginEntry {
+        assert!(!has_star<PluginT>(sender_addr), Errors::invalid_state(ERR_EXPECT_PLUGIN_NFT));
+    }
+
     public fun initialize() {
         assert!(!exists<PluginRegistry>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
         let signer = GenesisSignerCapability::get_genesis_signer();
@@ -149,7 +162,6 @@ module StarcoinFramework::DAOPluginMarketplace {
             next_version_number: 1,
             versions: Vector::empty<PluginVersion>(), 
             stars: Vector::empty<Star>(),
-            comments: Vector::empty<Comment>(),
             created_at: Timestamp::now_milliseconds(),
             updated_at: Timestamp::now_milliseconds(),
         });
@@ -165,6 +177,10 @@ module StarcoinFramework::DAOPluginMarketplace {
         NFTGallery::deposit(sender, nft);
 
         plugin_id
+    }
+
+    public fun exists_plugin<PluginT>(): bool {
+        return exists<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS())
     }
 
     public fun publish_plugin_version<PluginT>(
@@ -196,38 +212,33 @@ module StarcoinFramework::DAOPluginMarketplace {
         plugin.updated_at = Timestamp::now_milliseconds();
     }
 
-    public fun star_plugin<PluginT>(sender: &signer) acquires PluginEntry {
-        let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
-
-        let sender_addr = Signer::address_of(sender);
- 
-        let len = Vector::length(&plugin.stars);
-        let idx = 0;
-        while (idx < len) {
-            let star = Vector::borrow_mut(&mut plugin.stars, idx);
-            if (star.user == sender_addr) {
-                return
-            };
-
-            idx = idx + 1;
-        };
-
-        Vector::push_back<Star>(&mut plugin.stars, Star{
-            user: sender_addr,
-            star: 1,
-            created_at: Timestamp::now_milliseconds(),
-            updated_at: Timestamp::now_milliseconds(),
-        });
-    }
-
     public fun exists_plugin_version<PluginT>(
         version_number: u64,
     ): bool acquires PluginEntry {
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
         return version_number > 0 && version_number < plugin.next_version_number
     }
-}
 
+    public fun star_plugin<PluginT>(sender: &signer) acquires PluginEntry {
+        let sender_addr = Signer::address_of(sender);
+        ensure_not_star<PluginT>(sender_addr);
+
+        let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
+        
+        Vector::push_back<Star>(&mut plugin.stars, Star{
+            user: sender_addr,
+            star: 1,
+            created_at: Timestamp::now_milliseconds(),
+        });
+
+        plugin.updated_at = Timestamp::now_milliseconds();
+    }
+
+    public fun has_star_plugin<PluginT>(sender: &signer): bool acquires PluginEntry {
+        let sender_addr = Signer::address_of(sender);
+        return has_star<PluginT>(sender_addr)
+    }
+}
 
 module StarcoinFramework::DAOPluginMarketplaceScript {
     use StarcoinFramework::DAOPluginMarketplace;

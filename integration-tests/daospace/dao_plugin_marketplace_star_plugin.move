@@ -74,3 +74,31 @@ script {
     }
 }
 // check: EXECUTED
+
+//# run --signers bob
+script {
+    use StarcoinFramework::DAOPluginMarketplace;
+    use creator::TestPlugin;
+    
+    fun main(sender: signer) {
+        DAOPluginMarketplace::star_plugin<TestPlugin::TestPlugin>(
+            &sender,
+        );
+    }
+}
+// check: EXECUTED
+
+//# run --signers alice
+script {
+    use StarcoinFramework::DAOPluginMarketplace;
+    use creator::TestPlugin;
+    
+    fun main(sender: signer) {
+        DAOPluginMarketplace::star_plugin<TestPlugin::TestPlugin>(
+            &sender,
+        );
+    }
+}
+// check: EXECUTED
+
+//# view --address Genesis --resource 0x1::DAOPluginMarketplace::PluginEntry<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestPlugin::TestPlugin>

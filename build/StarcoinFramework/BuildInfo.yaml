@@ -318,7 +318,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 14E5C3F96ED16585BA6FA107AA480A75808411F173489196E518A591EA7F52F6
+  source_digest: 7CD99D07804FC5A4529ABAA8991A6335726F83286A285326ECD11E0DF3A4C0F9
   build_flags:
     dev_mode: false
     test_mode: false

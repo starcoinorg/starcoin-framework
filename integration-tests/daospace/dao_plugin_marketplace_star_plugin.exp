@@ -1,4 +1,4 @@
-processed 9 tasks
+processed 12 tasks
 
 task 6 'run'. lines 45-53:
 {
@@ -8,12 +8,59 @@ task 6 'run'. lines 45-53:
 
 task 7 'run'. lines 55-63:
 {
-  "gas_used": 208269,
+  "gas_used": 206370,
   "status": "Executed"
 }
 
 task 8 'run'. lines 65-76:
 {
-  "gas_used": 46989,
+  "gas_used": 54069,
   "status": "Executed"
+}
+
+task 9 'run'. lines 78-89:
+{
+  "gas_used": 28227,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOPluginMarketplace"
+        }
+      },
+      "abort_code": "26369"
+    }
+  }
+}
+
+task 10 'run'. lines 91-102:
+{
+  "gas_used": 58090,
+  "status": "Executed"
+}
+
+task 11 'view'. lines 104-104:
+store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
+    id: 1
+    name: 54657374506c7567696e
+    description: 697066733a2f2f6465736372697074696f6e
+    git_repo: 
+    next_version_number: 1
+    versions: [
+    ]
+    stars: [
+        store 0x00000000000000000000000000000001::DAOPluginMarketplace::Star {
+            user: b5d577dc9ce59725e29886632e69ecdf
+            star: 1u8
+            created_at: 10000
+        },
+        store 0x00000000000000000000000000000001::DAOPluginMarketplace::Star {
+            user: a7dcef9aef26202fce82a7c7d6672afb
+            star: 1u8
+            created_at: 10000
+        },
+    ]
+    created_at: 10000
+    updated_at: 10000
 }
