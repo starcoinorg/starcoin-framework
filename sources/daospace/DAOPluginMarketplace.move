@@ -13,6 +13,8 @@ module StarcoinFramework::DAOPluginMarketplace {
     const ERR_NOT_FOUND_PLUGIN: u64 = 102;
     const ERR_EXPECT_PLUGIN_NFT: u64 = 103;
     const ERR_PLUGIN_ALREADY_EXISTS: u64 = 104;
+    const ERR_STAR_ALREADY_STARED: u64 = 105;
+    const ERR_STAR_NOT_FOUND_STAR: u64 = 106;
 
     struct PluginVersion has store {
         number: u64, //Numeric version number, such as 1, 2, 3
@@ -25,13 +27,7 @@ module StarcoinFramework::DAOPluginMarketplace {
         js_entry_uri: vector<u8>, //Front-end JS code resource URI, for example: "https://cdn.xxxx.xxxx/xxxx/xxxxx.js"
         created_at: u64, //Plugin creation time
     }
-    
-    struct Star has store {
-        user: address, //Star's wallet address, which can be a short address, such as zhangsan.stc
-        star: u8, // Star value
-        created_at: u64, //creation time
-    }
-    
+        
     struct PluginRegistry has key, store {
         next_plugin_id: u64,
     }
@@ -43,9 +39,14 @@ module StarcoinFramework::DAOPluginMarketplace {
         git_repo: vector<u8>, //git repository code
         next_version_number: u64, //next version number
         versions: vector<PluginVersion>, //All versions of the plugin
-        stars: vector<Star>,//All stars of the plugin
+        star_count: u64, //Star count
         created_at: u64, //Plugin creation time
         updated_at: u64, //Plugin last update time
+    }
+
+    struct Star<phantom PluginT> has key, store {
+        user: address, //Star's wallet address, which can be a short address, such as zhangsan.stc
+        created_at: u64, //creation time
     }
 
     /// Plugin Owner NFT
@@ -104,28 +105,6 @@ module StarcoinFramework::DAOPluginMarketplace {
         assert!(has_plugin_owner_nft(sender_addr, plugin_id), Errors::invalid_state(ERR_EXPECT_PLUGIN_NFT));
     }
 
-    fun has_star<PluginT>(sender_addr: address): bool acquires PluginEntry {
-        let plugin = borrow_global<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
-
-        let len = Vector::length(&plugin.stars);
-
-        let idx = 0;
-        while (idx < len) {
-            let star = Vector::borrow(&plugin.stars, idx);
-            if (star.user == sender_addr) {
-                return true
-            };
-
-            idx = idx + 1;
-        };
-
-        return false
-    }
-
-    fun ensure_not_star<PluginT>(sender_addr: address) acquires PluginEntry {
-        assert!(!has_star<PluginT>(sender_addr), Errors::invalid_state(ERR_EXPECT_PLUGIN_NFT));
-    }
-
     public fun initialize() {
         assert!(!exists<PluginRegistry>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
         let signer = GenesisSignerCapability::get_genesis_signer();
@@ -161,7 +140,7 @@ module StarcoinFramework::DAOPluginMarketplace {
             git_repo: Vector::empty<u8>(),
             next_version_number: 1,
             versions: Vector::empty<PluginVersion>(), 
-            stars: Vector::empty<Star>(),
+            star_count: 0,
             created_at: Timestamp::now_milliseconds(),
             updated_at: Timestamp::now_milliseconds(),
         });
@@ -221,22 +200,33 @@ module StarcoinFramework::DAOPluginMarketplace {
 
     public fun star_plugin<PluginT>(sender: &signer) acquires PluginEntry {
         let sender_addr = Signer::address_of(sender);
-        ensure_not_star<PluginT>(sender_addr);
+        assert!(!exists<Star<PluginT>>(sender_addr), Errors::invalid_state(ERR_STAR_ALREADY_STARED));
 
-        let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
-        
-        Vector::push_back<Star>(&mut plugin.stars, Star{
+        move_to(sender, Star<PluginT>{
             user: sender_addr,
-            star: 1,
             created_at: Timestamp::now_milliseconds(),
         });
 
+        let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
+        plugin.star_count = plugin.star_count + 1;
         plugin.updated_at = Timestamp::now_milliseconds();
     }
 
-    public fun has_star_plugin<PluginT>(sender: &signer): bool acquires PluginEntry {
+    public fun unstar_plugin<PluginT>(sender: &signer) acquires PluginEntry, Star {
         let sender_addr = Signer::address_of(sender);
-        return has_star<PluginT>(sender_addr)
+        assert!(exists<Star<PluginT>>(sender_addr), Errors::invalid_state(ERR_STAR_NOT_FOUND_STAR));
+
+        let star = move_from<Star<PluginT>>(sender_addr);
+        let Star<PluginT> {user:_, created_at:_} = star;
+
+        let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
+        plugin.star_count = plugin.star_count - 1;
+        plugin.updated_at = Timestamp::now_milliseconds();
+    }
+
+    public fun has_star_plugin<PluginT>(sender: &signer): bool {
+        let sender_addr = Signer::address_of(sender);
+        return exists<Star<PluginT>>(sender_addr)
     }
 }
 
