@@ -70,7 +70,7 @@ task 24 'run'. lines 208-222:
 
 task 26 'run'. lines 226-240:
 {
-  "gas_used": 173465,
+  "gas_used": 172880,
   "status": "Executed"
 }
 
