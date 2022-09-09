@@ -179,6 +179,7 @@ module StarcoinFramework::StakeToSBTPlugin {
 
         let weight = Option::destroy_some(weight_opt);
         let sbt_amount = compute_token_to_sbt(weight, &token);
+
         DAOSpace::increase_member_sbt(&member_cap, sender_addr, sbt_amount);
 
         let stake_list = borrow_global_mut<StakeList<DAOT, TokenT>>(sender_addr);
