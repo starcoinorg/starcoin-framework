@@ -8,40 +8,31 @@
 module creator::TestExtentionPoint {
     use StarcoinFramework::DAOExtensionPoint;
 
-    struct ExtInfo has store, copy, drop {
-        tags: vector<u8>,
-    }
+    struct TestExtentionPoint has store, copy, drop {}
 
     const NAME: vector<u8> = b"TestExtentionPoint";
 
     public(script) fun initialize(sender: signer) {
-        let extInfo = ExtInfo{
-            tags: b"Test",
-        };
-
-        DAOExtensionPoint::register<ExtInfo>(
+        DAOExtensionPoint::register<TestExtentionPoint>(
             &sender,
             NAME, 
             b"ipfs://description",
             b"ipfs://types_d_ts",
             b"ipfs://pb_doc",
-            extInfo,
         );
     }
 
     public(script) fun publish_version_v1(sender: signer) {
-        DAOExtensionPoint::publish_version<ExtInfo>(
+        DAOExtensionPoint::publish_version<TestExtentionPoint>(
             &sender,
-            1,
             b"ipfs://types_d_ts_1",
             b"ipfs://pb_doc1",
         );
     }
 
     public(script) fun publish_version_v2(sender: signer) {
-        DAOExtensionPoint::publish_version<ExtInfo>(
+        DAOExtensionPoint::publish_version<TestExtentionPoint>(
             &sender,
-            1,
             b"ipfs://types_d_ts_2",
             b"ipfs://dts_doc2",
         );
@@ -70,7 +61,7 @@ script {
 
 //# view --address Genesis --resource 0x1::DAOExtensionPoint::Registry
 
-//# view --address Genesis --resource 0x1::DAOExtensionPoint::ExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::ExtInfo>
+//# view --address Genesis --resource 0x1::DAOExtensionPoint::ExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::TestExtentionPoint>
 
 //# run --signers creator
 script {
@@ -84,7 +75,7 @@ script {
 
 //# view --address Genesis --resource 0x1::DAOExtensionPoint::Registry
 
-//# view --address Genesis --resource 0x1::DAOExtensionPoint::ExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::ExtInfo>
+//# view --address Genesis --resource 0x1::DAOExtensionPoint::ExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::TestExtentionPoint>
 
 //# run --signers creator
 script {
@@ -98,7 +89,7 @@ script {
 
 //# view --address Genesis --resource 0x1::DAOExtensionPoint::Registry
 
-//# view --address Genesis --resource 0x1::DAOExtensionPoint::ExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::ExtInfo>
+//# view --address Genesis --resource 0x1::DAOExtensionPoint::ExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::TestExtentionPoint>
 
 //# run --signers creator
 script {
@@ -112,4 +103,4 @@ script {
 
 //# view --address Genesis --resource 0x1::DAOExtensionPoint::Registry
 
-//# view --address Genesis --resource 0x1::DAOExtensionPoint::ExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::ExtInfo>
+//# view --address Genesis --resource 0x1::DAOExtensionPoint::ExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::TestExtentionPoint>

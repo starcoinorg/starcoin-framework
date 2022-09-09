@@ -62,22 +62,15 @@ script {
 }
 // check: EXECUTED
 
-//# run --signers alice
-script {
-    use creator::TestPlugin;
-    
-    fun main(sender: signer) {
-        TestPlugin::publish_version(sender);
-    }
-}
-// check: EXECUTED
-
 //# run --signers bob
 script {
+    use StarcoinFramework::DAOPluginMarketplace;
     use creator::TestPlugin;
     
     fun main(sender: signer) {
-        TestPlugin::publish_version(sender);
+        DAOPluginMarketplace::star_plugin<TestPlugin::TestPlugin>(
+            &sender,
+        );
     }
 }
 // check: EXECUTED

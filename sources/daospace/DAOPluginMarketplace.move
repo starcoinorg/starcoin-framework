@@ -27,14 +27,17 @@ module StarcoinFramework::DAOPluginMarketplace {
     }
     
     struct Star has store {
-        addr: address, //Star's wallet address, which can be a short address, such as zhangsan.stc
+        user: address, //Star's wallet address, which can be a short address, such as zhangsan.stc
+        star: u8, // Star value
         created_at: u64, //creation time
+        updated_at: u64, //update time
     }
     
     struct Comment has store {
         addr: address, //The commenter's wallet address, which can be a short address, such as zhangsan.stc
         content: vector<u8>, //comments
         created_at: u64, //creation time
+        updated_at: u64, //update time
     }
     
     struct PluginRegistry has key, store {
@@ -79,7 +82,7 @@ module StarcoinFramework::DAOPluginMarketplace {
         version_number
     }
 
-    fun has_plugin_nft(sender_addr: address, plugin_id: u64): bool {
+    fun has_plugin_owner_nft(sender_addr: address, plugin_id: u64): bool {
         if (!NFTGallery::is_accept<PluginOwnerNFTMeta, PluginOwnerNFTBody>(sender_addr)) {
             return false
         };
@@ -106,15 +109,15 @@ module StarcoinFramework::DAOPluginMarketplace {
         }
     }
 
-    fun ensure_exists_plugin_nft(sender_addr: address, plugin_id: u64) {
-        assert!(has_plugin_nft(sender_addr, plugin_id), Errors::invalid_state(ERR_EXPECT_PLUGIN_NFT));
+    fun ensure_exists_plugin_owner_nft(sender_addr: address, plugin_id: u64) {
+        assert!(has_plugin_owner_nft(sender_addr, plugin_id), Errors::invalid_state(ERR_EXPECT_PLUGIN_NFT));
     }
 
     public fun initialize() {
         assert!(!exists<PluginRegistry>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
         let signer = GenesisSignerCapability::get_genesis_signer();
 
-        let nft_name = b"PO";
+        let nft_name = b"PluginOwnerNFT";
         let nft_image = b"SVG image";
         let nft_description = b"The plugin owner NFT";
         let basemeta = NFT::new_meta_with_image_data(nft_name, nft_image, nft_description);
@@ -166,7 +169,6 @@ module StarcoinFramework::DAOPluginMarketplace {
 
     public fun publish_plugin_version<PluginT>(
         sender: &signer, 
-        plugin_id:u64, 
         version: vector<u8>,
         required_caps: vector<vector<u8>>,
         export_caps: vector<vector<u8>>, 
@@ -175,9 +177,8 @@ module StarcoinFramework::DAOPluginMarketplace {
         contract_module: vector<u8>, 
         js_entry_uri: vector<u8>, 
     ) acquires PluginEntry {
-        ensure_exists_plugin_nft(Signer::address_of(sender), plugin_id);
-
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
+        ensure_exists_plugin_owner_nft(Signer::address_of(sender), plugin.id);
         
         let version_number = next_plugin_version_number(plugin);
         Vector::push_back<PluginVersion>(&mut plugin.versions, PluginVersion{
@@ -193,6 +194,30 @@ module StarcoinFramework::DAOPluginMarketplace {
         });
 
         plugin.updated_at = Timestamp::now_milliseconds();
+    }
+
+    public fun star_plugin<PluginT>(sender: &signer) acquires PluginEntry {
+        let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
+
+        let sender_addr = Signer::address_of(sender);
+ 
+        let len = Vector::length(&plugin.stars);
+        let idx = 0;
+        while (idx < len) {
+            let star = Vector::borrow_mut(&mut plugin.stars, idx);
+            if (star.user == sender_addr) {
+                return
+            };
+
+            idx = idx + 1;
+        };
+
+        Vector::push_back<Star>(&mut plugin.stars, Star{
+            user: sender_addr,
+            star: 1,
+            created_at: Timestamp::now_milliseconds(),
+            updated_at: Timestamp::now_milliseconds(),
+        });
     }
 
     public fun exists_plugin_version<PluginT>(

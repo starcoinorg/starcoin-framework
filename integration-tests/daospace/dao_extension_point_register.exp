@@ -1,27 +1,27 @@
 processed 10 tasks
 
-task 4 'run'. lines 29-37:
+task 4 'run'. lines 26-34:
 {
   "gas_used": 149986,
   "status": "Executed"
 }
 
-task 5 'run'. lines 39-47:
+task 5 'run'. lines 36-44:
 {
-  "gas_used": 215347,
+  "gas_used": 220665,
   "status": "Executed"
 }
 
-task 6 'view'. lines 49-49:
+task 6 'view'. lines 46-46:
 store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
     next_id: 2
 }
 
-task 7 'view'. lines 51-51:
-store key 0x00000000000000000000000000000001::DAOExtensionPoint::ExtensionPoint<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::ExtInfo> {
+task 7 'view'. lines 48-48:
+store key 0x00000000000000000000000000000001::DAOExtensionPoint::ExtensionPoint<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::TestExtentionPoint> {
     id: 1
     name: 54657374457874656e74696f6e506f696e74
-    describe: 697066733a2f2f6465736372697074696f6e
+    description: 697066733a2f2f6465736372697074696f6e
     next_version_number: 2
     versions: [
         store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
@@ -31,15 +31,13 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::ExtensionPoint<
             created_at: 10000
         },
     ]
-    ext: copy drop store 0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::ExtInfo {
-        dummy_field: false
-    }
     created_at: 10000
+    updated_at: 10000
 }
 
-task 8 'run'. lines 53-61:
+task 8 'run'. lines 50-58:
 {
-  "gas_used": 18064,
+  "gas_used": 17428,
   "status": {
     "MoveAbort": {
       "location": {
@@ -53,11 +51,11 @@ task 8 'run'. lines 53-61:
   }
 }
 
-task 9 'view'. lines 63-63:
-store key 0x00000000000000000000000000000001::DAOExtensionPoint::ExtensionPoint<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::ExtInfo> {
+task 9 'view'. lines 60-60:
+store key 0x00000000000000000000000000000001::DAOExtensionPoint::ExtensionPoint<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::TestExtentionPoint> {
     id: 1
     name: 54657374457874656e74696f6e506f696e74
-    describe: 697066733a2f2f6465736372697074696f6e
+    description: 697066733a2f2f6465736372697074696f6e
     next_version_number: 2
     versions: [
         store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
@@ -67,8 +65,6 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::ExtensionPoint<
             created_at: 10000
         },
     ]
-    ext: copy drop store 0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::ExtInfo {
-        dummy_field: false
-    }
     created_at: 10000
+    updated_at: 10000
 }

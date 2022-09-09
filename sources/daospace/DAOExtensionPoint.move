@@ -25,13 +25,12 @@ module StarcoinFramework::DAOExtensionPoint {
        next_id: u64,
     }
 
-    struct ExtensionPoint<ExtInfo: store> has key, store  {
+    struct ExtensionPoint<phantom ExtPointT> has key, store  {
        id: u64,
        name: vector<u8>,
        description: vector<u8>,
        next_version_number: u64,
        versions: vector<Version>,
-       ext: ExtInfo,
        created_at: u64,
        updated_at: u64,
     }
@@ -95,7 +94,7 @@ module StarcoinFramework::DAOExtensionPoint {
         assert!(!exists<Registry>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
         let signer = GenesisSignerCapability::get_genesis_signer();
 
-        let nft_name = b"EPO";
+        let nft_name = b"ExtPointOwnerNFT";
         let nft_image = b"SVG image";
         let nft_description = b"The extension point owner NFT";
         let basemeta = NFT::new_meta_with_image_data(nft_name, nft_image, nft_description);
@@ -113,8 +112,8 @@ module StarcoinFramework::DAOExtensionPoint {
         });
     }
 
-    public fun register<ExtInfo: store>(sender: &signer, name: vector<u8>, description: vector<u8>, types_d_ts:vector<u8>, dts_doc:vector<u8>, extInfo: ExtInfo):u64 acquires Registry, NFTMintCapHolder {
-        assert!(!exists<ExtensionPoint<ExtInfo>>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_REGISTERED));
+    public fun register<ExtPointT: store>(sender: &signer, name: vector<u8>, description: vector<u8>, types_d_ts:vector<u8>, dts_doc:vector<u8>):u64 acquires Registry, NFTMintCapHolder {
+        assert!(!exists<ExtensionPoint<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_REGISTERED));
         let registry = borrow_global_mut<Registry>(CoreAddresses::GENESIS_ADDRESS());
         let extpoint_id = next_extpoint_id(registry);
 
@@ -126,13 +125,12 @@ module StarcoinFramework::DAOExtensionPoint {
         };
 
         let genesis_account = GenesisSignerCapability::get_genesis_signer();
-        move_to(&genesis_account, ExtensionPoint<ExtInfo>{
+        move_to(&genesis_account, ExtensionPoint<ExtPointT>{
             id: extpoint_id, 
             name: name,
             description: description,
             next_version_number: 2,
             versions: Vector::singleton<Version>(version), 
-            ext: extInfo,
             created_at: Timestamp::now_milliseconds(),
             updated_at: Timestamp::now_milliseconds(),
         });
@@ -150,15 +148,14 @@ module StarcoinFramework::DAOExtensionPoint {
         extpoint_id
     }
 
-    public fun publish_version<ExtInfo: store>(
+    public fun publish_version<ExtPointT: store>(
         sender: &signer, 
-        extp_id: u64,
         types_d_ts:vector<u8>,
         dts_doc: vector<u8>, 
     ) acquires ExtensionPoint {
-        ensure_exists_extpoint_nft(Signer::address_of(sender), extp_id);
+        let extp = borrow_global_mut<ExtensionPoint<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
+        ensure_exists_extpoint_nft(Signer::address_of(sender), extp.id);
 
-        let extp = borrow_global_mut<ExtensionPoint<ExtInfo>>(CoreAddresses::GENESIS_ADDRESS());
         let number = next_extpoint_version_number(extp);
 
         Vector::push_back<Version>(&mut extp.versions, Version{

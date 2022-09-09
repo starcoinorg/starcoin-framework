@@ -8,20 +8,17 @@
 module creator::TestExtentionPoint {
     use StarcoinFramework::DAOExtensionPoint;
 
-    struct ExtInfo has store, copy, drop {}
+    struct TestExtentionPoint has store, copy, drop {}
 
     const NAME: vector<u8> = b"TestExtentionPoint";
 
-    /// directly upgrade the sender account to DAOAccount and create DAO
     public(script) fun initialize(sender: signer) {
-        let extInfo = ExtInfo{};
-        DAOExtensionPoint::register<ExtInfo>(
+        DAOExtensionPoint::register<TestExtentionPoint>(
             &sender,
             NAME, 
             b"ipfs://description",
             b"ipfs://protobuf",
             b"ipfs://pb_doc",
-            extInfo,
         );
     }
 }
@@ -48,7 +45,7 @@ script {
 
 //# view --address Genesis --resource 0x1::DAOExtensionPoint::Registry
 
-//# view --address Genesis --resource 0x1::DAOExtensionPoint::ExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::ExtInfo>
+//# view --address Genesis --resource 0x1::DAOExtensionPoint::ExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::TestExtentionPoint>
 
 //# run --signers creator
 script {
@@ -60,4 +57,4 @@ script {
 }
 // check: EXECUTED
 
-//# view --address Genesis --resource 0x1::DAOExtensionPoint::ExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::ExtInfo>
+//# view --address Genesis --resource 0x1::DAOExtensionPoint::ExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::TestExtentionPoint>

@@ -1,20 +1,20 @@
-processed 11 tasks
+processed 10 tasks
 
-task 6 'run'. lines 63-71:
+task 6 'run'. lines 45-53:
 {
   "gas_used": 149256,
   "status": "Executed"
 }
 
-task 7 'run'. lines 73-81:
+task 7 'run'. lines 55-63:
 {
   "gas_used": 206625,
   "status": "Executed"
 }
 
-task 8 'run'. lines 83-91:
+task 8 'run'. lines 65-73:
 {
-  "gas_used": 41041,
+  "gas_used": 43555,
   "status": {
     "MoveAbort": {
       "location": {
@@ -28,24 +28,8 @@ task 8 'run'. lines 83-91:
   }
 }
 
-task 9 'run'. lines 93-101:
+task 9 'run'. lines 75-83:
 {
-  "gas_used": 101414,
+  "gas_used": 106949,
   "status": "Executed"
-}
-
-task 10 'run'. lines 103-111:
-{
-  "gas_used": 70090,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOPluginMarketplace"
-        }
-      },
-      "abort_code": "26369"
-    }
-  }
 }
