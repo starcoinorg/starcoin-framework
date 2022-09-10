@@ -10,6 +10,7 @@
 
 //# publish
 module creator::TestPlugin {
+    use StarcoinFramework::Option;
     use StarcoinFramework::DAOPluginMarketplace;
 
     struct TestPlugin has store, copy, drop {}
@@ -22,6 +23,7 @@ module creator::TestPlugin {
             &sender,
             NAME, 
             b"ipfs://description",
+            Option::none(),
         );
     }
 }
@@ -69,6 +71,8 @@ script {
 
 //# publish
 module creator::TestPlugin2 {
+    use StarcoinFramework::Option;
+    use StarcoinFramework::Vector;
     use StarcoinFramework::DAOPluginMarketplace;
 
     struct TestPlugin2 has store, copy, drop {}
@@ -77,10 +81,15 @@ module creator::TestPlugin2 {
 
     /// directly upgrade the sender account to DAOAccount and create DAO
     public(script) fun register(sender: signer) {
+        let labels = Vector::empty<vector<u8>>();
+        Vector::push_back<vector<u8>>(&mut labels, b"OS=Starcoin");
+        Vector::push_back<vector<u8>>(&mut labels, b"Store=IPFS");
+
         DAOPluginMarketplace::register_plugin<TestPlugin2>(
             &sender,
             NAME, 
             b"ipfs://description",
+            Option::some(labels),
         );
     }
 }
@@ -94,6 +103,8 @@ script {
     }
 }
 // check: EXECUTED
+
+//# view --address Genesis --resource 0x1::DAOPluginMarketplace::PluginEntry<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestPlugin2::TestPlugin2>
 
 //# run --signers alice
 script {

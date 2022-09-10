@@ -10,6 +10,7 @@
 
 //# publish
 module creator::TestPlugin {
+    use StarcoinFramework::Option;
     use StarcoinFramework::Vector;
     use StarcoinFramework::DAOPluginMarketplace;
 
@@ -22,6 +23,7 @@ module creator::TestPlugin {
             &sender,
             NAME, 
             b"ipfs://description",
+            Option::none(),
         );
     }
 

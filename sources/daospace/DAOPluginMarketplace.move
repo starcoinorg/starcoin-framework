@@ -7,6 +7,7 @@ module StarcoinFramework::DAOPluginMarketplace {
     use StarcoinFramework::Vector;
     use StarcoinFramework::NFT;
     use StarcoinFramework::NFTGallery;
+    use StarcoinFramework::Option::{Self, Option};
 
     const ERR_ALREADY_INITIALIZED: u64 = 100;
     const ERR_NOT_CONTRACT_OWNER: u64 = 101;
@@ -36,7 +37,7 @@ module StarcoinFramework::DAOPluginMarketplace {
         id: u64, //Plugin ID
         name: vector<u8>, //plugin name
         description: vector<u8>, //Plugin description
-        git_repo: vector<u8>, //git repository code
+        labels: vector<vector<u8>>, //Plugin label
         next_version_number: u64, //next version number
         versions: vector<PluginVersion>, //All versions of the plugin
         star_count: u64, //Star count
@@ -127,17 +128,24 @@ module StarcoinFramework::DAOPluginMarketplace {
         });
     }
 
-    public fun register_plugin<PluginT: store>(sender: &signer, name: vector<u8>, description: vector<u8>): u64 acquires PluginRegistry, PluginOwnerNFTMintCapHolder {
+    public fun register_plugin<PluginT: store>(sender: &signer, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>): u64 acquires PluginRegistry, PluginOwnerNFTMintCapHolder {
         assert!(!exists<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_PLUGIN_ALREADY_EXISTS));
         let plugin_registry = borrow_global_mut<PluginRegistry>(CoreAddresses::GENESIS_ADDRESS());
         let plugin_id = next_plugin_id(plugin_registry);
 
         let genesis_account = GenesisSignerCapability::get_genesis_signer();
+
+        let labels = if(Option::is_some(&option_labels)){
+            Option::destroy_some(option_labels)
+        } else {
+            Vector::empty<vector<u8>>()
+        };
+
         move_to(&genesis_account, PluginEntry<PluginT>{
             id: plugin_id, 
             name: name, 
             description: description,
-            git_repo: Vector::empty<u8>(),
+            labels: labels,
             next_version_number: 1,
             versions: Vector::empty<PluginVersion>(), 
             star_count: 0,
