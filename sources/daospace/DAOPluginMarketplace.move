@@ -8,6 +8,8 @@ module StarcoinFramework::DAOPluginMarketplace {
     use StarcoinFramework::NFT;
     use StarcoinFramework::NFTGallery;
     use StarcoinFramework::Option::{Self, Option};
+    use StarcoinFramework::Event;
+    use StarcoinFramework::TypeInfo::{Self, TypeInfo};
 
     const ERR_ALREADY_INITIALIZED: u64 = 100;
     const ERR_NOT_CONTRACT_OWNER: u64 = 101;
@@ -106,6 +108,48 @@ module StarcoinFramework::DAOPluginMarketplace {
         assert!(has_plugin_owner_nft(sender_addr, plugin_id), Errors::invalid_state(ERR_EXPECT_PLUGIN_NFT));
     }
 
+    /// registry event handlers
+    struct RegistryEventHandlers has key, store{
+        register: Event::EventHandle<PluginRegisterEvent>,
+    }
+
+    struct PluginRegisterEvent has drop, store{
+        id: u64,
+        type: TypeInfo,
+        name: vector<u8>,
+        description:vector<u8>,
+        labels: vector<vector<u8>>
+    }
+
+    /// plugin event handlers
+    struct PluginEventHandlers<phantom PluginT> has key, store{
+        publish_version: Event::EventHandle<PluginPublishVersionEvent<PluginT>>,
+        star: Event::EventHandle<StarPluginEvent<PluginT>>,
+        unstar: Event::EventHandle<UnstarPluginEvent<PluginT>>,
+        update_plugin: Event::EventHandle<UpdatePluginInfoEvent<PluginT>>,
+    }
+
+    struct PluginPublishVersionEvent<phantom PluginT> has drop, store{
+        sender: address,
+        version_number: u64,
+    }
+
+    struct StarPluginEvent<phantom PluginT> has drop, store{
+        sender: address,
+    }
+
+    struct UnstarPluginEvent<phantom PluginT> has drop, store{
+        sender: address,
+    }
+
+    struct UpdatePluginInfoEvent<phantom PluginT> has drop, store{
+        sender: address,
+        id: u64,
+        name: vector<u8>,
+        description:vector<u8>,
+        labels: vector<vector<u8>>
+    }
+
     public fun initialize() {
         assert!(!exists<PluginRegistry>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
         let signer = GenesisSignerCapability::get_genesis_signer();
@@ -126,9 +170,14 @@ module StarcoinFramework::DAOPluginMarketplace {
         move_to(&signer, PluginRegistry{
             next_plugin_id: 1,
         });
+
+        move_to(&signer, RegistryEventHandlers {
+            register: Event::new_event_handle<PluginRegisterEvent>(&signer),
+        });
     }
 
-    public fun register_plugin<PluginT: store>(sender: &signer, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>): u64 acquires PluginRegistry, PluginOwnerNFTMintCapHolder {
+    public fun register_plugin<PluginT: store>(sender: &signer, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>): u64 
+        acquires PluginRegistry, PluginOwnerNFTMintCapHolder, RegistryEventHandlers {
         assert!(!exists<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_PLUGIN_ALREADY_EXISTS));
         let plugin_registry = borrow_global_mut<PluginRegistry>(CoreAddresses::GENESIS_ADDRESS());
         let plugin_id = next_plugin_id(plugin_registry);
@@ -142,10 +191,10 @@ module StarcoinFramework::DAOPluginMarketplace {
         };
 
         move_to(&genesis_account, PluginEntry<PluginT>{
-            id: plugin_id, 
-            name: name, 
-            description: description,
-            labels: labels,
+            id: copy plugin_id, 
+            name: copy name, 
+            description: copy description,
+            labels: copy labels,
             next_version_number: 1,
             versions: Vector::empty<PluginVersion>(), 
             star_count: 0,
@@ -153,15 +202,34 @@ module StarcoinFramework::DAOPluginMarketplace {
             updated_at: Timestamp::now_milliseconds(),
         });
 
+        move_to(&genesis_account, PluginEventHandlers<PluginT>{
+            publish_version: Event::new_event_handle<PluginPublishVersionEvent<PluginT>>(&genesis_account),
+            star: Event::new_event_handle<StarPluginEvent<PluginT>>(&genesis_account),
+            unstar: Event::new_event_handle<UnstarPluginEvent<PluginT>>(&genesis_account),
+            update_plugin: Event::new_event_handle<UpdatePluginInfoEvent<PluginT>>(&genesis_account),
+        });
+
         // grant owner NFT to sender
         let nft_mint_cap = borrow_global_mut<PluginOwnerNFTMintCapHolder>(CoreAddresses::GENESIS_ADDRESS());
         let meta = PluginOwnerNFTMeta{
             registry_address: CoreAddresses::GENESIS_ADDRESS(),
-            plugin_id: plugin_id,
+            plugin_id: copy plugin_id,
         };
 
         let nft = NFT::mint_with_cap_v2(CoreAddresses::GENESIS_ADDRESS(), &mut nft_mint_cap.cap, *&nft_mint_cap.nft_metadata, meta, PluginOwnerNFTBody{});
         NFTGallery::deposit(sender, nft);
+
+        // registry register event emit
+        let registry_event_handlers = borrow_global_mut<RegistryEventHandlers>(CoreAddresses::GENESIS_ADDRESS());
+        Event::emit_event(&mut registry_event_handlers.register,
+            PluginRegisterEvent {
+                id: copy plugin_id,
+                type: TypeInfo::type_of<PluginT>(),
+                name: copy name,
+                description: copy description,
+                labels: copy labels,
+            },
+        );
 
         plugin_id
     }
@@ -179,13 +247,14 @@ module StarcoinFramework::DAOPluginMarketplace {
         depend_extpoints: vector<vector<u8>>,
         contract_module: vector<u8>, 
         js_entry_uri: vector<u8>, 
-    ) acquires PluginEntry {
+    ) acquires PluginEntry, PluginEventHandlers {
+        let sender_addr = Signer::address_of(sender);
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
-        ensure_exists_plugin_owner_nft(Signer::address_of(sender), plugin.id);
+        ensure_exists_plugin_owner_nft(copy sender_addr, plugin.id);
         
         let version_number = next_plugin_version_number(plugin);
         Vector::push_back<PluginVersion>(&mut plugin.versions, PluginVersion{
-            number: version_number,
+            number: copy version_number,
             version: version,
             required_caps: required_caps,
             export_caps: export_caps,
@@ -197,6 +266,15 @@ module StarcoinFramework::DAOPluginMarketplace {
         });
 
         plugin.updated_at = Timestamp::now_milliseconds();
+
+        // plugin register event emit
+        let plugin_event_handlers = borrow_global_mut<PluginEventHandlers<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
+        Event::emit_event(&mut plugin_event_handlers.publish_version,
+            PluginPublishVersionEvent {
+                sender: copy sender_addr,
+                version_number: copy version_number,
+            },
+        );
     }
 
     public fun exists_plugin_version<PluginT>(
@@ -206,7 +284,7 @@ module StarcoinFramework::DAOPluginMarketplace {
         return version_number > 0 && version_number < plugin.next_version_number
     }
 
-    public fun star_plugin<PluginT>(sender: &signer) acquires PluginEntry {
+    public fun star_plugin<PluginT>(sender: &signer) acquires PluginEntry, PluginEventHandlers {
         let sender_addr = Signer::address_of(sender);
         assert!(!exists<Star<PluginT>>(sender_addr), Errors::invalid_state(ERR_STAR_ALREADY_STARED));
 
@@ -218,9 +296,17 @@ module StarcoinFramework::DAOPluginMarketplace {
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
         plugin.star_count = plugin.star_count + 1;
         plugin.updated_at = Timestamp::now_milliseconds();
+
+        // star plugin event emit
+        let plugin_event_handlers = borrow_global_mut<PluginEventHandlers<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
+        Event::emit_event(&mut plugin_event_handlers.star,
+            StarPluginEvent {
+                sender: sender_addr,
+            },
+        );
     }
 
-    public fun unstar_plugin<PluginT>(sender: &signer) acquires PluginEntry, Star {
+    public fun unstar_plugin<PluginT>(sender: &signer) acquires PluginEntry, Star, PluginEventHandlers {
         let sender_addr = Signer::address_of(sender);
         assert!(exists<Star<PluginT>>(sender_addr), Errors::invalid_state(ERR_STAR_NOT_FOUND_STAR));
 
@@ -230,6 +316,14 @@ module StarcoinFramework::DAOPluginMarketplace {
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
         plugin.star_count = plugin.star_count - 1;
         plugin.updated_at = Timestamp::now_milliseconds();
+
+        // unstar plugin event emit
+        let plugin_event_handlers = borrow_global_mut<PluginEventHandlers<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
+        Event::emit_event(&mut plugin_event_handlers.unstar,
+            UnstarPluginEvent {
+                sender: sender_addr,
+            },
+        );
     }
 
     public fun has_star_plugin<PluginT>(sender: &signer): bool {
@@ -237,9 +331,10 @@ module StarcoinFramework::DAOPluginMarketplace {
         return exists<Star<PluginT>>(sender_addr)
     }
 
-    public fun update_plugin<PluginT>(sender: &signer, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>) acquires PluginEntry {
+    public fun update_plugin<PluginT>(sender: &signer, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>) acquires PluginEntry, PluginEventHandlers {
+        let sender_addr = Signer::address_of(sender);
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
-        ensure_exists_plugin_owner_nft(Signer::address_of(sender), plugin.id);
+        ensure_exists_plugin_owner_nft(sender_addr, plugin.id);
 
         plugin.name = name;
         plugin.description = description;
@@ -249,6 +344,18 @@ module StarcoinFramework::DAOPluginMarketplace {
         };
 
         plugin.updated_at = Timestamp::now_milliseconds();
+
+        // update plugin event emit
+        let plugin_event_handlers = borrow_global_mut<PluginEventHandlers<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
+        Event::emit_event(&mut plugin_event_handlers.update_plugin,
+            UpdatePluginInfoEvent {
+                sender: sender_addr,
+                id: *&plugin.id,
+                name: *&plugin.name,
+                description: *&plugin.description,
+                labels: *&plugin.labels,
+            },
+        );
     }
 }
 
