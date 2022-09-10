@@ -236,6 +236,20 @@ module StarcoinFramework::DAOPluginMarketplace {
         let sender_addr = Signer::address_of(sender);
         return exists<Star<PluginT>>(sender_addr)
     }
+
+    public fun update_plugin<PluginT>(sender: &signer, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>) acquires PluginEntry {
+        let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
+        ensure_exists_plugin_owner_nft(Signer::address_of(sender), plugin.id);
+
+        plugin.name = name;
+        plugin.description = description;
+
+        if(Option::is_some(&option_labels)){
+            plugin.labels = Option::destroy_some(option_labels);
+        };
+
+        plugin.updated_at = Timestamp::now_milliseconds();
+    }
 }
 
 module StarcoinFramework::DAOPluginMarketplaceScript {
