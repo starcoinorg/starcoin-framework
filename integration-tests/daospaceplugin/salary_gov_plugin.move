@@ -356,3 +356,26 @@ script {
     }
 }
 // check: EXECUTED
+
+//# run --signers acting_boss
+script {
+    use creator::XDAO::XDAO;
+    use creator::SalaryGovPlugin;
+
+    fun main(sender: signer) {
+        SalaryGovPlugin::burn_boss_cap<XDAO>(sender);
+    }
+}
+// check: EXECUTED
+
+//# run --signers acting_boss
+script {
+    use creator::XDAO::XDAO;
+    use creator::SalaryGovPlugin;
+    use StarcoinFramework::STC::STC;
+
+    fun main(sender: signer) {
+        SalaryGovPlugin::increase_salary<XDAO, STC>(sender, @alice, 20000u128);
+    }
+}
+// check: ABORT, reason: acting_boss has no boss_cap anymore.

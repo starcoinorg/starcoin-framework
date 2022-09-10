@@ -1,4 +1,4 @@
-processed 19 tasks
+processed 21 tasks
 
 task 7 'run'. lines 229-238:
 {
@@ -56,4 +56,26 @@ task 18 'run'. lines 342-358:
 {
   "gas_used": 291420,
   "status": "Executed"
+}
+
+task 19 'run'. lines 360-369:
+{
+  "gas_used": 25017,
+  "status": "Executed"
+}
+
+task 20 'run'. lines 371-381:
+{
+  "gas_used": 22142,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x662ba5a1a1da0f1c70a9762c7eeb7aaf",
+          "name": "SalaryGovPlugin"
+        }
+      },
+      "abort_code": "257025"
+    }
+  }
 }
