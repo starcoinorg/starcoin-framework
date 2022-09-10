@@ -1,25 +1,43 @@
-processed 40 tasks
+processed 19 tasks
 
-task 7 'run'. lines 57-66:
+task 7 'run'. lines 229-238:
 {
-  "gas_used": 1125329,
+  "gas_used": 1147505,
   "status": "Executed"
 }
 
-task 8 'run'. lines 69-84:
+task 8 'run'. lines 241-249:
 {
-  "gas_used": 280768,
+  "gas_used": 44618,
   "status": "Executed"
 }
 
-task 9 'run'. lines 87-97:
+task 10 'run'. lines 254-269:
+{
+  "gas_used": 279652,
+  "status": "Executed"
+}
+
+task 11 'run'. lines 272-283:
+{
+  "gas_used": 393187,
+  "status": "Executed"
+}
+
+task 13 'run'. lines 288-304:
+{
+  "gas_used": 291420,
+  "status": "Executed"
+}
+
+task 14 'run'. lines 307-317:
 {
   "gas_used": 22142,
   "status": {
     "MoveAbort": {
       "location": {
         "Module": {
-          "address": "0x00000000000000000000000000000001",
+          "address": "0x662ba5a1a1da0f1c70a9762c7eeb7aaf",
           "name": "SalaryGovPlugin"
         }
       },
@@ -28,217 +46,14 @@ task 9 'run'. lines 87-97:
   }
 }
 
-task 13 'run'. lines 105-116:
+task 16 'run'. lines 321-338:
 {
-  "gas_used": 101440,
+  "gas_used": 454361,
   "status": "Executed"
 }
 
-task 16 'run'. lines 122-131:
+task 18 'run'. lines 342-358:
 {
-  "gas_used": 575872,
+  "gas_used": 291420,
   "status": "Executed"
-}
-
-task 17 'run'. lines 133-153:
-{
-  "gas_used": 434045,
-  "status": "Executed"
-}
-
-task 19 'call'. lines 157-157:
-"0x2b0563c31d96e57f92102e012c80c333/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::XDAO::XDAO>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::XDAO::XDAO>>"
-
-task 21 'run'. lines 161-175:
-{
-  "gas_used": 7952935,
-  "status": "Executed"
-}
-
-task 23 'run'. lines 179-203:
-{
-  "gas_used": 91467,
-  "status": {
-    "MoveAbort": {
-      "location": "Script",
-      "abort_code": "105"
-    }
-  }
-}
-
-task 25 'run'. lines 207-224:
-warning[W09001]: unused alias
-    ┌─ C:\Users\Joker\AppData\Local\Temp\.tmpmV4L56:211:28
-    │
-211 │     use StarcoinFramework::Account;
-    │                            ^^^^^^^ Unused 'use' of alias 'Account'. Consider removing it
-
-warning[W09001]: unused alias
-    ┌─ C:\Users\Joker\AppData\Local\Temp\.tmpmV4L56:212:28
-    │
-212 │     use StarcoinFramework::Signer;
-    │                            ^^^^^^ Unused 'use' of alias 'Signer'. Consider removing it
-
-warning[W09001]: unused alias
-    ┌─ C:\Users\Joker\AppData\Local\Temp\.tmpmV4L56:213:28
-    │
-213 │     use StarcoinFramework::Token;
-    │                            ^^^^^ Unused 'use' of alias 'Token'. Consider removing it
-
-{
-  "gas_used": 63789,
-  "status": {
-    "MoveAbort": {
-      "location": "Script",
-      "abort_code": "106"
-    }
-  }
-}
-
-task 27 'run'. lines 228-243:
-{
-  "gas_used": 280768,
-  "status": "Executed"
-}
-
-task 28 'run'. lines 245-256:
-{
-  "gas_used": 22142,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "SalaryGovPlugin"
-        }
-      },
-      "abort_code": "257025"
-    }
-  }
-}
-
-task 30 'run'. lines 260-272:
-warning[W09001]: unused alias
-    ┌─ C:\Users\Joker\AppData\Local\Temp\.tmp9DEOPx:265:28
-    │
-265 │     use StarcoinFramework::Account;
-    │                            ^^^^^^^ Unused 'use' of alias 'Account'. Consider removing it
-
-{
-  "gas_used": 34490,
-  "status": "Executed"
-}
-
-task 31 'run'. lines 274-285:
-{
-  "gas_used": 22142,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "SalaryGovPlugin"
-        }
-      },
-      "abort_code": "257025"
-    }
-  }
-}
-
-task 32 'run'. lines 287-298:
-{
-  "gas_used": 22142,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "SalaryGovPlugin"
-        }
-      },
-      "abort_code": "257025"
-    }
-  }
-}
-
-task 33 'run'. lines 300-318:
-{
-  "gas_used": 29978,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "SalaryGovPlugin"
-        }
-      },
-      "abort_code": "257025"
-    }
-  }
-}
-
-task 35 'run'. lines 322-339:
-warning[W09002]: unused variable
-    ┌─ C:\Users\Joker\AppData\Local\Temp\.tmp3rgIln:329:14
-    │
-329 │     fun main(sender: signer) {
-    │              ^^^^^^ Unused parameter 'sender'. Consider removing or prefixing with an underscore: '_sender'
-
-{
-  "gas_used": 243547,
-  "status": {
-    "MoveAbort": {
-      "location": "Script",
-      "abort_code": "101"
-    }
-  }
-}
-
-task 36 'run'. lines 341-351:
-{
-  "gas_used": 22142,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "SalaryGovPlugin"
-        }
-      },
-      "abort_code": "257025"
-    }
-  }
-}
-
-task 37 'run'. lines 353-363:
-{
-  "gas_used": 22142,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "SalaryGovPlugin"
-        }
-      },
-      "abort_code": "257025"
-    }
-  }
-}
-
-task 39 'run'. lines 367-384:
-warning[W09002]: unused variable
-    ┌─ C:\Users\Joker\AppData\Local\Temp\.tmprL8FsD:374:14
-    │
-374 │     fun main(sender: signer) {
-    │              ^^^^^^ Unused parameter 'sender'. Consider removing or prefixing with an underscore: '_sender'
-
-{
-  "gas_used": 243551,
-  "status": {
-    "MoveAbort": {
-      "location": "Script",
-      "abort_code": "101"
-    }
-  }
 }
