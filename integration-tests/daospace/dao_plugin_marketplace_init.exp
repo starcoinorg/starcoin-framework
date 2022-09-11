@@ -1,17 +1,12 @@
-processed 6 tasks
+processed 5 tasks
 
 task 3 'run'. lines 7-15:
 {
-  "gas_used": 177448,
+  "gas_used": 176645,
   "status": "Executed"
 }
 
-task 4 'view'. lines 17-17:
-store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
-    next_id: 1
-}
-
-task 5 'run'. lines 19-27:
+task 4 'run'. lines 17-25:
 {
   "gas_used": 15477,
   "status": {
@@ -19,7 +14,7 @@ task 5 'run'. lines 19-27:
       "location": {
         "Module": {
           "address": "0x00000000000000000000000000000001",
-          "name": "DAOExtensionPoint"
+          "name": "DAOPluginMarketplace"
         }
       },
       "abort_code": "25606"

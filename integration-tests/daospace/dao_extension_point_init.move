@@ -8,8 +8,8 @@
 script {
     use StarcoinFramework::DAOExtensionPointScript;
 
-    fun main(sender: signer) {
-        DAOExtensionPointScript::initialize(sender);
+    fun main(_sender: signer) {
+        DAOExtensionPointScript::initialize();
     }
 }
 // check: EXECUTED
@@ -20,19 +20,10 @@ script {
 script {
     use StarcoinFramework::DAOExtensionPointScript;
 
-    fun main(sender: signer) {
-        DAOExtensionPointScript::initialize(sender);
+    fun main(_sender: signer) {
+        DAOExtensionPointScript::initialize();
     }
 }
 // check: EXECUTED
 
-//# run --signers bob
-script {
-    use StarcoinFramework::DAOExtensionPointScript;
-
-    fun main(sender: signer) {
-        DAOExtensionPointScript::initialize(sender);
-    }
-}
-// check: EXECUTED
 

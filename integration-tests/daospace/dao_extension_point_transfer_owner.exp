@@ -1,0 +1,167 @@
+processed 18 tasks
+
+task 6 'run'. lines 32-40:
+{
+  "gas_used": 177448,
+  "status": "Executed"
+}
+
+task 7 'run'. lines 42-50:
+{
+  "gas_used": 369697,
+  "status": "Executed"
+}
+
+task 8 'run'. lines 52-71:
+{
+  "gas_used": 52191,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOExtensionPoint"
+        }
+      },
+      "abort_code": "26113"
+    }
+  }
+}
+
+task 9 'run'. lines 73-82:
+{
+  "gas_used": 80067,
+  "status": "Executed"
+}
+
+task 10 'view'. lines 84-84:
+store key 0x00000000000000000000000000000001::NFTGallery::NFTGallery<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta, 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTBody> {
+    withdraw_events: store 0x00000000000000000000000000000001::Event::EventHandle<0x00000000000000000000000000000001::NFTGallery::WithdrawEvent<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta>> {
+        counter: 0
+        guid: 0300000000000000b5d577dc9ce59725e29886632e69ecdf
+    }
+    deposit_events: store 0x00000000000000000000000000000001::Event::EventHandle<0x00000000000000000000000000000001::NFTGallery::DepositEvent<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta>> {
+        counter: 1
+        guid: 0400000000000000b5d577dc9ce59725e29886632e69ecdf
+    }
+    items: [
+        store 0x00000000000000000000000000000001::NFT::NFT<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta, 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTBody> {
+            creator: 1
+            id: 1
+            base_meta: copy drop store 0x00000000000000000000000000000001::NFT::Metadata {
+                name: 457874506f696e744f776e65724e4654
+                image: 
+                image_data: 53564720696d616765
+                description: 54686520657874656e73696f6e20706f696e74206f776e6572204e4654
+            }
+            type_meta: copy drop store 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta {
+                extpoint_id: 1
+                registry_address: 1
+            }
+            body: store 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTBody {
+                dummy_field: false
+            }
+        },
+    ]
+}
+
+task 11 'run'. lines 86-95:
+{
+  "gas_used": 190493,
+  "status": "Executed"
+}
+
+task 12 'view'. lines 97-97:
+store key 0x00000000000000000000000000000001::NFTGallery::NFTGallery<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta, 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTBody> {
+    withdraw_events: store 0x00000000000000000000000000000001::Event::EventHandle<0x00000000000000000000000000000001::NFTGallery::WithdrawEvent<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta>> {
+        counter: 1
+        guid: 0300000000000000b5d577dc9ce59725e29886632e69ecdf
+    }
+    deposit_events: store 0x00000000000000000000000000000001::Event::EventHandle<0x00000000000000000000000000000001::NFTGallery::DepositEvent<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta>> {
+        counter: 1
+        guid: 0400000000000000b5d577dc9ce59725e29886632e69ecdf
+    }
+    items: [
+    ]
+}
+
+task 13 'view'. lines 99-99:
+store key 0x00000000000000000000000000000001::NFTGallery::NFTGallery<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta, 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTBody> {
+    withdraw_events: store 0x00000000000000000000000000000001::Event::EventHandle<0x00000000000000000000000000000001::NFTGallery::WithdrawEvent<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta>> {
+        counter: 0
+        guid: 0300000000000000a7dcef9aef26202fce82a7c7d6672afb
+    }
+    deposit_events: store 0x00000000000000000000000000000001::Event::EventHandle<0x00000000000000000000000000000001::NFTGallery::DepositEvent<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta>> {
+        counter: 1
+        guid: 0400000000000000a7dcef9aef26202fce82a7c7d6672afb
+    }
+    items: [
+        store 0x00000000000000000000000000000001::NFT::NFT<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta, 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTBody> {
+            creator: 1
+            id: 1
+            base_meta: copy drop store 0x00000000000000000000000000000001::NFT::Metadata {
+                name: 457874506f696e744f776e65724e4654
+                image: 
+                image_data: 53564720696d616765
+                description: 54686520657874656e73696f6e20706f696e74206f776e6572204e4654
+            }
+            type_meta: copy drop store 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta {
+                extpoint_id: 1
+                registry_address: 1
+            }
+            body: store 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTBody {
+                dummy_field: false
+            }
+        },
+    ]
+}
+
+task 14 'run'. lines 101-120:
+{
+  "gas_used": 133043,
+  "status": "Executed"
+}
+
+task 15 'view'. lines 122-122:
+store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
+    next_id: 2
+}
+
+task 16 'view'. lines 124-124:
+store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::TestExtentionPoint> {
+    id: 1
+    name: 74657374
+    description: 697066733a2f2f6465736372697074696f6e32
+    labels: [
+        4f533d53746172636f696e,
+        53746f72653d49504653,
+    ]
+    next_version_number: 2
+    versions: [
+        store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
+            number: 1
+            types_d_ts: 697066733a2f2f74797065735f645f7473
+            document: 697066733a2f2f70625f646f63
+            created_at: 10000
+        },
+    ]
+    star_count: 0
+    created_at: 10000
+    updated_at: 10000
+}
+
+task 17 'run'. lines 127-143:
+{
+  "gas_used": 135577,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "NFT"
+        }
+      },
+      "abort_code": "26372"
+    }
+  }
+}

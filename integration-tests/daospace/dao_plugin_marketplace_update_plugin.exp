@@ -1,0 +1,67 @@
+processed 12 tasks
+
+task 6 'run'. lines 44-52:
+{
+  "gas_used": 176645,
+  "status": "Executed"
+}
+
+task 7 'run'. lines 54-62:
+{
+  "gas_used": 348165,
+  "status": "Executed"
+}
+
+task 8 'view'. lines 64-64:
+store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
+    id: 1
+    name: 54657374506c7567696e
+    description: 697066733a2f2f6465736372697074696f6e
+    labels: [
+    ]
+    next_version_number: 1
+    versions: [
+    ]
+    star_count: 0
+    created_at: 10000
+    updated_at: 10000
+}
+
+task 9 'run'. lines 66-74:
+{
+  "gas_used": 54505,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOPluginMarketplace"
+        }
+      },
+      "abort_code": "26369"
+    }
+  }
+}
+
+task 10 'run'. lines 76-84:
+{
+  "gas_used": 135566,
+  "status": "Executed"
+}
+
+task 11 'view'. lines 86-86:
+store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
+    id: 1
+    name: 54657374506c7567696e
+    description: 697066733a2f2f6465736372697074696f6e32
+    labels: [
+        4f533d53746172636f696e,
+        53746f72653d49504653,
+    ]
+    next_version_number: 1
+    versions: [
+    ]
+    star_count: 0
+    created_at: 10000
+    updated_at: 10000
+}
