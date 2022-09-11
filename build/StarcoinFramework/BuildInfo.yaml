@@ -253,6 +253,9 @@ compiled_package_info:
       name: StakeToSBTPlugin
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: StarcoinDAO
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: StarcoinVerifier
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -304,6 +307,9 @@ compiled_package_info:
       name: UpgradeModuleDaoProposal
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: UpgradeModulePlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: VMConfig
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -318,7 +324,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 85A801EEF07DD3D4D2CE0D7683A8168F7FCACE3C9FABDF4F93C03155DC745A4E
+  source_digest: 137027AFB512DC3047038A2F998A8D9FD0A99CC20497FDD7A733619C67D99A5B
   build_flags:
     dev_mode: false
     test_mode: false

@@ -7,6 +7,8 @@ module StarcoinFramework::DAOAccount{
     use StarcoinFramework::Version;
     use StarcoinFramework::Config;
 
+
+    friend StarcoinFramework::StarcoinDAO;
     spec module {
         pragma verify = false;
         pragma aborts_if_is_strict = true;
@@ -14,6 +16,7 @@ module StarcoinFramework::DAOAccount{
 
     const ERR_ACCOUNT_CAP_NOT_EXISTS:u64 = 100;
     const ERR_ACCOUNT_CAP_EXISTS: u64 = 101;
+    const ERR_ACCOUNT_IS_NOT_SAME:u64 = 102;
 
     /// DAOAccount
     struct DAOAccount has key{
@@ -61,11 +64,11 @@ module StarcoinFramework::DAOAccount{
         upgrade_to_dao_with_signer_cap(signer_cap)
     }
 
-     /// Upgrade the account which have the `signer_cap` to a DAO Account
+    /// Upgrade the account which have the `signer_cap` to a DAO Account
     public fun upgrade_to_dao_with_signer_cap(signer_cap: SignerCapability): DAOAccountCap {
-       let dao_signer = Account::create_signer_with_cap(&signer_cap);
-       let dao_address = Signer::address_of(&dao_signer);
- 
+        let dao_signer = Account::create_signer_with_cap(&signer_cap);
+        let dao_address = Signer::address_of(&dao_signer);
+        
         let upgrade_plan_cap = if(Config::config_exist_by_address<Version::Version>(dao_address)){
             //TODO if the account has extract the upgrade plan cap
             PackageTxnManager::extract_submit_upgrade_plan_cap(&dao_signer)
@@ -74,16 +77,26 @@ module StarcoinFramework::DAOAccount{
             PackageTxnManager::update_module_upgrade_strategy(&dao_signer, PackageTxnManager::get_strategy_two_phase(), Option::some(1));
             PackageTxnManager::extract_submit_upgrade_plan_cap(&dao_signer)
         };
+        upgrade_to_dao_with_signer_cap_and_upgrade_plan_cap(signer_cap, upgrade_plan_cap)
+    }
+
+    /// Upgrade the account which have the `signer_cap` to a DAO Account
+    public fun upgrade_to_dao_with_signer_cap_and_upgrade_plan_cap(signer_cap: SignerCapability, upgrade_plan_cap:UpgradePlanCapability): DAOAccountCap {
+        let dao_signer = Account::create_signer_with_cap(&signer_cap);
+        let dao_address = Signer::address_of(&dao_signer);
+
+        assert!(Account::signer_address(&signer_cap) == PackageTxnManager::account_address(&upgrade_plan_cap), Errors::already_published(ERR_ACCOUNT_IS_NOT_SAME));
+        
         move_to(&dao_signer, DAOAccount{
             dao_address,
             signer_cap,
             upgrade_plan_cap,
         });
-         DAOAccountCap{
+
+        DAOAccountCap{
             dao_address
         }
     }
-
     
     /// Provide a function to create signer with `DAOAccountCap`
     public fun dao_signer(cap: &DAOAccountCap): signer acquires DAOAccount {

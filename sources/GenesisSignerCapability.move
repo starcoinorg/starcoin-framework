@@ -11,7 +11,7 @@ module StarcoinFramework::GenesisSignerCapability {
     friend StarcoinFramework::DAOExtensionPoint;
     friend StarcoinFramework::DAOPluginMarketplace;
     friend StarcoinFramework::Block;
-
+    friend StarcoinFramework::DAOAccount;
 
     const ENOT_GENESIS_ACCOUNT: u64 = 11;
 

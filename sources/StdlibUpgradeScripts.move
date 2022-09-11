@@ -23,6 +23,7 @@ module StdlibUpgradeScripts {
         use StarcoinFramework::DAORegistry;
         use StarcoinFramework::DAOExtensionPoint;
         use StarcoinFramework::DAOPluginMarketplace;
+        use StarcoinFramework::StarcoinDAO;
 
         spec module {
             pragma verify = false;
@@ -110,8 +111,16 @@ module StdlibUpgradeScripts {
         public fun do_upgrade_from_v11_to_v12() {
             Block::checkpoints_init();
             DAORegistry::initialize();
+        }
+
+        public(script) fun upgrade_from_v12_to_v12_1()  {
+            do_upgrade_from_v12_to_v12_1();
+        }
+
+        public fun do_upgrade_from_v12_to_v12_1() {
             DAOExtensionPoint::initialize();
             DAOPluginMarketplace::initialize();
+            StarcoinDAO::create_dao( 60000, 120000, 10, 10000, 0);
         }
 }
 }

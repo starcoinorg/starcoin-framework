@@ -22,7 +22,8 @@ module StarcoinFramework::DAOSpace {
     use StarcoinFramework::SnapshotUtil;
     use StarcoinFramework::Block;
 
-
+    friend StarcoinFramework::StarcoinDAO;
+    
     const ERR_NO_GRANTED: u64 = 100;
     const ERR_REPEAT_ELEMENT: u64 = 101;
     const ERR_PLUGIN_HAS_INSTALLED: u64 = 102;
@@ -1897,6 +1898,17 @@ module StarcoinFramework::DAOSpace {
                 cap: Config::publish_new_config_with_capability<ConfigT>(&signer, config)
             });
         }
+    }
+
+    //StarcoinDAO add Config cap
+    public (friend) fun set_custom_config_cap<DAOT: store,
+                                    ConfigT:copy + store + drop>(
+        config_cap: Config::ModifyConfigCapability<ConfigT>)
+        acquires DAOAccountCapHolder{
+            let signer = dao_signer<DAOT>();
+            move_to(&signer, DAOCustomConfigModifyCapHolder<DAOT, ConfigT> {
+                cap: config_cap
+        });
     }
 
     /// Update DAO description
