@@ -2,13 +2,13 @@ processed 17 tasks
 
 task 4 'run'. lines 44-52:
 {
-  "gas_used": 150935,
+  "gas_used": 177448,
   "status": "Executed"
 }
 
 task 5 'run'. lines 54-62:
 {
-  "gas_used": 236608,
+  "gas_used": 369697,
   "status": "Executed"
 }
 
@@ -40,7 +40,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
 
 task 8 'run'. lines 68-76:
 {
-  "gas_used": 97321,
+  "gas_used": 108722,
   "status": "Executed"
 }
 
@@ -78,7 +78,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
 
 task 11 'run'. lines 82-90:
 {
-  "gas_used": 97382,
+  "gas_used": 108783,
   "status": "Executed"
 }
 
@@ -122,7 +122,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
 
 task 14 'run'. lines 96-104:
 {
-  "gas_used": 97382,
+  "gas_used": 108783,
   "status": "Executed"
 }
 

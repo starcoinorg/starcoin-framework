@@ -8,6 +8,8 @@ module StarcoinFramework::DAOExtensionPoint {
     use StarcoinFramework::NFT;
     use StarcoinFramework::NFTGallery;
     use StarcoinFramework::Option::{Self, Option};
+    use StarcoinFramework::Event;
+    use StarcoinFramework::TypeInfo::{Self, TypeInfo};
 
     const ERR_ALREADY_INITIALIZED: u64 = 100;
     const ERR_NOT_CONTRACT_OWNER: u64 = 101;
@@ -55,6 +57,48 @@ module StarcoinFramework::DAOExtensionPoint {
     struct NFTMintCapHolder has key {
         cap: NFT::MintCapability<OwnerNFTMeta>,
         nft_metadata: NFT::Metadata,
+    }
+
+    /// registry event handlers
+    struct RegistryEventHandlers has key, store{
+        register: Event::EventHandle<ExtensionPointRegisterEvent>,
+    }
+
+    struct ExtensionPointRegisterEvent has drop, store{
+        id: u64,
+        type: TypeInfo,
+        name: vector<u8>,
+        description:vector<u8>,
+        labels: vector<vector<u8>>
+    }
+
+    /// extension point event handlers
+    struct ExtensionPointEventHandlers<phantom PluginT> has key, store{
+        publish_version: Event::EventHandle<PublishVersionEvent<PluginT>>,
+        star: Event::EventHandle<StarEvent<PluginT>>,
+        unstar: Event::EventHandle<UnstarEvent<PluginT>>,
+        update: Event::EventHandle<UpdateInfoEvent<PluginT>>,
+    }
+
+    struct PublishVersionEvent<phantom PluginT> has drop, store{
+        sender: address,
+        version_number: u64,
+    }
+
+    struct StarEvent<phantom PluginT> has drop, store{
+        sender: address,
+    }
+
+    struct UnstarEvent<phantom PluginT> has drop, store{
+        sender: address,
+    }
+
+    struct UpdateInfoEvent<phantom PluginT> has drop, store{
+        sender: address,
+        id: u64,
+        name: vector<u8>,
+        description:vector<u8>,
+        labels: vector<vector<u8>>
     }
 
     fun next_extpoint_id(registry: &mut Registry): u64 {
@@ -120,9 +164,14 @@ module StarcoinFramework::DAOExtensionPoint {
         move_to(&signer, Registry{
             next_id: 1,
         });
+
+        move_to(&signer, RegistryEventHandlers {
+            register: Event::new_event_handle<ExtensionPointRegisterEvent>(&signer),
+        });
     }
 
-    public fun register<ExtPointT: store>(sender: &signer, name: vector<u8>, description: vector<u8>, types_d_ts:vector<u8>, dts_doc:vector<u8>, option_labels: Option<vector<vector<u8>>>):u64 acquires Registry, NFTMintCapHolder {
+    public fun register<ExtPointT: store>(sender: &signer, name: vector<u8>, description: vector<u8>, types_d_ts:vector<u8>, dts_doc:vector<u8>, 
+        option_labels: Option<vector<vector<u8>>>):u64 acquires Registry, NFTMintCapHolder, RegistryEventHandlers {
         assert!(!exists<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_REGISTERED));
         let registry = borrow_global_mut<Registry>(CoreAddresses::GENESIS_ADDRESS());
         let extpoint_id = next_extpoint_id(registry);
@@ -142,15 +191,22 @@ module StarcoinFramework::DAOExtensionPoint {
 
         let genesis_account = GenesisSignerCapability::get_genesis_signer();
         move_to(&genesis_account, Entry<ExtPointT>{
-            id: extpoint_id, 
-            name: name,
-            description: description,
-            labels: labels,
+            id: copy extpoint_id, 
+            name: copy name,
+            description: copy description,
+            labels: copy labels,
             next_version_number: 2,
             versions: Vector::singleton<Version>(version), 
             star_count: 0,
             created_at: Timestamp::now_milliseconds(),
             updated_at: Timestamp::now_milliseconds(),
+        });
+
+        move_to(&genesis_account, ExtensionPointEventHandlers<ExtPointT>{
+            publish_version: Event::new_event_handle<PublishVersionEvent<ExtPointT>>(&genesis_account),
+            star: Event::new_event_handle<StarEvent<ExtPointT>>(&genesis_account),
+            unstar: Event::new_event_handle<UnstarEvent<ExtPointT>>(&genesis_account),
+            update: Event::new_event_handle<UpdateInfoEvent<ExtPointT>>(&genesis_account),
         });
 
         // grant owner NFT to sender
@@ -163,6 +219,18 @@ module StarcoinFramework::DAOExtensionPoint {
         let nft = NFT::mint_with_cap_v2(CoreAddresses::GENESIS_ADDRESS(), &mut nft_mint_cap.cap, *&nft_mint_cap.nft_metadata, meta, OwnerNFTBody{});
         NFTGallery::deposit(sender, nft);
 
+        // registry register event emit
+        let registry_event_handlers = borrow_global_mut<RegistryEventHandlers>(CoreAddresses::GENESIS_ADDRESS());
+        Event::emit_event(&mut registry_event_handlers.register,
+            ExtensionPointRegisterEvent {
+                id: copy extpoint_id,
+                type: TypeInfo::type_of<ExtPointT>(),
+                name: copy name,
+                description: copy description,
+                labels: copy labels,
+            },
+        );
+
         extpoint_id
     }
 
@@ -170,9 +238,10 @@ module StarcoinFramework::DAOExtensionPoint {
         sender: &signer, 
         types_d_ts:vector<u8>,
         dts_doc: vector<u8>, 
-    ) acquires Entry {
+    ) acquires Entry, ExtensionPointEventHandlers {
+        let sender_addr = Signer::address_of(sender);
         let extp = borrow_global_mut<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
-        ensure_exists_extpoint_nft(Signer::address_of(sender), extp.id);
+        ensure_exists_extpoint_nft(sender_addr, extp.id);
 
         let number = next_extpoint_version_number(extp);
 
@@ -184,11 +253,21 @@ module StarcoinFramework::DAOExtensionPoint {
         });
 
         extp.updated_at = Timestamp::now_milliseconds();
+
+        // publish version event emit
+        let plugin_event_handlers = borrow_global_mut<ExtensionPointEventHandlers<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
+        Event::emit_event(&mut plugin_event_handlers.publish_version,
+            PublishVersionEvent {
+                sender: copy sender_addr,
+                version_number: copy number,
+            },
+        );
     }
 
-    public fun update<ExtPointT>(sender: &signer, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>) acquires Entry {
+    public fun update<ExtPointT>(sender: &signer, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>) acquires Entry, ExtensionPointEventHandlers {
+        let sender_addr = Signer::address_of(sender);
         let extp = borrow_global_mut<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
-        ensure_exists_extpoint_nft(Signer::address_of(sender), extp.id);
+        ensure_exists_extpoint_nft(sender_addr, extp.id);
 
         extp.name = name;
         extp.description = description;
@@ -198,9 +277,21 @@ module StarcoinFramework::DAOExtensionPoint {
         };
 
         extp.updated_at = Timestamp::now_milliseconds();
+
+        // update extpoint entry event emit
+        let plugin_event_handlers = borrow_global_mut<ExtensionPointEventHandlers<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
+        Event::emit_event(&mut plugin_event_handlers.update,
+            UpdateInfoEvent {
+                sender: sender_addr,
+                id: *&extp.id,
+                name: *&extp.name,
+                description: *&extp.description,
+                labels: *&extp.labels,
+            },
+        );
     }
 
-    public fun star<ExtPointT>(sender: &signer) acquires Entry {
+    public fun star<ExtPointT>(sender: &signer) acquires Entry, ExtensionPointEventHandlers {
         let sender_addr = Signer::address_of(sender);
         assert!(!exists<Star<ExtPointT>>(sender_addr), Errors::invalid_state(ERR_STAR_ALREADY_STARED));
 
@@ -212,9 +303,17 @@ module StarcoinFramework::DAOExtensionPoint {
         let entry = borrow_global_mut<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
         entry.star_count = entry.star_count + 1;
         entry.updated_at = Timestamp::now_milliseconds();
+
+        // star event emit
+        let extpoint_event_handlers = borrow_global_mut<ExtensionPointEventHandlers<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
+        Event::emit_event(&mut extpoint_event_handlers.star,
+            StarEvent {
+                sender: sender_addr,
+            },
+        );
     }
 
-    public fun unstar<ExtPointT>(sender: &signer) acquires Star, Entry {
+    public fun unstar<ExtPointT>(sender: &signer) acquires Star, Entry, ExtensionPointEventHandlers {
         let sender_addr = Signer::address_of(sender);
         assert!(exists<Star<ExtPointT>>(sender_addr), Errors::invalid_state(ERR_STAR_NOT_FOUND_STAR));
 
@@ -224,9 +323,15 @@ module StarcoinFramework::DAOExtensionPoint {
         let entry = borrow_global_mut<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
         entry.star_count = entry.star_count - 1;
         entry.updated_at = Timestamp::now_milliseconds();
+
+        // unstar event emit
+        let extpoint_event_handlers = borrow_global_mut<ExtensionPointEventHandlers<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
+        Event::emit_event(&mut extpoint_event_handlers.unstar,
+            UnstarEvent {
+                sender: sender_addr,
+            },
+        );
     }
-
-
 }
 
 
