@@ -6,6 +6,7 @@
 
 //# publish
 module creator::TestExtentionPoint {
+    use StarcoinFramework::Option;
     use StarcoinFramework::DAOExtensionPoint;
 
     struct TestExtentionPoint has store, copy, drop {}
@@ -19,6 +20,7 @@ module creator::TestExtentionPoint {
             b"ipfs://description",
             b"ipfs://types_d_ts",
             b"ipfs://pb_doc",
+            Option::none(),
         );
     }
 
@@ -61,7 +63,7 @@ script {
 
 //# view --address Genesis --resource 0x1::DAOExtensionPoint::Registry
 
-//# view --address Genesis --resource 0x1::DAOExtensionPoint::ExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::TestExtentionPoint>
+//# view --address Genesis --resource 0x1::DAOExtensionPoint::Entry<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::TestExtentionPoint>
 
 //# run --signers creator
 script {
@@ -75,7 +77,7 @@ script {
 
 //# view --address Genesis --resource 0x1::DAOExtensionPoint::Registry
 
-//# view --address Genesis --resource 0x1::DAOExtensionPoint::ExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::TestExtentionPoint>
+//# view --address Genesis --resource 0x1::DAOExtensionPoint::Entry<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::TestExtentionPoint>
 
 //# run --signers creator
 script {
@@ -89,7 +91,7 @@ script {
 
 //# view --address Genesis --resource 0x1::DAOExtensionPoint::Registry
 
-//# view --address Genesis --resource 0x1::DAOExtensionPoint::ExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::TestExtentionPoint>
+//# view --address Genesis --resource 0x1::DAOExtensionPoint::Entry<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::TestExtentionPoint>
 
 //# run --signers creator
 script {
@@ -103,4 +105,4 @@ script {
 
 //# view --address Genesis --resource 0x1::DAOExtensionPoint::Registry
 
-//# view --address Genesis --resource 0x1::DAOExtensionPoint::ExtensionPoint<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::TestExtentionPoint>
+//# view --address Genesis --resource 0x1::DAOExtensionPoint::Entry<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::TestExtentionPoint>

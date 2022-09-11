@@ -14,6 +14,8 @@ module StarcoinFramework::DAOExtensionPoint {
     const ERR_EXPECT_EXT_POINT_NFT: u64 = 102;
     const ERR_NOT_FOUND_EXT_POINT: u64 = 103;
     const ERR_ALREADY_REGISTERED: u64 = 104;
+    const ERR_STAR_ALREADY_STARED: u64 = 105;
+    const ERR_STAR_NOT_FOUND_STAR: u64 = 106;
 
     struct Version has store  {
        number: u64,
@@ -26,15 +28,21 @@ module StarcoinFramework::DAOExtensionPoint {
        next_id: u64,
     }
 
-    struct ExtensionPoint<phantom ExtPointT> has key, store  {
+    struct Entry<phantom ExtPointT> has key, store  {
        id: u64,
        name: vector<u8>,
        description: vector<u8>,
        labels: vector<vector<u8>>,
        next_version_number: u64,
        versions: vector<Version>,
+       star_count: u64,
        created_at: u64,
        updated_at: u64,
+    }
+
+    struct Star<phantom ExtPointT> has key, store {
+        user: address,
+        created_at: u64,
     }
 
     struct OwnerNFTMeta has copy, store, drop {
@@ -55,7 +63,7 @@ module StarcoinFramework::DAOExtensionPoint {
         extpoint_id
     }
 
-    fun next_extpoint_version_number<ExtInfo: store>(extpoint: &mut ExtensionPoint<ExtInfo>): u64 {
+    fun next_extpoint_version_number<ExtPointT: store>(extpoint: &mut Entry<ExtPointT>): u64 {
         let version_number = extpoint.next_version_number;
         extpoint.next_version_number = version_number + 1;
         version_number
@@ -115,7 +123,7 @@ module StarcoinFramework::DAOExtensionPoint {
     }
 
     public fun register<ExtPointT: store>(sender: &signer, name: vector<u8>, description: vector<u8>, types_d_ts:vector<u8>, dts_doc:vector<u8>, option_labels: Option<vector<vector<u8>>>):u64 acquires Registry, NFTMintCapHolder {
-        assert!(!exists<ExtensionPoint<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_REGISTERED));
+        assert!(!exists<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_REGISTERED));
         let registry = borrow_global_mut<Registry>(CoreAddresses::GENESIS_ADDRESS());
         let extpoint_id = next_extpoint_id(registry);
 
@@ -133,13 +141,14 @@ module StarcoinFramework::DAOExtensionPoint {
         };
 
         let genesis_account = GenesisSignerCapability::get_genesis_signer();
-        move_to(&genesis_account, ExtensionPoint<ExtPointT>{
+        move_to(&genesis_account, Entry<ExtPointT>{
             id: extpoint_id, 
             name: name,
             description: description,
             labels: labels,
             next_version_number: 2,
             versions: Vector::singleton<Version>(version), 
+            star_count: 0,
             created_at: Timestamp::now_milliseconds(),
             updated_at: Timestamp::now_milliseconds(),
         });
@@ -161,8 +170,8 @@ module StarcoinFramework::DAOExtensionPoint {
         sender: &signer, 
         types_d_ts:vector<u8>,
         dts_doc: vector<u8>, 
-    ) acquires ExtensionPoint {
-        let extp = borrow_global_mut<ExtensionPoint<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
+    ) acquires Entry {
+        let extp = borrow_global_mut<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
         ensure_exists_extpoint_nft(Signer::address_of(sender), extp.id);
 
         let number = next_extpoint_version_number(extp);
@@ -175,6 +184,32 @@ module StarcoinFramework::DAOExtensionPoint {
         });
 
         extp.updated_at = Timestamp::now_milliseconds();
+    }
+
+    public fun star<ExtPointT>(sender: &signer) acquires Entry {
+        let sender_addr = Signer::address_of(sender);
+        assert!(!exists<Star<ExtPointT>>(sender_addr), Errors::invalid_state(ERR_STAR_ALREADY_STARED));
+
+        move_to(sender, Star<ExtPointT>{
+            user: sender_addr,
+            created_at: Timestamp::now_milliseconds(),
+        });
+
+        let entry = borrow_global_mut<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
+        entry.star_count = entry.star_count + 1;
+        entry.updated_at = Timestamp::now_milliseconds();
+    }
+
+    public fun unstar<ExtPointT>(sender: &signer) acquires Star, Entry {
+        let sender_addr = Signer::address_of(sender);
+        assert!(exists<Star<ExtPointT>>(sender_addr), Errors::invalid_state(ERR_STAR_NOT_FOUND_STAR));
+
+        let star = move_from<Star<ExtPointT>>(sender_addr);
+        let Star<ExtPointT> {user:_, created_at:_} = star;
+
+        let entry = borrow_global_mut<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
+        entry.star_count = entry.star_count - 1;
+        entry.updated_at = Timestamp::now_milliseconds();
     }
 }
 
