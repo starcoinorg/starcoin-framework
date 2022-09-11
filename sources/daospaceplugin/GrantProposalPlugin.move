@@ -1,12 +1,18 @@
 //TODO find more good name
 module StarcoinFramework::GrantProposalPlugin{
+    use StarcoinFramework::GenesisSignerCapability;
+    use StarcoinFramework::CoreAddresses;
+    use StarcoinFramework::Errors;
+    use StarcoinFramework::Option;
+    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Signer;
-    use StarcoinFramework::Errors;
     use StarcoinFramework::Vector;
     use StarcoinFramework::InstallPluginProposalPlugin;
 
-    struct GrantProposalPlugin has store, drop{}
+    const ERR_ALREADY_INITIALIZED: u64 = 100;
+
+    struct GrantProposalPlugin has key, store, drop{}
 
     struct GrantCreateAction<phantom TokenT:store> has store {
         grantee: address,
@@ -25,6 +31,29 @@ module StarcoinFramework::GrantProposalPlugin{
 
     struct GrantRevokeAction<phantom TokenT:store> has store {
         grantee:address
+    }
+
+    public fun initialize() {
+        assert!(!exists<GrantProposalPlugin>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
+        let signer = GenesisSignerCapability::get_genesis_signer();
+        
+        DAOPluginMarketplace::register_plugin<GrantProposalPlugin>(
+            &signer,
+            b"0x1::GrantProposalPlugin",
+            b"The plugin for grant proposal",
+            Option::none(),
+        );
+
+        let implement_extpoints = Vector::empty<vector<u8>>();
+        let depend_extpoints = Vector::empty<vector<u8>>();
+
+        DAOPluginMarketplace::publish_plugin_version<GrantProposalPlugin>(
+            &signer, 
+            b"v0.1.0", 
+            *&implement_extpoints,
+            *&depend_extpoints,
+            b"inner-plugin://grant-proposal-plugin",
+        );
     }
 
     public fun required_caps():vector<CapType>{
@@ -101,7 +130,7 @@ module StarcoinFramework::GrantProposalPlugin{
         DAOSpace::grant_config<DAOT, GrantProposalPlugin, TokenT>(&grant_cap , old_grantee , &sender, total, start_time, period);
     }
 
-    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, description: vector<u8>, action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, GrantProposalPlugin>(&sender, required_caps(), description, action_delay);
+    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, plugin_version: u64, description: vector<u8>, action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, GrantProposalPlugin>(&sender, plugin_version, required_caps(), description, action_delay);
     } 
 }

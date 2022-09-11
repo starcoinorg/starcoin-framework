@@ -35,10 +35,7 @@ module creator::TestPlugin {
             &sender, 
             b"v0.1.0", 
             *&vec, 
-            *&vec, 
-            *&vec, 
-            *&vec, 
-            b"0x1::TestPlugin", 
+            *&vec,
             b"ipfs://js_entry_uri"
         );
     }

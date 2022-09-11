@@ -1,14 +1,44 @@
 module StarcoinFramework::UpgradeModulePlugin {
+    use StarcoinFramework::GenesisSignerCapability;
+    use StarcoinFramework::CoreAddresses;
+    use StarcoinFramework::Errors;
+    use StarcoinFramework::Option;
+    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Vector;
     use StarcoinFramework::InstallPluginProposalPlugin;
 
-    struct UpgradeModulePlugin has store, drop{}
+    const ERR_ALREADY_INITIALIZED: u64 = 100;
+
+    struct UpgradeModulePlugin has key, store, drop{}
 
     struct UpgradeModuleAction has store {
         package_hash: vector<u8>,
         version: u64,
         enforced: bool
+    }
+
+    public fun initialize() {
+        assert!(!exists<UpgradeModulePlugin>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
+        let signer = GenesisSignerCapability::get_genesis_signer();
+        
+        DAOPluginMarketplace::register_plugin<UpgradeModulePlugin>(
+            &signer,
+            b"0x1::UpgradeModulePlugin",
+            b"The plugin for upgrade module.",
+            Option::none(),
+        );
+
+        let implement_extpoints = Vector::empty<vector<u8>>();
+        let depend_extpoints = Vector::empty<vector<u8>>();
+
+        DAOPluginMarketplace::publish_plugin_version<UpgradeModulePlugin>(
+            &signer, 
+            b"v0.1.0", 
+            *&implement_extpoints,
+            *&depend_extpoints,
+            b"inner-plugin://upgrade-module-plugin",
+        );
     }
 
     public fun required_caps(): vector<CapType> {
@@ -53,7 +83,7 @@ module StarcoinFramework::UpgradeModulePlugin {
         DAOSpace::submit_upgrade_plan<DAOT, UpgradeModulePlugin>(&mut upgrade_module_cap, package_hash, version, enforced);
     }
 
-    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, description: vector<u8>, action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, UpgradeModulePlugin>(&sender, required_caps(), description, action_delay);
+    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, plugin_version: u64,  description: vector<u8>, action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, UpgradeModulePlugin>(&sender, plugin_version, required_caps(), description, action_delay);
     } 
 }

@@ -1,13 +1,43 @@
 /// Called by other contract which need proposal config
 module StarcoinFramework::ConfigProposalPlugin {
+    use StarcoinFramework::GenesisSignerCapability;
+    use StarcoinFramework::CoreAddresses;
+    use StarcoinFramework::Errors;
+    use StarcoinFramework::Option;
+    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Vector;
     use StarcoinFramework::InstallPluginProposalPlugin;
 
-    struct ConfigProposalPlugin has store, drop{}
+    const ERR_ALREADY_INITIALIZED: u64 = 100;
+
+    struct ConfigProposalPlugin has key, store, drop{}
 
     struct ConfigProposalAction<ConfigT> has store {
         config: ConfigT,
+    }
+
+    public fun initialize() {
+        assert!(!exists<ConfigProposalPlugin>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
+        let signer = GenesisSignerCapability::get_genesis_signer();
+        
+        DAOPluginMarketplace::register_plugin<ConfigProposalPlugin>(
+            &signer,
+            b"0x1::ConfigProposalPlugin",
+            b"The config proposal plugin",
+            Option::none(),
+        );
+
+        let implement_extpoints = Vector::empty<vector<u8>>();
+        let depend_extpoints = Vector::empty<vector<u8>>();
+
+        DAOPluginMarketplace::publish_plugin_version<ConfigProposalPlugin>(
+            &signer, 
+            b"v0.1.0", 
+            *&implement_extpoints,
+            *&depend_extpoints,
+            b"inner-plugin://config-proposal-plugin",
+        );
     }
 
     public fun required_caps(): vector<CapType> {
@@ -42,7 +72,7 @@ module StarcoinFramework::ConfigProposalPlugin {
         DAOSpace::set_custom_config<DAOT, ConfigProposalPlugin, ConfigT>(&mut modify_config_cap, config);
     }
 
-    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, description: vector<u8>, action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, ConfigProposalPlugin>(&sender, required_caps(), description, action_delay);
+    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, plugin_version: u64, description: vector<u8>, action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, ConfigProposalPlugin>(&sender, plugin_version, required_caps(), description, action_delay);
     } 
 }

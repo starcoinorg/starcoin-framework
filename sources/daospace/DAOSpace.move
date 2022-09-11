@@ -21,17 +21,18 @@ module StarcoinFramework::DAOSpace {
     use StarcoinFramework::SBTVoteStrategy;
     use StarcoinFramework::SnapshotUtil;
     use StarcoinFramework::Block;
+    use StarcoinFramework::DAOPluginMarketplace;
 
     friend StarcoinFramework::StarcoinDAO;
     
+    
     const ERR_NO_GRANTED: u64 = 100;
     const ERR_REPEAT_ELEMENT: u64 = 101;
-    const ERR_PLUGIN_HAS_INSTALLED: u64 = 102;
-    const ERR_STORAGE_ERROR: u64 = 103;
-    const ERR_NFT_ERROR: u64 = 104;
-    const ERR_ALREADY_INIT: u64 = 105;
-    const ERR_TOKEN_ERROR: u64 = 106;
-    const ERR_DAO_EXT: u64 = 107;
+    const ERR_STORAGE_ERROR: u64 = 102;
+    const ERR_NFT_ERROR: u64 = 103;
+    const ERR_ALREADY_INIT: u64 = 104;
+    const ERR_TOKEN_ERROR: u64 = 105;
+    const ERR_DAO_EXT: u64 = 106;
 
     /// member
     const ERR_EXPECT_MEMBER: u64 = 200;
@@ -65,6 +66,12 @@ module StarcoinFramework::DAOSpace {
     const ERR_VOTE_PARAM_INVALID: u64 = 603;
     const ERR_SNAPSHOT_PROOF_PARAM_INVALID: u64 = 604;
     const ERR_STATE_PROOF_VERIFY_INVALID: u64 = 605;
+
+    /// plugin
+    const ERR_PLUGIN_NOT_EXIST: u64 = 700;
+    const ERR_PLUGIN_VERSION_NOT_EXIST: u64 = 701;
+    const ERR_PLUGIN_HAS_INSTALLED: u64 = 702;
+    const ERR_PLUGIN_NOT_INSTALLED: u64 = 703;
 
     /// DAO resource, every DAO has this resource at it's DAO account
     struct DAO has key {
@@ -234,7 +241,9 @@ module StarcoinFramework::DAOSpace {
 
     /// The info for DAO installed Plugin
     struct InstalledPluginInfo<phantom PluginT> has key {
-        granted_caps: vector<CapType>,
+        plugin_id: u64, // The plugin id of plugin marketplace
+        plugin_version: u64, // The plugin version of plugin marketplace
+        granted_caps: vector<CapType>, // The granted capabilities
     }
 
     /// The DAO member NFT metadata
@@ -454,22 +463,80 @@ module StarcoinFramework::DAOSpace {
 
 
     /// Install ToInstallPluginT to DAO and grant the capabilites
-    public fun install_plugin_with_root_cap<DAOT: store, ToInstallPluginT:store>(_cap: &DAORootCap<DAOT>, granted_caps: vector<CapType>) acquires DAOAccountCapHolder {
-        do_install_plugin<DAOT, ToInstallPluginT>(granted_caps);
+    public fun install_plugin_with_root_cap<DAOT: store, ToInstallPluginT:store>(_cap: &DAORootCap<DAOT>, plugin_version: u64, granted_caps: vector<CapType>) acquires DAOAccountCapHolder {
+        do_install_plugin<DAOT, ToInstallPluginT>(plugin_version, granted_caps);
     }
 
     /// Install plugin with DAOInstallPluginCap
-    public fun install_plugin<DAOT: store, PluginT:store, ToInstallPluginT:store>(_cap: &DAOInstallPluginCap<DAOT, PluginT>, granted_caps: vector<CapType>) acquires DAOAccountCapHolder {
-        do_install_plugin<DAOT, ToInstallPluginT>(granted_caps);
+    public fun install_plugin<DAOT: store, PluginT:store, ToInstallPluginT:store>(_cap: &DAOInstallPluginCap<DAOT, PluginT>, plugin_version: u64, granted_caps: vector<CapType>) acquires DAOAccountCapHolder {
+        do_install_plugin<DAOT, ToInstallPluginT>(plugin_version, granted_caps);
     }
 
-    fun do_install_plugin<DAOT: store, ToInstallPluginT:store>(granted_caps: vector<CapType>) acquires DAOAccountCapHolder {
+    fun do_install_plugin<DAOT: store, ToInstallPluginT:store>(plugin_version: u64, granted_caps: vector<CapType>) acquires DAOAccountCapHolder {
+        assert!(DAOPluginMarketplace::exists_plugin<ToInstallPluginT>(), Errors::invalid_state(ERR_PLUGIN_NOT_EXIST));
+        assert!(DAOPluginMarketplace::exists_plugin_version<ToInstallPluginT>(plugin_version), Errors::invalid_state(ERR_PLUGIN_VERSION_NOT_EXIST));
         assert_no_repeat(&granted_caps);
+
         let dao_signer = dao_signer<DAOT>();
+        let plugin_id = DAOPluginMarketplace::take_plugin_id<ToInstallPluginT>();
+
         assert!(!exists<InstalledPluginInfo<ToInstallPluginT>>(Signer::address_of(&dao_signer)), Errors::already_published(ERR_PLUGIN_HAS_INSTALLED));
         move_to(&dao_signer, InstalledPluginInfo<ToInstallPluginT>{
+            plugin_id: plugin_id,
+            plugin_version,
             granted_caps,
         });
+    }
+
+    /// Upgrade plugin with DAORootCap
+    public fun upgrade_plugin_with_root_cap<DAOT: store, ToInstallPluginT:store>(_cap: &DAORootCap<DAOT>, plugin_version: u64, granted_caps: vector<CapType>) acquires DAOAccountCapHolder, InstalledPluginInfo {
+        do_upgrade_plugin<DAOT, ToInstallPluginT>(plugin_version, granted_caps);
+    }
+
+    /// Upgrade plugin with DAOInstallPluginCap
+    public fun upgrade_plugin<DAOT: store, PluginT:store, ToInstallPluginT:store>(_cap: &DAOInstallPluginCap<DAOT, PluginT>, plugin_version: u64, granted_caps: vector<CapType>) acquires DAOAccountCapHolder, InstalledPluginInfo {
+        do_upgrade_plugin<DAOT, ToInstallPluginT>(plugin_version, granted_caps);
+    }
+
+    fun do_upgrade_plugin<DAOT: store, ToInstallPluginT:store>(plugin_version: u64, granted_caps: vector<CapType>) acquires DAOAccountCapHolder, InstalledPluginInfo {
+        assert!(DAOPluginMarketplace::exists_plugin<ToInstallPluginT>(), Errors::invalid_state(ERR_PLUGIN_NOT_EXIST));
+        assert!(DAOPluginMarketplace::exists_plugin_version<ToInstallPluginT>(plugin_version), Errors::invalid_state(ERR_PLUGIN_VERSION_NOT_EXIST));
+        assert_no_repeat(&granted_caps);
+
+        let dao_signer = dao_signer<DAOT>();
+        let dao_address = Signer::address_of(&dao_signer);
+
+        assert!(exists<InstalledPluginInfo<ToInstallPluginT>>(dao_address), Errors::already_published(ERR_PLUGIN_NOT_INSTALLED));
+        let installed_plugin = borrow_global_mut<InstalledPluginInfo<ToInstallPluginT>>(dao_address);
+
+        installed_plugin.plugin_version = plugin_version;
+        installed_plugin.granted_caps = granted_caps;
+    }
+
+    /// Uninstall plugin with DAORootCap
+    public fun uninstall_plugin_with_root_cap<DAOT: store, ToInstallPluginT:store>(_cap: &DAORootCap<DAOT>) acquires DAOAccountCapHolder, InstalledPluginInfo {
+        do_uninstall_plugin<DAOT, ToInstallPluginT>();
+    }
+
+    /// Uninstall plugin with DAOInstallPluginCap
+    public fun uninstall_plugin<DAOT: store, PluginT:store, ToInstallPluginT:store>(_cap: &DAOInstallPluginCap<DAOT, PluginT>) acquires DAOAccountCapHolder, InstalledPluginInfo {
+        do_uninstall_plugin<DAOT, ToInstallPluginT>();
+    }
+
+    fun do_uninstall_plugin<DAOT: store, ToInstallPluginT:store>() acquires DAOAccountCapHolder, InstalledPluginInfo {
+        assert!(DAOPluginMarketplace::exists_plugin<ToInstallPluginT>(), Errors::invalid_state(ERR_PLUGIN_NOT_EXIST));
+
+        let dao_signer = dao_signer<DAOT>();
+        let dao_address = Signer::address_of(&dao_signer);
+
+        assert!(exists<InstalledPluginInfo<ToInstallPluginT>>(dao_address), Errors::already_published(ERR_PLUGIN_NOT_INSTALLED));
+        let installed_plugin = move_from<InstalledPluginInfo<ToInstallPluginT>>(dao_address);
+
+        let InstalledPluginInfo<ToInstallPluginT> {
+            plugin_id:_,
+            plugin_version:_,
+            granted_caps:_,
+        } = installed_plugin;
     }
 
     // ModuleUpgrade functions

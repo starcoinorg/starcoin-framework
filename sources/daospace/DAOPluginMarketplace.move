@@ -21,12 +21,9 @@ module StarcoinFramework::DAOPluginMarketplace {
 
     struct PluginVersion has store {
         number: u64, //Numeric version number, such as 1, 2, 3
-        version: vector<u8>, //Plugin version number, e.g. v0.1.1
-        required_caps: vector<vector<u8>>, //ability to depend
-        export_caps: vector<vector<u8>>, //ability to export
+        tag: vector<u8>, //Plugin tag, e.g. v0.1.1
         implement_extpoints: vector<vector<u8>>, //Implemented extension points
         depend_extpoints: vector<vector<u8>>, //Dependent extension points
-        contract_module: vector<u8>, //Contract module, format: ${address}::${module}
         js_entry_uri: vector<u8>, //Front-end JS code resource URI, for example: "https://cdn.xxxx.xxxx/xxxx/xxxxx.js"
         created_at: u64, //Plugin creation time
     }
@@ -238,14 +235,16 @@ module StarcoinFramework::DAOPluginMarketplace {
         return exists<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS())
     }
 
+    public fun take_plugin_id<PluginT>(): u64 acquires PluginEntry {
+        let plugin = borrow_global<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
+        return plugin.id
+    }
+
     public fun publish_plugin_version<PluginT>(
         sender: &signer, 
-        version: vector<u8>,
-        required_caps: vector<vector<u8>>,
-        export_caps: vector<vector<u8>>, 
+        tag: vector<u8>,
         implement_extpoints: vector<vector<u8>>, 
         depend_extpoints: vector<vector<u8>>,
-        contract_module: vector<u8>, 
         js_entry_uri: vector<u8>, 
     ) acquires PluginEntry, PluginEventHandlers {
         let sender_addr = Signer::address_of(sender);
@@ -255,12 +254,9 @@ module StarcoinFramework::DAOPluginMarketplace {
         let version_number = next_plugin_version_number(plugin);
         Vector::push_back<PluginVersion>(&mut plugin.versions, PluginVersion{
             number: copy version_number,
-            version: version,
-            required_caps: required_caps,
-            export_caps: export_caps,
+            tag: tag,
             implement_extpoints: implement_extpoints,
             depend_extpoints: depend_extpoints,
-            contract_module: contract_module,
             js_entry_uri: js_entry_uri,
             created_at: Timestamp::now_milliseconds(),
         });

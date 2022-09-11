@@ -1,13 +1,15 @@
 module StarcoinFramework::StakeToSBTPlugin {
-
+    use StarcoinFramework::GenesisSignerCapability;
+    use StarcoinFramework::CoreAddresses;
+    use StarcoinFramework::Errors;
+    use StarcoinFramework::Option;
+    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::Token;
     use StarcoinFramework::Account;
     use StarcoinFramework::DAOSpace;
     use StarcoinFramework::Vector;
     use StarcoinFramework::Signer;
-    use StarcoinFramework::Errors;
     use StarcoinFramework::Timestamp;
-    use StarcoinFramework::Option;
     use StarcoinFramework::InstallPluginProposalPlugin;
     use StarcoinFramework::IdentifierNFT;
 
@@ -17,8 +19,32 @@ module StarcoinFramework::StakeToSBTPlugin {
     const ERR_PLUGIN_STILL_LOCKED: u64 = 1004;
     const ERR_PLUGIN_CONFIG_INIT_REPEATE: u64 = 1005;
     const ERR_PLUGIN_ITEM_CANT_FOUND: u64 = 1006;
+    const ERR_ALREADY_INITIALIZED: u64 = 1007;
 
-    struct StakeToSBTPlugin has store, drop{}
+    struct StakeToSBTPlugin has key, store, drop{}
+
+    public fun initialize() {
+        assert!(!exists<StakeToSBTPlugin>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
+        let signer = GenesisSignerCapability::get_genesis_signer();
+        
+        DAOPluginMarketplace::register_plugin<StakeToSBTPlugin>(
+            &signer,
+            b"0x1::StakeToSBTPlugin",
+            b"The plugin for stake to SBT",
+            Option::none(),
+        );
+
+        let implement_extpoints = Vector::empty<vector<u8>>();
+        let depend_extpoints = Vector::empty<vector<u8>>();
+
+        DAOPluginMarketplace::publish_plugin_version<StakeToSBTPlugin>(
+            &signer, 
+            b"v0.1.0", 
+            *&implement_extpoints,
+            *&depend_extpoints,
+            b"inner-plugin://stake-to-sbt-plugin",
+        );
+    }
 
     public fun required_caps(): vector<DAOSpace::CapType> {
         let caps = Vector::singleton(DAOSpace::proposal_cap_type());
@@ -336,7 +362,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         accept_token(cap);
     }
 
-    public(script) fun install_plugin_proposal<DAOT: store>(sender: signer, description:vector<u8>, action_delay: u64) {
-        InstallPluginProposalPlugin::create_proposal<DAOT, StakeToSBTPlugin>(&sender, required_caps(), description,action_delay);
+    public(script) fun install_plugin_proposal<DAOT: store>(sender: signer, plugin_version: u64, description:vector<u8>, action_delay: u64) {
+        InstallPluginProposalPlugin::create_proposal<DAOT, StakeToSBTPlugin>(&sender, plugin_version, required_caps(), description,action_delay);
     }
 }

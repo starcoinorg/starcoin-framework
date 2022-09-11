@@ -1,13 +1,19 @@
 module StarcoinFramework::MintProposalPlugin{
+    use StarcoinFramework::GenesisSignerCapability;
+    use StarcoinFramework::CoreAddresses;
+    use StarcoinFramework::Errors;
+    use StarcoinFramework::Option;
+    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Signer;
-    use StarcoinFramework::Errors;
     use StarcoinFramework::Vector;
     use StarcoinFramework::InstallPluginProposalPlugin;
     use StarcoinFramework::Token;
     use StarcoinFramework::Account;
 
-    struct MintProposalPlugin has store, drop{}
+    const ERR_ALREADY_INITIALIZED: u64 = 100;
+
+    struct MintProposalPlugin has key, store, drop{}
 
     /// MintToken request.
     struct MintTokenAction<phantom TokenT: store> has copy, drop, store {
@@ -15,6 +21,29 @@ module StarcoinFramework::MintProposalPlugin{
         receiver: address,
         /// how many tokens to mint.
         amount: u128,
+    }
+
+    public fun initialize() {
+        assert!(!exists<MintProposalPlugin>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
+        let signer = GenesisSignerCapability::get_genesis_signer();
+        
+        DAOPluginMarketplace::register_plugin<MintProposalPlugin>(
+            &signer,
+            b"0x1::MintProposalPlugin",
+            b"The plugin for minting tokens.",
+            Option::none(),
+        );
+
+        let implement_extpoints = Vector::empty<vector<u8>>();
+        let depend_extpoints = Vector::empty<vector<u8>>();
+
+        DAOPluginMarketplace::publish_plugin_version<MintProposalPlugin>(
+            &signer, 
+            b"v0.1.0", 
+            *&implement_extpoints,
+            *&depend_extpoints,
+            b"inner-plugin://mint-proposal-plugin",
+        );
     }
 
     public fun required_caps():vector<CapType>{
@@ -55,7 +84,7 @@ module StarcoinFramework::MintProposalPlugin{
         Account::deposit<TokenT>(receiver, tokens);
     }
 
-    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, description: vector<u8>, action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, MintProposalPlugin>(&sender, required_caps(), description, action_delay);
+    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, plugin_version: u64, description: vector<u8>, action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, MintProposalPlugin>(&sender, plugin_version, required_caps(), description, action_delay);
     } 
 }

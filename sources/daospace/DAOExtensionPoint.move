@@ -21,6 +21,7 @@ module StarcoinFramework::DAOExtensionPoint {
 
     struct Version has store  {
        number: u64,
+       tag: vector<u8>,
        types_d_ts: vector<u8>,
        document: vector<u8>,
        created_at: u64,
@@ -178,6 +179,7 @@ module StarcoinFramework::DAOExtensionPoint {
 
         let version = Version {
             number: 1,
+            tag: b"v0.1.0",
             types_d_ts: types_d_ts,
             document: dts_doc,
             created_at: Timestamp::now_milliseconds(),
@@ -236,6 +238,7 @@ module StarcoinFramework::DAOExtensionPoint {
 
     public fun publish_version<ExtPointT: store>(
         sender: &signer, 
+        tag: vector<u8>,
         types_d_ts:vector<u8>,
         dts_doc: vector<u8>, 
     ) acquires Entry, ExtensionPointEventHandlers {
@@ -247,6 +250,7 @@ module StarcoinFramework::DAOExtensionPoint {
 
         Vector::push_back<Version>(&mut extp.versions, Version{
             number: number,
+            tag: tag,
             types_d_ts: types_d_ts,
             document: dts_doc,
             created_at: Timestamp::now_milliseconds(),

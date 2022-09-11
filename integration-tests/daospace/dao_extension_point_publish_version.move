@@ -27,6 +27,7 @@ module creator::TestExtentionPoint {
     public(script) fun publish_version_v1(sender: signer) {
         DAOExtensionPoint::publish_version<TestExtentionPoint>(
             &sender,
+            b"v0.1.1",
             b"ipfs://types_d_ts_1",
             b"ipfs://pb_doc1",
         );
@@ -35,6 +36,7 @@ module creator::TestExtentionPoint {
     public(script) fun publish_version_v2(sender: signer) {
         DAOExtensionPoint::publish_version<TestExtentionPoint>(
             &sender,
+            b"v0.1.1",
             b"ipfs://types_d_ts_2",
             b"ipfs://dts_doc2",
         );

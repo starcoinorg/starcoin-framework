@@ -1,19 +1,22 @@
 address StarcoinFramework {
 module SalaryGovPlugin {
-
+    use StarcoinFramework::GenesisSignerCapability;
+    use StarcoinFramework::CoreAddresses;
+    use StarcoinFramework::Errors;
+    use StarcoinFramework::Option;
+    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace;
     use StarcoinFramework::Vector;
     use StarcoinFramework::Signer;
     use StarcoinFramework::Account;
     use StarcoinFramework::Timestamp;
-    use StarcoinFramework::Errors;
-    use StarcoinFramework::Option;
 
+    const ERR_ALREADY_INITIALIZED: u64 = 1001;
     const ERR_PLUGIN_USER_NOT_MEMBER: u64 = 1002;
     const ERR_PLUGIN_USER_IS_MEMBER: u64 = 1003;
     const ERR_PLUGIN_USER_NOT_PRIVILEGE: u64 = 1004;
 
-    struct SalaryGovPlugin has store, drop{}
+    struct SalaryGovPlugin has key, store, drop{}
 
     struct PluginBossCap<phantom DAOT> has key, store, drop {}
 
@@ -27,6 +30,29 @@ module SalaryGovPlugin {
 
     struct BossProposalAction<phantom DAOT> has key, store {
         boss: address,
+    }
+
+    public fun initialize() {
+        assert!(!exists<SalaryGovPlugin>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
+        let signer = GenesisSignerCapability::get_genesis_signer();
+        
+        DAOPluginMarketplace::register_plugin<SalaryGovPlugin>(
+            &signer,
+            b"0x1::SalaryGovPlugin",
+            b"The plugin for salary governance",
+            Option::none(),
+        );
+
+        let implement_extpoints = Vector::empty<vector<u8>>();
+        let depend_extpoints = Vector::empty<vector<u8>>();
+
+        DAOPluginMarketplace::publish_plugin_version<SalaryGovPlugin>(
+            &signer, 
+            b"v0.1.0", 
+            *&implement_extpoints,
+            *&depend_extpoints,
+            b"inner-plugin://salary-gov-plugin",
+        );
     }
 
     public fun required_caps(): vector<DAOSpace::CapType> {
