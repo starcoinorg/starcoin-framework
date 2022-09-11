@@ -186,6 +186,20 @@ module StarcoinFramework::DAOExtensionPoint {
         extp.updated_at = Timestamp::now_milliseconds();
     }
 
+    public fun update<ExtPointT>(sender: &signer, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>) acquires Entry {
+        let extp = borrow_global_mut<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
+        ensure_exists_extpoint_nft(Signer::address_of(sender), extp.id);
+
+        extp.name = name;
+        extp.description = description;
+
+        if(Option::is_some(&option_labels)){
+            extp.labels = Option::destroy_some(option_labels);
+        };
+
+        extp.updated_at = Timestamp::now_milliseconds();
+    }
+
     public fun star<ExtPointT>(sender: &signer) acquires Entry {
         let sender_addr = Signer::address_of(sender);
         assert!(!exists<Star<ExtPointT>>(sender_addr), Errors::invalid_state(ERR_STAR_ALREADY_STARED));
@@ -211,6 +225,8 @@ module StarcoinFramework::DAOExtensionPoint {
         entry.star_count = entry.star_count - 1;
         entry.updated_at = Timestamp::now_milliseconds();
     }
+
+
 }
 
 
