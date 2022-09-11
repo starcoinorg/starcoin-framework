@@ -334,7 +334,6 @@ module StarcoinFramework::DAOExtensionPoint {
     }
 }
 
-
 module StarcoinFramework::DAOExtensionPointScript {
     use StarcoinFramework::DAOExtensionPoint;
 
