@@ -7,6 +7,7 @@ module StarcoinFramework::DAOExtensionPoint {
     use StarcoinFramework::Vector;
     use StarcoinFramework::NFT;
     use StarcoinFramework::NFTGallery;
+    use StarcoinFramework::Option::{Self, Option};
 
     const ERR_ALREADY_INITIALIZED: u64 = 100;
     const ERR_NOT_CONTRACT_OWNER: u64 = 101;
@@ -29,6 +30,7 @@ module StarcoinFramework::DAOExtensionPoint {
        id: u64,
        name: vector<u8>,
        description: vector<u8>,
+       labels: vector<vector<u8>>,
        next_version_number: u64,
        versions: vector<Version>,
        created_at: u64,
@@ -112,7 +114,7 @@ module StarcoinFramework::DAOExtensionPoint {
         });
     }
 
-    public fun register<ExtPointT: store>(sender: &signer, name: vector<u8>, description: vector<u8>, types_d_ts:vector<u8>, dts_doc:vector<u8>):u64 acquires Registry, NFTMintCapHolder {
+    public fun register<ExtPointT: store>(sender: &signer, name: vector<u8>, description: vector<u8>, types_d_ts:vector<u8>, dts_doc:vector<u8>, option_labels: Option<vector<vector<u8>>>):u64 acquires Registry, NFTMintCapHolder {
         assert!(!exists<ExtensionPoint<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_REGISTERED));
         let registry = borrow_global_mut<Registry>(CoreAddresses::GENESIS_ADDRESS());
         let extpoint_id = next_extpoint_id(registry);
@@ -124,11 +126,18 @@ module StarcoinFramework::DAOExtensionPoint {
             created_at: Timestamp::now_milliseconds(),
         };
 
+        let labels = if(Option::is_some(&option_labels)){
+            Option::destroy_some(option_labels)
+        } else {
+            Vector::empty<vector<u8>>()
+        };
+
         let genesis_account = GenesisSignerCapability::get_genesis_signer();
         move_to(&genesis_account, ExtensionPoint<ExtPointT>{
             id: extpoint_id, 
             name: name,
             description: description,
+            labels: labels,
             next_version_number: 2,
             versions: Vector::singleton<Version>(version), 
             created_at: Timestamp::now_milliseconds(),

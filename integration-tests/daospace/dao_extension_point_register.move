@@ -6,6 +6,8 @@
 
 //# publish
 module creator::TestExtentionPoint {
+    use StarcoinFramework::Option;
+    use StarcoinFramework::Vector;
     use StarcoinFramework::DAOExtensionPoint;
 
     struct TestExtentionPoint has store, copy, drop {}
@@ -13,12 +15,17 @@ module creator::TestExtentionPoint {
     const NAME: vector<u8> = b"TestExtentionPoint";
 
     public(script) fun initialize(sender: signer) {
+        let labels = Vector::empty<vector<u8>>();
+        Vector::push_back<vector<u8>>(&mut labels, b"OS=Starcoin");
+        Vector::push_back<vector<u8>>(&mut labels, b"Store=IPFS");
+
         DAOExtensionPoint::register<TestExtentionPoint>(
             &sender,
             NAME, 
             b"ipfs://description",
-            b"ipfs://protobuf",
-            b"ipfs://pb_doc",
+            b"ipfs://types_d_ts",
+            b"ipfs://dts_doc",
+            Option::some(labels),
         );
     }
 }
