@@ -23,6 +23,15 @@ module StdlibUpgradeScripts {
         use StarcoinFramework::DAORegistry;
         use StarcoinFramework::DAOExtensionPoint;
         use StarcoinFramework::DAOPluginMarketplace;
+        use StarcoinFramework::AnyMemberPlugin;
+        use StarcoinFramework::ConfigProposalPlugin;
+        use StarcoinFramework::GrantProposalPlugin;
+        use StarcoinFramework::InstallPluginProposalPlugin;
+        use StarcoinFramework::MemberProposalPlugin;
+        use StarcoinFramework::MintProposalPlugin;
+        use StarcoinFramework::SalaryGovPlugin;
+        use StarcoinFramework::StakeToSBTPlugin;
+        use StarcoinFramework::UpgradeModulePlugin;
         use StarcoinFramework::StarcoinDAO;
 
         spec module {
@@ -120,6 +129,17 @@ module StdlibUpgradeScripts {
         public fun do_upgrade_from_v12_to_v12_1() {
             DAOExtensionPoint::initialize();
             DAOPluginMarketplace::initialize();
+
+            AnyMemberPlugin::initialize();
+            ConfigProposalPlugin::initialize();
+            GrantProposalPlugin::initialize();
+            InstallPluginProposalPlugin::initialize();
+            MemberProposalPlugin::initialize();
+            MintProposalPlugin::initialize();
+            SalaryGovPlugin::initialize();
+            StakeToSBTPlugin::initialize();
+            UpgradeModulePlugin::initialize();
+
             StarcoinDAO::create_dao( 60000, 120000, 10, 10000, 0);
         }
 }
