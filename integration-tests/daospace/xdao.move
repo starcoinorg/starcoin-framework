@@ -4,14 +4,14 @@
 
 // TODO figure out how to call genesis init script in integration tests
 
-////# run --signers creator
-//script{
-//    use StarcoinFramework::StdlibUpgradeScripts;
-//
-//    fun main(){
-//        StdlibUpgradeScripts::upgrade_from_v11_to_v12();
-//    }
-//}
+//# run --signers creator
+script{
+    use StarcoinFramework::StdlibUpgradeScripts;
+
+    fun main(){
+        StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
+    }
+}
 
 //# publish
 module creator::XDAO {
@@ -44,8 +44,8 @@ module creator::XDAO {
         );
         let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(),b"ipfs://description", X{}, config);
         
-        DAOSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
-        DAOSpace::install_plugin_with_root_cap<X, MemberProposalPlugin>(&dao_root_cap, MemberProposalPlugin::required_caps());
+        DAOSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, 1, InstallPluginProposalPlugin::required_caps()); 
+        DAOSpace::install_plugin_with_root_cap<X, MemberProposalPlugin>(&dao_root_cap, 1, MemberProposalPlugin::required_caps());
         
         DAOSpace::burn_root_cap(dao_root_cap);
     }
@@ -59,3 +59,9 @@ script{
         XDAO::create_dao(sender, 10, 10, 10, 10, 10);
     }
 }
+
+//# view --address creator --resource 0x1::DAOSpace::DAO
+
+//# view --address creator --resource 0x1::DAOSpace::InstalledPluginInfo<0x1::InstallPluginProposalPlugin::InstallPluginProposalPlugin>
+
+//# view --address creator --resource 0x1::DAOSpace::InstalledPluginInfo<0x1::MemberProposalPlugin::MemberProposalPlugin>

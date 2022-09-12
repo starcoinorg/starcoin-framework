@@ -4,14 +4,29 @@
 
 //# faucet --addr alice --amount 10000000000
 
+//# run --signers creator
+script {
+    use StarcoinFramework::StdlibUpgradeScripts;
+
+    fun upgrade_from_v11_to_v12() {
+        StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
+    }
+}
+// check: EXECUTED
+
 //# publish
 module creator::DAOHelper {
+    use StarcoinFramework::Signer;
+    use StarcoinFramework::Errors;
+    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOAccount;
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::AnyMemberPlugin::{Self, AnyMemberPlugin};
     use StarcoinFramework::InstallPluginProposalPlugin::{Self, InstallPluginProposalPlugin};
     use StarcoinFramework::Vector;
     use StarcoinFramework::Option;
+
+    const ERR_ALREADY_INITIALIZED: u64 = 100;
 
     struct X has store, copy, drop {}
 
@@ -36,15 +51,38 @@ module creator::DAOHelper {
         );
         let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", X {}, config);
 
-        DAOSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps());
-        DAOSpace::install_plugin_with_root_cap<X, AnyMemberPlugin>(&dao_root_cap, AnyMemberPlugin::required_caps());
+        DAOSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, 1, InstallPluginProposalPlugin::required_caps());
+        DAOSpace::install_plugin_with_root_cap<X, AnyMemberPlugin>(&dao_root_cap, 1, AnyMemberPlugin::required_caps());
 
-        DAOSpace::install_plugin_with_root_cap<X, XPlugin>(&dao_root_cap, required_caps());
+        DAOSpace::install_plugin_with_root_cap<X, XPlugin>(&dao_root_cap, 1, required_caps());
 
         DAOSpace::burn_root_cap(dao_root_cap);
     }
 
-    struct XPlugin has store, drop {}
+    struct XPlugin has key, store, drop {}
+
+    public fun initialize_x_plugin(sender: &signer) {
+        let sender_addr = Signer::address_of(sender);
+        assert!(!exists<XPlugin>(sender_addr), Errors::already_published(ERR_ALREADY_INITIALIZED));
+
+        DAOPluginMarketplace::register_plugin<XPlugin>(
+            sender,
+            b"0x1::XPlugin",
+            b"The X plugin.",
+            Option::none(),
+        );
+
+        let implement_extpoints = Vector::empty<vector<u8>>();
+        let depend_extpoints = Vector::empty<vector<u8>>();
+
+        DAOPluginMarketplace::publish_plugin_version<XPlugin>(
+            sender, 
+            b"v0.1.0", 
+            *&implement_extpoints,
+            *&depend_extpoints,
+            b"inner-plugin://x-plugin",
+        );
+    }
 
     public fun required_caps(): vector<CapType> {
         let caps = Vector::singleton(DAOSpace::proposal_cap_type());
@@ -60,6 +98,16 @@ module creator::DAOHelper {
         DAOSpace::submit_upgrade_plan(&upgrade_cap, package_hash, version, enforced);
     }
 }
+
+//# run --signers creator
+script {
+    use creator::DAOHelper;
+
+    fun main(sender: signer) {
+        DAOHelper::initialize_x_plugin(&sender);
+    }
+}
+// check: EXECUTED
 
 //# package
 module creator::test {

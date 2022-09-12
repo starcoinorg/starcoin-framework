@@ -117,6 +117,7 @@ module StdlibUpgradeScripts {
         public(script) fun upgrade_from_v11_to_v12() {
             do_upgrade_from_v11_to_v12();
         }
+
         public fun do_upgrade_from_v11_to_v12() {
             Block::checkpoints_init();
             DAORegistry::initialize();

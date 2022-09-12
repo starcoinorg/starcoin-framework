@@ -8,7 +8,7 @@ task 4 'run'. lines 33-41:
 
 task 5 'run'. lines 43-51:
 {
-  "gas_used": 397708,
+  "gas_used": 398301,
   "status": "Executed"
 }
 
@@ -30,6 +30,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
     versions: [
         store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
             number: 1
+            tag: 76302e312e30
             types_d_ts: 697066733a2f2f74797065735f645f7473
             document: 697066733a2f2f6474735f646f63
             created_at: 10000
@@ -69,6 +70,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
     versions: [
         store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
             number: 1
+            tag: 76302e312e30
             types_d_ts: 697066733a2f2f74797065735f645f7473
             document: 697066733a2f2f6474735f646f63
             created_at: 10000
