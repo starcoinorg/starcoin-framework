@@ -464,9 +464,7 @@ module StarcoinFramework::DAOSpace {
 
     /// Check the item has exists in storage
     public fun exists_storage<DAOT: store, PluginT, V: store>(): bool {
-        let dao_address = dao_address<DAOT>();
-        assert!(exists<StorageItem<PluginT, V>>(dao_address), Errors::not_published(ERR_STORAGE_ERROR));
-        exists<StorageItem<PluginT, V>>(dao_address)
+        exists<StorageItem<PluginT, V>>(dao_address<DAOT>())
     }
 
     // Withdraw Token capability function
@@ -675,11 +673,10 @@ module StarcoinFramework::DAOSpace {
                                  EventT: store + drop>(_cap: &DAOPluginEventCap<DAOT, PluginT>)
     acquires DAOAccountCapHolder {
         let dao_signer = dao_signer<DAOT>();
-        if (!exists<PluginEvent<DAOT, PluginT, EventT>>(dao_address<DAOT>())) {
-            move_to(&dao_signer, PluginEvent<DAOT, PluginT, EventT> {
-                event_handle: Event::new_event_handle<EventT>(&dao_signer)
-            });
-        };
+        assert!(!exists<PluginEvent<DAOT, PluginT, EventT>>(dao_address<DAOT>()), Errors::invalid_state(ERR_ALREADY_INIT));
+        move_to(&dao_signer, PluginEvent<DAOT, PluginT, EventT> {
+            event_handle: Event::new_event_handle<EventT>(&dao_signer)
+        });
     }
 
     public fun emit_plugin_event<DAOT: store,
