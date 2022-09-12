@@ -12,10 +12,12 @@ OnChainConfigDao is a DAO proposal for modify onchain configuration.
 -  [Function `plugin`](#0x1_OnChainConfigDao_plugin)
 -  [Function `propose_update`](#0x1_OnChainConfigDao_propose_update)
 -  [Function `execute`](#0x1_OnChainConfigDao_execute)
+-  [Function `config_cap`](#0x1_OnChainConfigDao_config_cap)
 -  [Module Specification](#@Module_Specification_1)
 
 
 <pre><code><b>use</b> <a href="Config.md#0x1_Config">0x1::Config</a>;
+<b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
 <b>use</b> <a href="Dao.md#0x1_Dao">0x1::Dao</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
@@ -239,6 +241,31 @@ the kind of this proposal module.
 <b>let</b> expected_states = vec&lt;u8&gt;(6);
 <b>include</b> <a href="Dao.md#0x1_Dao_CheckProposalStates">Dao::CheckProposalStates</a>&lt;TokenT, <a href="OnChainConfigDao.md#0x1_OnChainConfigDao_OnChainConfigUpdate">OnChainConfigUpdate</a>&lt;ConfigT&gt;&gt;{expected_states};
 <b>aborts_if</b> !<b>exists</b>&lt;<a href="OnChainConfigDao.md#0x1_OnChainConfigDao_WrappedConfigModifyCapability">WrappedConfigModifyCapability</a>&lt;TokenT, ConfigT&gt;&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">Token::SPEC_TOKEN_TEST_ADDRESS</a>());
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_OnChainConfigDao_config_cap"></a>
+
+## Function `config_cap`
+
+
+
+<pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="OnChainConfigDao.md#0x1_OnChainConfigDao_config_cap">config_cap</a>&lt;TokenT: store, ConfigT: <b>copy</b>, drop, store&gt;(): <a href="Config.md#0x1_Config_ModifyConfigCapability">Config::ModifyConfigCapability</a>&lt;ConfigT&gt;
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> (<b>friend</b>) <b>fun</b> <a href="OnChainConfigDao.md#0x1_OnChainConfigDao_config_cap">config_cap</a>&lt;TokenT: store, ConfigT: <b>copy</b> + drop + store&gt;():<a href="Config.md#0x1_Config_ModifyConfigCapability">Config::ModifyConfigCapability</a>&lt;ConfigT&gt;<b>acquires</b> <a href="OnChainConfigDao.md#0x1_OnChainConfigDao_WrappedConfigModifyCapability">WrappedConfigModifyCapability</a>{
+    <b>let</b> <a href="OnChainConfigDao.md#0x1_OnChainConfigDao_WrappedConfigModifyCapability">WrappedConfigModifyCapability</a> &lt;TokenT, ConfigT&gt;{cap} = <b>move_from</b>&lt;<a href="OnChainConfigDao.md#0x1_OnChainConfigDao_WrappedConfigModifyCapability">WrappedConfigModifyCapability</a>&lt;TokenT, ConfigT&gt;&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+    cap
+}
 </code></pre>
 
 

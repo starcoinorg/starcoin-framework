@@ -151,6 +151,9 @@ compiled_package_info:
       name: MintDaoProposal
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: MintProposalPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: MintScripts
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -217,9 +220,6 @@ compiled_package_info:
       name: STCUSDOracle
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
-      name: SalaryGovPlugin
-    : StarcoinFramework
-    ? address: "0x00000000000000000000000000000001"
       name: SharedEd25519PublicKey
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -236,6 +236,9 @@ compiled_package_info:
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: StakeToSBTPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: StarcoinDAO
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: StarcoinVerifier
@@ -280,10 +283,16 @@ compiled_package_info:
       name: TreasuryWithdrawDaoProposal
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: TypeInfo
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: U256
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: UpgradeModuleDaoProposal
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: UpgradeModulePlugin
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
       name: VMConfig
@@ -300,7 +309,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: FD22ADD0AC2FCAA5A3918D285615A4E0512A53741F05CC7711158F468064CDC3
+  source_digest: 8E7AEB189849D23881D6C14563228D20E8991069B2A727CBB2D0A5FBAA816EC4
   build_flags:
     dev_mode: false
     test_mode: false
