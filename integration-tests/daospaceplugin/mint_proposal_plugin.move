@@ -133,7 +133,7 @@ script {
         IdentifierNFT::accept<DAOMember<XDAO>, DAOMemberBody<XDAO>>(&sender);
         let image_data = b"image";
         let image_url = b"";
-        AnyMemberPlugin::join<XDAO>(sender, image_data, image_url);
+        AnyMemberPlugin::join<XDAO>(&sender, image_data, image_url);
     }
 }
 // check: EXECUTED
@@ -186,7 +186,7 @@ script {
         let amount = 100000;
         let action_delay = 0;
         MintProposalPlugin::create_mint_proposal<XDAO, AliceToken>(
-            sender, description, @bob, amount, action_delay);
+            &sender, description, @bob, amount, action_delay);
         let (_id, proposer, start_time, end_time, _yes_votes, _no_votes, _no_with_veto_votes, _abstain_votes, block_number, state_root) = DAOSpace::proposal_info<XDAO>(1);
 
         Debug::print(&proposer);
@@ -229,11 +229,11 @@ script{
     use StarcoinFramework::DAOSpace;
 
     // execute action
-    fun queue_proposal_action(sender: signer){
+    fun queue_proposal_action(_sender: signer){
         let proposal_id = 1;
         let proposal_state = DAOSpace::proposal_state<XDAO>(proposal_id);
         assert!(proposal_state == 4, 105); // DAOSpace::AGREED
-        DAOSpace::do_queue_proposal_action<XDAO>(&sender, proposal_id);
+        DAOSpace::queue_proposal_action<XDAO>(proposal_id);
 
     }
 }
@@ -257,7 +257,7 @@ script {
         assert!(proposal_state == 6, 106); // DAOSpace::EXECUTABLE
 
         let addr = Signer::address_of(&sender);
-        MintProposalPlugin::execute_mint_proposal<XDAO, AliceToken>(sender, proposal_id);
+        MintProposalPlugin::execute_mint_proposal<XDAO, AliceToken>(&sender, proposal_id);
         let balance = Account::balance<AliceToken>(addr);
         assert!(balance == 100000, 107);
         assert!(Token::market_cap<AliceToken>() == balance, 108);
