@@ -183,6 +183,9 @@ module StarcoinFramework::DAOSpace {
 
     /// Create a token burning capability type.
     public fun token_burn_cap_type(): CapType { CapType{code: 10 } }
+    
+    /// Creates a grant capability type.
+    public fun plugin_event_cap_type(): CapType { CapType{ code: 11 } }
 
     /// Create all capability types.
     public fun all_caps(): vector<CapType> {
@@ -197,6 +200,7 @@ module StarcoinFramework::DAOSpace {
         Vector::push_back(&mut caps, grant_cap_type());
         Vector::push_back(&mut caps, token_mint_cap_type());
         Vector::push_back(&mut caps, token_burn_cap_type());
+        Vector::push_back(&mut caps, plugin_event_cap_type());
         caps
     }
 
@@ -220,6 +224,8 @@ module StarcoinFramework::DAOSpace {
     struct DAOProposalCap<phantom DAOT, phantom PluginT> has drop {}
 
     struct DAOGrantCap<phantom DAOT, phantom PluginT> has drop {}
+
+    struct DAOPluginEventCap<phantom DAOT, phantom PluginT> has drop {}
 
     struct DAOGrantWithdrawTokenKey<phantom DAOT, phantom PluginT ,phantom TokenT> has key, store{
         /// The total amount of tokens that can be withdrawn by this capability
@@ -503,6 +509,11 @@ module StarcoinFramework::DAOSpace {
         item
     }
 
+    /// Check the item has exists in storage
+    public fun exists_storage<DAOT: store, PluginT, V: store>(): bool {
+        exists<StorageItem<PluginT, V>>(dao_address<DAOT>())
+    }
+
     // Withdraw Token capability function
 
     /// Withdraw the token from the DAO account
@@ -701,7 +712,7 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// Query amount of the member SBT
-    public fun query_sbt<DAOT: store, PluginT>(member_addr: address)
+    public fun query_sbt<DAOT: store>(member_addr: address)
     : u128 acquires DAONFTUpdateCapHolder {
         if (!is_member<DAOT>(member_addr)) {
             return 0
@@ -724,6 +735,32 @@ module StarcoinFramework::DAOSpace {
     public fun is_member<DAOT: store>(member_addr: address): bool {
         IdentifierNFT::owns<DAOMember<DAOT>, DAOMemberBody<DAOT>>(member_addr)
     }
+
+    struct PluginEvent<phantom DAOT : store, phantom PluginT: store, phantom EventT: store + drop> has key, store {
+        event_handle: Event::EventHandle<EventT>,
+    }
+
+    /// Plugin event
+    public fun init_plugin_event<DAOT: store,
+                                 PluginT: store,
+                                 EventT: store + drop>(_cap: &DAOPluginEventCap<DAOT, PluginT>)
+    acquires DAOAccountCapHolder {
+        let dao_signer = dao_signer<DAOT>();
+        assert!(!exists<PluginEvent<DAOT, PluginT, EventT>>(dao_address<DAOT>()), Errors::invalid_state(ERR_ALREADY_INIT));
+        move_to(&dao_signer, PluginEvent<DAOT, PluginT, EventT> {
+            event_handle: Event::new_event_handle<EventT>(&dao_signer)
+        });
+    }
+
+    public fun emit_plugin_event<DAOT: store,
+                                 PluginT: store,
+                                 EventT: store + drop>(_cap: &DAOPluginEventCap<DAOT, PluginT>,
+                                                       event: EventT) acquires PluginEvent {
+        let dao_address = dao_address<DAOT>();
+        let plugin_event = borrow_global_mut<PluginEvent<DAOT, PluginT, EventT>>(dao_address);
+        Event::emit_event(&mut plugin_event.event_handle, event);
+    }
+
 
     /// Grant Event
 
@@ -1072,6 +1109,14 @@ module StarcoinFramework::DAOSpace {
         DAOGrantCap<DAOT, PluginT>{}
     }
 
+
+    /// Acquire the plugin event capability
+    /// _witness parameter ensures that the caller is the module which define PluginT
+    public fun acquire_plugin_event_cap<DAOT: store, PluginT>(_witness: &PluginT): DAOPluginEventCap<DAOT, PluginT> acquires InstalledPluginInfo {
+        validate_cap<DAOT, PluginT>(plugin_event_cap_type());
+        DAOPluginEventCap<DAOT, PluginT> {}
+    }
+
     /// Delegate the token mint capability to DAO
     /// _witness parameter ensures that the caller is the module which define PluginT
     public fun delegate_token_mint_cap<DAOT: store, PluginT, TokenT: store>(cap: Token::MintCapability<TokenT>, _witness: &PluginT)
@@ -1119,7 +1164,7 @@ module StarcoinFramework::DAOSpace {
 
     /// Proposal
     /// --------------------------------------------------
-      /// Proposal state
+    /// Proposal state
     const PENDING: u8 = 1;
     const ACTIVE: u8 = 2;
     const DEFEATED: u8 = 3;
@@ -1807,16 +1852,15 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// queue agreed proposal to execute.
-    public(script) fun queue_proposal_action<DAOT:store>(
+    public(script) fun queue_proposal_action_entry<DAOT:store>(
         _signer: signer,
         proposal_id: u64,
     ) acquires GlobalProposalActions, GlobalProposals {
-        do_queue_proposal_action<DAOT>(&_signer, proposal_id)
+        queue_proposal_action<DAOT>(proposal_id)
     }
 
     /// queue agreed proposal to execute.
-    public fun do_queue_proposal_action<DAOT:store>(
-        _signer: &signer,
+    public fun queue_proposal_action<DAOT:store>(
         proposal_id: u64,
     ) acquires GlobalProposalActions, GlobalProposals {
         // Only agreed proposal can be submitted.
@@ -2126,11 +2170,11 @@ module StarcoinFramework::DAOSpace {
         DAOAccount::dao_signer(cap)
     }
 
-    fun dao_address<DAOT>(): address {
+    public fun dao_address<DAOT>(): address {
         DAORegistry::dao_address<DAOT>()
     }
 
-    fun dao_id(dao_address: address): u64 acquires DAO {
+    public fun dao_id(dao_address: address): u64 acquires DAO {
         if (exists<DAO>(dao_address)){
             let dao = borrow_global<DAO>(dao_address);
             dao.id
