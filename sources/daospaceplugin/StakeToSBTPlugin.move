@@ -17,6 +17,7 @@ module StarcoinFramework::StakeToSBTPlugin {
     const ERR_PLUGIN_STILL_LOCKED: u64 = 1004;
     const ERR_PLUGIN_CONFIG_INIT_REPEATE: u64 = 1005;
     const ERR_PLUGIN_ITEM_CANT_FOUND: u64 = 1006;
+    const ERR_PLUGIN_NO_MATCH_LOCKTIME: u64 = 1007;
 
     struct StakeToSBTPlugin has store, drop {}
 
@@ -174,13 +175,9 @@ module StarcoinFramework::StakeToSBTPlugin {
         };
 
         let weight_opt = get_sbt_weight<DAOT, TokenT>(lock_time);
-        let weight = if (Option::is_none(&weight_opt)) {
-            1
-        } else {
-            Option::destroy_some(weight_opt)
-        };
+        assert!(Option::is_some(&weight_opt), Errors::invalid_state(ERR_PLUGIN_NO_MATCH_LOCKTIME));
 
-        let token_amount = Token::value<TokenT>(&token);
+        let weight = Option::destroy_some(weight_opt);
         let sbt_amount = compute_token_to_sbt(weight, &token);
         DAOSpace::increase_member_sbt(&member_cap, sender_addr, sbt_amount);
 
@@ -206,7 +203,11 @@ module StarcoinFramework::StakeToSBTPlugin {
                 dao_id: DAOSpace::dao_id(DAOSpace::dao_address<DAOT>()),
                 stake_id: id,
                 token_code: Token::token_code<TokenT>(),
-                amount: token_amount,
+                amount: 
+                
+                
+                
+                ,
                 lock_time,
                 weight,
                 sbt_amount,
