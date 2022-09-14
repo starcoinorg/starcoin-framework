@@ -1242,11 +1242,6 @@ module StarcoinFramework::DAOSpace {
         proposal_id: u64,
     }
 
-    /// Same as Proposal but has copy and drop
-    struct ProposalInfo has store, copy, drop {
-        //TODO add fields
-    }
-
     /// Keep a global proposal record for query proposal by id.
     /// Replace with Table when support Table.
     struct   GlobalProposals has key {
@@ -1794,17 +1789,6 @@ module StarcoinFramework::DAOSpace {
         }
     }
 
-    /// get proposal's information.
-    /// return: (id, proposer, start_time, end_time, yes_votes, no_votes, abstain_votes, veto_votes, block_number, state_root).
-    public fun proposal_info<DAOT: store>(
-        proposal_id: u64,
-    ): (u64, address, u64, u64, u128, u128, u128, u128, u64, vector<u8>) acquires GlobalProposals {
-        let dao_address = DAORegistry::dao_address<DAOT>();
-        let proposals = borrow_global_mut<GlobalProposals>(dao_address);
-        let proposal = borrow_proposal(proposals, proposal_id);
-        (proposal.id, proposal.proposer, proposal.start_time, proposal.end_time, proposal.yes_votes, proposal.no_votes, proposal.abstain_votes, proposal.veto_votes, proposal.block_number, *&proposal.state_root)
-    }
-
     fun borrow_proposal_mut(proposals: &mut GlobalProposals, proposal_id: u64): &mut Proposal{
         let i = 0;
         let len = Vector::length(&proposals.proposals);
@@ -1844,11 +1828,41 @@ module StarcoinFramework::DAOSpace {
         Option::none<u64>()
     }
 
-    ///Return a copy of Proposal
+    /// Return a copy of Proposal of proposal_id
     public fun proposal<DAOT>(proposal_id: u64): Proposal acquires GlobalProposals{
         let dao_address = dao_address<DAOT>();
         let global_proposals = borrow_global<GlobalProposals>(dao_address);
         *borrow_proposal(global_proposals, proposal_id)
+    }
+
+     /// get proposal's id.
+    public fun proposal_id(proposal: &Proposal): u64 {
+        proposal.id
+    }
+
+    /// get proposal's proposer.
+    public fun proposal_proposer(proposal: &Proposal): address {
+        proposal.proposer
+    }
+
+    /// get proposal's time(start_time/end_time).
+    public fun proposal_time(proposal: &Proposal): (u64, u64) {
+        (proposal.start_time,proposal.end_time)
+    }
+
+    /// get proposal's votes(Yes/No/Abstain/Veto).
+    public fun proposal_votes(proposal: &Proposal): (u128, u128, u128, u128) {
+        (proposal.yes_votes, proposal.no_votes, proposal.abstain_votes, proposal.veto_votes)
+    }
+
+    /// get proposal's block number.
+    public fun proposal_block_number(proposal: &Proposal): u64 {
+        proposal.block_number
+    }
+
+    /// get proposal's state root.
+    public fun proposal_state_root(proposal: &Proposal): vector<u8> {
+        *&proposal.state_root
     }
 
     /// queue agreed proposal to execute.
