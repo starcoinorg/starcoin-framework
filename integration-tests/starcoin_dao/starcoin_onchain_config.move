@@ -32,6 +32,7 @@ script {
 }
 // check: EXECUTED
 
+
 //# block --author 0x1 --timestamp 86401000
 
 //# block --author 0x1 --timestamp 86402000
@@ -67,23 +68,17 @@ script {
 }
 // check: EXECUTED
 
-//# package
-module Genesis::test {
-    public fun hello() {}
-}
 
-//# run --signers alice --args {{$.package[0].package_hash}}
-script{
-    use StarcoinFramework::StarcoinDAO::StarcoinDAO;
-    use StarcoinFramework::UpgradeModulePlugin;
+//# run --signers alice 
+script {
+    use StarcoinFramework::OnChainStarcoinDAOConfig;
+    use StarcoinFramework::RewardConfig;
 
-    //alice create proposal
-    fun create_proposal(sender: signer, package_hash: vector<u8>){
-        UpgradeModulePlugin::create_proposal<StarcoinDAO>(&sender, b"Upgrade module", 10000, package_hash, 1, true);
+    fun propose (sender: signer){
+        assert!(RewardConfig::reward_delay() == 1, 101);
+        OnChainStarcoinDAOConfig::propose_update_reward_config(&sender, b"update", 5 , 20000);
     }
 }
-// check: EXECUTED
-
 
 //# block --author=0x3 --timestamp 86520000
 
@@ -103,7 +98,6 @@ script{
     }
 }
 // check: EXECUTED
-
 
 //# block --author=0x3 --timestamp 86640000
 
@@ -136,16 +130,16 @@ script{
 script{
     use StarcoinFramework::DAOSpace;
     use StarcoinFramework::StarcoinDAO::StarcoinDAO;
-    use StarcoinFramework::UpgradeModulePlugin;
+    use StarcoinFramework::ConfigProposalPlugin;
+    use StarcoinFramework::RewardConfig;
 
     fun execute_proposal(sender: signer){
         assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 6 , 103);
-        UpgradeModulePlugin::execute_proposal<StarcoinDAO>(&sender, 1);
-        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 7 , 103);
+        ConfigProposalPlugin::execute_proposal<StarcoinDAO, RewardConfig::RewardConfig>(&sender, 1);
+        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 7 , 104);
+
+        assert!(RewardConfig::reward_delay() == 5, 105);
+
     }
 }
 // check: EXECUTED
-
-//# block --author=0x3 --timestamp 90000000
-
-//# deploy {{$.package[0].file}} --signers alice
