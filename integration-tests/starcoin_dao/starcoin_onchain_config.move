@@ -27,7 +27,7 @@ script {
     fun stake_and_check(sender: signer) {
         let token = Account::withdraw<STC::STC>(
             &sender, 1000 * Token::scaling_factor<STC::STC>());
-        StakeToSBTPlugin::stake<StarcoinDAO, STC::STC>(&sender, token, 100000);
+        StakeToSBTPlugin::stake<StarcoinDAO, STC::STC>(&sender, token, 60000);
     }
 }
 // check: EXECUTED
