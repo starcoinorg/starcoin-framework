@@ -203,11 +203,7 @@ module StarcoinFramework::StakeToSBTPlugin {
                 dao_id: DAOSpace::dao_id(DAOSpace::dao_address<DAOT>()),
                 stake_id: id,
                 token_code: Token::token_code<TokenT>(),
-                amount: 
-                
-                
-                
-                ,
+                amount: sbt_amount,
                 lock_time,
                 weight,
                 sbt_amount,

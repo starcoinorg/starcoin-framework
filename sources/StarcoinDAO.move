@@ -58,7 +58,7 @@ module StarcoinFramework::StarcoinDAO{
         
         DAOSpace::install_plugin_with_root_cap<StarcoinDAO, StakeToSBTPlugin>(&dao_root_cap, StakeToSBTPlugin::required_caps());
         StakeToSBTPlugin::accept_token_with_root_cap<StarcoinDAO, STC>(&dao_root_cap);
-        StakeToSBTPlugin::set_sbt_weight_with_root_cap<StarcoinDAO, STC>(&dao_root_cap, 10, 2000);
+        StakeToSBTPlugin::set_sbt_weight_with_root_cap<StarcoinDAO, STC>(&dao_root_cap, 60000, 1000);
         
         DAOSpace::burn_root_cap(dao_root_cap);
 

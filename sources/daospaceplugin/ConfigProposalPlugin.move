@@ -16,7 +16,7 @@ module StarcoinFramework::ConfigProposalPlugin {
         caps
     }
 
-    public fun create_proposal<DAOT: store, ConfigT: store>(sender: signer, description: vector<u8>,action_delay: u64, config: ConfigT) {
+    public fun create_proposal<DAOT: store, ConfigT: store>(sender: &signer, description: vector<u8>,action_delay: u64, config: ConfigT) {
         let witness = ConfigProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, ConfigProposalPlugin>(&witness);
         let action = ConfigProposalAction<ConfigT>{
@@ -25,7 +25,7 @@ module StarcoinFramework::ConfigProposalPlugin {
         DAOSpace::create_proposal<
             DAOT,
             ConfigProposalPlugin,
-            ConfigProposalAction<ConfigT>>(&cap, &sender, action, description, action_delay);
+            ConfigProposalAction<ConfigT>>(&cap, sender, action, description, action_delay);
     }
 
     public fun execute_proposal<DAOT: store, ConfigT: copy + drop + store>(sender: &signer, proposal_id: u64) {
