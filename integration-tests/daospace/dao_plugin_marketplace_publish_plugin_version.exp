@@ -1,4 +1,4 @@
-processed 10 tasks
+processed 13 tasks
 
 task 6 'run'. lines 44-52:
 {
@@ -14,7 +14,7 @@ task 7 'run'. lines 54-62:
 
 task 8 'run'. lines 64-72:
 {
-  "gas_used": 41782,
+  "gas_used": 42907,
   "status": {
     "MoveAbort": {
       "location": {
@@ -30,6 +30,114 @@ task 8 'run'. lines 64-72:
 
 task 9 'run'. lines 74-82:
 {
-  "gas_used": 116860,
+  "gas_used": 117986,
   "status": "Executed"
+}
+
+task 10 'view'. lines 84-84:
+store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
+    id: 1
+    name: 54657374506c7567696e
+    description: 697066733a2f2f6465736372697074696f6e
+    labels: [
+    ]
+    next_version_number: 2
+    versions: [
+        store 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginVersion {
+            number: 1
+            tag: 76302e312e30
+            implement_extpoints: [
+                746573745f706c7567696e,
+            ]
+            depend_extpoints: [
+                746573745f706c7567696e,
+            ]
+            js_entry_uri: 697066733a2f2f6a735f656e7472795f757269
+            created_at: 10000
+        },
+    ]
+    star_count: 0
+    created_at: 10000
+    updated_at: 10000
+}
+
+task 11 'run'. lines 86-99:
+{
+  "gas_used": 659997,
+  "status": "Executed"
+}
+
+task 12 'view'. lines 101-101:
+store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
+    id: 1
+    name: 54657374506c7567696e
+    description: 697066733a2f2f6465736372697074696f6e
+    labels: [
+    ]
+    next_version_number: 8
+    versions: [
+        store 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginVersion {
+            number: 3
+            tag: 76302e332e30
+            implement_extpoints: [
+                746573745f706c7567696e,
+            ]
+            depend_extpoints: [
+                746573745f706c7567696e,
+            ]
+            js_entry_uri: 697066733a2f2f6a735f656e7472795f757269
+            created_at: 10000
+        },
+        store 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginVersion {
+            number: 4
+            tag: 76302e342e30
+            implement_extpoints: [
+                746573745f706c7567696e,
+            ]
+            depend_extpoints: [
+                746573745f706c7567696e,
+            ]
+            js_entry_uri: 697066733a2f2f6a735f656e7472795f757269
+            created_at: 10000
+        },
+        store 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginVersion {
+            number: 5
+            tag: 76302e352e30
+            implement_extpoints: [
+                746573745f706c7567696e,
+            ]
+            depend_extpoints: [
+                746573745f706c7567696e,
+            ]
+            js_entry_uri: 697066733a2f2f6a735f656e7472795f757269
+            created_at: 10000
+        },
+        store 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginVersion {
+            number: 6
+            tag: 76302e362e30
+            implement_extpoints: [
+                746573745f706c7567696e,
+            ]
+            depend_extpoints: [
+                746573745f706c7567696e,
+            ]
+            js_entry_uri: 697066733a2f2f6a735f656e7472795f757269
+            created_at: 10000
+        },
+        store 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginVersion {
+            number: 7
+            tag: 76302e372e30
+            implement_extpoints: [
+                746573745f706c7567696e,
+            ]
+            depend_extpoints: [
+                746573745f706c7567696e,
+            ]
+            js_entry_uri: 697066733a2f2f6a735f656e7472795f757269
+            created_at: 10000
+        },
+    ]
+    star_count: 0
+    created_at: 10000
+    updated_at: 10000
 }

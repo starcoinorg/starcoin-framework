@@ -41,7 +41,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
 
 task 8 'run'. lines 70-78:
 {
-  "gas_used": 111563,
+  "gas_used": 111564,
   "status": "Executed"
 }
 
@@ -81,7 +81,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
 
 task 11 'run'. lines 84-92:
 {
-  "gas_used": 111624,
+  "gas_used": 111625,
   "status": "Executed"
 }
 
@@ -128,7 +128,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
 
 task 14 'run'. lines 98-106:
 {
-  "gas_used": 111624,
+  "gas_used": 111625,
   "status": "Executed"
 }
 

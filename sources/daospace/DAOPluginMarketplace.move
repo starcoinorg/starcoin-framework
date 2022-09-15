@@ -18,9 +18,8 @@ module StarcoinFramework::DAOPluginMarketplace {
     const ERR_PLUGIN_ALREADY_EXISTS: u64 = 104;
     const ERR_STAR_ALREADY_STARED: u64 = 105;
     const ERR_STAR_NOT_FOUND_STAR: u64 = 106;
-    const ERR_VERSION_COUNT_LIMIT: u64 = 107;
 
-    const MAX_VERSION_COUNT: u64 = 100;
+    const MAX_VERSION_COUNT: u64 = 5;
 
     struct PluginVersion has store {
         number: u64, //Numeric version number, such as 1, 2, 3
@@ -252,7 +251,19 @@ module StarcoinFramework::DAOPluginMarketplace {
         let sender_addr = Signer::address_of(sender);
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
         ensure_exists_plugin_owner_nft(copy sender_addr, plugin.id);
-        assert!(Vector::length(&plugin.versions) <= MAX_VERSION_COUNT, Errors::limit_exceeded(ERR_VERSION_COUNT_LIMIT));
+
+        // Remove the old version when the number of versions is greater than MAX_VERSION_COUNT
+        if (Vector::length(&plugin.versions) >= MAX_VERSION_COUNT) {
+            let oldest_version = Vector::remove(&mut plugin.versions, 0);
+            let PluginVersion {
+                number: _,
+                tag: _,
+                implement_extpoints: _,
+                depend_extpoints: _,
+                js_entry_uri: _,
+                created_at: _,
+            } = oldest_version;
+        };
         
         let version_number = next_plugin_version_number(plugin);
         Vector::push_back<PluginVersion>(&mut plugin.versions, PluginVersion{
