@@ -49,8 +49,7 @@ module StarcoinFramework::MemberProposalPlugin{
         caps 
     }
 
-    //TODO how to unify arguments.
-    public (script) fun create_proposal<DAOT: store>(sender: signer, description: vector<u8>, member: address, image_data:vector<u8>, image_url:vector<u8>, init_sbt: u128, action_delay: u64){
+    public fun create_proposal<DAOT: store>(sender: &signer, description: vector<u8>, member: address, image_data:vector<u8>, image_url:vector<u8>, init_sbt: u128, action_delay: u64){
         let witness = MemberProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, MemberProposalPlugin>(&witness);
         let action = MemberJoinAction{
@@ -59,18 +58,31 @@ module StarcoinFramework::MemberProposalPlugin{
             image_data,
             image_url
         };
-        DAOSpace::create_proposal(&cap, &sender, action, description, action_delay);
+        DAOSpace::create_proposal(&cap, sender, action, description, action_delay);
     }
 
-    public (script) fun execute_proposal<DAOT: store>(sender: signer, proposal_id: u64){
+    public (script) fun create_proposal_entry<DAOT: store>(sender: signer, description: vector<u8>, member: address, image_data:vector<u8>, image_url:vector<u8>, init_sbt: u128, action_delay: u64){
+        create_proposal<DAOT>(&sender, description, member, image_data, image_url, init_sbt, action_delay);
+    }
+
+    public fun execute_proposal<DAOT: store>(sender: &signer, proposal_id: u64){
         let witness = MemberProposalPlugin{};
         let proposal_cap = DAOSpace::acquire_proposal_cap<DAOT, MemberProposalPlugin>(&witness);
-        let MemberJoinAction{member, init_sbt, image_data, image_url} = DAOSpace::execute_proposal<DAOT, MemberProposalPlugin, MemberJoinAction>(&proposal_cap, &sender, proposal_id);
+        let MemberJoinAction{member, init_sbt, image_data, image_url} = DAOSpace::execute_proposal<DAOT, MemberProposalPlugin, MemberJoinAction>(&proposal_cap, sender, proposal_id);
         let member_cap = DAOSpace::acquire_member_cap<DAOT, MemberProposalPlugin>(&witness);
         DAOSpace::join_member(&member_cap, member, Option::some(image_data), Option::some(image_url) , init_sbt);
     }
 
-    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, plugin_version: u64, description: vector<u8>,action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, MemberJoinAction>(&sender, plugin_version, required_caps(), description, action_delay);
-    } 
+    public (script) fun execute_proposal_entry<DAOT: store>(sender: signer, proposal_id: u64){
+        execute_proposal<DAOT>(&sender, proposal_id);
+    }
+
+    public fun install_plugin_proposal<DAOT:store>(sender:&signer, plugin_version: u64, description: vector<u8>,action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, MemberJoinAction>(sender, plugin_version, required_caps(), description, action_delay);
+    }
+
+    public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, plugin_version: u64, description: vector<u8>, action_delay:u64){
+        install_plugin_proposal<DAOT>(&sender, plugin_version, description, action_delay);
+    }
+
 }

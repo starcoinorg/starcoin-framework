@@ -74,6 +74,7 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::Offer`](Offer.md#0x1_Offer)
 -  [`0x1::OnChainConfigDao`](OnChainConfigDao.md#0x1_OnChainConfigDao)
 -  [`0x1::OnChainConfigScripts`](OnChainConfigScripts.md#0x1_OnChainConfigScripts)
+-  [`0x1::OnChainStarcoinDAOConfig`](OnChainStarcoinDAOConfig.md#0x1_OnChainStarcoinDAOConfig)
 -  [`0x1::Option`](Option.md#0x1_Option)
 -  [`0x1::Oracle`](Oracle.md#0x1_Oracle)
 -  [`0x1::PackageTxnManager`](PackageTxnManager.md#0x1_PackageTxnManager)

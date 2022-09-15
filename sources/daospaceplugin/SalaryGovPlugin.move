@@ -141,7 +141,7 @@ module SalaryGovPlugin {
     }
 
     fun compute_salary_amount<DAOT: store, TokenT>(member: address): u128 acquires SalaryReceive {
-        let sbt_amount = DAOSpace::query_sbt<DAOT, SalaryGovPlugin>(member);
+        let sbt_amount = DAOSpace::query_sbt<DAOT>(member);
         let receive = borrow_global<SalaryReceive<DAOT, TokenT>>(member);
 
         let witness = SalaryGovPlugin{};

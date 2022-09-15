@@ -65,7 +65,7 @@ module StarcoinFramework::UpgradeModulePlugin {
         create_proposal<DAOT>(&sender,description, action_delay, package_hash, version, enforced);
     }
 
-    public (script) fun execute_proposal<DAOT: store>(sender: signer, proposal_id: u64) {
+    public fun execute_proposal<DAOT: store>(sender: &signer, proposal_id: u64) {
         let witness = UpgradeModulePlugin{};
         let proposal_cap =
             DAOSpace::acquire_proposal_cap<DAOT, UpgradeModulePlugin>(&witness);
@@ -79,11 +79,19 @@ module StarcoinFramework::UpgradeModulePlugin {
         } = DAOSpace::execute_proposal<
             DAOT,
             UpgradeModulePlugin,
-            UpgradeModuleAction>(&proposal_cap, &sender, proposal_id);
+            UpgradeModuleAction>(&proposal_cap, sender, proposal_id);
         DAOSpace::submit_upgrade_plan<DAOT, UpgradeModulePlugin>(&mut upgrade_module_cap, package_hash, version, enforced);
     }
 
-    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, plugin_version: u64,  description: vector<u8>, action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, UpgradeModulePlugin>(&sender, plugin_version, required_caps(), description, action_delay);
+    public (script) fun execute_proposal_entry<DAOT: store>(sender: signer, proposal_id: u64) {
+        execute_proposal<DAOT>(&sender, proposal_id);
+    }
+
+    public fun install_plugin_proposal<DAOT:store>(sender:&signer, plugin_version: u64,  description: vector<u8>, action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, UpgradeModulePlugin>(sender, plugin_version, required_caps(), description, action_delay);
     } 
+
+    public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, plugin_version: u64,  description: vector<u8>, action_delay:u64){
+        install_plugin_proposal<DAOT>(&sender, plugin_version, description, action_delay);
+    }
 }
