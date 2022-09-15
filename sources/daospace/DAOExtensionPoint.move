@@ -18,6 +18,10 @@ module StarcoinFramework::DAOExtensionPoint {
     const ERR_ALREADY_REGISTERED: u64 = 104;
     const ERR_STAR_ALREADY_STARED: u64 = 105;
     const ERR_STAR_NOT_FOUND_STAR: u64 = 106;
+    const ERR_TAG_DUPLICATED: u64 = 107;
+    const ERR_VERSION_COUNT_LIMIT: u64 = 108;
+
+    const MAX_VERSION_COUNT: u64 = 100;
 
     struct Version has store  {
        number: u64,
@@ -244,9 +248,9 @@ module StarcoinFramework::DAOExtensionPoint {
         let sender_addr = Signer::address_of(sender);
         let extp = borrow_global_mut<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
         ensure_exists_extpoint_nft(sender_addr, extp.id);
+        assert!(Vector::length(&extp.versions) <= MAX_VERSION_COUNT, Errors::limit_exceeded(ERR_VERSION_COUNT_LIMIT));
 
         let number = next_extpoint_version_number(extp);
-
         Vector::push_back<Version>(&mut extp.versions, Version{
             number: number,
             tag: tag,
