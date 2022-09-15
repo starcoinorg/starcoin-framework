@@ -44,7 +44,6 @@ module StarcoinFramework::DAOExtensionPoint {
     }
 
     struct Star<phantom ExtPointT> has key, store {
-        user: address,
         created_at: u64,
     }
 
@@ -300,7 +299,6 @@ module StarcoinFramework::DAOExtensionPoint {
         assert!(!exists<Star<ExtPointT>>(sender_addr), Errors::invalid_state(ERR_STAR_ALREADY_STARED));
 
         move_to(sender, Star<ExtPointT>{
-            user: sender_addr,
             created_at: Timestamp::now_milliseconds(),
         });
 
@@ -322,7 +320,7 @@ module StarcoinFramework::DAOExtensionPoint {
         assert!(exists<Star<ExtPointT>>(sender_addr), Errors::invalid_state(ERR_STAR_NOT_FOUND_STAR));
 
         let star = move_from<Star<ExtPointT>>(sender_addr);
-        let Star<ExtPointT> {user:_, created_at:_} = star;
+        let Star<ExtPointT> {created_at:_} = star;
 
         let entry = borrow_global_mut<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
         entry.star_count = entry.star_count - 1;

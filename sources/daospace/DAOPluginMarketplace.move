@@ -45,7 +45,6 @@ module StarcoinFramework::DAOPluginMarketplace {
     }
 
     struct Star<phantom PluginT> has key, store {
-        user: address, //Star's wallet address, which can be a short address, such as zhangsan.stc
         created_at: u64, //creation time
     }
 
@@ -285,7 +284,6 @@ module StarcoinFramework::DAOPluginMarketplace {
         assert!(!exists<Star<PluginT>>(sender_addr), Errors::invalid_state(ERR_STAR_ALREADY_STARED));
 
         move_to(sender, Star<PluginT>{
-            user: sender_addr,
             created_at: Timestamp::now_milliseconds(),
         });
 
@@ -307,7 +305,7 @@ module StarcoinFramework::DAOPluginMarketplace {
         assert!(exists<Star<PluginT>>(sender_addr), Errors::invalid_state(ERR_STAR_NOT_FOUND_STAR));
 
         let star = move_from<Star<PluginT>>(sender_addr);
-        let Star<PluginT> {user:_, created_at:_} = star;
+        let Star<PluginT> { created_at:_} = star;
 
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
         plugin.star_count = plugin.star_count - 1;
