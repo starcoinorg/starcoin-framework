@@ -2,7 +2,7 @@ processed 6 tasks
 
 task 3 'run'. lines 7-15:
 {
-  "gas_used": 177448,
+  "gas_used": 174543,
   "status": "Executed"
 }
 
@@ -13,7 +13,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
 
 task 5 'run'. lines 19-27:
 {
-  "gas_used": 15477,
+  "gas_used": 13211,
   "status": {
     "MoveAbort": {
       "location": {

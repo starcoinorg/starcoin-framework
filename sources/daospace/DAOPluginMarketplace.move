@@ -354,11 +354,3 @@ module StarcoinFramework::DAOPluginMarketplace {
         );
     }
 }
-
-module StarcoinFramework::DAOPluginMarketplaceScript {
-    use StarcoinFramework::DAOPluginMarketplace;
-
-    public(script) fun initialize() {
-        DAOPluginMarketplace::initialize();
-    }
-}

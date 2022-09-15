@@ -43,10 +43,10 @@ module creator::TestPlugin {
 
 //# run --signers Genesis
 script {
-    use StarcoinFramework::DAOPluginMarketplaceScript;
+    use StarcoinFramework::DAOPluginMarketplace;
 
     fun main(_sender: signer) {
-        DAOPluginMarketplaceScript::initialize();
+        DAOPluginMarketplace::initialize();
     }
 }
 // check: EXECUTED

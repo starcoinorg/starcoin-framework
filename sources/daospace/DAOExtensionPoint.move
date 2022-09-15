@@ -337,11 +337,3 @@ module StarcoinFramework::DAOExtensionPoint {
         );
     }
 }
-
-module StarcoinFramework::DAOExtensionPointScript {
-    use StarcoinFramework::DAOExtensionPoint;
-
-    public(script) fun initialize() {
-        DAOExtensionPoint::initialize();
-    }
-}
