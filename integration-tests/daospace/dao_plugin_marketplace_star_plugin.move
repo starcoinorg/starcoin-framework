@@ -85,7 +85,7 @@ script {
         );
     }
 }
-// check: EXECUTED
+// check: MoveAbort
 
 //# run --signers alice
 script {
@@ -129,4 +129,4 @@ script {
         );
     }
 }
-// check: EXECUTED
+// check: MoveAbort

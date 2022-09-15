@@ -68,7 +68,7 @@ script {
         );
     }
 }
-// check: EXECUTED
+// check: MoveAbort
 
 //# run --signers bob
 script {

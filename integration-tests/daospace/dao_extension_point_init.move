@@ -24,6 +24,6 @@ script {
         DAOExtensionPoint::initialize();
     }
 }
-// check: EXECUTED
+// check: MoveAbort
 
 

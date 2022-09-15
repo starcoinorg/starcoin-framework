@@ -22,4 +22,4 @@ script {
         DAOPluginMarketplace::initialize();
     }
 }
-// check: EXECUTED
+// check: MoveAbort

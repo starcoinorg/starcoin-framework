@@ -71,7 +71,7 @@ script {
         TestPlugin::update_plugin(sender);
     }
 }
-// check: EXECUTED
+// check: MoveAbort
 
 //# run --signers bob
 script {

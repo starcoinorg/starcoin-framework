@@ -68,7 +68,7 @@ script {
         );
     }
 }
-// check: EXECUTED
+// check: MoveAbort
 
 //# run --signers alice
 script {
@@ -140,4 +140,4 @@ script {
         NFTGallery::deposit<DAOExtensionPoint::OwnerNFTMeta, DAOExtensionPoint::OwnerNFTBody>(&sender, nft);
     }
 }
-// check: EXECUTED
+// check: MoveAbort

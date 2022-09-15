@@ -62,6 +62,6 @@ script {
         TestExtentionPoint::initialize(sender);
     }
 }
-// check: EXECUTED
+// check: MoveAbort
 
 //# view --address Genesis --resource 0x1::DAOExtensionPoint::Entry<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestExtentionPoint::TestExtentionPoint>

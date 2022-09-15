@@ -69,7 +69,7 @@ script {
         DAOExtensionPoint::star<TestExtentionPoint::TestExtentionPoint>(&sender);
     }
 }
-// check: EXECUTED
+// check: MoveAbort
 
 //# run --signers alice
 script {

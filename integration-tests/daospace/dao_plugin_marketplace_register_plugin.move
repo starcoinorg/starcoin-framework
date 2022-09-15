@@ -56,7 +56,7 @@ script {
         TestPlugin::register(sender);
     }
 }
-// check: EXECUTED
+// check: MoveAbort
 
 //# run --signers bob
 script {
@@ -66,7 +66,7 @@ script {
         TestPlugin::register(sender);
     }
 }
-// check: EXECUTED
+// check: MoveAbort
 
 
 //# publish
@@ -114,4 +114,4 @@ script {
         TestPlugin2::register(sender);
     }
 }
-// check: EXECUTED
+// check: MoveAbort
