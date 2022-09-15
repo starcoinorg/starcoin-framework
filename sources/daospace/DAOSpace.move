@@ -10,7 +10,7 @@ module StarcoinFramework::DAOSpace {
     use StarcoinFramework::Token::{Self, Token};
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option::{Self, Option};
-    use StarcoinFramework::STC::{STC};
+    use StarcoinFramework::STC::{Self, STC};
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::Config;
     use StarcoinFramework::Event;
@@ -1231,7 +1231,6 @@ module StarcoinFramework::DAOSpace {
         /// id of the proposal
         proposal_id: u64,
         //To prevent spam, proposals must be submitted with a deposit
-        //TODO should support custom Token?
         deposit: Token<STC>,
         /// proposal action.
         action: Action,
@@ -1631,7 +1630,7 @@ module StarcoinFramework::DAOSpace {
         proposal_id: u64,
     ): ActionT acquires ProposalActions, GlobalProposals, GlobalProposalActions, ProposalEvent, DAO {
         // Only executable proposal's action can be extracted.
-         assert!(proposal_state<DAOT>(proposal_id) == EXECUTABLE, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
+        assert!(proposal_state<DAOT>(proposal_id) == EXECUTABLE, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
         let dao_address = dao_address<DAOT>();
         let sender_addr = Signer::address_of(sender);
         assert!(exists<ProposalActions<ActionT>>(dao_address), Errors::invalid_state(ERR_PROPOSAL_ACTIONS_NOT_EXIST));
@@ -1666,9 +1665,20 @@ module StarcoinFramework::DAOSpace {
         let propopsal_action_index = Option::extract(&mut proposal_action_index_opt);
         let ProposalActionIndex{ proposal_id:_,} = Vector::remove(&mut global_proposal_actions.proposal_action_indexs, propopsal_action_index);
 
-        //TODO check the proposal state and do deposit or burn.
         Account::deposit(proposal.proposer, deposit);
         action
+    }
+
+    fun burn_proposal_token<ActionT: store>(dao_address: address, proposal_id: u64) acquires ProposalActions {
+        let actions = borrow_global_mut<ProposalActions<ActionT>>(dao_address);
+        let index_opt = find_action(&actions.actions, proposal_id);
+        assert!(Option::is_some(&index_opt), Errors::invalid_argument(ERR_ACTION_INDEX_INVALID));
+
+        let index = Option::extract(&mut index_opt);
+        let deposit = &mut Vector::borrow_mut(&mut actions.actions, index).deposit;
+        let amount  = Token::value<STC>(deposit);
+        let token = Token::withdraw<STC>(deposit, amount);
+        STC::burn(token);
     }
 
     fun find_action<ActionT: store>(actions: &vector<ProposalAction<ActionT>>, proposal_id: u64): Option<u64>{
@@ -1729,6 +1739,18 @@ module StarcoinFramework::DAOSpace {
             idx = idx + 1;
         };
         Option::none<VoteInfo>()
+    }
+
+    public fun clean_up_defeated_proposal<DAOT: store, ActionT: store>(_sender: &signer, proposal_id: u64) acquires ProposalActions, GlobalProposals, GlobalProposalActions{
+        // Only DEFEATED proposal's action can be burn token.
+        assert!(proposal_state<DAOT>(proposal_id) == DEFEATED, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
+        let dao_address = dao_address<DAOT>();
+        assert!(exists<ProposalActions<ActionT>>(dao_address), Errors::invalid_state(ERR_PROPOSAL_ACTIONS_NOT_EXIST));
+        burn_proposal_token<ActionT>(dao_address, proposal_id);
+    }
+
+    public (script) fun clean_up_defeated_proposal_entry<DAOT: store, ActionT: store>(sender: signer, proposal_id: u64) acquires ProposalActions, GlobalProposals, GlobalProposalActions{
+        clean_up_defeated_proposal<DAOT, ActionT>(&sender, proposal_id);
     }
 
     /// get vote info by proposal_id
