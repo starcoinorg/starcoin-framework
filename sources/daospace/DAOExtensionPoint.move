@@ -145,7 +145,7 @@ module StarcoinFramework::DAOExtensionPoint {
         assert!(has_extpoint_nft(sender_addr, extpoint_id), Errors::invalid_state(ERR_EXPECT_EXT_POINT_NFT));
     }
 
-	public fun initialize() {
+    public fun initialize() {
         assert!(!exists<Registry>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
         let signer = GenesisSignerCapability::get_genesis_signer();
 
