@@ -44,14 +44,23 @@ module StarcoinFramework::AnyMemberPlugin{
     }
 
     //TODO how to unify arguments.
-    public (script) fun join<DAOT: store>(sender: signer, image_data:vector<u8>, image_url:vector<u8>){
+    public fun join<DAOT: store>(sender: &signer, image_data:vector<u8>, image_url:vector<u8>){
         let witness = AnyMemberPlugin{};
         let member_cap = DAOSpace::acquire_member_cap<DAOT, AnyMemberPlugin>(&witness);
-        IdentifierNFT::accept<DAOSpace::DAOMember<DAOT>,DAOSpace::DAOMemberBody<DAOT>>(&sender);
-        DAOSpace::join_member(&member_cap, Signer::address_of(&sender), Option::some(image_data), Option::some(image_url), 1);
+        IdentifierNFT::accept<DAOSpace::DAOMember<DAOT>,DAOSpace::DAOMemberBody<DAOT>>(sender);
+        DAOSpace::join_member(&member_cap, Signer::address_of(sender), Option::some(image_data), Option::some(image_url), 1);
     }
 
-    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, plugin_version: u64, description: vector<u8>, action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, AnyMemberPlugin>(&sender, plugin_version, required_caps(), description, action_delay);
-    } 
+    public (script) fun join_entry<DAOT: store>(sender: signer, image_data:vector<u8>, image_url:vector<u8>){
+        join<DAOT>(&sender, image_data, image_url);
+    }
+
+    public fun install_plugin_proposal<DAOT:store>(sender:&signer, plugin_version: u64, description: vector<u8>, action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, AnyMemberPlugin>(sender, plugin_version, required_caps(), description, action_delay);
+    }
+
+    public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, plugin_version: u64, description: vector<u8>, action_delay:u64){
+        install_plugin_proposal<DAOT>(&sender, plugin_version, description, action_delay);
+    }
+
 }
