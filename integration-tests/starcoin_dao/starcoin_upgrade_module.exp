@@ -41,18 +41,18 @@ task 18 'run'. lines 95-105:
 
 task 20 'run'. lines 110-118:
 {
-  "gas_used": 72052,
+  "gas_used": 72156,
   "status": "Executed"
 }
 
 task 22 'run'. lines 122-131:
 {
-  "gas_used": 173404,
+  "gas_used": 173612,
   "status": "Executed"
 }
 
 task 24 'run'. lines 135-147:
 {
-  "gas_used": 505187,
+  "gas_used": 505499,
   "status": "Executed"
 }

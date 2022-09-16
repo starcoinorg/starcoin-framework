@@ -1215,12 +1215,12 @@ module StarcoinFramework::DAOSpace {
         no_votes: u128,
         abstain_votes: u128,
         /// no_with_veto counts as no but also adds a veto vote
-        veto_votes: u128,
+        no_with_veto_votes: u128,
         /// executable after this time.
         eta: u64,
         /// after how long, the agreed proposal can be executed.
         action_delay: u64,
-        /// how many votes to reach to make the proposal pass.
+        /// how many votes to reach to make the proposal valid.
         quorum_votes: u128,
         /// the block number when submit proposal 
         block_number: u64,
@@ -1387,7 +1387,7 @@ module StarcoinFramework::DAOSpace {
             yes_votes: 0,
             no_votes: 0,
             abstain_votes: 0,
-            veto_votes: 0,
+            no_with_veto_votes: 0,
             eta: 0,
             action_delay,
             quorum_votes,
@@ -1700,7 +1700,7 @@ module StarcoinFramework::DAOSpace {
         } else if (choice_no().choice == vote.choice) {
             proposal.no_votes = proposal.no_votes + vote.vote_weight;
         } else if ( choice_no_with_veto().choice == vote.choice) {
-            proposal.veto_votes = proposal.veto_votes + vote.vote_weight;
+            proposal.no_with_veto_votes = proposal.no_with_veto_votes + vote.vote_weight;
         } else if (choice_abstain().choice == vote.choice) {
             proposal.abstain_votes = proposal.abstain_votes + vote.vote_weight;
         } else {
@@ -1799,11 +1799,11 @@ module StarcoinFramework::DAOSpace {
         } else if (current_time <= proposal.end_time) {
             // Active
             ACTIVE
-        } else if (proposal.veto_votes >= (proposal.no_votes + proposal.yes_votes) ){
+        } else if (proposal.no_with_veto_votes >= (proposal.no_votes + proposal.yes_votes) ){
             // rejected
             REJECTED 
-        } else if (proposal.yes_votes <= (proposal.no_votes  + proposal.abstain_votes + proposal.veto_votes) ||
-                   proposal.yes_votes < proposal.quorum_votes) {
+        } else if (proposal.yes_votes <=  (proposal.no_votes + proposal.no_with_veto_votes) || 
+                   ( proposal.yes_votes + proposal.no_votes + proposal.abstain_votes + proposal.no_with_veto_votes ) < proposal.quorum_votes) {
             // Defeated
             DEFEATED
         } else if (proposal.eta == 0) {
@@ -1882,7 +1882,7 @@ module StarcoinFramework::DAOSpace {
 
     /// get proposal's votes(Yes/No/Abstain/Veto).
     public fun proposal_votes(proposal: &Proposal): (u128, u128, u128, u128) {
-        (proposal.yes_votes, proposal.no_votes, proposal.abstain_votes, proposal.veto_votes)
+        (proposal.yes_votes, proposal.no_votes, proposal.abstain_votes, proposal.no_with_veto_votes)
     }
 
     /// get proposal's block number.
@@ -2043,7 +2043,7 @@ module StarcoinFramework::DAOSpace {
         get_config<DAOT>().voting_period
     }
 
-    /// Quorum votes to make proposal pass.
+    /// Quorum votes to make proposal valid.
     public fun quorum_votes<DAOT: store>(): u128 {
         let market_cap = Token::market_cap<DAOT>();
         let rate = voting_quorum_rate<DAOT>();
