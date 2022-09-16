@@ -10,7 +10,7 @@ module StarcoinFramework::DAOSpace {
     use StarcoinFramework::Token::{Self, Token};
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option::{Self, Option};
-    use StarcoinFramework::STC::{STC};
+    use StarcoinFramework::STC::{Self, STC};
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::Config;
     use StarcoinFramework::Event;
@@ -1167,11 +1167,12 @@ module StarcoinFramework::DAOSpace {
     /// Proposal state
     const PENDING: u8 = 1;
     const ACTIVE: u8 = 2;
-    const DEFEATED: u8 = 3;
-    const AGREED: u8 = 4;
-    const QUEUED: u8 = 5;
-    const EXECUTABLE: u8 = 6;
-    const EXTRACTED: u8 = 7;
+    const REJECTED: u8 = 3;
+    const DEFEATED: u8 = 4;
+    const AGREED: u8 = 5;
+    const QUEUED: u8 = 6;
+    const EXECUTABLE: u8 = 7;
+    const EXTRACTED: u8 = 8;
 
     struct ProposalState has copy, drop, store { state: u8 }
 
@@ -1214,12 +1215,12 @@ module StarcoinFramework::DAOSpace {
         no_votes: u128,
         abstain_votes: u128,
         /// no_with_veto counts as no but also adds a veto vote
-        veto_votes: u128,
+        no_with_veto_votes: u128,
         /// executable after this time.
         eta: u64,
         /// after how long, the agreed proposal can be executed.
         action_delay: u64,
-        /// how many votes to reach to make the proposal pass.
+        /// how many votes to reach to make the proposal valid.
         quorum_votes: u128,
         /// the block number when submit proposal 
         block_number: u64,
@@ -1231,7 +1232,6 @@ module StarcoinFramework::DAOSpace {
         /// id of the proposal
         proposal_id: u64,
         //To prevent spam, proposals must be submitted with a deposit
-        //TODO should support custom Token?
         deposit: Token<STC>,
         /// proposal action.
         action: Action,
@@ -1387,7 +1387,7 @@ module StarcoinFramework::DAOSpace {
             yes_votes: 0,
             no_votes: 0,
             abstain_votes: 0,
-            veto_votes: 0,
+            no_with_veto_votes: 0,
             eta: 0,
             action_delay,
             quorum_votes,
@@ -1631,7 +1631,7 @@ module StarcoinFramework::DAOSpace {
         proposal_id: u64,
     ): ActionT acquires ProposalActions, GlobalProposals, GlobalProposalActions, ProposalEvent, DAO {
         // Only executable proposal's action can be extracted.
-         assert!(proposal_state<DAOT>(proposal_id) == EXECUTABLE, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
+        assert!(proposal_state<DAOT>(proposal_id) == EXECUTABLE, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
         let dao_address = dao_address<DAOT>();
         let sender_addr = Signer::address_of(sender);
         assert!(exists<ProposalActions<ActionT>>(dao_address), Errors::invalid_state(ERR_PROPOSAL_ACTIONS_NOT_EXIST));
@@ -1666,9 +1666,19 @@ module StarcoinFramework::DAOSpace {
         let propopsal_action_index = Option::extract(&mut proposal_action_index_opt);
         let ProposalActionIndex{ proposal_id:_,} = Vector::remove(&mut global_proposal_actions.proposal_action_indexs, propopsal_action_index);
 
-        //TODO check the proposal state and do deposit or burn.
         Account::deposit(proposal.proposer, deposit);
         action
+    }
+
+    fun take_proposal_token<ActionT: store>(dao_address: address, proposal_id: u64):Token<STC> acquires ProposalActions {
+        let actions = borrow_global_mut<ProposalActions<ActionT>>(dao_address);
+        let index_opt = find_action(&actions.actions, proposal_id);
+        assert!(Option::is_some(&index_opt), Errors::invalid_argument(ERR_ACTION_INDEX_INVALID));
+
+        let index = Option::extract(&mut index_opt);
+        let deposit = &mut Vector::borrow_mut(&mut actions.actions, index).deposit;
+        let amount  = Token::value<STC>(deposit);
+        Token::withdraw<STC>(deposit, amount)
     }
 
     fun find_action<ActionT: store>(actions: &vector<ProposalAction<ActionT>>, proposal_id: u64): Option<u64>{
@@ -1690,8 +1700,7 @@ module StarcoinFramework::DAOSpace {
         } else if (choice_no().choice == vote.choice) {
             proposal.no_votes = proposal.no_votes + vote.vote_weight;
         } else if ( choice_no_with_veto().choice == vote.choice) {
-            proposal.no_votes = proposal.no_votes + vote.vote_weight;
-            proposal.veto_votes = proposal.veto_votes + vote.vote_weight;
+            proposal.no_with_veto_votes = proposal.no_with_veto_votes + vote.vote_weight;
         } else if (choice_abstain().choice == vote.choice) {
             proposal.abstain_votes = proposal.abstain_votes + vote.vote_weight;
         } else {
@@ -1731,6 +1740,25 @@ module StarcoinFramework::DAOSpace {
         Option::none<VoteInfo>()
     }
 
+    /// Proposals are rejected when their nowithveto option reaches a certain threshold
+    /// A portion of the pledged tokens will be rewarded to the executor who executes the proposal
+    public fun reject_proposal<DAOT: store, ActionT: store>(sender: &signer, proposal_id: u64) acquires ProposalActions, GlobalProposals, GlobalProposalActions{
+        // Only  REJECTED proposal's action can be burn token.
+        assert!(proposal_state<DAOT>(proposal_id) == REJECTED, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
+        let dao_address = dao_address<DAOT>();
+        assert!(exists<ProposalActions<ActionT>>(dao_address), Errors::invalid_state(ERR_PROPOSAL_ACTIONS_NOT_EXIST));
+        let token = take_proposal_token<ActionT>(dao_address, proposal_id);
+        // Part of the token is awarded to whoever executes this method , TODO: 10 %
+        let award_amount = Token::value(&token) / 10;
+        let (burn_token , award_token) = Token::split(token, award_amount);
+        Account::deposit(Signer::address_of(sender), award_token);
+        STC::burn(burn_token);
+    }
+
+    public (script) fun reject_proposal_entry<DAOT: store, ActionT: store>(sender: signer, proposal_id: u64) acquires ProposalActions, GlobalProposals, GlobalProposalActions{
+        reject_proposal<DAOT, ActionT>(&sender, proposal_id);
+    }
+
     /// get vote info by proposal_id
     public fun get_vote_info<DAOT>(voter: address, proposal_id: u64): (u64, u8, u128)acquires MyVotes {
         if(exists<MyVotes<DAOT>>(voter)){
@@ -1764,16 +1792,18 @@ module StarcoinFramework::DAOSpace {
         do_proposal_state(proposal, current_time, action_index_opt)
     }
 
-    fun do_proposal_state(proposal: &Proposal, current_time: u64, action_index_opt: Option<u64> ): u8 {
+    fun do_proposal_state(proposal: &Proposal, current_time: u64, action_index_opt: Option<u64>): u8 {
         if (current_time < proposal.start_time) {
             // Pending
             PENDING
         } else if (current_time <= proposal.end_time) {
             // Active
             ACTIVE
-            //TODO need restrict yes votes ratio with (no/no_with_veto/abstain) ?
-        } else if (proposal.yes_votes <= (proposal.no_votes  + proposal.abstain_votes) ||
-                   proposal.yes_votes < proposal.quorum_votes) {
+        } else if (proposal.no_with_veto_votes >= (proposal.no_votes + proposal.yes_votes) ){
+            // rejected
+            REJECTED 
+        } else if (proposal.yes_votes <=  (proposal.no_votes + proposal.no_with_veto_votes) || 
+                   ( proposal.yes_votes + proposal.no_votes + proposal.abstain_votes + proposal.no_with_veto_votes ) < proposal.quorum_votes) {
             // Defeated
             DEFEATED
         } else if (proposal.eta == 0) {
@@ -1852,7 +1882,7 @@ module StarcoinFramework::DAOSpace {
 
     /// get proposal's votes(Yes/No/Abstain/Veto).
     public fun proposal_votes(proposal: &Proposal): (u128, u128, u128, u128) {
-        (proposal.yes_votes, proposal.no_votes, proposal.abstain_votes, proposal.veto_votes)
+        (proposal.yes_votes, proposal.no_votes, proposal.abstain_votes, proposal.no_with_veto_votes)
     }
 
     /// get proposal's block number.
@@ -2013,7 +2043,7 @@ module StarcoinFramework::DAOSpace {
         get_config<DAOT>().voting_period
     }
 
-    /// Quorum votes to make proposal pass.
+    /// Quorum votes to make proposal valid.
     public fun quorum_votes<DAOT: store>(): u128 {
         let market_cap = Token::market_cap<DAOT>();
         let rate = voting_quorum_rate<DAOT>();
