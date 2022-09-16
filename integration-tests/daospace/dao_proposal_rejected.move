@@ -87,8 +87,8 @@ module creator::DAOHelper {
         proposal_id
     }
 
-    public fun rejected_proposal<DAOT: store, TokenT:store>(sender: &signer, proposal_id: u64){
-        DAOSpace::rejected_proposal<DAOT, XAction<TokenT>>(sender, proposal_id);
+    public fun reject_proposal<DAOT: store, TokenT:store>(sender: &signer, proposal_id: u64){
+        DAOSpace::reject_proposal<DAOT, XAction<TokenT>>(sender, proposal_id);
     }
 
     public fun member_join<DAOT:store>(to_address: address, init_sbt: u128){
@@ -421,7 +421,7 @@ script{
         let total = Token::market_cap<STC>();
         StarcoinFramework::Debug::print(&DAOSpace::proposal_state<X>(1));
         let proposal_id = DAOHelper::last_proposal_id<X>();
-        DAOHelper::rejected_proposal<X, STC>(&sender, proposal_id);
+        DAOHelper::reject_proposal<X, STC>(&sender, proposal_id);
         assert!(total - (1000 - 1000 / 10)  == Token::market_cap<STC>(), 1001);
     }
 }

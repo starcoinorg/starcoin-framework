@@ -1742,7 +1742,7 @@ module StarcoinFramework::DAOSpace {
 
     /// Proposals are rejected when their nowithveto option reaches a certain threshold
     /// A portion of the pledged tokens will be rewarded to the executor who executes the proposal
-    public fun rejected_proposal<DAOT: store, ActionT: store>(sender: &signer, proposal_id: u64) acquires ProposalActions, GlobalProposals, GlobalProposalActions{
+    public fun reject_proposal<DAOT: store, ActionT: store>(sender: &signer, proposal_id: u64) acquires ProposalActions, GlobalProposals, GlobalProposalActions{
         // Only  REJECTED proposal's action can be burn token.
         assert!(proposal_state<DAOT>(proposal_id) == REJECTED, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
         let dao_address = dao_address<DAOT>();
@@ -1755,8 +1755,8 @@ module StarcoinFramework::DAOSpace {
         STC::burn(burn_token);
     }
 
-    public (script) fun rejected_proposal_entry<DAOT: store, ActionT: store>(sender: signer, proposal_id: u64) acquires ProposalActions, GlobalProposals, GlobalProposalActions{
-        rejected_proposal<DAOT, ActionT>(&sender, proposal_id);
+    public (script) fun reject_proposal_entry<DAOT: store, ActionT: store>(sender: signer, proposal_id: u64) acquires ProposalActions, GlobalProposals, GlobalProposalActions{
+        reject_proposal<DAOT, ActionT>(&sender, proposal_id);
     }
 
     /// get vote info by proposal_id
