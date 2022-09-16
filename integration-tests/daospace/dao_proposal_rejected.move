@@ -87,8 +87,8 @@ module creator::DAOHelper {
         proposal_id
     }
 
-    public fun clean_up_defeated_proposal<DAOT: store, TokenT:store>(sender: &signer, proposal_id: u64){
-        DAOSpace::clean_up_defeated_proposal<DAOT, XAction<TokenT>>(sender, proposal_id);
+    public fun rejected_proposal<DAOT: store, TokenT:store>(sender: &signer, proposal_id: u64){
+        DAOSpace::rejected_proposal<DAOT, XAction<TokenT>>(sender, proposal_id);
     }
 
     public fun member_join<DAOT:store>(to_address: address, init_sbt: u128){
@@ -331,7 +331,7 @@ script{
     // bob vote
     fun cast_vote(sender: signer, snpashot_raw_proofs: vector<u8>){
         let proposal_id = DAOHelper::last_proposal_id<X>();
-        let choice = DAOSpace::choice_no();
+        let choice = DAOSpace::choice_no_with_veto();
         Debug::print(&snpashot_raw_proofs);
 
         //deserize sbt
@@ -357,7 +357,7 @@ script{
     // alice vote
     fun cast_vote(sender: signer, snpashot_raw_proofs: vector<u8>){
         let proposal_id = DAOHelper::last_proposal_id<X>();
-        let choice = DAOSpace::choice_abstain();
+        let choice = DAOSpace::choice_no_with_veto();
         DAOSpace::cast_vote<X>(&sender, proposal_id, snpashot_raw_proofs, choice);
     }
 }
@@ -377,7 +377,7 @@ script{
     // cindy vote
     fun cast_vote(sender: signer, snpashot_raw_proofs: vector<u8>){
         let proposal_id = DAOHelper::last_proposal_id<X>();
-        let choice = DAOSpace::choice_no();
+        let choice = DAOSpace::choice_no_with_veto();
         DAOSpace::cast_vote<X>(&sender, proposal_id, snpashot_raw_proofs, choice);
     }
 }
@@ -414,13 +414,15 @@ script{
     use creator::DAOHelper::{Self, X};
     use StarcoinFramework::STC::STC;
     use StarcoinFramework::Token;
+    use StarcoinFramework::DAOSpace;
     
     // execute action
     fun queue_proposal_action(sender: signer){
         let total = Token::market_cap<STC>();
+        StarcoinFramework::Debug::print(&DAOSpace::proposal_state<X>(1));
         let proposal_id = DAOHelper::last_proposal_id<X>();
-        DAOHelper::clean_up_defeated_proposal<X, STC>(&sender, proposal_id);
-        assert!(total - 1000 == Token::market_cap<STC>(), 1001);
+        DAOHelper::rejected_proposal<X, STC>(&sender, proposal_id);
+        assert!(total - (1000 - 1000 / 10)  == Token::market_cap<STC>(), 1001);
     }
 }
 // check: EXECUTED

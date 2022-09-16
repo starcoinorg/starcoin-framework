@@ -1799,9 +1799,9 @@ module StarcoinFramework::DAOSpace {
         } else if (current_time <= proposal.end_time) {
             // Active
             ACTIVE
-        } else if (proposal.veto_votes >= (proposal.no_votes + proposal.abstain_votes + proposal.yes_votes) ){
+        } else if (proposal.veto_votes >= (proposal.no_votes + proposal.yes_votes) ){
             // rejected
-            REJECTED      
+            REJECTED 
         } else if (proposal.yes_votes <= (proposal.no_votes  + proposal.abstain_votes + proposal.veto_votes) ||
                    proposal.yes_votes < proposal.quorum_votes) {
             // Defeated

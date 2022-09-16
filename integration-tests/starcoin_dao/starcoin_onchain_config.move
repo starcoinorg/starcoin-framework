@@ -106,7 +106,7 @@ script{
     use StarcoinFramework::DAOSpace;
     use StarcoinFramework::StarcoinDAO::StarcoinDAO;
     fun state(_sender: signer){
-        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 4 , 103);
+        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 5 , 103);
     }
 }
 // check: EXECUTED
@@ -119,7 +119,7 @@ script{
     use StarcoinFramework::StarcoinDAO::StarcoinDAO;
     fun queue_proposal_action(_sender: signer){
         DAOSpace::queue_proposal_action<StarcoinDAO>(1);
-        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 5 , 103);
+        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 6 , 103);
     }
 }
 // check: EXECUTED
@@ -134,9 +134,9 @@ script{
     use StarcoinFramework::RewardConfig;
 
     fun execute_proposal(sender: signer){
-        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 6 , 103);
+        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 7 , 103);
         ConfigProposalPlugin::execute_proposal<StarcoinDAO, RewardConfig::RewardConfig>(&sender, 1);
-        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 7 , 104);
+        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 8 , 104);
 
         assert!(RewardConfig::reward_delay() == 5, 105);
 
