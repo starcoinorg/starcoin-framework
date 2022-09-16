@@ -93,10 +93,6 @@ module StarcoinFramework::DAOSpace {
         /// if 50% votes needed, then the voting_quorum_rate should be 50.
         /// it should between (0, 100].
         voting_quorum_rate: u8,
-        /// the veto votes rate to rejected on the proposal.
-        /// if 50% votes needed, then the veto_votes_rate should be 50.
-        /// it should between (0, 100].
-        veto_votes_rate: u8,
         /// how long the proposal should wait before it can be executed (in milliseconds).
         min_action_delay: u64,
         /// how many STC should be deposited to create a proposal.
@@ -1790,25 +1786,23 @@ module StarcoinFramework::DAOSpace {
         let dao_address = dao_address<DAOT>();
         let current_time = Timestamp::now_milliseconds();
 
-
         let global_proposal_actions = borrow_global<GlobalProposalActions>(dao_address);
         let action_index_opt = find_proposal_action_index(global_proposal_actions, proposal.id);
-        let config = get_config<DAOT>();
 
-        do_proposal_state(proposal, current_time, action_index_opt, config.veto_votes_rate)
+        do_proposal_state(proposal, current_time, action_index_opt)
     }
 
-    fun do_proposal_state(proposal: &Proposal, current_time: u64, action_index_opt: Option<u64>, veto: u8): u8 {
+    fun do_proposal_state(proposal: &Proposal, current_time: u64, action_index_opt: Option<u64>): u8 {
         if (current_time < proposal.start_time) {
             // Pending
             PENDING
         } else if (current_time <= proposal.end_time) {
             // Active
             ACTIVE
-        } else if (proposal.veto_votes > (proposal.quorum_votes / 100 * (veto as u128))){
+        } else if (proposal.veto_votes >= (proposal.no_votes + proposal.abstain_votes + proposal.yes_votes) ){
             // rejected
             REJECTED      
-        } else if (proposal.yes_votes <= (proposal.no_votes  + proposal.abstain_votes) ||
+        } else if (proposal.yes_votes <= (proposal.no_votes  + proposal.abstain_votes + proposal.veto_votes) ||
                    proposal.yes_votes < proposal.quorum_votes) {
             // Defeated
             DEFEATED
@@ -1946,7 +1940,6 @@ module StarcoinFramework::DAOSpace {
         voting_delay: u64,
         voting_period: u64,
         voting_quorum_rate: u8,
-        veto_votes_rate: u8,
         min_action_delay: u64,
         min_proposal_deposit: u128,
     ): DAOConfig{
@@ -1956,12 +1949,8 @@ module StarcoinFramework::DAOSpace {
             voting_quorum_rate > 0 && voting_quorum_rate <= 100,
             Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID),
         );
-        assert!(
-            veto_votes_rate > 0 && veto_votes_rate <= 100,
-            Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID),
-        );
         assert!(min_action_delay > 0, Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID));
-        DAOConfig { voting_delay, voting_period, voting_quorum_rate, veto_votes_rate, min_action_delay, min_proposal_deposit }
+        DAOConfig { voting_delay, voting_period, voting_quorum_rate, min_action_delay, min_proposal_deposit }
     }
 
     // Get config
@@ -2118,15 +2107,6 @@ module StarcoinFramework::DAOSpace {
     ) {
         assert!(value <= 100 && value > 0, Errors::invalid_argument(ERR_QUORUM_RATE_INVALID));
         config.voting_quorum_rate = value;
-    }
-
-    /// set voting no with veto rate
-    public fun set_veto_votes_rate<DAOT: store>(
-        config: &mut DAOConfig,
-        value: u8,
-    ) {
-        assert!(value <= 100 && value > 0, Errors::invalid_argument(ERR_QUORUM_RATE_INVALID));
-        config.veto_votes_rate = value;
     }
 
     /// set min action delay
