@@ -93,6 +93,10 @@ module StarcoinFramework::DAOSpace {
         /// if 50% votes needed, then the voting_quorum_rate should be 50.
         /// it should between (0, 100].
         voting_quorum_rate: u8,
+        /// the veto votes rate to rejected on the proposal.
+        /// if 50% votes needed, then the veto_votes_rate should be 50.
+        /// it should between (0, 100].
+        veto_votes_rate: u8,
         /// how long the proposal should wait before it can be executed (in milliseconds).
         min_action_delay: u64,
         /// how many STC should be deposited to create a proposal.
@@ -1167,11 +1171,12 @@ module StarcoinFramework::DAOSpace {
     /// Proposal state
     const PENDING: u8 = 1;
     const ACTIVE: u8 = 2;
-    const DEFEATED: u8 = 3;
-    const AGREED: u8 = 4;
-    const QUEUED: u8 = 5;
-    const EXECUTABLE: u8 = 6;
-    const EXTRACTED: u8 = 7;
+    const REJECTED: u8 = 3;
+    const DEFEATED: u8 = 4;
+    const AGREED: u8 = 5;
+    const QUEUED: u8 = 6;
+    const EXECUTABLE: u8 = 7;
+    const EXTRACTED: u8 = 8;
 
     struct ProposalState has copy, drop, store { state: u8 }
 
@@ -1669,7 +1674,7 @@ module StarcoinFramework::DAOSpace {
         action
     }
 
-    fun burn_proposal_token<ActionT: store>(dao_address: address, proposal_id: u64) acquires ProposalActions {
+    fun take_proposal_token<ActionT: store>(dao_address: address, proposal_id: u64):Token<STC> acquires ProposalActions {
         let actions = borrow_global_mut<ProposalActions<ActionT>>(dao_address);
         let index_opt = find_action(&actions.actions, proposal_id);
         assert!(Option::is_some(&index_opt), Errors::invalid_argument(ERR_ACTION_INDEX_INVALID));
@@ -1677,8 +1682,7 @@ module StarcoinFramework::DAOSpace {
         let index = Option::extract(&mut index_opt);
         let deposit = &mut Vector::borrow_mut(&mut actions.actions, index).deposit;
         let amount  = Token::value<STC>(deposit);
-        let token = Token::withdraw<STC>(deposit, amount);
-        STC::burn(token);
+        Token::withdraw<STC>(deposit, amount)
     }
 
     fun find_action<ActionT: store>(actions: &vector<ProposalAction<ActionT>>, proposal_id: u64): Option<u64>{
@@ -1700,7 +1704,6 @@ module StarcoinFramework::DAOSpace {
         } else if (choice_no().choice == vote.choice) {
             proposal.no_votes = proposal.no_votes + vote.vote_weight;
         } else if ( choice_no_with_veto().choice == vote.choice) {
-            proposal.no_votes = proposal.no_votes + vote.vote_weight;
             proposal.veto_votes = proposal.veto_votes + vote.vote_weight;
         } else if (choice_abstain().choice == vote.choice) {
             proposal.abstain_votes = proposal.abstain_votes + vote.vote_weight;
@@ -1741,16 +1744,23 @@ module StarcoinFramework::DAOSpace {
         Option::none<VoteInfo>()
     }
 
-    public fun clean_up_defeated_proposal<DAOT: store, ActionT: store>(_sender: &signer, proposal_id: u64) acquires ProposalActions, GlobalProposals, GlobalProposalActions{
-        // Only DEFEATED proposal's action can be burn token.
-        assert!(proposal_state<DAOT>(proposal_id) == DEFEATED, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
+    /// Proposals are rejected when their nowithveto option reaches a certain threshold
+    /// A portion of the pledged tokens will be rewarded to the executor who executes the proposal
+    public fun rejected_proposal<DAOT: store, ActionT: store>(sender: &signer, proposal_id: u64) acquires ProposalActions, GlobalProposals, GlobalProposalActions{
+        // Only  REJECTED proposal's action can be burn token.
+        assert!(proposal_state<DAOT>(proposal_id) == REJECTED, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
         let dao_address = dao_address<DAOT>();
         assert!(exists<ProposalActions<ActionT>>(dao_address), Errors::invalid_state(ERR_PROPOSAL_ACTIONS_NOT_EXIST));
-        burn_proposal_token<ActionT>(dao_address, proposal_id);
+        let token = take_proposal_token<ActionT>(dao_address, proposal_id);
+        // Part of the token is awarded to whoever executes this method , TODO: 10 %
+        let award_amount = Token::value(&token) / 10;
+        let (burn_token , award_token) = Token::split(token, award_amount);
+        Account::deposit(Signer::address_of(sender), award_token);
+        STC::burn(burn_token);
     }
 
-    public (script) fun clean_up_defeated_proposal_entry<DAOT: store, ActionT: store>(sender: signer, proposal_id: u64) acquires ProposalActions, GlobalProposals, GlobalProposalActions{
-        clean_up_defeated_proposal<DAOT, ActionT>(&sender, proposal_id);
+    public (script) fun rejected_proposal_entry<DAOT: store, ActionT: store>(sender: signer, proposal_id: u64) acquires ProposalActions, GlobalProposals, GlobalProposalActions{
+        rejected_proposal<DAOT, ActionT>(&sender, proposal_id);
     }
 
     /// get vote info by proposal_id
@@ -1780,20 +1790,24 @@ module StarcoinFramework::DAOSpace {
         let dao_address = dao_address<DAOT>();
         let current_time = Timestamp::now_milliseconds();
 
+
         let global_proposal_actions = borrow_global<GlobalProposalActions>(dao_address);
         let action_index_opt = find_proposal_action_index(global_proposal_actions, proposal.id);
+        let config = get_config<DAOT>();
 
-        do_proposal_state(proposal, current_time, action_index_opt)
+        do_proposal_state(proposal, current_time, action_index_opt, config.veto_votes_rate)
     }
 
-    fun do_proposal_state(proposal: &Proposal, current_time: u64, action_index_opt: Option<u64> ): u8 {
+    fun do_proposal_state(proposal: &Proposal, current_time: u64, action_index_opt: Option<u64>, veto: u8): u8 {
         if (current_time < proposal.start_time) {
             // Pending
             PENDING
         } else if (current_time <= proposal.end_time) {
             // Active
             ACTIVE
-            //TODO need restrict yes votes ratio with (no/no_with_veto/abstain) ?
+        } else if (proposal.veto_votes > (proposal.quorum_votes / 100 * (veto as u128))){
+            // rejected
+            REJECTED      
         } else if (proposal.yes_votes <= (proposal.no_votes  + proposal.abstain_votes) ||
                    proposal.yes_votes < proposal.quorum_votes) {
             // Defeated
@@ -1932,6 +1946,7 @@ module StarcoinFramework::DAOSpace {
         voting_delay: u64,
         voting_period: u64,
         voting_quorum_rate: u8,
+        veto_votes_rate: u8,
         min_action_delay: u64,
         min_proposal_deposit: u128,
     ): DAOConfig{
@@ -1941,8 +1956,12 @@ module StarcoinFramework::DAOSpace {
             voting_quorum_rate > 0 && voting_quorum_rate <= 100,
             Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID),
         );
+        assert!(
+            veto_votes_rate > 0 && veto_votes_rate <= 100,
+            Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID),
+        );
         assert!(min_action_delay > 0, Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID));
-        DAOConfig { voting_delay, voting_period, voting_quorum_rate, min_action_delay, min_proposal_deposit }
+        DAOConfig { voting_delay, voting_period, voting_quorum_rate, veto_votes_rate, min_action_delay, min_proposal_deposit }
     }
 
     // Get config
@@ -2099,6 +2118,15 @@ module StarcoinFramework::DAOSpace {
     ) {
         assert!(value <= 100 && value > 0, Errors::invalid_argument(ERR_QUORUM_RATE_INVALID));
         config.voting_quorum_rate = value;
+    }
+
+    /// set voting no with veto rate
+    public fun set_veto_votes_rate<DAOT: store>(
+        config: &mut DAOConfig,
+        value: u8,
+    ) {
+        assert!(value <= 100 && value > 0, Errors::invalid_argument(ERR_QUORUM_RATE_INVALID));
+        config.veto_votes_rate = value;
     }
 
     /// set min action delay

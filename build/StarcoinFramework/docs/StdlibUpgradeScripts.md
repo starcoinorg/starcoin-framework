@@ -391,7 +391,8 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1">do_upgrade_from_v12_to_v12_1</a>() {
-    <a href="StarcoinDAO.md#0x1_StarcoinDAO_create_dao">StarcoinDAO::create_dao</a>( 60000, 120000, 10, 10000, 0);
+    //TODO : config rate need mind
+    <a href="StarcoinDAO.md#0x1_StarcoinDAO_create_dao">StarcoinDAO::create_dao</a>( 60000, 120000, 10, 5, 10000, 1000 * 1000 * 1000 * 1000);
 }
 </code></pre>
 

@@ -27,6 +27,7 @@ module StarcoinFramework::StarcoinDAO{
         voting_delay: u64,
         voting_period: u64,
         voting_quorum_rate: u8,
+        veto_votes_rate: u8,
         min_action_delay: u64,
         min_proposal_deposit: u128
     ){
@@ -39,6 +40,7 @@ module StarcoinFramework::StarcoinDAO{
             voting_delay,
             voting_period,
             voting_quorum_rate,
+            veto_votes_rate,
             min_action_delay,
             min_proposal_deposit,
         );
