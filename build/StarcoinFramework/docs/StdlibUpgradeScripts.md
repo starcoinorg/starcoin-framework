@@ -415,7 +415,8 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
     <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_initialize">StakeToSBTPlugin::initialize</a>();
     <a href="UpgradeModulePlugin.md#0x1_UpgradeModulePlugin_initialize">UpgradeModulePlugin::initialize</a>();
 
-    <a href="StarcoinDAO.md#0x1_StarcoinDAO_create_dao">StarcoinDAO::create_dao</a>( 60000, 120000, 10, 10000, 0);
+    //TODO : config rate need mind
+    <a href="StarcoinDAO.md#0x1_StarcoinDAO_create_dao">StarcoinDAO::create_dao</a>( 60000, 120000, 10, 10000, 1000 * 1000 * 1000 * 1000);
 }
 </code></pre>
 

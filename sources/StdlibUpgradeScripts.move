@@ -141,7 +141,8 @@ module StdlibUpgradeScripts {
             StakeToSBTPlugin::initialize();
             UpgradeModulePlugin::initialize();
 
-            StarcoinDAO::create_dao( 60000, 120000, 10, 10000, 0);
+            //TODO : config rate need mind
+            StarcoinDAO::create_dao( 60000, 120000, 10, 10000, 1000 * 1000 * 1000 * 1000);
         }
 }
 }

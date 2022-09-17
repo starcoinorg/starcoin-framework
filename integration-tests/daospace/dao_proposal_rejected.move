@@ -1,4 +1,4 @@
-//# init -n dev --debug
+//# init -n dev
 
 //// creator address is 0x662ba5a1a1da0f1c70a9762c7eeb7aaf
 //# faucet --addr creator --amount 100000000000
@@ -11,30 +11,14 @@
 //# faucet --addr cindy --amount 10000000000
 
 
-////# run --signers creator
-//script{
-//    use StarcoinFramework::StdlibUpgradeScripts;
-//
-//    fun main(){
-//        StdlibUpgradeScripts::upgrade_from_v11_to_v12();
-//    }
-//}
-//// check: EXECUTED
-
 //# publish
 module creator::DAOHelper {
-    use StarcoinFramework::Signer;
-    use StarcoinFramework::Errors;
-    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOAccount;
     use StarcoinFramework::DAOSpace::{Self, CapType, Proposal};
     use StarcoinFramework::MemberProposalPlugin::{Self, MemberProposalPlugin};
     use StarcoinFramework::InstallPluginProposalPlugin::{Self, InstallPluginProposalPlugin};
-    use StarcoinFramework::Account;
     use StarcoinFramework::Vector;
     use StarcoinFramework::Option;
-
-    const ERR_ALREADY_INITIALIZED: u64 = 100;
 
     struct X has store, copy, drop{}
     
@@ -75,36 +59,11 @@ module creator::DAOHelper {
 
     }
 
-    struct XPlugin has key, store, drop{}
+    struct XPlugin has store, drop{}
 
     struct XAction<phantom TokenT> has store {
         total: u128,
         receiver: address,
-    }
-
-    public fun initialize_x_plugin(sender: &signer) {
-        let sender_addr = Signer::address_of(sender);
-        assert!(!exists<XPlugin>(sender_addr), Errors::already_published(ERR_ALREADY_INITIALIZED));
-
-        DAOPluginMarketplace::register_plugin<XPlugin>(
-            sender,
-            b"0x1::XPlugin",
-            b"The X plugin.",
-            Option::none(),
-        );
-
-        let implement_extpoints = Vector::empty<vector<u8>>();
-        let depend_extpoints = Vector::empty<vector<u8>>();
-
-        let witness = XPlugin{};
-        DAOPluginMarketplace::publish_plugin_version<XPlugin>(
-            sender,
-            &witness,
-            b"v0.1.0", 
-            *&implement_extpoints,
-            *&depend_extpoints,
-            b"inner-plugin://x-plugin",
-        );
     }
 
     public fun required_caps():vector<CapType>{
@@ -128,17 +87,8 @@ module creator::DAOHelper {
         proposal_id
     }
 
-    public fun execute_x_proposal<DAOT: store, TokenT:store>(sender: &signer, proposal_id: u64){
-        let witness = XPlugin{};
-        let proposal_cap = DAOSpace::acquire_proposal_cap<DAOT, XPlugin>(&witness);
-        let XAction{receiver, total} = DAOSpace::execute_proposal<DAOT, XPlugin, XAction<TokenT>>(&proposal_cap, sender, proposal_id);
-        let withdraw_cap = DAOSpace::acquire_withdraw_token_cap<DAOT, XPlugin>(&witness);
-        let token = DAOSpace::withdraw_token<DAOT, XPlugin, TokenT>(&withdraw_cap, total);
-        Account::deposit(receiver, token);
-    }
-
-    public fun queue_proposal_action<DAOT: store>(_sender: &signer, proposal_id: u64){
-        DAOSpace::queue_proposal_action<DAOT>(proposal_id);
+    public fun reject_proposal<DAOT: store, TokenT:store>(sender: &signer, proposal_id: u64){
+        DAOSpace::reject_proposal<DAOT, XAction<TokenT>>(sender, proposal_id);
     }
 
     public fun member_join<DAOT:store>(to_address: address, init_sbt: u128){
@@ -175,18 +125,16 @@ module creator::DAOHelper {
 
 //# run --signers creator
 script{
-    use StarcoinFramework::StdlibUpgradeScripts;
     use creator::DAOHelper;
 
     fun main(sender: signer){
-        StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
-        DAOHelper::initialize_x_plugin(&sender);
-
         // time unit is millsecond
-        DAOHelper::create_dao(sender, 10000, 600000, 2, 10000, 10);
+        DAOHelper::create_dao(sender, 10000, 600000, 2, 10000, 1000);
     }
 }
 // check: EXECUTED
+
+
 
 //# run --signers alice
 script{
@@ -383,7 +331,7 @@ script{
     // bob vote
     fun cast_vote(sender: signer, snpashot_raw_proofs: vector<u8>){
         let proposal_id = DAOHelper::last_proposal_id<X>();
-        let choice = DAOSpace::choice_yes();
+        let choice = DAOSpace::choice_no_with_veto();
         Debug::print(&snpashot_raw_proofs);
 
         //deserize sbt
@@ -409,7 +357,7 @@ script{
     // alice vote
     fun cast_vote(sender: signer, snpashot_raw_proofs: vector<u8>){
         let proposal_id = DAOHelper::last_proposal_id<X>();
-        let choice = DAOSpace::choice_abstain();
+        let choice = DAOSpace::choice_no_with_veto();
         DAOSpace::cast_vote<X>(&sender, proposal_id, snpashot_raw_proofs, choice);
     }
 }
@@ -429,7 +377,7 @@ script{
     // cindy vote
     fun cast_vote(sender: signer, snpashot_raw_proofs: vector<u8>){
         let proposal_id = DAOHelper::last_proposal_id<X>();
-        let choice = DAOSpace::choice_yes();
+        let choice = DAOSpace::choice_no_with_veto();
         DAOSpace::cast_vote<X>(&sender, proposal_id, snpashot_raw_proofs, choice);
     }
 }
@@ -464,28 +412,17 @@ script{
 //# run --signers bob
 script{
     use creator::DAOHelper::{Self, X};
-
+    use StarcoinFramework::STC::STC;
+    use StarcoinFramework::Token;
+    use StarcoinFramework::DAOSpace;
+    
     // execute action
     fun queue_proposal_action(sender: signer){
+        let total = Token::market_cap<STC>();
+        StarcoinFramework::Debug::print(&DAOSpace::proposal_state<X>(1));
         let proposal_id = DAOHelper::last_proposal_id<X>();
-        DAOHelper::queue_proposal_action<X>(&sender, proposal_id);
-    }
-}
-// check: EXECUTED
-
-
-//# block --author 0x4 --timestamp 90100000
-
-//# run --signers bob
-script{
-    use creator::DAOHelper::{Self, X};
-    use StarcoinFramework::STC::STC;
-    //    use StarcoinFramework::Debug;
-
-    // execute action
-    fun execute_action(sender: signer){
-        let proposal_id = DAOHelper::last_proposal_id<X>();
-        DAOHelper::execute_x_proposal<X, STC>(&sender, proposal_id);
+        DAOHelper::reject_proposal<X, STC>(&sender, proposal_id);
+        assert!(total - (1000 - 1000 / 10)  == Token::market_cap<STC>(), 1001);
     }
 }
 // check: EXECUTED

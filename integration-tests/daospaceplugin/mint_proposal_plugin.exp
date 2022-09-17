@@ -59,29 +59,29 @@ task 20 'run'. lines 173-182:
   "status": "Executed"
 }
 
-task 21 'run'. lines 184-209:
+task 21 'run'. lines 184-215:
 {
-  "gas_used": 435640,
+  "gas_used": 450230,
   "status": "Executed"
 }
 
-task 23 'call'. lines 213-213:
+task 23 'call'. lines 219-219:
 "0xa7dcef9aef26202fce82a7c7d6672afb/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::XDAO::XDAO>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::XDAO::XDAO>>"
 
-task 25 'run'. lines 217-231:
+task 25 'run'. lines 223-237:
 {
   "gas_used": 8799122,
   "status": "Executed"
 }
 
-task 27 'run'. lines 235-249:
+task 27 'run'. lines 241-255:
 {
-  "gas_used": 172880,
+  "gas_used": 173636,
   "status": "Executed"
 }
 
-task 29 'run'. lines 253-274:
+task 29 'run'. lines 259-280:
 {
-  "gas_used": 513498,
+  "gas_used": 514254,
   "status": "Executed"
 }
