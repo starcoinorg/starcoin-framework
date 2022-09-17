@@ -58,7 +58,7 @@ module creator::XDAO {
         );
         let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(),b"ipfs://description", X {}, config);
 
-        DAOSpace::install_plugin_with_root_cap<X, StakeToSBTPlugin>(&dao_root_cap, 1, StakeToSBTPlugin::required_caps());
+        DAOSpace::install_plugin_with_root_cap<X, StakeToSBTPlugin>(&dao_root_cap, StakeToSBTPlugin::required_caps());
         StakeToSBTPlugin::accept_token_with_root_cap<X, STC::STC>(&dao_root_cap);
 
         StakeToSBTPlugin::set_sbt_weight_with_root_cap<X, STC::STC>(&dao_root_cap, 10, 2000);
