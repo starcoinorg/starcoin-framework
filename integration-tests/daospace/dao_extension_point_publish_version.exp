@@ -8,7 +8,7 @@ task 4 'run'. lines 46-54:
 
 task 5 'run'. lines 56-64:
 {
-  "gas_used": 370290,
+  "gas_used": 379065,
   "status": "Executed"
 }
 
@@ -31,17 +31,17 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
             tag: 76302e312e30
             types_d_ts: 697066733a2f2f74797065735f645f7473
             document: 697066733a2f2f70625f646f63
-            created_at: 10000
+            created_at: 10
         },
     ]
     star_count: 0
-    created_at: 10000
-    updated_at: 10000
+    created_at: 10
+    updated_at: 10
 }
 
 task 8 'run'. lines 70-78:
 {
-  "gas_used": 121588,
+  "gas_used": 127438,
   "status": "Executed"
 }
 
@@ -64,24 +64,24 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
             tag: 76302e312e30
             types_d_ts: 697066733a2f2f74797065735f645f7473
             document: 697066733a2f2f70625f646f63
-            created_at: 10000
+            created_at: 10
         },
         store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
             number: 2
             tag: 76302e312e31
             types_d_ts: 697066733a2f2f74797065735f645f74735f31
             document: 697066733a2f2f70625f646f6331
-            created_at: 10000
+            created_at: 10
         },
     ]
     star_count: 0
-    created_at: 10000
-    updated_at: 10000
+    created_at: 10
+    updated_at: 10
 }
 
 task 11 'run'. lines 84-92:
 {
-  "gas_used": 125588,
+  "gas_used": 131438,
   "status": "Executed"
 }
 
@@ -104,26 +104,26 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
             tag: 76302e312e30
             types_d_ts: 697066733a2f2f74797065735f645f7473
             document: 697066733a2f2f70625f646f63
-            created_at: 10000
+            created_at: 10
         },
         store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
             number: 2
             tag: 76302e312e31
             types_d_ts: 697066733a2f2f74797065735f645f74735f31
             document: 697066733a2f2f70625f646f6331
-            created_at: 10000
+            created_at: 10
         },
         store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
             number: 3
             tag: 76302e312e32
             types_d_ts: 697066733a2f2f74797065735f645f74735f32
             document: 697066733a2f2f6474735f646f6332
-            created_at: 10000
+            created_at: 10
         },
     ]
     star_count: 0
-    created_at: 10000
-    updated_at: 10000
+    created_at: 10
+    updated_at: 10
 }
 
 task 14 'run'. lines 98-106:
@@ -161,24 +161,24 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
             tag: 76302e312e30
             types_d_ts: 697066733a2f2f74797065735f645f7473
             document: 697066733a2f2f70625f646f63
-            created_at: 10000
+            created_at: 10
         },
         store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
             number: 2
             tag: 76302e312e31
             types_d_ts: 697066733a2f2f74797065735f645f74735f31
             document: 697066733a2f2f70625f646f6331
-            created_at: 10000
+            created_at: 10
         },
         store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
             number: 3
             tag: 76302e312e32
             types_d_ts: 697066733a2f2f74797065735f645f74735f32
             document: 697066733a2f2f6474735f646f6332
-            created_at: 10000
+            created_at: 10
         },
     ]
     star_count: 0
-    created_at: 10000
-    updated_at: 10000
+    created_at: 10
+    updated_at: 10
 }

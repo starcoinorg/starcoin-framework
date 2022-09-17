@@ -195,7 +195,7 @@ module StarcoinFramework::DAOExtensionPoint {
             tag: b"v0.1.0",
             types_d_ts: types_d_ts,
             document: dts_doc,
-            created_at: Timestamp::now_milliseconds(),
+            created_at: Timestamp::now_seconds(),
         };
 
         let labels = if(Option::is_some(&option_labels)){
@@ -213,8 +213,8 @@ module StarcoinFramework::DAOExtensionPoint {
             next_version_number: 2,
             versions: Vector::singleton<Version>(version), 
             star_count: 0,
-            created_at: Timestamp::now_milliseconds(),
-            updated_at: Timestamp::now_milliseconds(),
+            created_at: Timestamp::now_seconds(),
+            updated_at: Timestamp::now_seconds(),
         });
 
         move_to(&genesis_account, ExtensionPointEventHandlers<ExtPointT>{
@@ -268,10 +268,10 @@ module StarcoinFramework::DAOExtensionPoint {
             tag: tag,
             types_d_ts: types_d_ts,
             document: dts_doc,
-            created_at: Timestamp::now_milliseconds(),
+            created_at: Timestamp::now_seconds(),
         });
 
-        extp.updated_at = Timestamp::now_milliseconds();
+        extp.updated_at = Timestamp::now_seconds();
 
         // publish version event emit
         let plugin_event_handlers = borrow_global_mut<ExtensionPointEventHandlers<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
@@ -295,7 +295,7 @@ module StarcoinFramework::DAOExtensionPoint {
             extp.labels = Option::destroy_some(option_labels);
         };
 
-        extp.updated_at = Timestamp::now_milliseconds();
+        extp.updated_at = Timestamp::now_seconds();
 
         // update extpoint entry event emit
         let plugin_event_handlers = borrow_global_mut<ExtensionPointEventHandlers<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
@@ -315,12 +315,12 @@ module StarcoinFramework::DAOExtensionPoint {
         assert!(!exists<Star<ExtPointT>>(sender_addr), Errors::invalid_state(ERR_STAR_ALREADY_STARED));
 
         move_to(sender, Star<ExtPointT>{
-            created_at: Timestamp::now_milliseconds(),
+            created_at: Timestamp::now_seconds(),
         });
 
         let entry = borrow_global_mut<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
         entry.star_count = entry.star_count + 1;
-        entry.updated_at = Timestamp::now_milliseconds();
+        entry.updated_at = Timestamp::now_seconds();
 
         // star event emit
         let extpoint_event_handlers = borrow_global_mut<ExtensionPointEventHandlers<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
@@ -340,7 +340,7 @@ module StarcoinFramework::DAOExtensionPoint {
 
         let entry = borrow_global_mut<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
         entry.star_count = entry.star_count - 1;
-        entry.updated_at = Timestamp::now_milliseconds();
+        entry.updated_at = Timestamp::now_seconds();
 
         // unstar event emit
         let extpoint_event_handlers = borrow_global_mut<ExtensionPointEventHandlers<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());

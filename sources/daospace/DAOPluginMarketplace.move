@@ -207,8 +207,8 @@ module StarcoinFramework::DAOPluginMarketplace {
             next_version_number: 1,
             versions: Vector::empty<PluginVersion>(), 
             star_count: 0,
-            created_at: Timestamp::now_milliseconds(),
-            updated_at: Timestamp::now_milliseconds(),
+            created_at: Timestamp::now_seconds(),
+            updated_at: Timestamp::now_seconds(),
         });
 
         move_to(&genesis_account, PluginEventHandlers<PluginT>{
@@ -286,10 +286,10 @@ module StarcoinFramework::DAOPluginMarketplace {
             implement_extpoints: implement_extpoints,
             depend_extpoints: depend_extpoints,
             js_entry_uri: js_entry_uri,
-            created_at: Timestamp::now_milliseconds(),
+            created_at: Timestamp::now_seconds(),
         });
 
-        plugin.updated_at = Timestamp::now_milliseconds();
+        plugin.updated_at = Timestamp::now_seconds();
 
         // plugin register event emit
         let plugin_event_handlers = borrow_global_mut<PluginEventHandlers<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
@@ -313,12 +313,12 @@ module StarcoinFramework::DAOPluginMarketplace {
         assert!(!exists<Star<PluginT>>(sender_addr), Errors::invalid_state(ERR_STAR_ALREADY_STARED));
 
         move_to(sender, Star<PluginT>{
-            created_at: Timestamp::now_milliseconds(),
+            created_at: Timestamp::now_seconds(),
         });
 
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
         plugin.star_count = plugin.star_count + 1;
-        plugin.updated_at = Timestamp::now_milliseconds();
+        plugin.updated_at = Timestamp::now_seconds();
 
         // star plugin event emit
         let plugin_event_handlers = borrow_global_mut<PluginEventHandlers<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
@@ -338,7 +338,7 @@ module StarcoinFramework::DAOPluginMarketplace {
 
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
         plugin.star_count = plugin.star_count - 1;
-        plugin.updated_at = Timestamp::now_milliseconds();
+        plugin.updated_at = Timestamp::now_seconds();
 
         // unstar plugin event emit
         let plugin_event_handlers = borrow_global_mut<PluginEventHandlers<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
@@ -366,7 +366,7 @@ module StarcoinFramework::DAOPluginMarketplace {
             plugin.labels = Option::destroy_some(option_labels);
         };
 
-        plugin.updated_at = Timestamp::now_milliseconds();
+        plugin.updated_at = Timestamp::now_seconds();
 
         // update plugin event emit
         let plugin_event_handlers = borrow_global_mut<PluginEventHandlers<PluginT>>(CoreAddresses::GENESIS_ADDRESS());

@@ -8,13 +8,13 @@ task 6 'run'. lines 46-54:
 
 task 7 'run'. lines 56-64:
 {
-  "gas_used": 348165,
+  "gas_used": 354015,
   "status": "Executed"
 }
 
 task 8 'run'. lines 66-77:
 {
-  "gas_used": 53470,
+  "gas_used": 59320,
   "status": "Executed"
 }
 
@@ -36,7 +36,7 @@ task 9 'run'. lines 79-90:
 
 task 10 'run'. lines 92-103:
 {
-  "gas_used": 53470,
+  "gas_used": 59320,
   "status": "Executed"
 }
 
@@ -51,13 +51,13 @@ store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<
     versions: [
     ]
     star_count: 2
-    created_at: 10000
-    updated_at: 10000
+    created_at: 10
+    updated_at: 10
 }
 
 task 12 'run'. lines 108-119:
 {
-  "gas_used": 44034,
+  "gas_used": 46959,
   "status": "Executed"
 }
 
@@ -72,8 +72,8 @@ store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<
     versions: [
     ]
     star_count: 1
-    created_at: 10000
-    updated_at: 10000
+    created_at: 10
+    updated_at: 10
 }
 
 task 14 'run'. lines 123-134:
