@@ -13,7 +13,6 @@ module StarcoinFramework::InstallPluginProposalPlugin{
     struct InstallPluginProposalPlugin has key, store, drop{}
 
     struct InstallPluginAction<phantom ToInstallPluginT> has store {
-        plugin_version: u64,
         required_caps: vector<CapType>,
     }
 
@@ -47,12 +46,11 @@ module StarcoinFramework::InstallPluginProposalPlugin{
     }
 
     //TODO how to unify arguments.
-    public fun create_proposal<DAOT: store, ToInstallPluginT: store>(sender: &signer, plugin_version: u64, required_caps: vector<CapType>, description: vector<u8>, action_delay: u64){
+    public fun create_proposal<DAOT: store, ToInstallPluginT: store>(sender: &signer, required_caps: vector<CapType>, description: vector<u8>, action_delay: u64){
         let witness = InstallPluginProposalPlugin{};
 
         let cap = DAOSpace::acquire_proposal_cap<DAOT, InstallPluginProposalPlugin>(&witness);
         let action = InstallPluginAction<ToInstallPluginT>{
-            plugin_version: plugin_version,
             required_caps,
         };
 
@@ -63,10 +61,10 @@ module StarcoinFramework::InstallPluginProposalPlugin{
         let witness = InstallPluginProposalPlugin{};
 
         let proposal_cap = DAOSpace::acquire_proposal_cap<DAOT, InstallPluginProposalPlugin>(&witness);
-        let InstallPluginAction{plugin_version, required_caps} = DAOSpace::execute_proposal<DAOT, InstallPluginProposalPlugin, InstallPluginAction<ToInstallPluginT>>(&proposal_cap, sender, proposal_id);
+        let InstallPluginAction{required_caps} = DAOSpace::execute_proposal<DAOT, InstallPluginProposalPlugin, InstallPluginAction<ToInstallPluginT>>(&proposal_cap, sender, proposal_id);
         
         let install_plugin_cap = DAOSpace::acquire_install_plugin_cap<DAOT, InstallPluginProposalPlugin>(&witness);
-        DAOSpace::install_plugin<DAOT, InstallPluginProposalPlugin, ToInstallPluginT>(&install_plugin_cap, plugin_version, required_caps);
+        DAOSpace::install_plugin<DAOT, InstallPluginProposalPlugin, ToInstallPluginT>(&install_plugin_cap, required_caps);
     }
 
     public (script) fun execute_proposal_entry<DAOT: store, ToInstallPluginT: copy + drop + store>(sender: signer, proposal_id: u64) {

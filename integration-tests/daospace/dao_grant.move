@@ -60,10 +60,10 @@ module creator::DAOHelper {
         );
         let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", X{}, config);
         
-        DAOSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, 1, InstallPluginProposalPlugin::required_caps()); 
-        DAOSpace::install_plugin_with_root_cap<X, AnyMemberPlugin>(&dao_root_cap, 1, AnyMemberPlugin::required_caps());
+        DAOSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
+        DAOSpace::install_plugin_with_root_cap<X, AnyMemberPlugin>(&dao_root_cap, AnyMemberPlugin::required_caps());
 
-        DAOSpace::install_plugin_with_root_cap<X, XPlugin>(&dao_root_cap, 1, required_caps());
+        DAOSpace::install_plugin_with_root_cap<X, XPlugin>(&dao_root_cap, required_caps());
 
         DAOSpace::burn_root_cap(dao_root_cap);
 

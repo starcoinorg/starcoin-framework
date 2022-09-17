@@ -92,12 +92,12 @@ module StarcoinFramework::MintProposalPlugin{
         execute_mint_proposal<DAOT, TokenT>(&sender, proposal_id);
     }
 
-    public fun install_plugin_proposal<DAOT:store>(sender:&signer, plugin_version: u64, description: vector<u8>, action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, MintProposalPlugin>(sender, plugin_version, required_caps(), description, action_delay);
+    public fun install_plugin_proposal<DAOT:store>(sender:&signer, description: vector<u8>, action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, MintProposalPlugin>(sender, required_caps(), description, action_delay);
     }
 
-    public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, plugin_version: u64, description: vector<u8>, action_delay:u64){
-        install_plugin_proposal<DAOT>(&sender, plugin_version, description, action_delay);
+    public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, description: vector<u8>, action_delay:u64){
+        install_plugin_proposal<DAOT>(&sender, description, action_delay);
     }
 
 }

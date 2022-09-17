@@ -29,7 +29,7 @@ module StarcoinFramework::DAOPluginMarketplace {
         js_entry_uri: vector<u8>, //Front-end JS code resource URI, for example: "https://cdn.xxxx.xxxx/xxxx/xxxxx.js"
         created_at: u64, //Plugin creation time
     }
-        
+    
     struct PluginRegistry has key, store {
         next_plugin_id: u64,
     }
