@@ -32,8 +32,10 @@ module creator::TestPlugin {
         Vector::push_back<vector<u8>>(&mut labels, b"OS=Starcoin");
         Vector::push_back<vector<u8>>(&mut labels, b"Store=IPFS");
 
+        let cap = TestPlugin{};
         DAOPluginMarketplace::update_plugin<TestPlugin>(
             &sender,
+            &cap,
             NAME,
             b"ipfs://description2",
             Option::some(labels),

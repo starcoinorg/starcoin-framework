@@ -37,8 +37,10 @@ module StarcoinFramework::MintProposalPlugin{
         let implement_extpoints = Vector::empty<vector<u8>>();
         let depend_extpoints = Vector::empty<vector<u8>>();
 
+        let witness = MintProposalPlugin{};
         DAOPluginMarketplace::publish_plugin_version<MintProposalPlugin>(
-            &signer, 
+            &signer,
+            &witness,
             b"v0.1.0", 
             *&implement_extpoints,
             *&depend_extpoints,

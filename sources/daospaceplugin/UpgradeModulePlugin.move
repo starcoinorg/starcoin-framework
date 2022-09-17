@@ -32,9 +32,11 @@ module StarcoinFramework::UpgradeModulePlugin {
         let implement_extpoints = Vector::empty<vector<u8>>();
         let depend_extpoints = Vector::empty<vector<u8>>();
 
+        let witness = UpgradeModulePlugin{};
         DAOPluginMarketplace::publish_plugin_version<UpgradeModulePlugin>(
-            &signer, 
-            b"v0.1.0", 
+            &signer,
+            &witness,
+            b"v0.1.0",
             *&implement_extpoints,
             *&depend_extpoints,
             b"inner-plugin://upgrade-module-plugin",

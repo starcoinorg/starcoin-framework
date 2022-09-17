@@ -243,6 +243,7 @@ module StarcoinFramework::DAOPluginMarketplace {
 
     public fun publish_plugin_version<PluginT>(
         sender: &signer, 
+        _witness: &PluginT,
         tag: vector<u8>,
         implement_extpoints: vector<vector<u8>>, 
         depend_extpoints: vector<vector<u8>>,
@@ -340,7 +341,7 @@ module StarcoinFramework::DAOPluginMarketplace {
         return exists<Star<PluginT>>(sender_addr)
     }
 
-    public fun update_plugin<PluginT>(sender: &signer, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>) acquires PluginEntry, PluginEventHandlers {
+    public fun update_plugin<PluginT>(sender: &signer, _witness: &PluginT, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>) acquires PluginEntry, PluginEventHandlers {
         let sender_addr = Signer::address_of(sender);
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
         ensure_exists_plugin_owner_nft(sender_addr, plugin.id);

@@ -50,8 +50,10 @@ module creator::SalaryGovPlugin {
         let implement_extpoints = Vector::empty<vector<u8>>();
         let depend_extpoints = Vector::empty<vector<u8>>();
 
+        let witness = SalaryGovPlugin{};
         DAOPluginMarketplace::publish_plugin_version<SalaryGovPlugin>(
-            sender, 
+            sender,
+            &witness,
             b"v0.1.0", 
             *&implement_extpoints,
             *&depend_extpoints,

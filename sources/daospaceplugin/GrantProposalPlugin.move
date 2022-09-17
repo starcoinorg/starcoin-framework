@@ -47,8 +47,10 @@ module StarcoinFramework::GrantProposalPlugin{
         let implement_extpoints = Vector::empty<vector<u8>>();
         let depend_extpoints = Vector::empty<vector<u8>>();
 
+        let witness = GrantProposalPlugin{};
         DAOPluginMarketplace::publish_plugin_version<GrantProposalPlugin>(
             &signer, 
+            &witness,
             b"v0.1.0", 
             *&implement_extpoints,
             *&depend_extpoints,

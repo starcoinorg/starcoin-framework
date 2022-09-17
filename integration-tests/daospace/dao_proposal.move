@@ -96,8 +96,10 @@ module creator::DAOHelper {
         let implement_extpoints = Vector::empty<vector<u8>>();
         let depend_extpoints = Vector::empty<vector<u8>>();
 
+        let witness = XPlugin{};
         DAOPluginMarketplace::publish_plugin_version<XPlugin>(
-            sender, 
+            sender,
+            &witness,
             b"v0.1.0", 
             *&implement_extpoints,
             *&depend_extpoints,

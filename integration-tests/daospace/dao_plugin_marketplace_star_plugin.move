@@ -31,8 +31,10 @@ module creator::TestPlugin {
         let vec = Vector::empty<vector<u8>>();
         Vector::push_back<vector<u8>>(&mut vec, b"test_plugin");
 
+        let witness = TestPlugin{};
         DAOPluginMarketplace::publish_plugin_version<TestPlugin>(
-            &sender, 
+            &sender,
+            &witness,
             b"v0.1.0", 
             *&vec, 
             *&vec,
