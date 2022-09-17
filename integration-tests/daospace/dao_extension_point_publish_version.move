@@ -103,7 +103,7 @@ script {
         TestExtentionPoint::publish_version_v2(sender);
     }
 }
-// check: EXECUTED
+// check: MoveAbort
 
 //# view --address Genesis --resource 0x1::DAOExtensionPoint::Registry
 

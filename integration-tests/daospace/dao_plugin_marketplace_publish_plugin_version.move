@@ -110,6 +110,6 @@ script {
         TestPlugin::publish_version(&sender, b"v0.7.0");
     }
 }
-// check: EXECUTED
+// check: MoveAbort
 
 //# view --address Genesis --resource 0x1::DAOPluginMarketplace::PluginEntry<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestPlugin::TestPlugin>
