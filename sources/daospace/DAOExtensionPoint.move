@@ -148,6 +148,16 @@ module StarcoinFramework::DAOExtensionPoint {
         assert!(has_extpoint_nft(sender_addr, extpoint_id), Errors::invalid_state(ERR_EXPECT_EXT_POINT_NFT));
     }
 
+    fun assert_tag_no_repeat(v: &vector<Version>, tag:vector<u8>) {
+        let i = 0;
+        let len = Vector::length(v);
+        while (i < len) {
+            let e = Vector::borrow(v, i);
+            assert!(*&e.tag != *&tag, Errors::invalid_argument(ERR_TAG_DUPLICATED));
+            i = i + 1;
+        };
+    }
+
     public fun initialize() {
         assert!(!exists<Registry>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
         let signer = GenesisSignerCapability::get_genesis_signer();
@@ -247,8 +257,10 @@ module StarcoinFramework::DAOExtensionPoint {
     ) acquires Entry, ExtensionPointEventHandlers {
         let sender_addr = Signer::address_of(sender);
         let extp = borrow_global_mut<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
+
         ensure_exists_extpoint_nft(sender_addr, extp.id);
         assert!(Vector::length(&extp.versions) <= MAX_VERSION_COUNT, Errors::limit_exceeded(ERR_VERSION_COUNT_LIMIT));
+        assert_tag_no_repeat(&extp.versions, copy tag);
 
         let number = next_extpoint_version_number(extp);
         Vector::push_back<Version>(&mut extp.versions, Version{

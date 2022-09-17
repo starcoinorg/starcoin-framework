@@ -18,6 +18,7 @@ module StarcoinFramework::DAOPluginMarketplace {
     const ERR_PLUGIN_ALREADY_EXISTS: u64 = 104;
     const ERR_STAR_ALREADY_STARED: u64 = 105;
     const ERR_STAR_NOT_FOUND_STAR: u64 = 106;
+    const ERR_TAG_DUPLICATED: u64 = 107;
 
     const MAX_VERSION_COUNT: u64 = 5;
 
@@ -104,6 +105,16 @@ module StarcoinFramework::DAOPluginMarketplace {
 
     fun ensure_exists_plugin_owner_nft(sender_addr: address, plugin_id: u64) {
         assert!(has_plugin_owner_nft(sender_addr, plugin_id), Errors::invalid_state(ERR_EXPECT_PLUGIN_NFT));
+    }
+
+    fun assert_tag_no_repeat(v: &vector<PluginVersion>, tag:vector<u8>) {
+        let i = 0;
+        let len = Vector::length(v);
+        while (i < len) {
+            let e = Vector::borrow(v, i);
+            assert!(*&e.tag != *&tag, Errors::invalid_argument(ERR_TAG_DUPLICATED));
+            i = i + 1;
+        };
     }
 
     /// registry event handlers
@@ -251,7 +262,9 @@ module StarcoinFramework::DAOPluginMarketplace {
     ) acquires PluginEntry, PluginEventHandlers {
         let sender_addr = Signer::address_of(sender);
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
+        
         ensure_exists_plugin_owner_nft(copy sender_addr, plugin.id);
+        assert_tag_no_repeat(&plugin.versions, copy tag);
 
         // Remove the old version when the number of versions is greater than MAX_VERSION_COUNT
         if (Vector::length(&plugin.versions) >= MAX_VERSION_COUNT) {

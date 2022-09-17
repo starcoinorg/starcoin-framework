@@ -41,7 +41,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
 
 task 8 'run'. lines 70-78:
 {
-  "gas_used": 111563,
+  "gas_used": 121588,
   "status": "Executed"
 }
 
@@ -81,7 +81,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
 
 task 11 'run'. lines 84-92:
 {
-  "gas_used": 111624,
+  "gas_used": 125588,
   "status": "Executed"
 }
 
@@ -115,7 +115,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
         },
         store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
             number: 3
-            tag: 76302e312e31
+            tag: 76302e312e32
             types_d_ts: 697066733a2f2f74797065735f645f74735f32
             document: 697066733a2f2f6474735f646f6332
             created_at: 10000
@@ -128,8 +128,18 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
 
 task 14 'run'. lines 98-106:
 {
-  "gas_used": 111624,
-  "status": "Executed"
+  "gas_used": 86683,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOExtensionPoint"
+        }
+      },
+      "abort_code": "27399"
+    }
+  }
 }
 
 task 15 'view'. lines 108-108:
@@ -144,7 +154,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
     description: 697066733a2f2f6465736372697074696f6e
     labels: [
     ]
-    next_version_number: 5
+    next_version_number: 4
     versions: [
         store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
             number: 1
@@ -162,14 +172,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
         },
         store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
             number: 3
-            tag: 76302e312e31
-            types_d_ts: 697066733a2f2f74797065735f645f74735f32
-            document: 697066733a2f2f6474735f646f6332
-            created_at: 10000
-        },
-        store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
-            number: 4
-            tag: 76302e312e31
+            tag: 76302e312e32
             types_d_ts: 697066733a2f2f74797065735f645f74735f32
             document: 697066733a2f2f6474735f646f6332
             created_at: 10000
