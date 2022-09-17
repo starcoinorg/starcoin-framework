@@ -2,44 +2,44 @@ processed 18 tasks
 
 task 3 'run'. lines 7-15:
 {
-  "gas_used": 6405604,
+  "gas_used": 6341335,
   "status": "Executed"
 }
 
-task 5 'run'. lines 104-112:
+task 5 'run'. lines 97-105:
 {
-  "gas_used": 460299,
+  "gas_used": 450442,
   "status": "Executed"
 }
 
-task 9 'run'. lines 128-135:
+task 9 'run'. lines 121-128:
 {
   "gas_used": 600,
   "status": "MiscellaneousError"
 }
 
-task 10 'run'. lines 137-151:
+task 10 'run'. lines 130-144:
 {
   "gas_used": 173698,
   "status": "Executed"
 }
 
-task 11 'run'. lines 152-161:
+task 11 'run'. lines 145-154:
 {
   "gas_used": 1047820,
   "status": "Executed"
 }
 
-task 12 'deploy'. lines 163-163:
+task 12 'deploy'. lines 156-156:
 Publish failure: Discard { status_code: StrView(2015), status_code_name: "UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION" }
 
-task 14 'run'. lines 167-174:
+task 14 'run'. lines 160-167:
 {
   "gas_used": 110070,
   "status": "Executed"
 }
 
-task 17 'run'. lines 180-187:
+task 17 'run'. lines 173-180:
 {
   "gas_used": 11344,
   "status": "Executed"

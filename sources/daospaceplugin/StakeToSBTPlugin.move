@@ -1,6 +1,5 @@
 module StarcoinFramework::StakeToSBTPlugin {
     use StarcoinFramework::GenesisSignerCapability;
-    use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option;
     use StarcoinFramework::DAOPluginMarketplace;
@@ -21,12 +20,9 @@ module StarcoinFramework::StakeToSBTPlugin {
     const ERR_PLUGIN_ITEM_CANT_FOUND: u64 = 1006;
     const ERR_PLUGIN_NO_MATCH_LOCKTIME: u64 = 1007;
 
-    const ERR_ALREADY_INITIALIZED: u64 = 1008;
-
-    struct StakeToSBTPlugin has key, store, drop{}
+    struct StakeToSBTPlugin has store, drop{}
 
     public fun initialize() {
-        assert!(!exists<StakeToSBTPlugin>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
         let signer = GenesisSignerCapability::get_genesis_signer();
         
         DAOPluginMarketplace::register_plugin<StakeToSBTPlugin>(

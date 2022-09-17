@@ -22,9 +22,8 @@ module creator::SalaryGovPlugin {
     const ERR_PLUGIN_USER_NOT_PRIVILEGE: u64 = 1004;
     const ERR_PLUGIN_PERIOD_NOT_SAME: u64 = 1005;
     const ERR_PLUGIN_PERIOD_APPLICATION: u64 = 1006;
-    const ERR_ALREADY_INITIALIZED: u64 = 1007;
 
-    struct SalaryGovPlugin has key, store, drop {}
+    struct SalaryGovPlugin has store, drop {}
 
     struct PluginBossCap<phantom DAOT> has key, store, drop {}
 
@@ -37,9 +36,6 @@ module creator::SalaryGovPlugin {
     }
 
     public fun initialize(sender: &signer) {
-        let sender_addr = Signer::address_of(sender);
-        assert!(!exists<SalaryGovPlugin>(sender_addr), Errors::already_published(ERR_ALREADY_INITIALIZED));
-
         DAOPluginMarketplace::register_plugin<SalaryGovPlugin>(
             sender,
             b"0x1::SalaryGovPlugin",

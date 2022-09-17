@@ -14,7 +14,7 @@ module creator::TestPlugin {
     use StarcoinFramework::Vector;
     use StarcoinFramework::DAOPluginMarketplace;
 
-    struct TestPlugin has store, copy, drop {}
+    struct TestPlugin has store, drop {}
 
     const NAME: vector<u8> = b"TestPlugin";
 

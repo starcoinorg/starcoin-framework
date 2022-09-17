@@ -16,8 +16,6 @@ script {
 
 //# publish
 module creator::DAOHelper {
-    use StarcoinFramework::Signer;
-    use StarcoinFramework::Errors;
     use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOAccount;
     use StarcoinFramework::DAOSpace::{Self, CapType};
@@ -25,8 +23,6 @@ module creator::DAOHelper {
     use StarcoinFramework::InstallPluginProposalPlugin::{Self, InstallPluginProposalPlugin};
     use StarcoinFramework::Vector;
     use StarcoinFramework::Option;
-
-    const ERR_ALREADY_INITIALIZED: u64 = 100;
 
     struct X has store, copy, drop {}
 
@@ -59,12 +55,9 @@ module creator::DAOHelper {
         DAOSpace::burn_root_cap(dao_root_cap);
     }
 
-    struct XPlugin has key, store, drop {}
+    struct XPlugin has store, drop {}
 
     public fun initialize_x_plugin(sender: &signer) {
-        let sender_addr = Signer::address_of(sender);
-        assert!(!exists<XPlugin>(sender_addr), Errors::already_published(ERR_ALREADY_INITIALIZED));
-
         DAOPluginMarketplace::register_plugin<XPlugin>(
             sender,
             b"0x1::XPlugin",

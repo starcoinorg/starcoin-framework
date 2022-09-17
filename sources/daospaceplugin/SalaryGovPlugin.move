@@ -1,7 +1,6 @@
 address StarcoinFramework {
 module SalaryGovPlugin {
     use StarcoinFramework::GenesisSignerCapability;
-    use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option;
     use StarcoinFramework::DAOPluginMarketplace;
@@ -16,7 +15,7 @@ module SalaryGovPlugin {
     const ERR_PLUGIN_USER_IS_MEMBER: u64 = 1003;
     const ERR_PLUGIN_USER_NOT_PRIVILEGE: u64 = 1004;
 
-    struct SalaryGovPlugin has key, store, drop{}
+    struct SalaryGovPlugin has store, drop{}
 
     struct PluginBossCap<phantom DAOT> has key, store, drop {}
 
@@ -33,7 +32,6 @@ module SalaryGovPlugin {
     }
 
     public fun initialize() {
-        assert!(!exists<SalaryGovPlugin>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
         let signer = GenesisSignerCapability::get_genesis_signer();
         
         DAOPluginMarketplace::register_plugin<SalaryGovPlugin>(

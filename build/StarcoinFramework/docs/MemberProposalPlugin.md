@@ -5,9 +5,8 @@
 
 
 
--  [Resource `MemberProposalPlugin`](#0x1_MemberProposalPlugin_MemberProposalPlugin)
+-  [Struct `MemberProposalPlugin`](#0x1_MemberProposalPlugin_MemberProposalPlugin)
 -  [Struct `MemberJoinAction`](#0x1_MemberProposalPlugin_MemberJoinAction)
--  [Constants](#@Constants_0)
 -  [Function `initialize`](#0x1_MemberProposalPlugin_initialize)
 -  [Function `required_caps`](#0x1_MemberProposalPlugin_required_caps)
 -  [Function `create_proposal`](#0x1_MemberProposalPlugin_create_proposal)
@@ -18,10 +17,8 @@
 -  [Function `install_plugin_proposal_entry`](#0x1_MemberProposalPlugin_install_plugin_proposal_entry)
 
 
-<pre><code><b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
-<b>use</b> <a href="DAOPluginMarketplace.md#0x1_DAOPluginMarketplace">0x1::DAOPluginMarketplace</a>;
+<pre><code><b>use</b> <a href="DAOPluginMarketplace.md#0x1_DAOPluginMarketplace">0x1::DAOPluginMarketplace</a>;
 <b>use</b> <a href="DAOSpace.md#0x1_DAOSpace">0x1::DAOSpace</a>;
-<b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability">0x1::GenesisSignerCapability</a>;
 <b>use</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">0x1::InstallPluginProposalPlugin</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
@@ -32,11 +29,11 @@
 
 <a name="0x1_MemberProposalPlugin_MemberProposalPlugin"></a>
 
-## Resource `MemberProposalPlugin`
+## Struct `MemberProposalPlugin`
 
 
 
-<pre><code><b>struct</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a> <b>has</b> drop, store, key
+<pre><code><b>struct</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a> <b>has</b> drop, store
 </code></pre>
 
 
@@ -102,20 +99,6 @@
 
 </details>
 
-<a name="@Constants_0"></a>
-
-## Constants
-
-
-<a name="0x1_MemberProposalPlugin_ERR_ALREADY_INITIALIZED"></a>
-
-
-
-<pre><code><b>const</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_ERR_ALREADY_INITIALIZED">ERR_ALREADY_INITIALIZED</a>: u64 = 100;
-</code></pre>
-
-
-
 <a name="0x1_MemberProposalPlugin_initialize"></a>
 
 ## Function `initialize`
@@ -132,7 +115,6 @@
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_initialize">initialize</a>() {
-    <b>assert</b>!(!<b>exists</b>&lt;<a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()), <a href="Errors.md#0x1_Errors_already_published">Errors::already_published</a>(<a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_ERR_ALREADY_INITIALIZED">ERR_ALREADY_INITIALIZED</a>));
     <b>let</b> signer = <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability_get_genesis_signer">GenesisSignerCapability::get_genesis_signer</a>();
 
     <a href="DAOPluginMarketplace.md#0x1_DAOPluginMarketplace_register_plugin">DAOPluginMarketplace::register_plugin</a>&lt;<a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>&gt;(

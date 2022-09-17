@@ -1,23 +1,18 @@
 //TODO find more good name
 module StarcoinFramework::InstallPluginProposalPlugin{
     use StarcoinFramework::GenesisSignerCapability;
-    use StarcoinFramework::CoreAddresses;
-    use StarcoinFramework::Errors;
     use StarcoinFramework::Option;
     use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Vector;
 
-    const ERR_ALREADY_INITIALIZED: u64 = 100;
-
-    struct InstallPluginProposalPlugin has key, store, drop{}
+    struct InstallPluginProposalPlugin has store, drop{}
 
     struct InstallPluginAction<phantom ToInstallPluginT> has store {
         required_caps: vector<CapType>,
     }
 
     public fun initialize() {
-        assert!(!exists<InstallPluginProposalPlugin>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
         let signer = GenesisSignerCapability::get_genesis_signer();
         
         DAOPluginMarketplace::register_plugin<InstallPluginProposalPlugin>(

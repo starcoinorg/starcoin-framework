@@ -1,17 +1,13 @@
 //TODO find more good name
 module StarcoinFramework::MemberProposalPlugin{
     use StarcoinFramework::GenesisSignerCapability;
-    use StarcoinFramework::CoreAddresses;
-    use StarcoinFramework::Errors;
     use StarcoinFramework::Option;
     use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Vector;
     use StarcoinFramework::InstallPluginProposalPlugin;
 
-    const ERR_ALREADY_INITIALIZED: u64 = 100;
-
-    struct MemberProposalPlugin has key, store, drop{}
+    struct MemberProposalPlugin has store, drop{}
 
     struct MemberJoinAction has store {
         member: address,
@@ -21,7 +17,6 @@ module StarcoinFramework::MemberProposalPlugin{
     }
 
     public fun initialize() {
-        assert!(!exists<MemberProposalPlugin>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
         let signer = GenesisSignerCapability::get_genesis_signer();
         
         DAOPluginMarketplace::register_plugin<MemberProposalPlugin>(

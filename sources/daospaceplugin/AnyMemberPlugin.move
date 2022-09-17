@@ -1,8 +1,6 @@
 //TODO find more good name
 module StarcoinFramework::AnyMemberPlugin{
     use StarcoinFramework::GenesisSignerCapability;
-    use StarcoinFramework::CoreAddresses;
-    use StarcoinFramework::Errors;
     use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Vector;
@@ -10,10 +8,8 @@ module StarcoinFramework::AnyMemberPlugin{
     use StarcoinFramework::Option;
     use StarcoinFramework::InstallPluginProposalPlugin;
     use StarcoinFramework::IdentifierNFT;
-    
-    const ERR_ALREADY_INITIALIZED: u64 = 100;
 
-    struct AnyMemberPlugin has key, store, drop{}
+    struct AnyMemberPlugin has store, drop{}
 
     public fun required_caps():vector<CapType>{
         let caps = Vector::singleton(DAOSpace::member_cap_type());  
@@ -21,7 +17,6 @@ module StarcoinFramework::AnyMemberPlugin{
     }
 
     public fun initialize() {
-        assert!(!exists<AnyMemberPlugin>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
         let signer = GenesisSignerCapability::get_genesis_signer();
         
         DAOPluginMarketplace::register_plugin<AnyMemberPlugin>(

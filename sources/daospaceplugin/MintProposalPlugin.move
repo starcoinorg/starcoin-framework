@@ -1,6 +1,5 @@
 module StarcoinFramework::MintProposalPlugin{
     use StarcoinFramework::GenesisSignerCapability;
-    use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option;
     use StarcoinFramework::DAOPluginMarketplace;
@@ -11,9 +10,7 @@ module StarcoinFramework::MintProposalPlugin{
     use StarcoinFramework::Token;
     use StarcoinFramework::Account;
 
-    const ERR_ALREADY_INITIALIZED: u64 = 100;
-
-    struct MintProposalPlugin has key, store, drop{}
+    struct MintProposalPlugin has store, drop{}
 
     /// MintToken request.
     struct MintTokenAction<phantom TokenT: store> has copy, drop, store {
@@ -24,7 +21,6 @@ module StarcoinFramework::MintProposalPlugin{
     }
 
     public fun initialize() {
-        assert!(!exists<MintProposalPlugin>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
         let signer = GenesisSignerCapability::get_genesis_signer();
         
         DAOPluginMarketplace::register_plugin<MintProposalPlugin>(
