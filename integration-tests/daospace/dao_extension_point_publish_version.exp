@@ -8,7 +8,7 @@ task 4 'run'. lines 46-54:
 
 task 5 'run'. lines 56-64:
 {
-  "gas_used": 379065,
+  "gas_used": 412273,
   "status": "Executed"
 }
 
@@ -41,7 +41,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
 
 task 8 'run'. lines 70-78:
 {
-  "gas_used": 127438,
+  "gas_used": 145501,
   "status": "Executed"
 }
 
@@ -81,7 +81,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
 
 task 11 'run'. lines 84-92:
 {
-  "gas_used": 131438,
+  "gas_used": 149501,
   "status": "Executed"
 }
 
@@ -128,7 +128,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
 
 task 14 'run'. lines 98-106:
 {
-  "gas_used": 86683,
+  "gas_used": 104746,
   "status": {
     "MoveAbort": {
       "location": {

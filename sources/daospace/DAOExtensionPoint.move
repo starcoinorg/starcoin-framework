@@ -19,9 +19,16 @@ module StarcoinFramework::DAOExtensionPoint {
     const ERR_STAR_ALREADY_STARED: u64 = 105;
     const ERR_STAR_NOT_FOUND_STAR: u64 = 106;
     const ERR_TAG_DUPLICATED: u64 = 107;
-    const ERR_VERSION_COUNT_LIMIT: u64 = 108;
 
-    const MAX_VERSION_COUNT: u64 = 99; // Max version count for extension point.
+    const ERR_VERSION_COUNT_LIMIT: u64 = 108;
+    const ERR_ITEMS_COUNT_LIMIT: u64 = 109;
+    const ERR_STRING_TOO_LONG: u64 = 110;
+
+    const MAX_VERSION_COUNT: u64 = 256; // Max version count for extension point.
+    const MAX_LABELS_COUNT: u64 = 20; // Max labels count for extension point.
+
+    const MAX_INPUT_LEN: u64 = 64;
+    const MAX_TEXT_LEN: u64 = 256;
 
     struct Version has store  {
        number: u64,
@@ -158,6 +165,23 @@ module StarcoinFramework::DAOExtensionPoint {
         };
     }
 
+    fun assert_string_length(s: &vector<u8>, max_len: u64) {
+        let len = Vector::length(s);
+        assert!(len <= max_len, Errors::invalid_argument(ERR_STRING_TOO_LONG));
+    }
+
+    fun assert_string_array_length(v: &vector<vector<u8>>, max_item_len: u64, max_string_len: u64) {
+        assert!(Vector::length(v) <= max_item_len, Errors::limit_exceeded(ERR_ITEMS_COUNT_LIMIT));
+
+        let i = 0;
+        let len = Vector::length(v);
+        while (i < len) {
+            let e = Vector::borrow(v, i);
+            assert_string_length(e, max_string_len);
+            i = i + 1;
+        };
+    }
+
     public fun initialize() {
         assert!(!exists<Registry>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
         let signer = GenesisSignerCapability::get_genesis_signer();
@@ -186,6 +210,11 @@ module StarcoinFramework::DAOExtensionPoint {
 
     public fun register<ExtPointT: store>(sender: &signer, name: vector<u8>, description: vector<u8>, types_d_ts:vector<u8>, dts_doc:vector<u8>, 
         option_labels: Option<vector<vector<u8>>>):u64 acquires Registry, NFTMintCapHolder, RegistryEventHandlers {
+        assert_string_length(&name, MAX_INPUT_LEN);
+        assert_string_length(&description, MAX_TEXT_LEN);
+        assert_string_length(&types_d_ts, MAX_TEXT_LEN);
+        assert_string_length(&dts_doc, MAX_TEXT_LEN);
+
         assert!(!exists<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_REGISTERED));
         let registry = borrow_global_mut<Registry>(CoreAddresses::GENESIS_ADDRESS());
         let extpoint_id = next_extpoint_id(registry);
@@ -203,6 +232,8 @@ module StarcoinFramework::DAOExtensionPoint {
         } else {
             Vector::empty<vector<u8>>()
         };
+
+        assert_string_array_length(&labels, MAX_LABELS_COUNT, MAX_INPUT_LEN);
 
         let genesis_account = GenesisSignerCapability::get_genesis_signer();
         move_to(&genesis_account, Entry<ExtPointT>{
@@ -255,6 +286,10 @@ module StarcoinFramework::DAOExtensionPoint {
         types_d_ts:vector<u8>,
         dts_doc: vector<u8>, 
     ) acquires Entry, ExtensionPointEventHandlers {
+        assert_string_length(&tag, MAX_INPUT_LEN);
+        assert_string_length(&types_d_ts, MAX_TEXT_LEN);
+        assert_string_length(&dts_doc, MAX_TEXT_LEN);
+
         let sender_addr = Signer::address_of(sender);
         let extp = borrow_global_mut<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
 
@@ -284,6 +319,9 @@ module StarcoinFramework::DAOExtensionPoint {
     }
 
     public fun update<ExtPointT>(sender: &signer, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>) acquires Entry, ExtensionPointEventHandlers {
+        assert_string_length(&name, MAX_INPUT_LEN);
+        assert_string_length(&description, MAX_TEXT_LEN);
+
         let sender_addr = Signer::address_of(sender);
         let extp = borrow_global_mut<Entry<ExtPointT>>(CoreAddresses::GENESIS_ADDRESS());
         ensure_exists_extpoint_nft(sender_addr, extp.id);
@@ -292,7 +330,9 @@ module StarcoinFramework::DAOExtensionPoint {
         extp.description = description;
 
         if(Option::is_some(&option_labels)){
-            extp.labels = Option::destroy_some(option_labels);
+            let labels = Option::destroy_some(option_labels);
+            assert_string_array_length(&labels, MAX_LABELS_COUNT, MAX_INPUT_LEN);
+            extp.labels = labels;
         };
 
         extp.updated_at = Timestamp::now_seconds();

@@ -8,13 +8,13 @@ task 6 'run'. lines 32-40:
 
 task 7 'run'. lines 42-50:
 {
-  "gas_used": 379065,
+  "gas_used": 412273,
   "status": "Executed"
 }
 
 task 8 'run'. lines 52-71:
 {
-  "gas_used": 52191,
+  "gas_used": 64233,
   "status": {
     "MoveAbort": {
       "location": {
@@ -118,7 +118,7 @@ store key 0x00000000000000000000000000000001::NFTGallery::NFTGallery<0x000000000
 
 task 14 'run'. lines 101-120:
 {
-  "gas_used": 135968,
+  "gas_used": 177066,
   "status": "Executed"
 }
 

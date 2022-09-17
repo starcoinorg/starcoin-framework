@@ -1,23 +1,23 @@
-processed 10 tasks
+processed 14 tasks
 
-task 4 'run'. lines 33-41:
+task 4 'run'. lines 48-56:
 {
   "gas_used": 174543,
   "status": "Executed"
 }
 
-task 5 'run'. lines 43-51:
+task 5 'run'. lines 58-66:
 {
-  "gas_used": 407076,
+  "gas_used": 460124,
   "status": "Executed"
 }
 
-task 6 'view'. lines 53-53:
+task 6 'view'. lines 68-68:
 store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
     next_id: 2
 }
 
-task 7 'view'. lines 55-55:
+task 7 'view'. lines 70-70:
 store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::TestExtentionPoint> {
     id: 1
     name: 54657374457874656e74696f6e506f696e74
@@ -41,9 +41,9 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
     updated_at: 10
 }
 
-task 8 'run'. lines 57-65:
+task 8 'run'. lines 72-80:
 {
-  "gas_used": 36162,
+  "gas_used": 60246,
   "status": {
     "MoveAbort": {
       "location": {
@@ -57,7 +57,7 @@ task 8 'run'. lines 57-65:
   }
 }
 
-task 9 'view'. lines 67-67:
+task 9 'view'. lines 82-82:
 store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::TestExtentionPoint> {
     id: 1
     name: 54657374457874656e74696f6e506f696e74
@@ -79,4 +79,36 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
     star_count: 0
     created_at: 10
     updated_at: 10
+}
+
+task 11 'run'. lines 110-118:
+{
+  "gas_used": 38409,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOExtensionPoint"
+        }
+      },
+      "abort_code": "28167"
+    }
+  }
+}
+
+task 13 'run'. lines 147-155:
+{
+  "gas_used": 137491,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOExtensionPoint"
+        }
+      },
+      "abort_code": "28167"
+    }
+  }
 }

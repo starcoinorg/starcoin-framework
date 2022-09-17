@@ -20,7 +20,15 @@ module StarcoinFramework::DAOPluginMarketplace {
     const ERR_STAR_NOT_FOUND_STAR: u64 = 106;
     const ERR_TAG_DUPLICATED: u64 = 107;
 
-    const MAX_VERSION_COUNT: u64 = 5;
+    const ERR_VERSION_COUNT_LIMIT: u64 = 108;
+    const ERR_ITEMS_COUNT_LIMIT: u64 = 109;
+    const ERR_STRING_TOO_LONG: u64 = 110;
+
+    const MAX_VERSION_COUNT: u64 = 5; // Max version count for extension point.
+    const MAX_ITEMS_COUNT: u64 = 20; // Max items count for vector.
+
+    const MAX_INPUT_LEN: u64 = 64;
+    const MAX_TEXT_LEN: u64 = 256;
 
     struct PluginVersion has store {
         number: u64, //Numeric version number, such as 1, 2, 3
@@ -117,6 +125,23 @@ module StarcoinFramework::DAOPluginMarketplace {
         };
     }
 
+    fun assert_string_length(s: &vector<u8>, max_len: u64) {
+        let len = Vector::length(s);
+        assert!(len <= max_len, Errors::invalid_argument(ERR_STRING_TOO_LONG));
+    }
+
+    fun assert_string_array_length(v: &vector<vector<u8>>, max_item_len: u64, max_string_len: u64) {
+        assert!(Vector::length(v) <= max_item_len, Errors::limit_exceeded(ERR_ITEMS_COUNT_LIMIT));
+
+        let i = 0;
+        let len = Vector::length(v);
+        while (i < len) {
+            let e = Vector::borrow(v, i);
+            assert_string_length(e, max_string_len);
+            i = i + 1;
+        };
+    }
+
     /// registry event handlers
     struct RegistryEventHandlers has key, store{
         register: Event::EventHandle<PluginRegisterEvent>,
@@ -187,6 +212,9 @@ module StarcoinFramework::DAOPluginMarketplace {
 
     public fun register_plugin<PluginT: store>(sender: &signer, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>): u64 
         acquires PluginRegistry, PluginOwnerNFTMintCapHolder, RegistryEventHandlers {
+        assert_string_length(&name, MAX_INPUT_LEN);
+        assert_string_length(&description, MAX_TEXT_LEN);
+
         assert!(!exists<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_PLUGIN_ALREADY_EXISTS));
         let plugin_registry = borrow_global_mut<PluginRegistry>(CoreAddresses::GENESIS_ADDRESS());
         let plugin_id = next_plugin_id(plugin_registry);
@@ -198,6 +226,8 @@ module StarcoinFramework::DAOPluginMarketplace {
         } else {
             Vector::empty<vector<u8>>()
         };
+
+        assert_string_array_length(&labels, MAX_ITEMS_COUNT, MAX_INPUT_LEN);
 
         move_to(&genesis_account, PluginEntry<PluginT>{
             id: copy plugin_id, 
@@ -260,6 +290,11 @@ module StarcoinFramework::DAOPluginMarketplace {
         depend_extpoints: vector<vector<u8>>,
         js_entry_uri: vector<u8>, 
     ) acquires PluginEntry, PluginEventHandlers {
+        assert_string_length(&tag, MAX_INPUT_LEN);
+        assert_string_array_length(&implement_extpoints, MAX_ITEMS_COUNT, MAX_INPUT_LEN);
+        assert_string_array_length(&depend_extpoints, MAX_ITEMS_COUNT, MAX_INPUT_LEN);
+        assert_string_length(&js_entry_uri, MAX_TEXT_LEN);
+
         let sender_addr = Signer::address_of(sender);
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
         
@@ -355,6 +390,9 @@ module StarcoinFramework::DAOPluginMarketplace {
     }
 
     public fun update_plugin<PluginT>(sender: &signer, _witness: &PluginT, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>) acquires PluginEntry, PluginEventHandlers {
+        assert_string_length(&name, MAX_INPUT_LEN);
+        assert_string_length(&description, MAX_TEXT_LEN);
+
         let sender_addr = Signer::address_of(sender);
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
         ensure_exists_plugin_owner_nft(sender_addr, plugin.id);
@@ -363,7 +401,9 @@ module StarcoinFramework::DAOPluginMarketplace {
         plugin.description = description;
 
         if(Option::is_some(&option_labels)){
-            plugin.labels = Option::destroy_some(option_labels);
+            let labels = Option::destroy_some(option_labels);
+            assert_string_array_length(&labels, MAX_ITEMS_COUNT, MAX_INPUT_LEN);
+            plugin.labels = labels;
         };
 
         plugin.updated_at = Timestamp::now_seconds();
