@@ -187,7 +187,7 @@ module StarcoinFramework::DAOExtensionPoint {
         let signer = GenesisSignerCapability::get_genesis_signer();
 
         let nft_name = b"ExtPointOwnerNFT";
-        let nft_image = b"SVG image";
+        let nft_image = b"ipfs://QmdTwdhFi61zhRM3MtPLxuKyaqv3ePECLGsMg9pMrePv4i";
         let nft_description = b"The extension point owner NFT";
         let basemeta = NFT::new_meta_with_image_data(nft_name, nft_image, nft_description);
         let basemeta_bak = *&basemeta;
