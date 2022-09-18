@@ -1,4 +1,7 @@
 module StarcoinFramework::UpgradeModulePlugin {
+    use StarcoinFramework::GenesisSignerCapability;
+    use StarcoinFramework::Option;
+    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Vector;
     use StarcoinFramework::InstallPluginProposalPlugin;
@@ -9,6 +12,30 @@ module StarcoinFramework::UpgradeModulePlugin {
         package_hash: vector<u8>,
         version: u64,
         enforced: bool
+    }
+
+    public fun initialize() {
+        let signer = GenesisSignerCapability::get_genesis_signer();
+        
+        DAOPluginMarketplace::register_plugin<UpgradeModulePlugin>(
+            &signer,
+            b"0x1::UpgradeModulePlugin",
+            b"The plugin for upgrade module.",
+            Option::none(),
+        );
+
+        let implement_extpoints = Vector::empty<vector<u8>>();
+        let depend_extpoints = Vector::empty<vector<u8>>();
+
+        let witness = UpgradeModulePlugin{};
+        DAOPluginMarketplace::publish_plugin_version<UpgradeModulePlugin>(
+            &signer,
+            &witness,
+            b"v0.1.0",
+            *&implement_extpoints,
+            *&depend_extpoints,
+            b"inner-plugin://upgrade-module-plugin",
+        );
     }
 
     public fun required_caps(): vector<CapType> {

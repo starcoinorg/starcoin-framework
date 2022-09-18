@@ -1,0 +1,114 @@
+processed 14 tasks
+
+task 4 'run'. lines 48-56:
+{
+  "gas_used": 177755,
+  "status": "Executed"
+}
+
+task 5 'run'. lines 58-66:
+{
+  "gas_used": 466152,
+  "status": "Executed"
+}
+
+task 6 'view'. lines 68-68:
+store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
+    next_id: 2
+}
+
+task 7 'view'. lines 70-70:
+store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::TestExtentionPoint> {
+    id: 1
+    name: 54657374457874656e74696f6e506f696e74
+    description: 697066733a2f2f6465736372697074696f6e
+    labels: [
+        4f533d53746172636f696e,
+        53746f72653d49504653,
+    ]
+    next_version_number: 2
+    versions: [
+        store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
+            number: 1
+            tag: 76302e312e30
+            types_d_ts: 697066733a2f2f74797065735f645f7473
+            document: 697066733a2f2f6474735f646f63
+            created_at: 10
+        },
+    ]
+    star_count: 0
+    created_at: 10
+    updated_at: 10
+}
+
+task 8 'run'. lines 72-80:
+{
+  "gas_used": 60246,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOExtensionPoint"
+        }
+      },
+      "abort_code": "26630"
+    }
+  }
+}
+
+task 9 'view'. lines 82-82:
+store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::TestExtentionPoint> {
+    id: 1
+    name: 54657374457874656e74696f6e506f696e74
+    description: 697066733a2f2f6465736372697074696f6e
+    labels: [
+        4f533d53746172636f696e,
+        53746f72653d49504653,
+    ]
+    next_version_number: 2
+    versions: [
+        store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
+            number: 1
+            tag: 76302e312e30
+            types_d_ts: 697066733a2f2f74797065735f645f7473
+            document: 697066733a2f2f6474735f646f63
+            created_at: 10
+        },
+    ]
+    star_count: 0
+    created_at: 10
+    updated_at: 10
+}
+
+task 11 'run'. lines 110-118:
+{
+  "gas_used": 38409,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOExtensionPoint"
+        }
+      },
+      "abort_code": "28167"
+    }
+  }
+}
+
+task 13 'run'. lines 147-155:
+{
+  "gas_used": 137491,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOExtensionPoint"
+        }
+      },
+      "abort_code": "28167"
+    }
+  }
+}

@@ -1,8 +1,11 @@
 //TODO find more good name
 module StarcoinFramework::GrantProposalPlugin{
+    use StarcoinFramework::GenesisSignerCapability;
+    use StarcoinFramework::Errors;
+    use StarcoinFramework::Option;
+    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Signer;
-    use StarcoinFramework::Errors;
     use StarcoinFramework::Vector;
     use StarcoinFramework::InstallPluginProposalPlugin;
 
@@ -25,6 +28,30 @@ module StarcoinFramework::GrantProposalPlugin{
 
     struct GrantRevokeAction<phantom TokenT:store> has store {
         grantee:address
+    }
+
+    public fun initialize() {
+        let signer = GenesisSignerCapability::get_genesis_signer();
+        
+        DAOPluginMarketplace::register_plugin<GrantProposalPlugin>(
+            &signer,
+            b"0x1::GrantProposalPlugin",
+            b"The plugin for grant proposal",
+            Option::none(),
+        );
+
+        let implement_extpoints = Vector::empty<vector<u8>>();
+        let depend_extpoints = Vector::empty<vector<u8>>();
+
+        let witness = GrantProposalPlugin{};
+        DAOPluginMarketplace::publish_plugin_version<GrantProposalPlugin>(
+            &signer, 
+            &witness,
+            b"v0.1.0", 
+            *&implement_extpoints,
+            *&depend_extpoints,
+            b"inner-plugin://grant-proposal-plugin",
+        );
     }
 
     public fun required_caps():vector<CapType>{
@@ -132,4 +159,5 @@ module StarcoinFramework::GrantProposalPlugin{
     public (script) fun install_plugin_proposal_entry<DAOT: store>(sender:signer, description: vector<u8>, action_delay:u64){
         install_plugin_proposal<DAOT>(&sender, description, action_delay);
     }
+
 }

@@ -4,14 +4,14 @@
 
 // TODO figure out how to call genesis init script in integration tests
 
-////# run --signers creator
-//script{
-//    use StarcoinFramework::StdlibUpgradeScripts;
-//
-//    fun main(){
-//        StdlibUpgradeScripts::upgrade_from_v11_to_v12();
-//    }
-//}
+//# run --signers creator
+script{
+    use StarcoinFramework::StdlibUpgradeScripts;
+
+    fun main(){
+        StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
+    }
+}
 
 //# publish
 module creator::XDAO {
@@ -59,3 +59,9 @@ script{
         XDAO::create_dao(sender, 10, 10, 10, 10, 10);
     }
 }
+
+//# view --address creator --resource 0x1::DAOSpace::DAO
+
+//# view --address creator --resource 0x1::DAOSpace::InstalledPluginInfo<0x1::InstallPluginProposalPlugin::InstallPluginProposalPlugin>
+
+//# view --address creator --resource 0x1::DAOSpace::InstalledPluginInfo<0x1::MemberProposalPlugin::MemberProposalPlugin>

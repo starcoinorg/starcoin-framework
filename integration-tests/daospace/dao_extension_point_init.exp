@@ -1,0 +1,28 @@
+processed 6 tasks
+
+task 3 'run'. lines 7-15:
+{
+  "gas_used": 177755,
+  "status": "Executed"
+}
+
+task 4 'view'. lines 17-17:
+store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
+    next_id: 1
+}
+
+task 5 'run'. lines 19-27:
+{
+  "gas_used": 13211,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOExtensionPoint"
+        }
+      },
+      "abort_code": "25606"
+    }
+  }
+}

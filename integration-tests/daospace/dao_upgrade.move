@@ -4,8 +4,19 @@
 
 //# faucet --addr alice --amount 10000000000
 
+//# run --signers creator
+script {
+    use StarcoinFramework::StdlibUpgradeScripts;
+
+    fun upgrade_from_v11_to_v12() {
+        StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
+    }
+}
+// check: EXECUTED
+
 //# publish
 module creator::DAOHelper {
+    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOAccount;
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::AnyMemberPlugin::{Self, AnyMemberPlugin};
@@ -46,6 +57,28 @@ module creator::DAOHelper {
 
     struct XPlugin has store, drop {}
 
+    public fun initialize_x_plugin(sender: &signer) {
+        DAOPluginMarketplace::register_plugin<XPlugin>(
+            sender,
+            b"0x1::XPlugin",
+            b"The X plugin.",
+            Option::none(),
+        );
+
+        let implement_extpoints = Vector::empty<vector<u8>>();
+        let depend_extpoints = Vector::empty<vector<u8>>();
+
+        let witness = XPlugin{};
+        DAOPluginMarketplace::publish_plugin_version<XPlugin>(
+            sender,
+            &witness,
+            b"v0.1.0", 
+            *&implement_extpoints,
+            *&depend_extpoints,
+            b"inner-plugin://x-plugin",
+        );
+    }
+
     public fun required_caps(): vector<CapType> {
         let caps = Vector::singleton(DAOSpace::proposal_cap_type());
         Vector::push_back(&mut caps, DAOSpace::install_plugin_cap_type());
@@ -60,6 +93,16 @@ module creator::DAOHelper {
         DAOSpace::submit_upgrade_plan(&upgrade_cap, package_hash, version, enforced);
     }
 }
+
+//# run --signers creator
+script {
+    use creator::DAOHelper;
+
+    fun main(sender: signer) {
+        DAOHelper::initialize_x_plugin(&sender);
+    }
+}
+// check: EXECUTED
 
 //# package
 module creator::test {

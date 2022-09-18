@@ -8,9 +8,10 @@
 
 //# publish
 module creator::SalaryGovPlugin {
+    use StarcoinFramework::Signer;
+    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace;
     use StarcoinFramework::Vector;
-    use StarcoinFramework::Signer;
     use StarcoinFramework::Account;
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::Errors;
@@ -32,6 +33,28 @@ module creator::SalaryGovPlugin {
 
     struct BossProposalAction<phantom DAOT> has key, store {
         boss: address,
+    }
+
+    public fun initialize(sender: &signer) {
+        DAOPluginMarketplace::register_plugin<SalaryGovPlugin>(
+            sender,
+            b"0x1::SalaryGovPlugin",
+            b"The salary plugin for DAO",
+            Option::none(),
+        );
+
+        let implement_extpoints = Vector::empty<vector<u8>>();
+        let depend_extpoints = Vector::empty<vector<u8>>();
+
+        let witness = SalaryGovPlugin{};
+        DAOPluginMarketplace::publish_plugin_version<SalaryGovPlugin>(
+            sender,
+            &witness,
+            b"v0.1.0", 
+            *&implement_extpoints,
+            *&depend_extpoints,
+            b"inner-plugin://salary-gov-plugin",
+        );
     }
 
     public fun required_caps(): vector<DAOSpace::CapType> {
@@ -228,9 +251,14 @@ module creator::XDAO {
 
 //# run --signers creator
 script {
+    use StarcoinFramework::StdlibUpgradeScripts;
+    use creator::SalaryGovPlugin;
     use creator::XDAO;
 
     fun main(sender: signer) {
+        StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
+        SalaryGovPlugin::initialize(&sender);
+
         // time unit is millsecond
         XDAO::create_dao(sender, 10000, 360000, 1, 10000, 0, @acting_boss);
     }

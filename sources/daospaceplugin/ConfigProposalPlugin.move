@@ -1,5 +1,8 @@
 /// Called by other contract which need proposal config
 module StarcoinFramework::ConfigProposalPlugin {
+    use StarcoinFramework::GenesisSignerCapability;
+    use StarcoinFramework::Option;
+    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Vector;
     use StarcoinFramework::InstallPluginProposalPlugin;
@@ -8,6 +11,30 @@ module StarcoinFramework::ConfigProposalPlugin {
 
     struct ConfigProposalAction<ConfigT> has store {
         config: ConfigT,
+    }
+
+    public fun initialize() {
+        let signer = GenesisSignerCapability::get_genesis_signer();
+        
+        DAOPluginMarketplace::register_plugin<ConfigProposalPlugin>(
+            &signer,
+            b"0x1::ConfigProposalPlugin",
+            b"The config proposal plugin",
+            Option::none(),
+        );
+
+        let implement_extpoints = Vector::empty<vector<u8>>();
+        let depend_extpoints = Vector::empty<vector<u8>>();
+
+        let witness = ConfigProposalPlugin{};
+        DAOPluginMarketplace::publish_plugin_version<ConfigProposalPlugin>(
+            &signer, 
+            &witness,
+            b"v0.1.0", 
+            *&implement_extpoints,
+            *&depend_extpoints,
+            b"inner-plugin://config-proposal-plugin",
+        );
     }
 
     public fun required_caps(): vector<CapType> {
@@ -53,4 +80,5 @@ module StarcoinFramework::ConfigProposalPlugin {
     public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, description: vector<u8>, action_delay:u64){
         install_plugin_proposal<DAOT>(&sender, description, action_delay);
     }
+
 }

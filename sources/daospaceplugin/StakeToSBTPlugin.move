@@ -1,13 +1,14 @@
 module StarcoinFramework::StakeToSBTPlugin {
-
+    use StarcoinFramework::GenesisSignerCapability;
+    use StarcoinFramework::Errors;
+    use StarcoinFramework::Option;
+    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::Token;
     use StarcoinFramework::Account;
     use StarcoinFramework::DAOSpace;
     use StarcoinFramework::Vector;
     use StarcoinFramework::Signer;
-    use StarcoinFramework::Errors;
     use StarcoinFramework::Timestamp;
-    use StarcoinFramework::Option;
     use StarcoinFramework::InstallPluginProposalPlugin;
     use StarcoinFramework::IdentifierNFT;
 
@@ -19,7 +20,31 @@ module StarcoinFramework::StakeToSBTPlugin {
     const ERR_PLUGIN_ITEM_CANT_FOUND: u64 = 1006;
     const ERR_PLUGIN_NO_MATCH_LOCKTIME: u64 = 1007;
 
-    struct StakeToSBTPlugin has store, drop {}
+    struct StakeToSBTPlugin has store, drop{}
+
+    public fun initialize() {
+        let signer = GenesisSignerCapability::get_genesis_signer();
+        
+        DAOPluginMarketplace::register_plugin<StakeToSBTPlugin>(
+            &signer,
+            b"0x1::StakeToSBTPlugin",
+            b"The plugin for stake to SBT",
+            Option::none(),
+        );
+
+        let implement_extpoints = Vector::empty<vector<u8>>();
+        let depend_extpoints = Vector::empty<vector<u8>>();
+
+        let witness = StakeToSBTPlugin{};
+        DAOPluginMarketplace::publish_plugin_version<StakeToSBTPlugin>(
+            &signer,
+            &witness, 
+            b"v0.1.0", 
+            *&implement_extpoints,
+            *&depend_extpoints,
+            b"inner-plugin://stake-to-sbt-plugin",
+        );
+    }
 
     struct Stake<phantom DAOT, phantom TokenT> has key, store {
         id: u64,
@@ -456,6 +481,7 @@ module StarcoinFramework::StakeToSBTPlugin {
 
         accept_token(cap);
     }
+
 
     public(script) fun execute_token_accept_proposal_entry<DAOT: store, TokenT: store>(sender: signer,
                                                                                  proposal_id: u64) {

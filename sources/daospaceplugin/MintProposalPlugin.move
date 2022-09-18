@@ -1,7 +1,10 @@
 module StarcoinFramework::MintProposalPlugin{
+    use StarcoinFramework::GenesisSignerCapability;
+    use StarcoinFramework::Errors;
+    use StarcoinFramework::Option;
+    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Signer;
-    use StarcoinFramework::Errors;
     use StarcoinFramework::Vector;
     use StarcoinFramework::InstallPluginProposalPlugin;
     use StarcoinFramework::Token;
@@ -15,6 +18,30 @@ module StarcoinFramework::MintProposalPlugin{
         receiver: address,
         /// how many tokens to mint.
         amount: u128,
+    }
+
+    public fun initialize() {
+        let signer = GenesisSignerCapability::get_genesis_signer();
+        
+        DAOPluginMarketplace::register_plugin<MintProposalPlugin>(
+            &signer,
+            b"0x1::MintProposalPlugin",
+            b"The plugin for minting tokens.",
+            Option::none(),
+        );
+
+        let implement_extpoints = Vector::empty<vector<u8>>();
+        let depend_extpoints = Vector::empty<vector<u8>>();
+
+        let witness = MintProposalPlugin{};
+        DAOPluginMarketplace::publish_plugin_version<MintProposalPlugin>(
+            &signer,
+            &witness,
+            b"v0.1.0", 
+            *&implement_extpoints,
+            *&depend_extpoints,
+            b"inner-plugin://mint-proposal-plugin",
+        );
     }
 
     public fun required_caps():vector<CapType>{
@@ -70,4 +97,5 @@ module StarcoinFramework::MintProposalPlugin{
     public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, description: vector<u8>, action_delay:u64){
         install_plugin_proposal<DAOT>(&sender, description, action_delay);
     }
+
 }
