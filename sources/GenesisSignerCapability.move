@@ -19,7 +19,6 @@ module StarcoinFramework::GenesisSignerCapability {
     friend StarcoinFramework::InstallPluginProposalPlugin;
     friend StarcoinFramework::MemberProposalPlugin;
     friend StarcoinFramework::MintProposalPlugin;
-    friend StarcoinFramework::SalaryGovPlugin;
     friend StarcoinFramework::StakeToSBTPlugin;
     friend StarcoinFramework::UpgradeModulePlugin;
 

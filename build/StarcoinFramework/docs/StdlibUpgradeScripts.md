@@ -45,7 +45,6 @@ The module for StdlibUpgrade init scripts
 <b>use</b> <a href="Oracle.md#0x1_Oracle">0x1::Oracle</a>;
 <b>use</b> <a href="STC.md#0x1_STC">0x1::STC</a>;
 <b>use</b> <a href="Oracle.md#0x1_STCUSDOracle">0x1::STCUSDOracle</a>;
-<b>use</b> <a href="SalaryGovPlugin.md#0x1_SalaryGovPlugin">0x1::SalaryGovPlugin</a>;
 <b>use</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin">0x1::StakeToSBTPlugin</a>;
 <b>use</b> <a href="StarcoinDAO.md#0x1_StarcoinDAO">0x1::StarcoinDAO</a>;
 <b>use</b> <a href="Timestamp.md#0x1_Timestamp">0x1::Timestamp</a>;
@@ -411,7 +410,6 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
     <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_initialize">InstallPluginProposalPlugin::initialize</a>();
     <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_initialize">MemberProposalPlugin::initialize</a>();
     <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_initialize">MintProposalPlugin::initialize</a>();
-    <a href="SalaryGovPlugin.md#0x1_SalaryGovPlugin_initialize">SalaryGovPlugin::initialize</a>();
     <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_initialize">StakeToSBTPlugin::initialize</a>();
     <a href="UpgradeModulePlugin.md#0x1_UpgradeModulePlugin_initialize">UpgradeModulePlugin::initialize</a>();
 

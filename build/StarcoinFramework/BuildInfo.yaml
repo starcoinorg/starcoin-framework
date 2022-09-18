@@ -229,9 +229,6 @@ compiled_package_info:
       name: STCUSDOracle
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
-      name: SalaryGovPlugin
-    : StarcoinFramework
-    ? address: "0x00000000000000000000000000000001"
       name: SharedEd25519PublicKey
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -321,7 +318,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: BD6030BFB855777BD5F816EBEDD2E93EA6E1D29A924E6D85633B7639FC756C5B
+  source_digest: E084083B9449F396039B8495E0E69BE4F2537E6F6E63F8187394FFDA78F1A9B2
   build_flags:
     dev_mode: false
     test_mode: false

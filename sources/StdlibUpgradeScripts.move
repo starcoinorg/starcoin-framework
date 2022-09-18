@@ -29,7 +29,6 @@ module StdlibUpgradeScripts {
         use StarcoinFramework::InstallPluginProposalPlugin;
         use StarcoinFramework::MemberProposalPlugin;
         use StarcoinFramework::MintProposalPlugin;
-        use StarcoinFramework::SalaryGovPlugin;
         use StarcoinFramework::StakeToSBTPlugin;
         use StarcoinFramework::UpgradeModulePlugin;
         use StarcoinFramework::StarcoinDAO;
@@ -137,7 +136,6 @@ module StdlibUpgradeScripts {
             InstallPluginProposalPlugin::initialize();
             MemberProposalPlugin::initialize();
             MintProposalPlugin::initialize();
-            SalaryGovPlugin::initialize();
             StakeToSBTPlugin::initialize();
             UpgradeModulePlugin::initialize();
 
