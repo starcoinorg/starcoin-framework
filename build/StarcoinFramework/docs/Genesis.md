@@ -514,7 +514,6 @@ The module for init Genesis
 
     };
     <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">StdlibUpgradeScripts::do_upgrade_from_v11_to_v12</a>();
-    <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1">StdlibUpgradeScripts::do_upgrade_from_v12_to_v12_1</a>();
     //Start time, <a href="Timestamp.md#0x1_Timestamp_is_genesis">Timestamp::is_genesis</a>() will <b>return</b> <b>false</b>. this call should at the end of genesis init.
     <a href="Timestamp.md#0x1_Timestamp_set_time_has_started">Timestamp::set_time_has_started</a>(&genesis_account);
     <a href="Account.md#0x1_Account_release_genesis_signer">Account::release_genesis_signer</a>(genesis_account);

@@ -6,15 +6,15 @@
 
 //# block --author 0x1 --timestamp 86400000
 
-//# run --signers Genesis
-script{
-   use StarcoinFramework::StdlibUpgradeScripts;
+// //# run --signers Genesis
+// script{
+//    use StarcoinFramework::StdlibUpgradeScripts;
 
-   fun main(){
-       StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
-   }
-}
-// check: EXECUTED
+//    fun main(){
+//        StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
+//    }
+// }
+// // check: EXECUTED
 
 //# run --signers alice
 script {
