@@ -1,0 +1,46 @@
+processed 19 tasks
+
+task 3 'run'. lines 7-15:
+{
+  "gas_used": 6483371,
+  "status": "Executed"
+}
+
+task 5 'run'. lines 97-105:
+{
+  "gas_used": 522882,
+  "status": "Executed"
+}
+
+task 9 'run'. lines 121-136:
+{
+  "gas_used": 173698,
+  "status": "Executed"
+}
+
+task 10 'run'. lines 138-147:
+{
+  "gas_used": 1047820,
+  "status": "Executed"
+}
+
+task 12 'run'. lines 151-159:
+{
+  "gas_used": 110070,
+  "status": "Executed"
+}
+
+task 14 'deploy'. lines 163-164:
+Publish failure: MiscellaneousError
+
+task 15 'run'. lines 166-174:
+{
+  "gas_used": 110070,
+  "status": "Executed"
+}
+
+task 18 'run'. lines 180-188:
+{
+  "gas_used": 11346,
+  "status": "Executed"
+}
