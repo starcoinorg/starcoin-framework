@@ -5,21 +5,38 @@
 
 
 
+-  [Constants](#@Constants_0)
 -  [Function `propose_module_upgrade_v2`](#0x1_ModuleUpgradeScripts_propose_module_upgrade_v2)
 -  [Function `update_module_upgrade_strategy`](#0x1_ModuleUpgradeScripts_update_module_upgrade_strategy)
+-  [Function `update_module_upgrade_strategy_with_min_time`](#0x1_ModuleUpgradeScripts_update_module_upgrade_strategy_with_min_time)
 -  [Function `submit_module_upgrade_plan`](#0x1_ModuleUpgradeScripts_submit_module_upgrade_plan)
 -  [Function `execute_module_upgrade_plan_propose`](#0x1_ModuleUpgradeScripts_execute_module_upgrade_plan_propose)
 -  [Function `submit_upgrade_plan`](#0x1_ModuleUpgradeScripts_submit_upgrade_plan)
 -  [Function `cancel_upgrade_plan`](#0x1_ModuleUpgradeScripts_cancel_upgrade_plan)
--  [Module Specification](#@Module_Specification_0)
+-  [Module Specification](#@Module_Specification_1)
 
 
 <pre><code><b>use</b> <a href="Config.md#0x1_Config">0x1::Config</a>;
+<b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
 <b>use</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager">0x1::PackageTxnManager</a>;
 <b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
 <b>use</b> <a href="UpgradeModuleDaoProposal.md#0x1_UpgradeModuleDaoProposal">0x1::UpgradeModuleDaoProposal</a>;
 <b>use</b> <a href="Version.md#0x1_Version">0x1::Version</a>;
+</code></pre>
+
+
+
+<a name="@Constants_0"></a>
+
+## Constants
+
+
+<a name="0x1_ModuleUpgradeScripts_ERR_WRONG_UPGRADE_STRATEGY"></a>
+
+
+
+<pre><code><b>const</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_ERR_WRONG_UPGRADE_STRATEGY">ERR_WRONG_UPGRADE_STRATEGY</a>: u64 = 100;
 </code></pre>
 
 
@@ -94,6 +111,43 @@ Update <code>sender</code>'s module upgrade strategy to <code>strategy</code>
         &sender,
         strategy,
         <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u64&gt;(),
+    );
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_ModuleUpgradeScripts_update_module_upgrade_strategy_with_min_time"></a>
+
+## Function `update_module_upgrade_strategy_with_min_time`
+
+Update <code>sender</code>'s module upgrade strategy to <code>strategy</code> with min_time_limit.
+This can only be invoked when strategy is STRATEGY_TWO_PHASE.
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_update_module_upgrade_strategy_with_min_time">update_module_upgrade_strategy_with_min_time</a>(sender: signer, strategy: u8, min_time_limit: u64)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_update_module_upgrade_strategy_with_min_time">update_module_upgrade_strategy_with_min_time</a>(
+    sender: signer,
+    strategy: u8,
+    min_time_limit: u64,
+){
+    // 1. check version
+    <b>assert</b>!(strategy == <a href="PackageTxnManager.md#0x1_PackageTxnManager_get_strategy_two_phase">PackageTxnManager::get_strategy_two_phase</a>(), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_ERR_WRONG_UPGRADE_STRATEGY">ERR_WRONG_UPGRADE_STRATEGY</a>));
+    // 2. <b>update</b> strategy
+    <a href="PackageTxnManager.md#0x1_PackageTxnManager_update_module_upgrade_strategy">PackageTxnManager::update_module_upgrade_strategy</a>(
+        &sender,
+        strategy,
+        <a href="Option.md#0x1_Option_some">Option::some</a>&lt;u64&gt;(min_time_limit),
     );
 }
 </code></pre>
@@ -248,7 +302,7 @@ Cancel current upgrade plan, the <code>sender</code> must have <code>UpgradePlan
 
 </details>
 
-<a name="@Module_Specification_0"></a>
+<a name="@Module_Specification_1"></a>
 
 ## Module Specification
 
