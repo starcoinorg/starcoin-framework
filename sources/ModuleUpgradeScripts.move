@@ -6,6 +6,9 @@ module ModuleUpgradeScripts {
     use StarcoinFramework::Version;
     use StarcoinFramework::Option;
     use StarcoinFramework::UpgradeModuleDaoProposal;
+    use StarcoinFramework::Errors;
+
+    const ERR_WRONG_UPGRADE_STRATEGY: u64 = 100;
 
     spec module {
         pragma verify = false; // break after enabling v2 compilation scheme
@@ -48,6 +51,23 @@ module ModuleUpgradeScripts {
             &sender,
             strategy,
             Option::none<u64>(),
+        );
+    }
+
+    /// Update `sender`'s module upgrade strategy to `strategy` with min_time_limit.
+    /// This can only be invoked when strategy is STRATEGY_TWO_PHASE.
+    public(script) fun update_module_upgrade_strategy_with_min_time(
+        sender: signer,
+        strategy: u8,
+        min_time_limit: u64,
+    ){
+        // 1. check version
+        assert!(strategy == PackageTxnManager::get_strategy_two_phase(), Errors::invalid_argument(ERR_WRONG_UPGRADE_STRATEGY));
+        // 2. update strategy
+        PackageTxnManager::update_module_upgrade_strategy(
+            &sender,
+            strategy,
+            Option::some<u64>(min_time_limit),
         );
     }
 
