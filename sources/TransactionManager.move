@@ -19,7 +19,11 @@ module TransactionManager {
     use StarcoinFramework::Epoch;
     use StarcoinFramework::Hash;
     use StarcoinFramework::Vector;
-
+    use StarcoinFramework::STCTokenOracle::STCToken;
+    use StarcoinFramework::DAOSpace;
+    use StarcoinFramework::StarcoinDAO::StarcoinDAO;
+    use StarcoinFramework::GasTokenOracleProposalPlugin::OracleProposalPlugin;
+    use StarcoinFramework::STC;
     spec module {
         pragma verify = false;
         pragma aborts_if_is_strict = true;
@@ -70,6 +74,12 @@ module TransactionManager {
             txn_gas_price,
             txn_max_gas_units,
         );
+        let stc_price= if (!STC::is_stc<TokenType>()){
+            DAOSpace::gas_token_oracle_read<StarcoinDAO,OracleProposalPlugin, STCToken<TokenType>>()
+        }else{
+            1
+        }; 
+        Account::txn_gas_check<TokenType>(txn_sender, txn_gas_price, txn_max_gas_units, stc_price);
         assert!(
             TransactionTimeout::is_valid_transaction_timestamp(txn_expiration_time),
             Errors::invalid_argument(EPROLOGUE_TRANSACTION_EXPIRED),
@@ -109,8 +119,6 @@ module TransactionManager {
         include Timestamp::AbortsIfTimestampNotExists;
         include Block::AbortsIfBlockMetadataNotExist;
         aborts_if txn_gas_price * txn_max_gas_units > 0 && !exists<Account::Balance<TokenType>>(txn_sender);
-        aborts_if txn_gas_price * txn_max_gas_units > 0 && StarcoinFramework::Token::spec_token_code<TokenType>() != StarcoinFramework::Token::spec_token_code<STC>();
-        aborts_if txn_gas_price * txn_max_gas_units > 0 && global<Account::Balance<TokenType>>(txn_sender).token.value < txn_gas_price * txn_max_gas_units;
         aborts_if txn_gas_price * txn_max_gas_units > 0 && txn_sequence_number >= max_u64();
         aborts_if txn_sequence_number < global<Account::Account>(txn_sender).sequence_number;
         aborts_if txn_sequence_number != global<Account::Account>(txn_sender).sequence_number;
@@ -159,6 +167,13 @@ module TransactionManager {
         success: bool,
     ) {
         CoreAddresses::assert_genesis_address(&account);
+        let stc_price =
+        if (!STC::is_stc<TokenType>()){
+            DAOSpace::gas_token_oracle_read<StarcoinDAO, OracleProposalPlugin, TokenType>()
+        }else{
+            1
+        };
+        Account::txn_gas_process<TokenType>(&account, txn_sender, txn_gas_price, txn_max_gas_units, gas_units_remaining, stc_price);
         Account::txn_epilogue_v2<TokenType>(
             &account,
             txn_sender,

@@ -21,11 +21,15 @@
 <b>use</b> <a href="BlockReward.md#0x1_BlockReward">0x1::BlockReward</a>;
 <b>use</b> <a href="ChainId.md#0x1_ChainId">0x1::ChainId</a>;
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
+<b>use</b> <a href="DAOSpace.md#0x1_DAOSpace">0x1::DAOSpace</a>;
 <b>use</b> <a href="Epoch.md#0x1_Epoch">0x1::Epoch</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
+<b>use</b> <a href="GasTokenOracleProposalPlugin.md#0x1_GasTokenOracleProposalPlugin">0x1::GasTokenOracleProposalPlugin</a>;
 <b>use</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager">0x1::PackageTxnManager</a>;
 <b>use</b> <a href="STC.md#0x1_STC">0x1::STC</a>;
+<b>use</b> <a href="Oracle.md#0x1_STCTokenOracle">0x1::STCTokenOracle</a>;
 <b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
+<b>use</b> <a href="StarcoinDAO.md#0x1_StarcoinDAO">0x1::StarcoinDAO</a>;
 <b>use</b> <a href="Timestamp.md#0x1_Timestamp">0x1::Timestamp</a>;
 <b>use</b> <a href="Token.md#0x1_Token">0x1::Token</a>;
 <b>use</b> <a href="TransactionFee.md#0x1_TransactionFee">0x1::TransactionFee</a>;
@@ -162,6 +166,12 @@ It verifies:
         txn_gas_price,
         txn_max_gas_units,
     );
+    <b>let</b> stc_price= <b>if</b> (!<a href="STC.md#0x1_STC_is_stc">STC::is_stc</a>&lt;TokenType&gt;()){
+        <a href="DAOSpace.md#0x1_DAOSpace_gas_token_oracle_read">DAOSpace::gas_token_oracle_read</a>&lt;<a href="StarcoinDAO.md#0x1_StarcoinDAO">StarcoinDAO</a>,OracleProposalPlugin, STCToken&lt;TokenType&gt;&gt;()
+    }<b>else</b>{
+        1
+    };
+    <a href="Account.md#0x1_Account_txn_gas_check">Account::txn_gas_check</a>&lt;TokenType&gt;(txn_sender, txn_gas_price, txn_max_gas_units, stc_price);
     <b>assert</b>!(
         <a href="TransactionTimeout.md#0x1_TransactionTimeout_is_valid_transaction_timestamp">TransactionTimeout::is_valid_transaction_timestamp</a>(txn_expiration_time),
         <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_TRANSACTION_EXPIRED">EPROLOGUE_TRANSACTION_EXPIRED</a>),
@@ -210,8 +220,6 @@ It verifies:
 <b>include</b> <a href="Timestamp.md#0x1_Timestamp_AbortsIfTimestampNotExists">Timestamp::AbortsIfTimestampNotExists</a>;
 <b>include</b> <a href="Block.md#0x1_Block_AbortsIfBlockMetadataNotExist">Block::AbortsIfBlockMetadataNotExist</a>;
 <b>aborts_if</b> txn_gas_price * txn_max_gas_units &gt; 0 && !<b>exists</b>&lt;<a href="Account.md#0x1_Account_Balance">Account::Balance</a>&lt;TokenType&gt;&gt;(txn_sender);
-<b>aborts_if</b> txn_gas_price * txn_max_gas_units &gt; 0 && StarcoinFramework::Token::spec_token_code&lt;TokenType&gt;() != StarcoinFramework::Token::spec_token_code&lt;<a href="STC.md#0x1_STC">STC</a>&gt;();
-<b>aborts_if</b> txn_gas_price * txn_max_gas_units &gt; 0 && <b>global</b>&lt;<a href="Account.md#0x1_Account_Balance">Account::Balance</a>&lt;TokenType&gt;&gt;(txn_sender).token.value &lt; txn_gas_price * txn_max_gas_units;
 <b>aborts_if</b> txn_gas_price * txn_max_gas_units &gt; 0 && txn_sequence_number &gt;= max_u64();
 <b>aborts_if</b> txn_sequence_number &lt; <b>global</b>&lt;<a href="Account.md#0x1_Account_Account">Account::Account</a>&gt;(txn_sender).sequence_number;
 <b>aborts_if</b> txn_sequence_number != <b>global</b>&lt;<a href="Account.md#0x1_Account_Account">Account::Account</a>&gt;(txn_sender).sequence_number;
@@ -323,6 +331,13 @@ It collects gas and bumps the sequence number
     success: bool,
 ) {
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(&account);
+    <b>let</b> stc_price =
+    <b>if</b> (!<a href="STC.md#0x1_STC_is_stc">STC::is_stc</a>&lt;TokenType&gt;()){
+        <a href="DAOSpace.md#0x1_DAOSpace_gas_token_oracle_read">DAOSpace::gas_token_oracle_read</a>&lt;<a href="StarcoinDAO.md#0x1_StarcoinDAO">StarcoinDAO</a>, OracleProposalPlugin, TokenType&gt;()
+    }<b>else</b>{
+        1
+    };
+    <a href="Account.md#0x1_Account_txn_gas_process">Account::txn_gas_process</a>&lt;TokenType&gt;(&account, txn_sender, txn_gas_price, txn_max_gas_units, gas_units_remaining, stc_price);
     <a href="Account.md#0x1_Account_txn_epilogue_v2">Account::txn_epilogue_v2</a>&lt;TokenType&gt;(
         &account,
         txn_sender,

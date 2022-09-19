@@ -76,7 +76,6 @@ script {
         let txn_sequence_number = 0;
         let txn_gas_price = 1;
         let txn_max_gas_units = 10000; //EPROLOGUE_CANT_PAY_GAS_DEPOSIT
-
         Account::txn_prologue<STC>(
             &account,
             txn_sender,

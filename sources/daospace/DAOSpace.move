@@ -23,7 +23,8 @@ module StarcoinFramework::DAOSpace {
     use StarcoinFramework::Block;
     use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::EventUtil;
-
+    use StarcoinFramework::PriceOracle;
+    use StarcoinFramework::STCTokenOracle::STCToken;
     friend StarcoinFramework::StarcoinDAO;
     
     
@@ -115,6 +116,14 @@ module StarcoinFramework::DAOSpace {
         cap: DAOAccountCap,
     }
 
+    struct OracleDataSource<phantom TokenType: store> has copy, store {
+        source_address: address
+    }
+    
+    public fun oracle_data_source<TokenType:store>(source_address:address): OracleDataSource<TokenType>{
+        return OracleDataSource<TokenType>{source_address}
+    }
+    
     /// Capability for minting SBT.
     struct DAOSBTMintCapHolder<phantom DAOT> has key {
         cap: Token::MintCapability<DAOT>,
@@ -546,6 +555,14 @@ module StarcoinFramework::DAOSpace {
         assert!(exists<StorageItem<PluginT, V>>(dao_address), Errors::not_published(ERR_STORAGE_ERROR));
         let StorageItem{ item } = move_from<StorageItem<PluginT, V>>(dao_address);
         item
+    }
+
+
+    public fun gas_token_oracle_read<DAOT: store, PluginT, TokenType:store>(): u128 acquires StorageItem {
+        let dao_address = dao_address<DAOT>();
+        assert!(exists<StorageItem<PluginT,OracleDataSource<TokenType> >>(dao_address), Errors::not_published(ERR_STORAGE_ERROR));
+        let s= borrow_global<StorageItem<PluginT, OracleDataSource<TokenType>>>(dao_address);
+        PriceOracle::read<STCToken<TokenType>>(s.item.source_address)
     }
 
     /// Check the item has exists in storage
