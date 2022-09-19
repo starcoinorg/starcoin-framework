@@ -1,0 +1,52 @@
+processed 18 tasks
+
+task 3 'run'. lines 7-15:
+{
+  "gas_used": 6483371,
+  "status": "Executed"
+}
+
+task 5 'run'. lines 97-105:
+{
+  "gas_used": 522882,
+  "status": "Executed"
+}
+
+task 9 'run'. lines 121-128:
+Error: error[E04016]: too few arguments
+    ┌─ /tmp/.tmpfbNNCj:125:9
+    │
+125 │         test::world();
+    │         ^^^^^^^^^^^^^
+    │         │          │
+    │         │          Found 0 argument(s) here
+    │         Invalid call of 'creator::test::world'. The call expected 1 argument(s) but got 0
+
+
+
+task 10 'run'. lines 130-144:
+{
+  "gas_used": 173698,
+  "status": "Executed"
+}
+
+task 11 'run'. lines 145-154:
+{
+  "gas_used": 1047820,
+  "status": "Executed"
+}
+
+task 12 'deploy'. lines 156-156:
+Publish failure: Discard { status_code: StrView(2015), status_code_name: "UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION" }
+
+task 14 'run'. lines 160-167:
+{
+  "gas_used": 110070,
+  "status": "Executed"
+}
+
+task 17 'run'. lines 173-180:
+{
+  "gas_used": 11346,
+  "status": "Executed"
+}
