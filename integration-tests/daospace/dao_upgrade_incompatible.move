@@ -126,6 +126,7 @@ script {
         test::world();
     }
 }
+//check: Invalid call
 
 //# run --signers creator
 script {
@@ -142,6 +143,8 @@ script {
         assert!(strategy == PackageTxnManager::get_strategy_two_phase(), 1001);
     }
 }
+//check: EXECUTED
+
 //# run --signers creator
 script {
     use creator::DAOHelper;
@@ -165,6 +168,7 @@ script {
         DAOHelper::submit_upgrade_plan(package_hash, 2, true);
     }
 }
+//check: EXECUTED
 
 //# block --author 0x1 --timestamp 86500000
 
@@ -178,3 +182,4 @@ script {
         test::world(1);
     }
 }
+//check: EXECUTED
