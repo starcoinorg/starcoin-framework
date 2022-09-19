@@ -3,6 +3,8 @@ module Offer {
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::Signer;
     use StarcoinFramework::Errors;
+    use StarcoinFramework::Option;
+    use StarcoinFramework::Vector;
     use StarcoinFramework::Collection2;
 
     spec module {
@@ -11,8 +13,11 @@ module Offer {
     }
 
     /// A wrapper around value `offered` that can be claimed by the address stored in `for` when after lock time.
-    struct Offer<Offered> has key { offered: Offered, for: address, time_lock: u64 }
+    struct Offer<Offered> has key, store { offered: Offered, for: address, time_lock: u64 }
 
+    struct Offers<Offered: store> has key {
+        offers: vector<Offer<Offered>>
+    }
     /// An offer of the specified type for the account does not match
     const EOFFER_DNE_FOR_ACCOUNT: u64 = 101;
 
@@ -21,10 +26,24 @@ module Offer {
 
     /// Publish a value of type `Offered` under the sender's account. The value can be claimed by
     /// either the `for` address or the transaction sender.
-    public fun create<Offered: store>(account: &signer, offered: Offered, for: address, lock_period: u64) {
+    public fun create<Offered: store>(account: &signer, offered: Offered, for: address, lock_period: u64) acquires Offers, Offer {
         let time_lock = Timestamp::now_seconds() + lock_period;
         //TODO should support multi Offer?
-        move_to(account, Offer<Offered> { offered, for, time_lock });
+        let account_address = Signer::address_of(account);
+
+        if(exists<Offers<Offered>>(account_address)){
+            let offers = &mut borrow_global_mut<Offers<Offered>>(account_address).offers;
+            Vector::push_back(offers, Offer<Offered> { offered, for, time_lock });
+
+        }else if(exists<Offer<Offered>>(account_address)){
+            let offers = Vector::empty<Offer<Offered>>();
+            Vector::push_back(&mut offers, move_from<Offer<Offered>>(account_address));
+            Vector::push_back(&mut offers, Offer<Offered> { offered, for, time_lock });
+            move_to(account, Offers<Offered> { offers });
+
+        }else{
+            move_to(account, Offer<Offered> { offered, for, time_lock });
+        }
     }
 
     spec create {
@@ -37,8 +56,26 @@ module Offer {
     /// Only succeeds if the sender is the intended recipient stored in `for` or the original
     /// publisher `offer_address`, and now >= time_lock
     /// Also fails if no such value exists.
-    public fun redeem<Offered: store>(account: &signer, offer_address: address): Offered acquires Offer {
-        let Offer<Offered> { offered, for, time_lock } = move_from<Offer<Offered>>(offer_address);
+    public fun redeem<Offered: store>(account: &signer, offer_address: address): Offered acquires Offer, Offers {
+        let account_address = Signer::address_of(account);
+        let Offer<Offered> { offered, for, time_lock } = if(exists<Offers<Offered>>(offer_address)){
+            let offers = &mut borrow_global_mut<Offers<Offered>>(offer_address).offers;
+            let op_index = find_offer(offers, account_address);
+            assert!(Option::is_some(&op_index),Errors::invalid_argument(EOFFER_DNE_FOR_ACCOUNT));
+            let index = Option::destroy_some(op_index);
+            let offer = Vector::remove(offers , index);
+            if(Vector::length(offers) == 0){
+                let Offers { offers } = move_from<Offers<Offered>>(offer_address);
+                Vector::destroy_empty(offers);
+            };
+            offer
+        }else if(exists<Offer<Offered>>(offer_address)){
+            move_from<Offer<Offered>>(offer_address)
+        }else{
+            //TODO: err code
+            abort 10000
+        };
+        
         let sender = Signer::address_of(account);
         let now = Timestamp::now_seconds();
         assert!(sender == for || sender == offer_address, Errors::invalid_argument(EOFFER_DNE_FOR_ACCOUNT));
@@ -72,13 +109,27 @@ module Offer {
     public(script) fun take_offer<Offered: store>(
         signer: signer,
         offer_address: address,
-    ) acquires Offer {
+    ) acquires Offer, Offers {
         let offered = redeem<Offered>(&signer, offer_address);
         Collection2::put(&signer, Signer::address_of(&signer), offered);
     }
 
     spec take_offer {
         pragma verify = false;
+    }
+
+    fun find_offer<Offered: store>(offers: &vector<Offer<Offered>>, for: address):Option::Option<u64>{
+        let now = Timestamp::now_seconds();
+        let length = Vector::length(offers);
+        let i = 0;
+        while(i < length){
+            let offer = Vector::borrow(offers, i);
+            if( offer.for == for && now >= offer.time_lock ){
+                return Option::some(i)
+            };
+            i = i + 1;
+        };
+        Option::none<u64>()
     }
 }
 }
