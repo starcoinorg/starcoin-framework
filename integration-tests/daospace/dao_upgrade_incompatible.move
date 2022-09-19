@@ -118,16 +118,6 @@ module creator::test {
 
 //# deploy {{$.package[0].file}}
 
-//# run --signers alice
-script {
-    use creator::test;
-
-    fun main(_sender: signer) {
-        test::world();
-    }
-}
-//check: Invalid call
-
 //# run --signers creator
 script {
     use StarcoinFramework::Config;
@@ -156,9 +146,22 @@ script {
 }
 // check: EXECUTED
 
-//# deploy {{$.package[1].file}} --signers alice
-
 //# block --author 0x1 --timestamp 86400000
+
+//# run --signers alice --args {{$.package[1].package_hash}}
+script {
+    use creator::DAOHelper;
+
+    fun main(_sender: signer, package_hash: vector<u8>) {
+        DAOHelper::submit_upgrade_plan(package_hash, 2, false);
+    }
+}
+//check: EXECUTED
+
+//# block --author 0x1 --timestamp 86600000
+
+//# deploy {{$.package[1].file}} --signers alice
+//check: Publish failure: MiscellaneousError
 
 //# run --signers alice --args {{$.package[1].package_hash}}
 script {
@@ -170,7 +173,7 @@ script {
 }
 //check: EXECUTED
 
-//# block --author 0x1 --timestamp 86500000
+//# block --author 0x1 --timestamp 86700000
 
 //# deploy {{$.package[1].file}} --signers alice
 
