@@ -6,7 +6,7 @@ module StarcoinFramework::EventUtil {
         handle: Event::EventHandle<EventT>,
     }
 
-    public fun init_event_with_T<EventT: store + drop>(sender: &signer) {
+    public fun init_event<EventT: store + drop>(sender: &signer) {
         let broker = Signer::address_of(sender);
         if (exists<EventHandleWrapper<EventT>>(broker)) {
             return
@@ -16,7 +16,7 @@ module StarcoinFramework::EventUtil {
         });
     }
 
-    public fun uninit_event_with_T<EventT: store + drop>(sender: &signer) acquires EventHandleWrapper {
+    public fun uninit_event<EventT: store + drop>(sender: &signer) acquires EventHandleWrapper {
         let broker = Signer::address_of(sender);
         if (!exists<EventHandleWrapper<EventT>>(broker)) {
             return
@@ -30,7 +30,7 @@ module StarcoinFramework::EventUtil {
         Event::emit_event(&mut event_handle.handle, event);
     }
 
-    public fun exist_event_T<EventT: store + drop>(broker: address): bool {
+    public fun exist_event<EventT: store + drop>(broker: address): bool {
         exists<EventHandleWrapper<EventT>>(broker)
     }
 }

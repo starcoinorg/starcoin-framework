@@ -22,6 +22,7 @@ module StarcoinFramework::DAOSpace {
     use StarcoinFramework::SnapshotUtil;
     use StarcoinFramework::Block;
     use StarcoinFramework::DAOPluginMarketplace;
+    use StarcoinFramework::EventUtil;
 
     friend StarcoinFramework::StarcoinDAO;
     
@@ -779,24 +780,24 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// Plugin event
-    public fun init_plugin_event<DAOT: store,
-                                 PluginT: store,
-                                 EventT: store + drop>(_cap: &DAOPluginEventCap<DAOT, PluginT>)
-    acquires DAOAccountCapHolder {
+    public fun init_plugin_event<
+        DAOT: store,
+        PluginT: store,
+        EventT: store + drop
+    >(_cap: &DAOPluginEventCap<DAOT, PluginT>) acquires DAOAccountCapHolder {
         let dao_signer = dao_signer<DAOT>();
-        assert!(!exists<PluginEvent<DAOT, PluginT, EventT>>(dao_address<DAOT>()), Errors::invalid_state(ERR_ALREADY_INIT));
-        move_to(&dao_signer, PluginEvent<DAOT, PluginT, EventT> {
-            event_handle: Event::new_event_handle<EventT>(&dao_signer)
-        });
+        EventUtil::init_event<EventT>(&dao_signer);
     }
 
-    public fun emit_plugin_event<DAOT: store,
-                                 PluginT: store,
-                                 EventT: store + drop>(_cap: &DAOPluginEventCap<DAOT, PluginT>,
-                                                       event: EventT) acquires PluginEvent {
-        let dao_address = dao_address<DAOT>();
-        let plugin_event = borrow_global_mut<PluginEvent<DAOT, PluginT, EventT>>(dao_address);
-        Event::emit_event(&mut plugin_event.event_handle, event);
+    public fun emit_plugin_event<
+        DAOT: store,
+        PluginT: store,
+        EventT: store + drop
+    >(
+        _cap: &DAOPluginEventCap<DAOT, PluginT>,
+        event: EventT
+    ) {
+        EventUtil::emit_event(dao_address<DAOT>(), event);
     }
 
 
