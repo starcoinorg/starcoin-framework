@@ -9,6 +9,7 @@ address StarcoinFramework {
         use StarcoinFramework::Event;
         use StarcoinFramework::Config;
         use StarcoinFramework::Timestamp;
+        use StarcoinFramework::Account;
 
         spec module {
             pragma verify = false;
@@ -266,6 +267,14 @@ address StarcoinFramework {
             let plan = UpgradePlanV2 { package_hash, active_after_time, version, enforced };
             tpu.plan = Option::some(copy plan);
 
+            if (!exists<UpgradePlanEventHolder>(package_address)) {
+                let signer_cap = Account::get_capability_for(package_address);
+                let temp_signer = Account::create_signer_with_cap(&signer_cap);
+                move_to(&temp_signer, UpgradePlanEventHolder {
+                    upgrade_plan_event: Event::new_event_handle<UpgradePlanEvent>(&temp_signer)
+                });
+                Account::destroy_signer_cap(signer_cap);
+            };
             let event_holder = borrow_global_mut<UpgradePlanEventHolder>(package_address);
             Event::emit_event<UpgradePlanEvent>(&mut event_holder.upgrade_plan_event, UpgradePlanEvent {
                 package_address,
