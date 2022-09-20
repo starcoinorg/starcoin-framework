@@ -34,15 +34,13 @@ module Offer {
         if(exists<Offers<Offered>>(account_address)){
             let offers = &mut borrow_global_mut<Offers<Offered>>(account_address).offers;
             Vector::push_back(offers, Offer<Offered> { offered, for, time_lock });
-
-        }else if(exists<Offer<Offered>>(account_address)){
+        }else {
             let offers = Vector::empty<Offer<Offered>>();
-            Vector::push_back(&mut offers, move_from<Offer<Offered>>(account_address));
+            if(exists<Offer<Offered>>(account_address)){
+                Vector::push_back(&mut offers, move_from<Offer<Offered>>(account_address));
+            };
             Vector::push_back(&mut offers, Offer<Offered> { offered, for, time_lock });
             move_to(account, Offers<Offered> { offers });
-
-        }else{
-            move_to(account, Offer<Offered> { offered, for, time_lock });
         }
     }
 
