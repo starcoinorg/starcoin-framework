@@ -8,7 +8,7 @@ task 6 'run'. lines 32-40:
 
 task 7 'run'. lines 42-50:
 {
-  "gas_used": 418301,
+  "gas_used": 418615,
   "status": "Executed"
 }
 
@@ -67,7 +67,7 @@ store key 0x00000000000000000000000000000001::NFTGallery::NFTGallery<0x000000000
 
 task 11 'run'. lines 86-95:
 {
-  "gas_used": 197269,
+  "gas_used": 200904,
   "status": "Executed"
 }
 
@@ -118,7 +118,7 @@ store key 0x00000000000000000000000000000001::NFTGallery::NFTGallery<0x000000000
 
 task 14 'run'. lines 101-120:
 {
-  "gas_used": 180322,
+  "gas_used": 183643,
   "status": "Executed"
 }
 
@@ -153,7 +153,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
 
 task 17 'run'. lines 127-143:
 {
-  "gas_used": 140065,
+  "gas_used": 150116,
   "status": {
     "MoveAbort": {
       "location": {
