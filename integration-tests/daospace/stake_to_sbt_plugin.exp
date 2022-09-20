@@ -1,5 +1,6 @@
-processed 18 tasks
+processed 17 tasks
 
+<<<<<<< HEAD
 task 4 'run'. lines 19-27:
 {
   "gas_used": 6516258,
@@ -7,18 +8,21 @@ task 4 'run'. lines 19-27:
 }
 
 task 6 'run'. lines 71-79:
+=======
+task 5 'run'. lines 71-79:
+>>>>>>> fix stdlib upgrade
 {
   "gas_used": 1688073,
   "status": "Executed"
 }
 
-task 7 'run'. lines 81-117:
+task 6 'run'. lines 81-117:
 {
   "gas_used": 655792,
   "status": "Executed"
 }
 
-task 8 'run'. lines 119-130:
+task 7 'run'. lines 119-130:
 {
   "gas_used": 38522,
   "status": {
@@ -34,37 +38,37 @@ task 8 'run'. lines 119-130:
   }
 }
 
-task 10 'run'. lines 134-147:
+task 9 'run'. lines 134-147:
 {
   "gas_used": 86636,
   "status": "Executed"
 }
 
-task 11 'run'. lines 149-165:
+task 10 'run'. lines 149-165:
 {
   "gas_used": 423057,
   "status": "Executed"
 }
 
-task 13 'run'. lines 169-182:
+task 12 'run'. lines 169-182:
 {
   "gas_used": 220601,
   "status": "Executed"
 }
 
-task 14 'run'. lines 184-200:
+task 13 'run'. lines 184-200:
 {
   "gas_used": 544264,
   "status": "Executed"
 }
 
-task 16 'run'. lines 204-219:
+task 15 'run'. lines 204-219:
 {
   "gas_used": 229566,
   "status": "Executed"
 }
 
-task 17 'run'. lines 221-232:
+task 16 'run'. lines 221-232:
 {
   "gas_used": 307027,
   "status": {

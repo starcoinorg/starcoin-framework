@@ -1,24 +1,18 @@
-processed 13 tasks
+processed 12 tasks
 
 task 6 'run'. lines 32-40:
 {
-  "gas_used": 177755,
+  "gas_used": 418301,
   "status": "Executed"
 }
 
-task 7 'run'. lines 42-50:
-{
-  "gas_used": 418615,
-  "status": "Executed"
-}
-
-task 8 'run'. lines 52-61:
+task 7 'run'. lines 42-51:
 {
   "gas_used": 59320,
   "status": "Executed"
 }
 
-task 9 'run'. lines 63-72:
+task 8 'run'. lines 53-62:
 {
   "gas_used": 15374,
   "status": {
@@ -34,18 +28,18 @@ task 9 'run'. lines 63-72:
   }
 }
 
-task 10 'run'. lines 74-83:
+task 9 'run'. lines 64-73:
 {
   "gas_used": 59320,
   "status": "Executed"
 }
 
-task 11 'view'. lines 85-85:
+task 10 'view'. lines 75-75:
 store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
     next_id: 2
 }
 
-task 12 'view'. lines 87-87:
+task 11 'view'. lines 77-77:
 store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::TestExtentionPoint> {
     id: 1
     name: 54657374457874656e74696f6e506f696e74

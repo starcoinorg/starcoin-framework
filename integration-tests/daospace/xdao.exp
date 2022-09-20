@@ -1,5 +1,6 @@
-processed 8 tasks
+processed 7 tasks
 
+<<<<<<< HEAD
 task 2 'run'. lines 7-14:
 {
   "gas_used": 6516258,
@@ -7,12 +8,15 @@ task 2 'run'. lines 7-14:
 }
 
 task 4 'run'. lines 54-61:
+=======
+task 3 'run'. lines 54-61:
+>>>>>>> fix stdlib upgrade
 {
   "gas_used": 1097649,
   "status": "Executed"
 }
 
-task 5 'view'. lines 63-63:
+task 4 'view'. lines 63-63:
 key 0x00000000000000000000000000000001::DAOSpace::DAO {
     id: 2
     name: 58
@@ -22,7 +26,7 @@ key 0x00000000000000000000000000000001::DAOSpace::DAO {
     next_proposal_id: 1
 }
 
-task 6 'view'. lines 65-65:
+task 5 'view'. lines 65-65:
 key 0x00000000000000000000000000000001::DAOSpace::InstalledPluginInfo<0x00000000000000000000000000000001::InstallPluginProposalPlugin::InstallPluginProposalPlugin> {
     plugin_id: 4
     granted_caps: [
@@ -35,7 +39,7 @@ key 0x00000000000000000000000000000001::DAOSpace::InstalledPluginInfo<0x00000000
     ]
 }
 
-task 7 'view'. lines 67-67:
+task 6 'view'. lines 67-67:
 key 0x00000000000000000000000000000001::DAOSpace::InstalledPluginInfo<0x00000000000000000000000000000001::MemberProposalPlugin::MemberProposalPlugin> {
     plugin_id: 5
     granted_caps: [
