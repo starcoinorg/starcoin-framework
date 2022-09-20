@@ -1,0 +1,49 @@
+processed 8 tasks
+
+task 2 'run'. lines 7-14:
+{
+  "gas_used": 6516258,
+  "status": "Executed"
+}
+
+task 4 'run'. lines 54-61:
+{
+  "gas_used": 1097649,
+  "status": "Executed"
+}
+
+task 5 'view'. lines 63-63:
+key 0x00000000000000000000000000000001::DAOSpace::DAO {
+    id: 2
+    name: 58
+    description: 697066733a2f2f6465736372697074696f6e
+    dao_address: 662ba5a1a1da0f1c70a9762c7eeb7aaf
+    next_member_id: 1
+    next_proposal_id: 1
+}
+
+task 6 'view'. lines 65-65:
+key 0x00000000000000000000000000000001::DAOSpace::InstalledPluginInfo<0x00000000000000000000000000000001::InstallPluginProposalPlugin::InstallPluginProposalPlugin> {
+    plugin_id: 4
+    granted_caps: [
+        copy drop store 0x00000000000000000000000000000001::DAOSpace::CapType {
+            code: 7u8
+        },
+        copy drop store 0x00000000000000000000000000000001::DAOSpace::CapType {
+            code: 0u8
+        },
+    ]
+}
+
+task 7 'view'. lines 67-67:
+key 0x00000000000000000000000000000001::DAOSpace::InstalledPluginInfo<0x00000000000000000000000000000001::MemberProposalPlugin::MemberProposalPlugin> {
+    plugin_id: 5
+    granted_caps: [
+        copy drop store 0x00000000000000000000000000000001::DAOSpace::CapType {
+            code: 6u8
+        },
+        copy drop store 0x00000000000000000000000000000001::DAOSpace::CapType {
+            code: 7u8
+        },
+    ]
+}
