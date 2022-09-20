@@ -20,10 +20,10 @@ module TransactionManager {
     use StarcoinFramework::Hash;
     use StarcoinFramework::Vector;
     use StarcoinFramework::STCTokenOracle::STCToken;
-    use StarcoinFramework::DAOSpace;
     use StarcoinFramework::StarcoinDAO::StarcoinDAO;
-    use StarcoinFramework::GasTokenOracleProposalPlugin::OracleProposalPlugin;
+    use StarcoinFramework::GasTokenOracleProposalPlugin::{Self, OracleProposalPlugin};
     use StarcoinFramework::STC;
+
     spec module {
         pragma verify = false;
         pragma aborts_if_is_strict = true;
@@ -66,20 +66,21 @@ module TransactionManager {
         // Check that the chain ID stored on-chain matches the chain ID
         // specified by the transaction
         assert!(ChainId::get() == chain_id, Errors::invalid_argument(EPROLOGUE_BAD_CHAIN_ID));
-        Account::txn_prologue<TokenType>(
+        let stc_price= if (!STC::is_stc<TokenType>()){
+            GasTokenOracleProposalPlugin::gas_token_oracle_read<StarcoinDAO,OracleProposalPlugin, STCToken<TokenType>>()
+        }else{
+            1
+        };
+
+        Account::txn_prologue_v2<TokenType>(
             &account,
             txn_sender,
             txn_sequence_number,
             txn_authentication_key_preimage,
             txn_gas_price,
             txn_max_gas_units,
+            stc_price,
         );
-        let stc_price= if (!STC::is_stc<TokenType>()){
-            DAOSpace::gas_token_oracle_read<StarcoinDAO,OracleProposalPlugin, STCToken<TokenType>>()
-        }else{
-            1
-        }; 
-        Account::txn_gas_check<TokenType>(txn_sender, txn_gas_price, txn_max_gas_units, stc_price);
         assert!(
             TransactionTimeout::is_valid_transaction_timestamp(txn_expiration_time),
             Errors::invalid_argument(EPROLOGUE_TRANSACTION_EXPIRED),
@@ -169,11 +170,10 @@ module TransactionManager {
         CoreAddresses::assert_genesis_address(&account);
         let stc_price =
         if (!STC::is_stc<TokenType>()){
-            DAOSpace::gas_token_oracle_read<StarcoinDAO, OracleProposalPlugin, TokenType>()
+            GasTokenOracleProposalPlugin::gas_token_oracle_read<StarcoinDAO, OracleProposalPlugin, TokenType>()
         }else{
             1
         };
-        Account::txn_gas_process<TokenType>(&account, txn_sender, txn_gas_price, txn_max_gas_units, gas_units_remaining, stc_price);
         Account::txn_epilogue_v2<TokenType>(
             &account,
             txn_sender,
@@ -182,6 +182,7 @@ module TransactionManager {
             txn_gas_price,
             txn_max_gas_units,
             gas_units_remaining,
+            stc_price
         );
         if (txn_payload_type == TXN_PAYLOAD_TYPE_PACKAGE) {
             PackageTxnManager::package_txn_epilogue(

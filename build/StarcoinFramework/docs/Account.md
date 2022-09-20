@@ -77,10 +77,9 @@ The module for the account resource that governs every account
 -  [Function `exists_at`](#0x1_Account_exists_at)
 -  [Function `is_dummy_auth_key`](#0x1_Account_is_dummy_auth_key)
 -  [Function `txn_prologue`](#0x1_Account_txn_prologue)
--  [Function `txn_gas_check`](#0x1_Account_txn_gas_check)
+-  [Function `txn_prologue_v2`](#0x1_Account_txn_prologue_v2)
 -  [Function `txn_epilogue`](#0x1_Account_txn_epilogue)
 -  [Function `txn_epilogue_v2`](#0x1_Account_txn_epilogue_v2)
--  [Function `txn_gas_process`](#0x1_Account_txn_gas_process)
 -  [Function `remove_zero_balance`](#0x1_Account_remove_zero_balance)
 -  [Function `make_event_store_if_not_exist`](#0x1_Account_make_event_store_if_not_exist)
 -  [Module Specification](#@Module_Specification_1)
@@ -3048,7 +3047,7 @@ It verifies:
 - That the sequence number matches the transaction's sequence key
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_txn_prologue">txn_prologue</a>&lt;TokenType: store&gt;(account: &signer, txn_sender: <b>address</b>, txn_sequence_number: u64, txn_authentication_key_preimage: vector&lt;u8&gt;, _txn_gas_price: u64, _txn_max_gas_units: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_txn_prologue">txn_prologue</a>&lt;TokenType: store&gt;(account: &signer, txn_sender: <b>address</b>, txn_sequence_number: u64, txn_authentication_key_preimage: vector&lt;u8&gt;, txn_gas_price: u64, txn_max_gas_units: u64)
 </code></pre>
 
 
@@ -3062,39 +3061,18 @@ It verifies:
     txn_sender: <b>address</b>,
     txn_sequence_number: u64,
     txn_authentication_key_preimage: vector&lt;u8&gt;,
-    _txn_gas_price: u64,
-    _txn_max_gas_units: u64,
-) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a> {
-    <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
-
-    // Verify that the transaction sender's account <b>exists</b>
-    <b>assert</b>!(<a href="Account.md#0x1_Account_exists_at">exists_at</a>(txn_sender), <a href="Errors.md#0x1_Errors_requires_address">Errors::requires_address</a>(<a href="Account.md#0x1_Account_EPROLOGUE_ACCOUNT_DOES_NOT_EXIST">EPROLOGUE_ACCOUNT_DOES_NOT_EXIST</a>));
-    // Verify the account <b>has</b> not delegate its signer cap.
-    <b>assert</b>!(!<a href="Account.md#0x1_Account_is_signer_delegated">is_signer_delegated</a>(txn_sender), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="Account.md#0x1_Account_EPROLOGUE_SIGNER_ALREADY_DELEGATED">EPROLOGUE_SIGNER_ALREADY_DELEGATED</a>));
-
-    // Load the transaction sender's account
-    <b>let</b> sender_account = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account">Account</a>&gt;(txn_sender);
-
-    <b>if</b> (<a href="Account.md#0x1_Account_is_dummy_auth_key">is_dummy_auth_key</a>(sender_account)){
-        // <b>if</b> sender's auth key is empty, <b>use</b> <b>address</b> <b>as</b> auth key for check transaction.
-        <b>assert</b>!(
-            <a href="Authenticator.md#0x1_Authenticator_derived_address">Authenticator::derived_address</a>(<a href="Hash.md#0x1_Hash_sha3_256">Hash::sha3_256</a>(txn_authentication_key_preimage)) == txn_sender,
-            <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_INVALID_ACCOUNT_AUTH_KEY">EPROLOGUE_INVALID_ACCOUNT_AUTH_KEY</a>)
-        );
-    }<b>else</b>{
-        // Check that the hash of the transaction's <b>public</b> key matches the account's auth key
-        <b>assert</b>!(
-            <a href="Hash.md#0x1_Hash_sha3_256">Hash::sha3_256</a>(txn_authentication_key_preimage) == *&sender_account.authentication_key,
-            <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_INVALID_ACCOUNT_AUTH_KEY">EPROLOGUE_INVALID_ACCOUNT_AUTH_KEY</a>)
-        );
-    };
-    // Check that the transaction sequence number matches the sequence number of the account
-    <b>assert</b>!(
-        (txn_sequence_number <b>as</b> u128) &lt; <a href="Account.md#0x1_Account_MAX_U64">MAX_U64</a>,
-        <a href="Errors.md#0x1_Errors_limit_exceeded">Errors::limit_exceeded</a>(<a href="Account.md#0x1_Account_EPROLOGUE_SEQUENCE_NUMBER_TOO_BIG">EPROLOGUE_SEQUENCE_NUMBER_TOO_BIG</a>)
-    );
-    <b>assert</b>!(txn_sequence_number &gt;= sender_account.sequence_number, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD">EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD</a>));
-    <b>assert</b>!(txn_sequence_number == sender_account.sequence_number, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_SEQUENCE_NUMBER_TOO_NEW">EPROLOGUE_SEQUENCE_NUMBER_TOO_NEW</a>));
+    txn_gas_price: u64,
+    txn_max_gas_units: u64,
+) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a> {
+    <a href="Account.md#0x1_Account_txn_prologue_v2">txn_prologue_v2</a>&lt;TokenType&gt;(
+        account,
+        txn_sender,
+        txn_sequence_number,
+        txn_authentication_key_preimage,
+        txn_gas_price,
+        txn_max_gas_units,
+        1,
+    )
 }
 </code></pre>
 
@@ -3119,13 +3097,13 @@ It verifies:
 
 </details>
 
-<a name="0x1_Account_txn_gas_check"></a>
+<a name="0x1_Account_txn_prologue_v2"></a>
 
-## Function `txn_gas_check`
+## Function `txn_prologue_v2`
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_txn_gas_check">txn_gas_check</a>&lt;TokenType: store&gt;(txn_sender: <b>address</b>, txn_gas_price: u64, txn_max_gas_units: u64, stc_price: u128)
+<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_txn_prologue_v2">txn_prologue_v2</a>&lt;TokenType: store&gt;(account: &signer, txn_sender: <b>address</b>, txn_sequence_number: u64, txn_authentication_key_preimage: vector&lt;u8&gt;, txn_gas_price: u64, txn_max_gas_units: u64, stc_price: u128)
 </code></pre>
 
 
@@ -3134,12 +3112,38 @@ It verifies:
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_txn_gas_check">txn_gas_check</a>&lt;TokenType:store&gt;(
+<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_txn_prologue_v2">txn_prologue_v2</a>&lt;TokenType: store&gt;(
+    account: &signer,
     txn_sender: <b>address</b>,
+    txn_sequence_number: u64,
+    txn_authentication_key_preimage: vector&lt;u8&gt;,
     txn_gas_price: u64,
     txn_max_gas_units: u64,
     stc_price: u128,
-) <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a> {
+) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a> {
+    <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
+
+    // Verify that the transaction sender's account <b>exists</b>
+    <b>assert</b>!(<a href="Account.md#0x1_Account_exists_at">exists_at</a>(txn_sender), <a href="Errors.md#0x1_Errors_requires_address">Errors::requires_address</a>(<a href="Account.md#0x1_Account_EPROLOGUE_ACCOUNT_DOES_NOT_EXIST">EPROLOGUE_ACCOUNT_DOES_NOT_EXIST</a>));
+    // Verify the account <b>has</b> not delegate its signer cap.
+    <b>assert</b>!(!<a href="Account.md#0x1_Account_is_signer_delegated">is_signer_delegated</a>(txn_sender), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="Account.md#0x1_Account_EPROLOGUE_SIGNER_ALREADY_DELEGATED">EPROLOGUE_SIGNER_ALREADY_DELEGATED</a>));
+
+    // Load the transaction sender's account
+    <b>let</b> sender_account = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account">Account</a>&gt;(txn_sender);
+
+    <b>if</b> (<a href="Account.md#0x1_Account_is_dummy_auth_key">is_dummy_auth_key</a>(sender_account)){
+        // <b>if</b> sender's auth key is empty, <b>use</b> <b>address</b> <b>as</b> auth key for check transaction.
+        <b>assert</b>!(
+            <a href="Authenticator.md#0x1_Authenticator_derived_address">Authenticator::derived_address</a>(<a href="Hash.md#0x1_Hash_sha3_256">Hash::sha3_256</a>(txn_authentication_key_preimage)) == txn_sender,
+            <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_INVALID_ACCOUNT_AUTH_KEY">EPROLOGUE_INVALID_ACCOUNT_AUTH_KEY</a>)
+        );
+    }<b>else</b>{
+        // Check that the hash of the transaction's <b>public</b> key matches the account's auth key
+        <b>assert</b>!(
+            <a href="Hash.md#0x1_Hash_sha3_256">Hash::sha3_256</a>(txn_authentication_key_preimage) == *&sender_account.authentication_key,
+            <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_INVALID_ACCOUNT_AUTH_KEY">EPROLOGUE_INVALID_ACCOUNT_AUTH_KEY</a>)
+        );
+    };
     // Check that the account <b>has</b> enough balance for all of the gas
     <b>let</b> max_transaction_fee = <a href="Math.md#0x1_Math_mul_div">Math::mul_div</a>((txn_gas_price <b>as</b> u128) ,(txn_max_gas_units <b>as</b> u128), stc_price);
     <b>assert</b>!(
@@ -3147,18 +3151,18 @@ It verifies:
         <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_CANT_PAY_GAS_DEPOSIT">EPROLOGUE_CANT_PAY_GAS_DEPOSIT</a>),
     );
     <b>if</b> (max_transaction_fee &gt; 0) {
+        <b>assert</b>!(
+            (txn_sequence_number <b>as</b> u128) &lt; <a href="Account.md#0x1_Account_MAX_U64">MAX_U64</a>,
+            <a href="Errors.md#0x1_Errors_limit_exceeded">Errors::limit_exceeded</a>(<a href="Account.md#0x1_Account_EPROLOGUE_SEQUENCE_NUMBER_TOO_BIG">EPROLOGUE_SEQUENCE_NUMBER_TOO_BIG</a>)
+        );
         <b>let</b> balance_amount = <a href="Account.md#0x1_Account_balance">balance</a>&lt;TokenType&gt;(txn_sender);
         <b>assert</b>!(balance_amount &gt;= max_transaction_fee, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_CANT_PAY_GAS_DEPOSIT">EPROLOGUE_CANT_PAY_GAS_DEPOSIT</a>));
     };
+    // Check that the transaction sequence number matches the sequence number of the account
+    <b>assert</b>!(txn_sequence_number &gt;= sender_account.sequence_number, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD">EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD</a>));
+    <b>assert</b>!(txn_sequence_number == sender_account.sequence_number, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_SEQUENCE_NUMBER_TOO_NEW">EPROLOGUE_SEQUENCE_NUMBER_TOO_NEW</a>));
 }
 </code></pre>
-
-
-
-</details>
-
-<details>
-<summary>Specification</summary>
 
 
 
@@ -3188,8 +3192,8 @@ It collects gas and bumps the sequence number
     txn_gas_price: u64,
     txn_max_gas_units: u64,
     gas_units_remaining: u64,
-) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a> {
-    <a href="Account.md#0x1_Account_txn_epilogue_v2">txn_epilogue_v2</a>&lt;TokenType&gt;(account, txn_sender, txn_sequence_number, <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>(), txn_gas_price, txn_max_gas_units, gas_units_remaining)
+) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a> {
+    <a href="Account.md#0x1_Account_txn_epilogue_v2">txn_epilogue_v2</a>&lt;TokenType&gt;(account, txn_sender, txn_sequence_number, <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>(), txn_gas_price, txn_max_gas_units, gas_units_remaining,1)
 }
 </code></pre>
 
@@ -3217,7 +3221,7 @@ The epilogue is invoked at the end of transactions.
 It collects gas and bumps the sequence number
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_txn_epilogue_v2">txn_epilogue_v2</a>&lt;TokenType: store&gt;(account: &signer, txn_sender: <b>address</b>, txn_sequence_number: u64, txn_authentication_key_preimage: vector&lt;u8&gt;, _txn_gas_price: u64, _txn_max_gas_units: u64, _gas_units_remaining: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_txn_epilogue_v2">txn_epilogue_v2</a>&lt;TokenType: store&gt;(account: &signer, txn_sender: <b>address</b>, txn_sequence_number: u64, txn_authentication_key_preimage: vector&lt;u8&gt;, txn_gas_price: u64, txn_max_gas_units: u64, gas_units_remaining: u64, stc_price: u128)
 </code></pre>
 
 
@@ -3231,11 +3235,20 @@ It collects gas and bumps the sequence number
     txn_sender: <b>address</b>,
     txn_sequence_number: u64,
     txn_authentication_key_preimage: vector&lt;u8&gt;,
-    _txn_gas_price: u64,
-    _txn_max_gas_units: u64,
-    _gas_units_remaining: u64,
-) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a> {
+    txn_gas_price: u64,
+    txn_max_gas_units: u64,
+    gas_units_remaining: u64,
+    stc_price: u128,
+) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a> {
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
+    // Charge for gas
+    <b>let</b> sender_balance = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;TokenType&gt;&gt;(txn_sender);
+    <b>let</b> transaction_fee_amount= <a href="Math.md#0x1_Math_mul_div">Math::mul_div</a>((txn_gas_price <b>as</b> u128), ((txn_max_gas_units - gas_units_remaining) <b>as</b> u128), stc_price);
+    <b>assert</b>!(
+        <a href="Account.md#0x1_Account_balance_for">balance_for</a>(sender_balance) &gt;= transaction_fee_amount,
+        <a href="Errors.md#0x1_Errors_limit_exceeded">Errors::limit_exceeded</a>(<a href="Account.md#0x1_Account_EINSUFFICIENT_BALANCE">EINSUFFICIENT_BALANCE</a>)
+    );
+
     // Load the transaction sender's account and balance resources
     <b>let</b> sender_account = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account">Account</a>&gt;(txn_sender);
     // Bump the sequence number
@@ -3244,60 +3257,6 @@ It collects gas and bumps the sequence number
     <b>if</b> (<a href="Account.md#0x1_Account_is_dummy_auth_key">is_dummy_auth_key</a>(sender_account) && !<a href="Vector.md#0x1_Vector_is_empty">Vector::is_empty</a>(&txn_authentication_key_preimage)){
         sender_account.authentication_key = <a href="Hash.md#0x1_Hash_sha3_256">Hash::sha3_256</a>(txn_authentication_key_preimage);
     };
-}
-</code></pre>
-
-
-
-</details>
-
-<details>
-<summary>Specification</summary>
-
-
-
-<pre><code><b>pragma</b> verify = <b>false</b>;
-<b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>();
-<b>aborts_if</b> !<b>exists</b>&lt;<a href="Account.md#0x1_Account">Account</a>&gt;(txn_sender);
-<b>aborts_if</b> !<b>exists</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;TokenType&gt;&gt;(txn_sender);
-<b>aborts_if</b> txn_sequence_number + 1 &gt; max_u64();
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Account_txn_gas_process"></a>
-
-## Function `txn_gas_process`
-
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_txn_gas_process">txn_gas_process</a>&lt;TokenType: store&gt;(account: &signer, txn_sender: <b>address</b>, txn_gas_price: u64, txn_max_gas_units: u64, gas_units_remaining: u64, stc_price: u128)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_txn_gas_process">txn_gas_process</a>&lt;TokenType: store&gt;(
-    account: &signer,
-    txn_sender: <b>address</b>,
-    txn_gas_price: u64,
-    txn_max_gas_units: u64,
-    gas_units_remaining: u64,
-    stc_price: u128) <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a> {
-    <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
-    // Load the transaction sender's account and balance resources
-    <b>let</b> sender_balance = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;TokenType&gt;&gt;(txn_sender);
-    // Charge for gas
-    <b>let</b> transaction_fee_amount= <a href="Math.md#0x1_Math_mul_div">Math::mul_div</a>((txn_gas_price <b>as</b> u128), ((txn_max_gas_units - gas_units_remaining) <b>as</b> u128), stc_price);
-    <b>assert</b>!(
-        <a href="Account.md#0x1_Account_balance_for">balance_for</a>(sender_balance) &gt;= transaction_fee_amount,
-        <a href="Errors.md#0x1_Errors_limit_exceeded">Errors::limit_exceeded</a>(<a href="Account.md#0x1_Account_EINSUFFICIENT_BALANCE">EINSUFFICIENT_BALANCE</a>)
-    );
     <b>if</b> (transaction_fee_amount &gt; 0) {
         <b>let</b> transaction_fee = <a href="Account.md#0x1_Account_withdraw_from_balance">withdraw_from_balance</a>(
             sender_balance,
@@ -3322,6 +3281,8 @@ It collects gas and bumps the sequence number
 <pre><code><b>pragma</b> verify = <b>false</b>;
 <b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>();
 <b>aborts_if</b> !<b>exists</b>&lt;<a href="Account.md#0x1_Account">Account</a>&gt;(txn_sender);
+<b>aborts_if</b> !<b>exists</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;TokenType&gt;&gt;(txn_sender);
+<b>aborts_if</b> txn_sequence_number + 1 &gt; max_u64();
 <b>aborts_if</b> !<b>exists</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;TokenType&gt;&gt;(txn_sender);
 <b>aborts_if</b> txn_max_gas_units &lt; gas_units_remaining;
 </code></pre>

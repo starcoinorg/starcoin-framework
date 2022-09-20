@@ -8,7 +8,7 @@ task 3 'run'. lines 8-23:
 
 task 4 'run'. lines 27-59:
 {
-  "gas_used": 174759,
+  "gas_used": 180218,
   "status": {
     "MoveAbort": {
       "location": {
@@ -24,13 +24,23 @@ task 4 'run'. lines 27-59:
 
 task 5 'run'. lines 63-89:
 {
-  "gas_used": 304567,
-  "status": "Executed"
+  "gas_used": 322008,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Account"
+        }
+      },
+      "abort_code": "1031"
+    }
+  }
 }
 
 task 6 'run'. lines 93-121:
 {
-  "gas_used": 300870,
+  "gas_used": 306271,
   "status": {
     "MoveAbort": {
       "location": {
@@ -46,7 +56,7 @@ task 6 'run'. lines 93-121:
 
 task 7 'run'. lines 125-155:
 {
-  "gas_used": 309389,
+  "gas_used": 328456,
   "status": {
     "MoveAbort": {
       "location": {
@@ -62,13 +72,13 @@ task 7 'run'. lines 125-155:
 
 task 8 'run'. lines 159-204:
 {
-  "gas_used": 357188,
+  "gas_used": 422198,
   "status": "Executed"
 }
 
 task 9 'run'. lines 208-238:
 {
-  "gas_used": 309259,
+  "gas_used": 328326,
   "status": {
     "MoveAbort": {
       "location": {
@@ -84,17 +94,32 @@ task 9 'run'. lines 208-238:
 
 task 10 'run'. lines 242-273:
 {
-  "gas_used": 191825,
-  "status": "Executed"
+  "gas_used": 185963,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Account"
+        }
+      },
+      "abort_code": "2568"
+    }
+  }
 }
 
 task 11 'run'. lines 277-308:
 {
-  "gas_used": 144115,
+  "gas_used": 174601,
   "status": {
     "MoveAbort": {
-      "location": "Script",
-      "abort_code": "1007"
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "CoreAddresses"
+        }
+      },
+      "abort_code": "2818"
     }
   }
 }

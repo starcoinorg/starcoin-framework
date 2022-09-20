@@ -21,7 +21,6 @@
 <b>use</b> <a href="BlockReward.md#0x1_BlockReward">0x1::BlockReward</a>;
 <b>use</b> <a href="ChainId.md#0x1_ChainId">0x1::ChainId</a>;
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
-<b>use</b> <a href="DAOSpace.md#0x1_DAOSpace">0x1::DAOSpace</a>;
 <b>use</b> <a href="Epoch.md#0x1_Epoch">0x1::Epoch</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="GasTokenOracleProposalPlugin.md#0x1_GasTokenOracleProposalPlugin">0x1::GasTokenOracleProposalPlugin</a>;
@@ -158,20 +157,21 @@ It verifies:
     // Check that the chain ID stored on-chain matches the chain ID
     // specified by the transaction
     <b>assert</b>!(<a href="ChainId.md#0x1_ChainId_get">ChainId::get</a>() == chain_id, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_BAD_CHAIN_ID">EPROLOGUE_BAD_CHAIN_ID</a>));
-    <a href="Account.md#0x1_Account_txn_prologue">Account::txn_prologue</a>&lt;TokenType&gt;(
+    <b>let</b> stc_price= <b>if</b> (!<a href="STC.md#0x1_STC_is_stc">STC::is_stc</a>&lt;TokenType&gt;()){
+        <a href="GasTokenOracleProposalPlugin.md#0x1_GasTokenOracleProposalPlugin_gas_token_oracle_read">GasTokenOracleProposalPlugin::gas_token_oracle_read</a>&lt;<a href="StarcoinDAO.md#0x1_StarcoinDAO">StarcoinDAO</a>,OracleProposalPlugin, STCToken&lt;TokenType&gt;&gt;()
+    }<b>else</b>{
+        1
+    };
+
+    <a href="Account.md#0x1_Account_txn_prologue_v2">Account::txn_prologue_v2</a>&lt;TokenType&gt;(
         &account,
         txn_sender,
         txn_sequence_number,
         txn_authentication_key_preimage,
         txn_gas_price,
         txn_max_gas_units,
+        stc_price,
     );
-    <b>let</b> stc_price= <b>if</b> (!<a href="STC.md#0x1_STC_is_stc">STC::is_stc</a>&lt;TokenType&gt;()){
-        <a href="DAOSpace.md#0x1_DAOSpace_gas_token_oracle_read">DAOSpace::gas_token_oracle_read</a>&lt;<a href="StarcoinDAO.md#0x1_StarcoinDAO">StarcoinDAO</a>,OracleProposalPlugin, STCToken&lt;TokenType&gt;&gt;()
-    }<b>else</b>{
-        1
-    };
-    <a href="Account.md#0x1_Account_txn_gas_check">Account::txn_gas_check</a>&lt;TokenType&gt;(txn_sender, txn_gas_price, txn_max_gas_units, stc_price);
     <b>assert</b>!(
         <a href="TransactionTimeout.md#0x1_TransactionTimeout_is_valid_transaction_timestamp">TransactionTimeout::is_valid_transaction_timestamp</a>(txn_expiration_time),
         <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_TRANSACTION_EXPIRED">EPROLOGUE_TRANSACTION_EXPIRED</a>),
@@ -333,11 +333,10 @@ It collects gas and bumps the sequence number
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(&account);
     <b>let</b> stc_price =
     <b>if</b> (!<a href="STC.md#0x1_STC_is_stc">STC::is_stc</a>&lt;TokenType&gt;()){
-        <a href="DAOSpace.md#0x1_DAOSpace_gas_token_oracle_read">DAOSpace::gas_token_oracle_read</a>&lt;<a href="StarcoinDAO.md#0x1_StarcoinDAO">StarcoinDAO</a>, OracleProposalPlugin, TokenType&gt;()
+        <a href="GasTokenOracleProposalPlugin.md#0x1_GasTokenOracleProposalPlugin_gas_token_oracle_read">GasTokenOracleProposalPlugin::gas_token_oracle_read</a>&lt;<a href="StarcoinDAO.md#0x1_StarcoinDAO">StarcoinDAO</a>, OracleProposalPlugin, TokenType&gt;()
     }<b>else</b>{
         1
     };
-    <a href="Account.md#0x1_Account_txn_gas_process">Account::txn_gas_process</a>&lt;TokenType&gt;(&account, txn_sender, txn_gas_price, txn_max_gas_units, gas_units_remaining, stc_price);
     <a href="Account.md#0x1_Account_txn_epilogue_v2">Account::txn_epilogue_v2</a>&lt;TokenType&gt;(
         &account,
         txn_sender,
@@ -346,6 +345,7 @@ It collects gas and bumps the sequence number
         txn_gas_price,
         txn_max_gas_units,
         gas_units_remaining,
+        stc_price
     );
     <b>if</b> (txn_payload_type == <a href="TransactionManager.md#0x1_TransactionManager_TXN_PAYLOAD_TYPE_PACKAGE">TXN_PAYLOAD_TYPE_PACKAGE</a>) {
         <a href="PackageTxnManager.md#0x1_PackageTxnManager_package_txn_epilogue">PackageTxnManager::package_txn_epilogue</a>(

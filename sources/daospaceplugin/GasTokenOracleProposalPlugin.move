@@ -4,13 +4,18 @@ module StarcoinFramework::GasTokenOracleProposalPlugin {
     use StarcoinFramework::PriceOracle;
     use StarcoinFramework::InstallPluginProposalPlugin;
     use StarcoinFramework::STCTokenOracle::STCToken;
+
     struct OracleProposalPlugin has store, drop {}
-    
+
     struct OracleCreateAction<phantom TokenType: store> has store {
         precision: u8
     }
 
-    struct OracleDataSourceSelectAction<phantom TokenType:store> has store {
+    struct OracleDataSourceSelectAction<phantom TokenType: store> has store {
+        source_address: address
+    }
+
+    struct OracleDataSource<phantom TokenType: store> has copy, store {
         source_address: address
     }
 
@@ -37,7 +42,7 @@ module StarcoinFramework::GasTokenOracleProposalPlugin {
         PriceOracle::register_oracle<STCToken<TokenType>>(&sender, precision);
     }
 
-    public(script) fun create_oracle_select_proposal<DAOT: store, TokenType:store>(sender: signer, description: vector<u8>, action_delay: u64, source_address: address) {
+    public(script) fun create_oracle_select_proposal<DAOT: store, TokenType: store>(sender: signer, description: vector<u8>, action_delay: u64, source_address: address) {
         let witness = OracleProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, OracleProposalPlugin>(&witness);
         let action = OracleDataSourceSelectAction<TokenType>{
@@ -51,16 +56,21 @@ module StarcoinFramework::GasTokenOracleProposalPlugin {
         let proposal_cap = DAOSpace::acquire_proposal_cap<DAOT, OracleProposalPlugin>(&witness);
         let OracleDataSourceSelectAction<TokenType>{ source_address } = DAOSpace::execute_proposal<DAOT, OracleProposalPlugin, OracleDataSourceSelectAction<TokenType>>(&proposal_cap, &sender, proposal_id);
         let storage_cap = DAOSpace::acquire_storage_cap<DAOT, OracleProposalPlugin>(&witness);
-        let data_source = DAOSpace::oracle_data_source<TokenType>(source_address);
-        DAOSpace::save(&storage_cap, data_source);
+        DAOSpace::save(&storage_cap, OracleDataSource<TokenType>{source_address});
     }
-    
-    public fun install_plugin_proposal<DAOT:store>(sender:&signer, description: vector<u8>, action_delay:u64){
+
+    public fun gas_token_oracle_read<DAOT: store, PluginT, TokenType: store>(): u128 {
+        let witness = OracleProposalPlugin{};
+        let storage_cap = DAOSpace::acquire_storage_cap<DAOT, OracleProposalPlugin>(&witness);
+        let OracleDataSource{ source_address } =DAOSpace::borrow_storage<DAOT,OracleProposalPlugin,OracleDataSource<TokenType>>(&storage_cap);
+        PriceOracle::read<STCToken<TokenType>>(source_address)
+    }
+
+    public fun install_plugin_proposal<DAOT: store>(sender: &signer, description: vector<u8>, action_delay: u64) {
         InstallPluginProposalPlugin::create_proposal<DAOT, OracleProposalPlugin>(sender, required_caps(), description, action_delay);
     }
 
-    public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, description: vector<u8>, action_delay:u64){
+    public(script) fun install_plugin_proposal_entry<DAOT: store>(sender: signer, description: vector<u8>, action_delay: u64) {
         install_plugin_proposal<DAOT>(&sender, description, action_delay);
     }
-
 }

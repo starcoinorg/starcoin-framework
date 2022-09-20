@@ -971,9 +971,37 @@ module Account {
         txn_sender: address,
         txn_sequence_number: u64,
         txn_authentication_key_preimage: vector<u8>,
-        _txn_gas_price: u64,
-        _txn_max_gas_units: u64,
-    ) acquires Account {
+        txn_gas_price: u64,
+        txn_max_gas_units: u64,
+    ) acquires Account, Balance {
+        txn_prologue_v2<TokenType>(
+            account,
+            txn_sender,
+            txn_sequence_number,
+            txn_authentication_key_preimage,
+            txn_gas_price,
+            txn_max_gas_units,
+            1,
+        )
+    }
+    spec txn_prologue {
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
+        aborts_if !exists<Account>(txn_sender);
+        aborts_if global<Account>(txn_sender).authentication_key == DUMMY_AUTH_KEY && Authenticator::spec_derived_address(Hash::sha3_256(txn_authentication_key_preimage)) != txn_sender;
+        aborts_if global<Account>(txn_sender).authentication_key != DUMMY_AUTH_KEY && Hash::sha3_256(txn_authentication_key_preimage) != global<Account>(txn_sender).authentication_key;
+        aborts_if txn_sequence_number < global<Account>(txn_sender).sequence_number;
+        aborts_if txn_sequence_number != global<Account>(txn_sender).sequence_number;
+    }
+    
+    public fun txn_prologue_v2<TokenType: store>(
+        account: &signer,
+        txn_sender: address,
+        txn_sequence_number: u64,
+        txn_authentication_key_preimage: vector<u8>,
+        txn_gas_price: u64,
+        txn_max_gas_units: u64,
+        stc_price: u128,
+    ) acquires Account, Balance {
         CoreAddresses::assert_genesis_address(account);
 
         // Verify that the transaction sender's account exists
@@ -997,30 +1025,6 @@ module Account {
                 Errors::invalid_argument(EPROLOGUE_INVALID_ACCOUNT_AUTH_KEY)
             );
         };
-        // Check that the transaction sequence number matches the sequence number of the account
-        assert!(
-            (txn_sequence_number as u128) < MAX_U64,
-            Errors::limit_exceeded(EPROLOGUE_SEQUENCE_NUMBER_TOO_BIG)
-        );
-        assert!(txn_sequence_number >= sender_account.sequence_number, Errors::invalid_argument(EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD));
-        assert!(txn_sequence_number == sender_account.sequence_number, Errors::invalid_argument(EPROLOGUE_SEQUENCE_NUMBER_TOO_NEW));
-    }
-
-    spec txn_prologue {
-        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
-        aborts_if !exists<Account>(txn_sender);
-        aborts_if global<Account>(txn_sender).authentication_key == DUMMY_AUTH_KEY && Authenticator::spec_derived_address(Hash::sha3_256(txn_authentication_key_preimage)) != txn_sender;
-        aborts_if global<Account>(txn_sender).authentication_key != DUMMY_AUTH_KEY && Hash::sha3_256(txn_authentication_key_preimage) != global<Account>(txn_sender).authentication_key;
-        aborts_if txn_sequence_number < global<Account>(txn_sender).sequence_number;
-        aborts_if txn_sequence_number != global<Account>(txn_sender).sequence_number;
-    }
-
-    public fun txn_gas_check<TokenType:store>(
-        txn_sender: address,
-        txn_gas_price: u64,
-        txn_max_gas_units: u64,
-        stc_price: u128,
-    ) acquires Balance {
         // Check that the account has enough balance for all of the gas
         let max_transaction_fee = Math::mul_div((txn_gas_price as u128) ,(txn_max_gas_units as u128), stc_price);
         assert!(
@@ -1028,13 +1032,18 @@ module Account {
             Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT),
         );
         if (max_transaction_fee > 0) {
+            assert!(
+                (txn_sequence_number as u128) < MAX_U64,
+                Errors::limit_exceeded(EPROLOGUE_SEQUENCE_NUMBER_TOO_BIG)
+            );
             let balance_amount = balance<TokenType>(txn_sender);
             assert!(balance_amount >= max_transaction_fee, Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT));
         };
+        // Check that the transaction sequence number matches the sequence number of the account
+        assert!(txn_sequence_number >= sender_account.sequence_number, Errors::invalid_argument(EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD));
+        assert!(txn_sequence_number == sender_account.sequence_number, Errors::invalid_argument(EPROLOGUE_SEQUENCE_NUMBER_TOO_NEW));
     }
-    spec txn_gas_check{
 
-    }
 
     /// The epilogue is invoked at the end of transactions.
     /// It collects gas and bumps the sequence number
@@ -1045,8 +1054,8 @@ module Account {
         txn_gas_price: u64,
         txn_max_gas_units: u64,
         gas_units_remaining: u64,
-    ) acquires Account {
-        txn_epilogue_v2<TokenType>(account, txn_sender, txn_sequence_number, Vector::empty(), txn_gas_price, txn_max_gas_units, gas_units_remaining)
+    ) acquires Account, Balance {
+        txn_epilogue_v2<TokenType>(account, txn_sender, txn_sequence_number, Vector::empty(), txn_gas_price, txn_max_gas_units, gas_units_remaining,1)
     }
 
     spec txn_epilogue {
@@ -1060,11 +1069,20 @@ module Account {
         txn_sender: address,
         txn_sequence_number: u64,
         txn_authentication_key_preimage: vector<u8>,
-        _txn_gas_price: u64,
-        _txn_max_gas_units: u64,
-        _gas_units_remaining: u64,
-    ) acquires Account {
+        txn_gas_price: u64,
+        txn_max_gas_units: u64,
+        gas_units_remaining: u64,
+        stc_price: u128,
+    ) acquires Account, Balance {
         CoreAddresses::assert_genesis_address(account);
+        // Charge for gas
+        let sender_balance = borrow_global_mut<Balance<TokenType>>(txn_sender);
+        let transaction_fee_amount= Math::mul_div((txn_gas_price as u128), ((txn_max_gas_units - gas_units_remaining) as u128), stc_price);
+        assert!(
+            balance_for(sender_balance) >= transaction_fee_amount,
+            Errors::limit_exceeded(EINSUFFICIENT_BALANCE)
+        );
+        
         // Load the transaction sender's account and balance resources
         let sender_account = borrow_global_mut<Account>(txn_sender);
         // Bump the sequence number
@@ -1073,32 +1091,6 @@ module Account {
         if (is_dummy_auth_key(sender_account) && !Vector::is_empty(&txn_authentication_key_preimage)){
             sender_account.authentication_key = Hash::sha3_256(txn_authentication_key_preimage);
         };
-    }
-    
-    spec txn_epilogue_v2 {
-        pragma verify = false; // Todo: fix me, cost too much time
-        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
-        aborts_if !exists<Account>(txn_sender);
-        aborts_if !exists<Balance<TokenType>>(txn_sender);
-        aborts_if txn_sequence_number + 1 > max_u64();
-   }
-
-    public fun txn_gas_process<TokenType: store>(
-        account: &signer,
-        txn_sender: address,
-        txn_gas_price: u64,
-        txn_max_gas_units: u64,
-        gas_units_remaining: u64,
-        stc_price: u128) acquires Balance {
-        CoreAddresses::assert_genesis_address(account);
-        // Load the transaction sender's account and balance resources
-        let sender_balance = borrow_global_mut<Balance<TokenType>>(txn_sender);
-        // Charge for gas
-        let transaction_fee_amount= Math::mul_div((txn_gas_price as u128), ((txn_max_gas_units - gas_units_remaining) as u128), stc_price);
-        assert!(
-            balance_for(sender_balance) >= transaction_fee_amount,
-            Errors::limit_exceeded(EINSUFFICIENT_BALANCE)
-        );
         if (transaction_fee_amount > 0) {
             let transaction_fee = withdraw_from_balance(
                 sender_balance,
@@ -1109,14 +1101,17 @@ module Account {
             TransactionFee::pay_fee(stc_transaction_fee);
         };
     }
-    spec txn_gas_process{
+    
+    spec txn_epilogue_v2 {
         pragma verify = false; // Todo: fix me, cost too much time
         aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
         aborts_if !exists<Account>(txn_sender);
         aborts_if !exists<Balance<TokenType>>(txn_sender);
+        aborts_if txn_sequence_number + 1 > max_u64();
+        aborts_if !exists<Balance<TokenType>>(txn_sender);
         aborts_if txn_max_gas_units < gas_units_remaining;
-    }
-    
+   }
+
     /// Remove zero Balance
     public fun remove_zero_balance<TokenType: store>(account: &signer) acquires Balance {
         let addr: address = Signer::address_of(account);
