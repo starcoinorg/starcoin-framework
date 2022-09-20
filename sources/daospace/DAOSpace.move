@@ -728,7 +728,12 @@ module StarcoinFramework::DAOSpace {
         });
     }
 
-    public fun set_member_image<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, member_addr: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>) acquires DAONFTUpdateCapHolder{
+    public fun set_member_image<DAOT: store, PluginT>(
+        _cap: &DAOMemberCap<DAOT, PluginT>,
+        member_addr: address,
+        image_data: Option::Option<vector<u8>>,
+        image_url: Option::Option<vector<u8>>
+    ) acquires DAONFTUpdateCapHolder {
         ensure_member<DAOT>(member_addr);
 
         let dao_address = dao_address<DAOT>();
@@ -875,7 +880,7 @@ module StarcoinFramework::DAOSpace {
         let dao_address = dao_address<DAOT>();
         let account_address = Signer::address_of(sender);
 
-        if(! exists<GrantEvent<PluginT>>(dao_address)){
+        if (!exists<GrantEvent<PluginT>>(dao_address)){
             move_to(&dao_signer, GrantEvent<PluginT>{
                 create_grant_event_handler:Event::new_event_handle<GrantCreateEvent<PluginT>>(&dao_signer),
                 revoke_grant_event_handler:Event::new_event_handle<GrantRevokeEvent<PluginT>>(&dao_signer),

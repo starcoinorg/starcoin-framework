@@ -1,6 +1,10 @@
 module StarcoinFramework::EventUtil {
     use StarcoinFramework::Event;
     use StarcoinFramework::Signer;
+    use StarcoinFramework::Errors;
+
+    const ERR_INIT_REPEATE: u64 = 101;
+    const ERR_RESOURCE_NOT_EXISTS: u64 = 101;
 
     struct EventHandleWrapper<phantom EventT: store + drop> has key {
         handle: Event::EventHandle<EventT>,
@@ -8,9 +12,7 @@ module StarcoinFramework::EventUtil {
 
     public fun init_event<EventT: store + drop>(sender: &signer) {
         let broker = Signer::address_of(sender);
-        if (exists<EventHandleWrapper<EventT>>(broker)) {
-            return
-        };
+        assert!(!exists<EventHandleWrapper<EventT>>(broker), Errors::invalid_state(ERR_INIT_REPEATE));
         move_to(sender, EventHandleWrapper<EventT> {
             handle: Event::new_event_handle<EventT>(sender)
         });
@@ -18,9 +20,7 @@ module StarcoinFramework::EventUtil {
 
     public fun uninit_event<EventT: store + drop>(sender: &signer) acquires EventHandleWrapper {
         let broker = Signer::address_of(sender);
-        if (!exists<EventHandleWrapper<EventT>>(broker)) {
-            return
-        };
+        assert!(exists<EventHandleWrapper<EventT>>(broker), Errors::invalid_state(ERR_RESOURCE_NOT_EXISTS));
         let EventHandleWrapper<EventT> { handle } = move_from<EventHandleWrapper<EventT>>(broker);
         Event::destroy_handle<EventT>(handle);
     }
