@@ -118,7 +118,7 @@ store key 0x00000000000000000000000000000001::NFTGallery::NFTGallery<0x000000000
 
 task 14 'run'. lines 101-120:
 {
-  "gas_used": 180636,
+  "gas_used": 183643,
   "status": "Executed"
 }
 

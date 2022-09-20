@@ -20,7 +20,7 @@ task 7 'run'. lines 118-130:
 
 task 8 'run'. lines 132-152:
 {
-  "gas_used": 122958,
+  "gas_used": 125965,
   "status": {
     "MoveAbort": {
       "location": "Script",
