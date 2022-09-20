@@ -870,6 +870,7 @@ module NFTGallery {
         sender: &signer
     ): NFT<NFTMeta, NFTBody> acquires NFTGallery {
         let nft = do_withdraw<NFTMeta, NFTBody>(sender, Option::none());
+        assert!(Option::is_some(&nft), Errors::not_published(ERR_NFT_NOT_EXISTS));
         Option::destroy_some(nft)
     }
 
@@ -887,7 +888,9 @@ module NFTGallery {
         id: Option<u64>
     ): Option<NFT<NFTMeta, NFTBody>> acquires NFTGallery {
         let sender_addr = Signer::address_of(sender);
-        assert!(exists<NFTGallery<NFTMeta, NFTBody>>(sender_addr), Errors::not_published(ERR_NFTGALLERY_NOT_EXISTS));
+        if(!is_accept<NFTMeta,NFTBody>(sender_addr)){
+            return Option::none<NFT<NFTMeta, NFTBody>>()
+        };
         let gallery = borrow_global_mut<NFTGallery<NFTMeta, NFTBody>>(sender_addr);
         let len = Vector::length(&gallery.items);
         let nft = if (len == 0) {

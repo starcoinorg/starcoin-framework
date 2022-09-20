@@ -14,13 +14,13 @@ task 5 'run'. lines 101-113:
 
 task 7 'run'. lines 118-130:
 {
-  "gas_used": 319896,
+  "gas_used": 339370,
   "status": "Executed"
 }
 
 task 8 'run'. lines 132-152:
 {
-  "gas_used": 125965,
+  "gas_used": 135702,
   "status": {
     "MoveAbort": {
       "location": "Script",
