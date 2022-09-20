@@ -2,11 +2,7 @@ processed 21 tasks
 
 task 7 'run'. lines 252-264:
 {
-<<<<<<< HEAD
-  "gas_used": 8197428,
-=======
   "gas_used": 1693174,
->>>>>>> fix stdlib upgrade
   "status": "Executed"
 }
 

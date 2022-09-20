@@ -48,16 +48,17 @@ task 10 'run'. lines 95-108:
 
 task 11 'run'. lines 110-129:
 {
-  "gas_used": 21895,
+  "gas_used": 11530,
   "status": {
-    "MoveAbort": {
+    "ExecutionFailure": {
       "location": {
         "Module": {
           "address": "0x00000000000000000000000000000001",
           "name": "UpgradeModuleDaoProposal"
         }
       },
-      "abort_code": "102916"
+      "function": 2,
+      "code_offset": 1
     }
   }
 }

@@ -6,16 +6,6 @@
 
 //# block --author 0x1 --timestamp 86400000
 
-// //# run --signers Genesis
-// script{
-//    use StarcoinFramework::StdlibUpgradeScripts;
-
-//    fun main(){
-//        StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
-//    }
-// }
-// // check: EXECUTED
-
 //# run --signers alice
 script {
     use StarcoinFramework::StakeToSBTPlugin;
@@ -27,6 +17,7 @@ script {
     fun stake_and_check(sender: signer) {
         let token = Account::withdraw<STC::STC>(
             &sender, 1000 * Token::scaling_factor<STC::STC>());
+        StakeToSBTPlugin::install_event<StarcoinDAO>();
         StakeToSBTPlugin::stake<StarcoinDAO, STC::STC>(&sender, token, 60000);
     }
 }
