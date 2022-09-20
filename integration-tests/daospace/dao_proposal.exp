@@ -1,42 +1,42 @@
 processed 42 tasks
 
-task 7 'run'. lines 169-182:
+task 7 'run'. lines 169-180:
 {
-  "gas_used": 8239466,
+  "gas_used": 1738847,
   "status": "Executed"
 }
 
-task 8 'run'. lines 184-198:
+task 8 'run'. lines 182-196:
 {
   "gas_used": 109239,
   "status": "Executed"
 }
 
-task 9 'run'. lines 200-225:
+task 9 'run'. lines 198-223:
 {
   "gas_used": 306386,
   "status": "Executed"
 }
 
-task 11 'run'. lines 230-246:
+task 11 'run'. lines 228-244:
 {
   "gas_used": 235032,
   "status": "Executed"
 }
 
-task 12 'run'. lines 248-264:
+task 12 'run'. lines 246-262:
 {
   "gas_used": 235032,
   "status": "Executed"
 }
 
-task 16 'run'. lines 272-286:
+task 16 'run'. lines 270-284:
 {
   "gas_used": 104944,
   "status": "Executed"
 }
 
-task 19 'run'. lines 293-306:
+task 19 'run'. lines 291-304:
 {
   "gas_used": 532278,
   "status": {
@@ -52,46 +52,46 @@ task 19 'run'. lines 293-306:
   }
 }
 
-task 22 'run'. lines 313-324:
+task 22 'run'. lines 311-322:
 {
   "gas_used": 577624,
   "status": "Executed"
 }
 
-task 23 'run'. lines 327-351:
+task 23 'run'. lines 325-349:
 {
   "gas_used": 476235,
   "status": "Executed"
 }
 
-task 25 'run'. lines 355-364:
+task 25 'run'. lines 353-362:
 {
   "gas_used": 11943,
   "status": "Executed"
 }
 
-task 26 'call'. lines 366-366:
+task 26 'call'. lines 364-364:
 "0xb5d577dc9ce59725e29886632e69ecdf/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X>>"
 
-task 28 'run'. lines 370-389:
+task 28 'run'. lines 368-387:
 {
   "gas_used": 6523189,
   "status": "Executed"
 }
 
-task 29 'call'. lines 392-392:
+task 29 'call'. lines 390-390:
 "0xa7dcef9aef26202fce82a7c7d6672afb/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X>>"
 
-task 31 'run'. lines 396-409:
+task 31 'run'. lines 394-407:
 {
   "gas_used": 6195892,
   "status": "Executed"
 }
 
-task 32 'call'. lines 412-412:
+task 32 'call'. lines 410-410:
 "0x3d4926eeda5b14b0ac979269ee79e40e/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::DAOHelper::X>>"
 
-task 34 'run'. lines 416-429:
+task 34 'run'. lines 414-427:
 {
   "gas_used": 35135,
   "status": {
@@ -107,19 +107,19 @@ task 34 'run'. lines 416-429:
   }
 }
 
-task 36 'run'. lines 434-449:
+task 36 'run'. lines 432-447:
 {
   "gas_used": 106454,
   "status": "Executed"
 }
 
-task 39 'run'. lines 457-467:
+task 39 'run'. lines 455-465:
 {
   "gas_used": 115442,
   "status": "Executed"
 }
 
-task 41 'run'. lines 472-484:
+task 41 'run'. lines 470-482:
 {
   "gas_used": 451300,
   "status": "Executed"

@@ -1,57 +1,51 @@
-processed 27 tasks
+processed 26 tasks
 
-task 4 'run'. lines 9-17:
+task 4 'run'. lines 9-24:
 {
-  "gas_used": 6509058,
+  "gas_used": 875200,
   "status": "Executed"
 }
 
-task 5 'run'. lines 19-33:
-{
-  "gas_used": 590106,
-  "status": "Executed"
-}
-
-task 9 'run'. lines 41-52:
+task 8 'run'. lines 32-43:
 {
   "gas_used": 101440,
   "status": "Executed"
 }
 
-task 12 'run'. lines 59-68:
+task 11 'run'. lines 50-59:
 {
   "gas_used": 575872,
   "status": "Executed"
 }
 
-task 14 'run'. lines 75-85:
+task 13 'run'. lines 66-76:
 {
   "gas_used": 434673,
   "status": "Executed"
 }
 
-task 16 'call'. lines 90-90:
+task 15 'call'. lines 81-81:
 "0xa7dcef9aef26202fce82a7c7d6672afb/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>>"
 
-task 18 'run'. lines 95-105:
+task 17 'run'. lines 86-96:
 {
   "gas_used": 6111871,
   "status": "Executed"
 }
 
-task 20 'run'. lines 110-118:
+task 19 'run'. lines 101-109:
 {
   "gas_used": 72156,
   "status": "Executed"
 }
 
-task 22 'run'. lines 122-131:
+task 21 'run'. lines 113-122:
 {
   "gas_used": 173612,
   "status": "Executed"
 }
 
-task 24 'run'. lines 135-147:
+task 23 'run'. lines 126-138:
 {
   "gas_used": 505499,
   "status": "Executed"
