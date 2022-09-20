@@ -47,6 +47,20 @@ task 21 'run'. lines 113-122:
 
 task 23 'run'. lines 126-138:
 {
-  "gas_used": 505499,
-  "status": "Executed"
+  "gas_used": 446524,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "PackageTxnManager"
+        }
+      },
+      "function": 21,
+      "code_offset": 41
+    }
+  }
 }
+
+task 26 'deploy'. lines 151-151:
+Publish failure: Discard { status_code: StrView(2015), status_code_name: "UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION" }

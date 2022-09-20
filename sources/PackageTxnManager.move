@@ -263,17 +263,14 @@ address StarcoinFramework {
             assert!(get_module_upgrade_strategy(package_address) == STRATEGY_TWO_PHASE, Errors::invalid_argument(ESTRATEGY_NOT_TWO_PHASE));
             let tpu = borrow_global_mut<TwoPhaseUpgradeV2>(package_address);
             let active_after_time = Timestamp::now_milliseconds() + tpu.config.min_time_limit;
-            tpu.plan = Option::some(UpgradePlanV2 { package_hash, active_after_time, version, enforced });
-            if (Option::is_some(&tpu.plan)) {
-                let plan = Option::borrow(&tpu.plan);
-                let event_holder = borrow_global_mut<UpgradePlanEventHolder>(package_address);
-                Event::emit_event<UpgradePlanEvent>(&mut event_holder.upgrade_plan_event, UpgradePlanEvent {
-                    package_address,
-                    plan: *plan
-                });
-            };
+            let plan = UpgradePlanV2 { package_hash, active_after_time, version, enforced };
+            tpu.plan = Option::some(copy plan);
 
-
+            let event_holder = borrow_global_mut<UpgradePlanEventHolder>(package_address);
+            Event::emit_event<UpgradePlanEvent>(&mut event_holder.upgrade_plan_event, UpgradePlanEvent {
+                package_address,
+                plan
+            });
         }
         spec submit_upgrade_plan_with_cap_v2 {
             pragma verify = false;

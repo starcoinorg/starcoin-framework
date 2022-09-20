@@ -988,17 +988,14 @@ extract out UpgradePlanCapability from <code>signer</code>.
     <b>assert</b>!(<a href="PackageTxnManager.md#0x1_PackageTxnManager_get_module_upgrade_strategy">get_module_upgrade_strategy</a>(package_address) == <a href="PackageTxnManager.md#0x1_PackageTxnManager_STRATEGY_TWO_PHASE">STRATEGY_TWO_PHASE</a>, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="PackageTxnManager.md#0x1_PackageTxnManager_ESTRATEGY_NOT_TWO_PHASE">ESTRATEGY_NOT_TWO_PHASE</a>));
     <b>let</b> tpu = <b>borrow_global_mut</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_TwoPhaseUpgradeV2">TwoPhaseUpgradeV2</a>&gt;(package_address);
     <b>let</b> active_after_time = <a href="Timestamp.md#0x1_Timestamp_now_milliseconds">Timestamp::now_milliseconds</a>() + tpu.config.min_time_limit;
-    tpu.plan = <a href="Option.md#0x1_Option_some">Option::some</a>(<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanV2">UpgradePlanV2</a> { package_hash, active_after_time, version, enforced });
-    <b>if</b> (<a href="Option.md#0x1_Option_is_some">Option::is_some</a>(&tpu.plan)) {
-        <b>let</b> plan = <a href="Option.md#0x1_Option_borrow">Option::borrow</a>(&tpu.plan);
-        <b>let</b> event_holder = <b>borrow_global_mut</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEventHolder">UpgradePlanEventHolder</a>&gt;(package_address);
-        <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEvent">UpgradePlanEvent</a>&gt;(&<b>mut</b> event_holder.upgrade_plan_event, <a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEvent">UpgradePlanEvent</a> {
-            package_address,
-            plan: *plan
-        });
-    };
+    <b>let</b> plan = <a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanV2">UpgradePlanV2</a> { package_hash, active_after_time, version, enforced };
+    tpu.plan = <a href="Option.md#0x1_Option_some">Option::some</a>(<b>copy</b> plan);
 
-
+    <b>let</b> event_holder = <b>borrow_global_mut</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEventHolder">UpgradePlanEventHolder</a>&gt;(package_address);
+    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEvent">UpgradePlanEvent</a>&gt;(&<b>mut</b> event_holder.upgrade_plan_event, <a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEvent">UpgradePlanEvent</a> {
+        package_address,
+        plan
+    });
 }
 </code></pre>
 
