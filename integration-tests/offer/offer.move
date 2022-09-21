@@ -46,7 +46,7 @@ script {
     }
 }
 
-// check: "Keep(ABORTED { code: 26117"
+// check: "Keep(ABORTED { code: 25863"
 
 //# block --author alice
 

@@ -106,7 +106,28 @@ module Offer {
     /// publisher `offer_address`, and now >= time_lock
     /// Also fails if no such value exists.
     public fun redeem<Offered: store>(account: &signer, offer_address: address): Offered acquires Offer, Offers {
-        redeem_v2<Offered>(account, offer_address, 0)
+        let account_address = Signer::address_of(account);
+        let Offer<Offered> { offered, for, time_lock } = if(exists<Offers<Offered>>(offer_address)){
+            let offers = &mut borrow_global_mut<Offers<Offered>>(offer_address).offers;
+            let op_index = find_offer(offers, account_address);
+            assert!(Option::is_some(&op_index),Errors::invalid_argument(EOFFER_DNE_FOR_ACCOUNT));
+            let index = Option::destroy_some(op_index);
+            let offer = Vector::remove(offers , index);
+            if(Vector::length(offers) == 0){
+                let Offers { offers } = move_from<Offers<Offered>>(offer_address);
+                Vector::destroy_empty(offers);
+            };
+            offer
+        }else if(exists<Offer<Offered>>(offer_address)){
+            move_from<Offer<Offered>>(offer_address)
+        }else{
+            abort Errors::invalid_argument(EOFFER_NOT_HAVE_OFFER)
+        };
+
+        let now = Timestamp::now_seconds();
+        assert!(account_address == for || account_address == offer_address, Errors::invalid_argument(EOFFER_DNE_FOR_ACCOUNT));
+        assert!(now >= time_lock, Errors::not_published(EOFFER_NOT_UNLOCKED));
+        offered
     }
 
     spec redeem {
