@@ -17,7 +17,7 @@ module Account {
     use StarcoinFramework::BCS;
 
     friend StarcoinFramework::StarcoinDAO;
-    friend StarcoinFramework::PackageTxnManager;
+    friend StarcoinFramework::PackageTxnManagerUpgradeScripts;
 
     spec module {
         pragma verify = false;

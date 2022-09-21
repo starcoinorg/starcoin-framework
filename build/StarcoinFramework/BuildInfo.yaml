@@ -202,6 +202,9 @@ compiled_package_info:
       name: PackageTxnManager
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: PackageTxnManagerUpgradeScripts
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: PriceOracle
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -321,7 +324,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 43CA1FB9AB7149221F9CD069EE17C650C82146ED01D05558E20A0EBD061767DC
+  source_digest: 1D41BF5CECA715897417BA720EEB91368D3F512C8DDF1CF8A6E97165AD03EF08
   build_flags:
     dev_mode: false
     test_mode: false

@@ -23,6 +23,7 @@ The module for the account resource that governs every account
 -  [Constants](#@Constants_0)
 -  [Function `remove_signer_capability`](#0x1_Account_remove_signer_capability)
 -  [Function `get_genesis_capability`](#0x1_Account_get_genesis_capability)
+-  [Function `get_capability_for`](#0x1_Account_get_capability_for)
 -  [Function `create_signer_with_cap`](#0x1_Account_create_signer_with_cap)
 -  [Function `destroy_signer_cap`](#0x1_Account_destroy_signer_cap)
 -  [Function `signer_address`](#0x1_Account_signer_address)
@@ -851,6 +852,31 @@ This function can only called once by signer.
 
 <pre><code><b>public</b> (<b>friend</b>) <b>fun</b> <a href="Account.md#0x1_Account_get_genesis_capability">get_genesis_capability</a>():<a href="Account.md#0x1_Account_SignerCapability">SignerCapability</a>{
     <b>let</b> signer_cap = <a href="Account.md#0x1_Account_SignerCapability">SignerCapability</a> {addr: <a href="Token.md#0x1_Token_token_address">Token::token_address</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;() };
+    signer_cap
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_Account_get_capability_for"></a>
+
+## Function `get_capability_for`
+
+
+
+<pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="Account.md#0x1_Account_get_capability_for">get_capability_for</a>(addr: <b>address</b>): <a href="Account.md#0x1_Account_SignerCapability">Account::SignerCapability</a>
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> (<b>friend</b>) <b>fun</b> <a href="Account.md#0x1_Account_get_capability_for">get_capability_for</a>(addr: <b>address</b>): <a href="Account.md#0x1_Account_SignerCapability">SignerCapability</a> {
+    <b>let</b> signer_cap = <a href="Account.md#0x1_Account_SignerCapability">SignerCapability</a> { addr };
     signer_cap
 }
 </code></pre>
