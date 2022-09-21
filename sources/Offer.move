@@ -49,6 +49,12 @@ module Offer {
         }
     }
 
+    spec create {
+        include Timestamp::AbortsIfTimestampNotExists;
+        aborts_if Timestamp::now_seconds() + lock_period > max_u64();
+        aborts_if exists<Offer<Offered>>(Signer::address_of(account));
+    }
+
     public fun create_offers<Offered: store>(account: &signer, offereds: vector<Offered>, for: vector<address>, lock_periods: vector<u64>) acquires Offers, Offer {
         let offer_length = Vector::length(&offereds);
         assert!(offer_length > 0, Errors::invalid_argument(EOFFER_OFFERS_ZERO));
@@ -68,7 +74,7 @@ module Offer {
         };
     }
 
-    spec create {
+    spec create_offers {
         include Timestamp::AbortsIfTimestampNotExists;
         aborts_if Timestamp::now_seconds() + lock_period > max_u64();
         aborts_if exists<Offer<Offered>>(Signer::address_of(account));
@@ -79,19 +85,17 @@ module Offer {
         let offer_length = Vector::length(&offereds);
 
         let i = offer_length - 1;
-        while(i > 0){
+        loop{
             Vector::push_back(offers, Offer<Offered> { 
                 offered: Vector::remove(&mut offereds, i), 
                 for: Vector::remove(&mut for, i),
                 time_lock: now + Vector::remove(&mut lock_periods, i) 
             });
+            if(i == 0){
+                break
+            };
             i = i - 1;
         };
-        Vector::push_back(offers, Offer<Offered> { 
-            offered: Vector::remove(&mut offereds, i), 
-            for: Vector::remove(&mut for, i),
-            time_lock: now + Vector::remove(&mut lock_periods, i) 
-        });
         Vector::destroy_empty(offereds);
         Vector::destroy_empty(for);
         Vector::destroy_empty(lock_periods);
@@ -102,28 +106,7 @@ module Offer {
     /// publisher `offer_address`, and now >= time_lock
     /// Also fails if no such value exists.
     public fun redeem<Offered: store>(account: &signer, offer_address: address): Offered acquires Offer, Offers {
-        let account_address = Signer::address_of(account);
-        let Offer<Offered> { offered, for, time_lock } = if(exists<Offers<Offered>>(offer_address)){
-            let offers = &mut borrow_global_mut<Offers<Offered>>(offer_address).offers;
-            let op_index = find_offer(offers, account_address);
-            assert!(Option::is_some(&op_index),Errors::invalid_argument(EOFFER_DNE_FOR_ACCOUNT));
-            let index = Option::destroy_some(op_index);
-            let offer = Vector::remove(offers , index);
-            if(Vector::length(offers) == 0){
-                let Offers { offers } = move_from<Offers<Offered>>(offer_address);
-                Vector::destroy_empty(offers);
-            };
-            offer
-        }else if(exists<Offer<Offered>>(offer_address)){
-            move_from<Offer<Offered>>(offer_address)
-        }else{
-            abort Errors::invalid_argument(EOFFER_NOT_HAVE_OFFER)
-        };
-        
-        let now = Timestamp::now_seconds();
-        assert!(account_address == for || account_address == offer_address, Errors::invalid_argument(EOFFER_DNE_FOR_ACCOUNT));
-        assert!(now >= time_lock, Errors::not_published(EOFFER_NOT_UNLOCKED));
-        offered
+        redeem_v2<Offered>(account, offer_address, 0)
     }
 
     spec redeem {
@@ -180,6 +163,30 @@ module Offer {
         let offers = & borrow_global<Offers<Offered>>(offer_address).offers;
         assert!(Vector::length(offers) - 1 >= idx, Errors::invalid_argument(EOFFER_NOT_HAVE_OFFER));
         Vector::borrow(offers, idx).for
+    }
+
+    public fun retake<Offered: store>(account: &signer, idx: u64): Offered acquires Offer, Offers {
+        let account_address = Signer::address_of(account);
+        let Offer<Offered> { offered: offered, for: _, time_lock: _ } = if(exists<Offers<Offered>>(account_address)){
+            let offers = &mut borrow_global_mut<Offers<Offered>>(account_address).offers;
+            assert!(Vector::length(offers) - 1 >= idx, Errors::invalid_argument(EOFFER_NOT_HAVE_OFFER));
+            let offer = Vector::remove(offers, idx);
+            if(Vector::length(offers) == 0){
+                let Offers { offers } = move_from<Offers<Offered>>(account_address);
+                Vector::destroy_empty(offers);
+            };
+            offer
+        }else if(exists<Offer<Offered>>(account_address)){
+            move_from<Offer<Offered>>(account_address)
+        }else{
+            abort Errors::invalid_argument(EOFFER_NOT_HAVE_OFFER)
+        };
+        offered
+    }
+
+    public (script) fun retake_entry<Offered: store>(signer: signer, idx: u64) acquires Offer, Offers {
+        let offered = retake<Offered>(&signer, idx);
+        Collection2::put(&signer, Signer::address_of(&signer), offered);
     }
 
     /// Take Offer and put to signer's Collection<Offered>.
