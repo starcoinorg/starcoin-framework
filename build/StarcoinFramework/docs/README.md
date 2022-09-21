@@ -77,7 +77,6 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::Option`](Option.md#0x1_Option)
 -  [`0x1::Oracle`](Oracle.md#0x1_Oracle)
 -  [`0x1::PackageTxnManager`](PackageTxnManager.md#0x1_PackageTxnManager)
--  [`0x1::PackageTxnManagerUpgradeScripts`](PackageTxnManagerUpgrade.md#0x1_PackageTxnManagerUpgradeScripts)
 -  [`0x1::PriceOracle`](Oracle.md#0x1_PriceOracle)
 -  [`0x1::PriceOracleAggregator`](Oracle.md#0x1_PriceOracleAggregator)
 -  [`0x1::PriceOracleScripts`](Oracle.md#0x1_PriceOracleScripts)

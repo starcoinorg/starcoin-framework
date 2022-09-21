@@ -31,7 +31,6 @@ address StarcoinFramework {
         const STRATEGY_NEW_MODULE: u8 = 2;
         const STRATEGY_FREEZE: u8 = 3;
         const ERR_INELIGIBALE_USER: u64 = 4;
-        const ERR_NOT_UPGRADE_YET: u64 = 5;
         const DEFAULT_MIN_TIME_LIMIT: u64 = 86400000;// one day
 
         /// arbitary stragegy
@@ -245,6 +244,12 @@ address StarcoinFramework {
         acquires TwoPhaseUpgradeV2,UpgradePlanCapability,ModuleUpgradeStrategy,UpgradePlanEventHolder{
             let account_address = Signer::address_of(account);
             let cap = borrow_global<UpgradePlanCapability>(account_address);
+            assert!(get_module_upgrade_strategy(cap.account_address) == STRATEGY_TWO_PHASE, Errors::invalid_argument(ESTRATEGY_NOT_TWO_PHASE));
+            if (!exists<UpgradePlanEventHolder>(account_address)) {
+                move_to(account, UpgradePlanEventHolder {
+                    upgrade_plan_event: Event::new_event_handle<UpgradePlanEvent>(account)
+                })
+            };
             submit_upgrade_plan_with_cap_v2(cap, package_hash, version, enforced);
         }
 
@@ -257,7 +262,6 @@ address StarcoinFramework {
         public fun submit_upgrade_plan_with_cap_v2(cap: &UpgradePlanCapability, package_hash: vector<u8>, version: u64, enforced: bool)
         acquires TwoPhaseUpgradeV2, ModuleUpgradeStrategy, UpgradePlanEventHolder{
             let package_address = cap.account_address;
-            assert!(exists<UpgradePlanEventHolder>(package_address), Errors::not_published(ERR_NOT_UPGRADE_YET));
             assert!(get_module_upgrade_strategy(package_address) == STRATEGY_TWO_PHASE, Errors::invalid_argument(ESTRATEGY_NOT_TWO_PHASE));
 
             let tpu = borrow_global_mut<TwoPhaseUpgradeV2>(package_address);
@@ -265,11 +269,17 @@ address StarcoinFramework {
             let plan = UpgradePlanV2 { package_hash, active_after_time, version, enforced };
             tpu.plan = Option::some(copy plan);
 
-            let event_holder = borrow_global_mut<UpgradePlanEventHolder>(package_address);
-            Event::emit_event<UpgradePlanEvent>(&mut event_holder.upgrade_plan_event, UpgradePlanEvent {
-                package_address,
-                plan
-            });
+            // TODO
+            // if UpgradePlanCapability was delegated to DAO or contract,
+            // it's hard to upgrade the address to claim an UpgradePlanEventHolder.
+            // Try to fix this!
+            if (exists<UpgradePlanEventHolder>(package_address)) {
+                let event_holder = borrow_global_mut<UpgradePlanEventHolder>(package_address);
+                Event::emit_event<UpgradePlanEvent>(&mut event_holder.upgrade_plan_event, UpgradePlanEvent {
+                    package_address,
+                    plan
+                });
+            }
         }
         spec submit_upgrade_plan_with_cap_v2 {
             pragma verify = false;

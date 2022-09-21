@@ -29,7 +29,7 @@ Publish failure: Discard { status_code: StrView(2015), status_code_name: "UNEXPE
 
 task 13 'run'. lines 160-167:
 {
-  "gas_used": 142127,
+  "gas_used": 123208,
   "status": "Executed"
 }
 

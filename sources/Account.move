@@ -17,7 +17,6 @@ module Account {
     use StarcoinFramework::BCS;
 
     friend StarcoinFramework::StarcoinDAO;
-    friend StarcoinFramework::PackageTxnManagerUpgradeScripts;
 
     spec module {
         pragma verify = false;
@@ -197,11 +196,6 @@ module Account {
     //TODO: Create StarcoinDAO , need modify or remove get_genesis_capability soon
     public (friend) fun get_genesis_capability():SignerCapability{
         let signer_cap = SignerCapability {addr: Token::token_address<STC>() };
-        signer_cap
-    }
-
-    public (friend) fun get_capability_for(addr: address): SignerCapability {
-        let signer_cap = SignerCapability { addr };
         signer_cap
     }
 

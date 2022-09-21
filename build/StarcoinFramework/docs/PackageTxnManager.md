@@ -462,15 +462,6 @@ module upgrade plan event when submitting a module upgrade plan
 
 
 
-<a name="0x1_PackageTxnManager_ERR_NOT_UPGRADE_YET"></a>
-
-
-
-<pre><code><b>const</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_ERR_NOT_UPGRADE_YET">ERR_NOT_UPGRADE_YET</a>: u64 = 5;
-</code></pre>
-
-
-
 <a name="0x1_PackageTxnManager_ESENDER_AND_PACKAGE_ADDRESS_MISMATCH"></a>
 
 
@@ -958,6 +949,12 @@ extract out UpgradePlanCapability from <code>signer</code>.
 <b>acquires</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_TwoPhaseUpgradeV2">TwoPhaseUpgradeV2</a>,<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanCapability">UpgradePlanCapability</a>,<a href="PackageTxnManager.md#0x1_PackageTxnManager_ModuleUpgradeStrategy">ModuleUpgradeStrategy</a>,<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEventHolder">UpgradePlanEventHolder</a>{
     <b>let</b> account_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account);
     <b>let</b> cap = <b>borrow_global</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanCapability">UpgradePlanCapability</a>&gt;(account_address);
+    <b>assert</b>!(<a href="PackageTxnManager.md#0x1_PackageTxnManager_get_module_upgrade_strategy">get_module_upgrade_strategy</a>(cap.account_address) == <a href="PackageTxnManager.md#0x1_PackageTxnManager_STRATEGY_TWO_PHASE">STRATEGY_TWO_PHASE</a>, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="PackageTxnManager.md#0x1_PackageTxnManager_ESTRATEGY_NOT_TWO_PHASE">ESTRATEGY_NOT_TWO_PHASE</a>));
+    <b>if</b> (!<b>exists</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEventHolder">UpgradePlanEventHolder</a>&gt;(account_address)) {
+        <b>move_to</b>(account, <a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEventHolder">UpgradePlanEventHolder</a> {
+            upgrade_plan_event: <a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEvent">UpgradePlanEvent</a>&gt;(account)
+        })
+    };
     <a href="PackageTxnManager.md#0x1_PackageTxnManager_submit_upgrade_plan_with_cap_v2">submit_upgrade_plan_with_cap_v2</a>(cap, package_hash, version, enforced);
 }
 </code></pre>
@@ -999,7 +996,6 @@ extract out UpgradePlanCapability from <code>signer</code>.
 <pre><code><b>public</b> <b>fun</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_submit_upgrade_plan_with_cap_v2">submit_upgrade_plan_with_cap_v2</a>(cap: &<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanCapability">UpgradePlanCapability</a>, package_hash: vector&lt;u8&gt;, version: u64, enforced: bool)
 <b>acquires</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_TwoPhaseUpgradeV2">TwoPhaseUpgradeV2</a>, <a href="PackageTxnManager.md#0x1_PackageTxnManager_ModuleUpgradeStrategy">ModuleUpgradeStrategy</a>, <a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEventHolder">UpgradePlanEventHolder</a>{
     <b>let</b> package_address = cap.account_address;
-    <b>assert</b>!(<b>exists</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEventHolder">UpgradePlanEventHolder</a>&gt;(package_address), <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="PackageTxnManager.md#0x1_PackageTxnManager_ERR_NOT_UPGRADE_YET">ERR_NOT_UPGRADE_YET</a>));
     <b>assert</b>!(<a href="PackageTxnManager.md#0x1_PackageTxnManager_get_module_upgrade_strategy">get_module_upgrade_strategy</a>(package_address) == <a href="PackageTxnManager.md#0x1_PackageTxnManager_STRATEGY_TWO_PHASE">STRATEGY_TWO_PHASE</a>, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="PackageTxnManager.md#0x1_PackageTxnManager_ESTRATEGY_NOT_TWO_PHASE">ESTRATEGY_NOT_TWO_PHASE</a>));
 
     <b>let</b> tpu = <b>borrow_global_mut</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_TwoPhaseUpgradeV2">TwoPhaseUpgradeV2</a>&gt;(package_address);
@@ -1007,11 +1003,17 @@ extract out UpgradePlanCapability from <code>signer</code>.
     <b>let</b> plan = <a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanV2">UpgradePlanV2</a> { package_hash, active_after_time, version, enforced };
     tpu.plan = <a href="Option.md#0x1_Option_some">Option::some</a>(<b>copy</b> plan);
 
-    <b>let</b> event_holder = <b>borrow_global_mut</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEventHolder">UpgradePlanEventHolder</a>&gt;(package_address);
-    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEvent">UpgradePlanEvent</a>&gt;(&<b>mut</b> event_holder.upgrade_plan_event, <a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEvent">UpgradePlanEvent</a> {
-        package_address,
-        plan
-    });
+    // TODO
+    // <b>if</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanCapability">UpgradePlanCapability</a> was delegated <b>to</b> DAO or contract,
+    // it's hard <b>to</b> upgrade the <b>address</b> <b>to</b> claim an <a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEventHolder">UpgradePlanEventHolder</a>.
+    // Try <b>to</b> fix this!
+    <b>if</b> (<b>exists</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEventHolder">UpgradePlanEventHolder</a>&gt;(package_address)) {
+        <b>let</b> event_holder = <b>borrow_global_mut</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEventHolder">UpgradePlanEventHolder</a>&gt;(package_address);
+        <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEvent">UpgradePlanEvent</a>&gt;(&<b>mut</b> event_holder.upgrade_plan_event, <a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEvent">UpgradePlanEvent</a> {
+            package_address,
+            plan
+        });
+    }
 }
 </code></pre>
 
