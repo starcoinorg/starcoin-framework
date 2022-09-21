@@ -40,7 +40,6 @@ The module provides strategies for module upgrading.
 -  [Function `package_txn_prologue`](#0x1_PackageTxnManager_package_txn_prologue)
 -  [Function `package_txn_prologue_v2`](#0x1_PackageTxnManager_package_txn_prologue_v2)
 -  [Function `package_txn_epilogue`](#0x1_PackageTxnManager_package_txn_epilogue)
--  [Function `claim_upgrade_plan_event`](#0x1_PackageTxnManager_claim_upgrade_plan_event)
 -  [Module Specification](#@Module_Specification_1)
 
 
@@ -449,15 +448,6 @@ module upgrade plan event when submitting a module upgrade plan
 
 
 <pre><code><b>const</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_EPACKAGE_HASH_INCORRECT">EPACKAGE_HASH_INCORRECT</a>: u64 = 103;
-</code></pre>
-
-
-
-<a name="0x1_PackageTxnManager_ERR_INELIGIBALE_USER"></a>
-
-
-
-<pre><code><b>const</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_ERR_INELIGIBALE_USER">ERR_INELIGIBALE_USER</a>: u64 = 4;
 </code></pre>
 
 
@@ -1546,37 +1536,6 @@ Package txn finished, and clean UpgradePlan
 <b>aborts_if</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_spec_get_module_upgrade_strategy">spec_get_module_upgrade_strategy</a>(package_address) == 1
     && success && <a href="Option.md#0x1_Option_is_some">Option::is_some</a>(<b>global</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_TwoPhaseUpgrade">TwoPhaseUpgrade</a>&gt;(package_address).plan)
     && !<b>exists</b>&lt;<a href="Config.md#0x1_Config_Config">Config::Config</a>&lt;<a href="Version.md#0x1_Version_Version">Version::Version</a>&gt;&gt;(<b>global</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_TwoPhaseUpgrade">TwoPhaseUpgrade</a>&gt;(package_address).version_cap.account_address);
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_PackageTxnManager_claim_upgrade_plan_event"></a>
-
-## Function `claim_upgrade_plan_event`
-
-Old user who has TwoPhaseUpgradeV2 can invoke this function to claim an UpgradePlanEventHolder.
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_claim_upgrade_plan_event">claim_upgrade_plan_event</a>(sender: &signer)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_claim_upgrade_plan_event">claim_upgrade_plan_event</a>(sender: &signer) {
-    <b>let</b> addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
-    <b>assert</b>!(<b>exists</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_TwoPhaseUpgradeV2">TwoPhaseUpgradeV2</a>&gt;(addr), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="PackageTxnManager.md#0x1_PackageTxnManager_ERR_INELIGIBALE_USER">ERR_INELIGIBALE_USER</a>));
-    <b>if</b> (!<b>exists</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEventHolder">UpgradePlanEventHolder</a>&gt;(addr)) {
-        <b>move_to</b>(sender, <a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEventHolder">UpgradePlanEventHolder</a> {
-            upgrade_plan_event: <a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanEvent">UpgradePlanEvent</a>&gt;(sender)
-        })
-    };
-}
 </code></pre>
 
 

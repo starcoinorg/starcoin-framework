@@ -30,7 +30,6 @@ address StarcoinFramework {
         const STRATEGY_TWO_PHASE: u8 = 1;
         const STRATEGY_NEW_MODULE: u8 = 2;
         const STRATEGY_FREEZE: u8 = 3;
-        const ERR_INELIGIBALE_USER: u64 = 4;
         const DEFAULT_MIN_TIME_LIMIT: u64 = 86400000;// one day
 
         /// arbitary stragegy
@@ -510,17 +509,6 @@ address StarcoinFramework {
             aborts_if spec_get_module_upgrade_strategy(package_address) == 1
                 && success && Option::is_some(global<TwoPhaseUpgrade>(package_address).plan)
                 && !exists<Config::Config<Version::Version>>(global<TwoPhaseUpgrade>(package_address).version_cap.account_address);
-        }
-
-        /// Old user who has TwoPhaseUpgradeV2 can invoke this function to claim an UpgradePlanEventHolder.
-        public fun claim_upgrade_plan_event(sender: &signer) {
-            let addr = Signer::address_of(sender);
-            assert!(exists<TwoPhaseUpgradeV2>(addr), Errors::invalid_state(ERR_INELIGIBALE_USER));
-            if (!exists<UpgradePlanEventHolder>(addr)) {
-                move_to(sender, UpgradePlanEventHolder {
-                    upgrade_plan_event: Event::new_event_handle<UpgradePlanEvent>(sender)
-                })
-            };
         }
     }
 }
