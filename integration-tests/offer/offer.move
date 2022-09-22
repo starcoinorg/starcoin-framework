@@ -131,8 +131,8 @@ script {
         assert!(Option::is_some(&op_offer_infos), 101);
         let offer_infos = Option::destroy_some(op_offer_infos);
         let offers_length = Offer::get_offers_length<Token<STC>>(@alice);
-        assert!(Vector::length(&offer_infos) == 2, 102);
-        assert!(offers_length == 2,103);
+        assert!(Vector::length(&offer_infos) == 3, 102);
+        assert!(offers_length == 3,103);
         let ( for, time_lock) = Offer::unpack_Offer_info(Vector::remove(&mut offer_infos, 0));
         assert!(for == @bob, 104);
         assert!(time_lock == 86410, 105);
@@ -142,7 +142,7 @@ script {
         assert!(Option::destroy_some(op_idx) == 0, 107);
     }
 }
-// check: "Keep(ABORTED { code: 25863"
+// check: EXECUTED
 
 //# run --signers bob
 script {
@@ -166,9 +166,9 @@ script {
     use StarcoinFramework::STC::STC;
 
     fun retake_offer(account: signer) {
-        let token = Offer::retake_v2<Token<STC>>(&account, 0);
+        let token = Offer::retake_v2<Token<STC>>(&account, 1);
         Account::deposit_to_self(&account, token);
-        let token = Offer::retake<Token<STC>>(&account);
+        let token = Offer::retake_v2<Token<STC>>(&account, 0);
         Account::deposit_to_self(&account, token);
     }
 }

@@ -38,13 +38,24 @@ module Offer {
 
     const EOFFER_HAVE_OFFER: u64 = 106;
 
+    const EOFFER_OFFERS_EMPTY: u64 = 107;
+
     /// Publish a value of type `Offered` under the sender's account. The value can be claimed by
     /// either the `for` address or the transaction sender.
-    public fun create<Offered: store>(account: &signer, offered: Offered, for: address, lock_period: u64) {
+    public fun create<Offered: store>(account: &signer, offered: Offered, for: address, lock_period: u64) acquires Offer, Offers{
         let time_lock = Timestamp::now_seconds() + lock_period;
         let account_address = Signer::address_of(account);
-        assert!(!exists<Offer<Offered>>(account_address),Errors::invalid_argument(EOFFER_HAVE_OFFER));
-        move_to(account, Offer<Offered> { offered, for, time_lock });
+        if(exists<Offers<Offered>>(account_address)){
+            let offers = &mut borrow_global_mut<Offers<Offered>>(account_address).offers;
+            Vector::push_back(offers, Offer<Offered> { offered, for, time_lock });
+        }else {
+            let offers = Vector::empty<Offer<Offered>>();
+            if(exists<Offer<Offered>>(account_address)){
+                Vector::push_back(&mut offers, move_from<Offer<Offered>>(account_address));
+            };
+            Vector::push_back(&mut offers, Offer<Offered> { offered, for, time_lock });
+            move_to(account, Offers<Offered> { offers });
+        }
     }
 
     spec create {
@@ -120,10 +131,25 @@ module Offer {
     /// Only succeeds if the sender is the intended recipient stored in `for` or the original
     /// publisher `offer_address`, and now >= time_lock
     /// Also fails if no such value exists.
-    public fun redeem<Offered: store>(account: &signer, offer_address: address): Offered acquires Offer {
+    public fun redeem<Offered: store>(account: &signer, offer_address: address): Offered acquires Offer, Offers {
         let account_address = Signer::address_of(account);
-        assert!(exists<Offer<Offered>>(offer_address), Errors::invalid_argument(EOFFER_NOT_HAVE_OFFER));
-        let Offer<Offered> { offered, for, time_lock } = move_from<Offer<Offered>>(offer_address);
+        let Offer<Offered> { offered, for, time_lock } = if(exists<Offers<Offered>>(offer_address)){
+            let op_index = find_offer<Offered>(offer_address, account_address);
+            assert!(Option::is_some(&op_index),Errors::invalid_argument(EOFFER_DNE_FOR_ACCOUNT));
+            let offers = &mut borrow_global_mut<Offers<Offered>>(offer_address).offers;
+            let index = Option::destroy_some(op_index);
+            let offer = Vector::remove(offers , index);
+            if(Vector::length(offers) == 0){
+                let Offers { offers } = move_from<Offers<Offered>>(offer_address);
+                Vector::destroy_empty(offers);
+            };
+            offer
+        }else if(exists<Offer<Offered>>(offer_address)){
+            move_from<Offer<Offered>>(offer_address)
+        }else{
+            abort Errors::invalid_argument(EOFFER_NOT_HAVE_OFFER)
+        };
+
         let now = Timestamp::now_seconds();
         assert!(account_address == for || account_address == offer_address, Errors::invalid_argument(EOFFER_DNE_FOR_ACCOUNT));
         assert!(now >= time_lock, Errors::not_published(EOFFER_NOT_UNLOCKED));
@@ -162,7 +188,7 @@ module Offer {
 
     /// Returns true if an offer of type `Offered` exists at `offer_address`.
     public fun exists_at<Offered: store>(offer_address: address): bool {
-        exists<Offer<Offered>>(offer_address)
+        exists<Offer<Offered>>(offer_address) || exists<Offers<Offered>>(offer_address)
     }
 
     spec exists_at {aborts_if false;}
@@ -175,9 +201,13 @@ module Offer {
 
     /// Returns the address of the `Offered` type stored at `offer_address`.
     /// Fails if no such `Offer` exists.
-    public fun address_of<Offered: store>(offer_address: address): address acquires Offer {
-        assert!(exists<Offer<Offered>>(offer_address), Errors::invalid_argument(EOFFER_NOT_HAVE_OFFER));
-        borrow_global<Offer<Offered>>(offer_address).for
+    public fun address_of<Offered: store>(offer_address: address): address acquires Offer, Offers {
+        if(exists<Offer<Offered>>(offer_address)){
+            borrow_global<Offer<Offered>>(offer_address).for
+        }else{
+            assert!(!is_offers_empty<Offered>(offer_address), Errors::invalid_argument(EOFFER_OFFERS_EMPTY));
+            address_of_v2<Offered>(offer_address, get_offers_length<Offered>(offer_address) - 1)
+        }
 
     }
 
@@ -262,11 +292,19 @@ module Offer {
         Vector::length(offers)
     }
 
+    public fun is_offers_empty<Offered: store>(offer_address: address): bool acquires Offers{
+        if( get_offers_length<Offered>(offer_address) == 0){
+            true
+        }else{
+            false
+        }
+    }
+
     /// Take Offer and put to signer's Collection<Offered>.
     public(script) fun take_offer<Offered: store>(
         signer: signer,
         offer_address: address,
-    ) acquires Offer {
+    ) acquires Offer, Offers {
         let offered = redeem<Offered>(&signer, offer_address);
         Collection2::put(&signer, Signer::address_of(&signer), offered);
     }

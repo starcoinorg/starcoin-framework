@@ -27,6 +27,7 @@
 -  [Function `get_offers_info`](#0x1_Offer_get_offers_info)
 -  [Function `unpack_Offer_info`](#0x1_Offer_unpack_Offer_info)
 -  [Function `get_offers_length`](#0x1_Offer_get_offers_length)
+-  [Function `is_offers_empty`](#0x1_Offer_is_offers_empty)
 -  [Function `take_offer`](#0x1_Offer_take_offer)
 -  [Function `take_offer_v2`](#0x1_Offer_take_offer_v2)
 -  [Function `take_offer_v2_entry`](#0x1_Offer_take_offer_v2_entry)
@@ -196,6 +197,15 @@ Offer is not unlocked yet.
 
 
 
+<a name="0x1_Offer_EOFFER_OFFERS_EMPTY"></a>
+
+
+
+<pre><code><b>const</b> <a href="Offer.md#0x1_Offer_EOFFER_OFFERS_EMPTY">EOFFER_OFFERS_EMPTY</a>: u64 = 107;
+</code></pre>
+
+
+
 <a name="0x1_Offer_EOFFER_OFFERS_ZERO"></a>
 
 
@@ -222,11 +232,20 @@ either the <code>for</code> address or the transaction sender.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_create">create</a>&lt;Offered: store&gt;(account: &signer, offered: Offered, for: <b>address</b>, lock_period: u64) {
+<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_create">create</a>&lt;Offered: store&gt;(account: &signer, offered: Offered, for: <b>address</b>, lock_period: u64) <b>acquires</b> <a href="Offer.md#0x1_Offer">Offer</a>, <a href="Offer.md#0x1_Offer_Offers">Offers</a>{
     <b>let</b> time_lock = <a href="Timestamp.md#0x1_Timestamp_now_seconds">Timestamp::now_seconds</a>() + lock_period;
     <b>let</b> account_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account);
-    <b>assert</b>!(!<b>exists</b>&lt;<a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt;&gt;(account_address),<a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Offer.md#0x1_Offer_EOFFER_HAVE_OFFER">EOFFER_HAVE_OFFER</a>));
-    <b>move_to</b>(account, <a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt; { offered, for, time_lock });
+    <b>if</b>(<b>exists</b>&lt;<a href="Offer.md#0x1_Offer_Offers">Offers</a>&lt;Offered&gt;&gt;(account_address)){
+        <b>let</b> offers = &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="Offer.md#0x1_Offer_Offers">Offers</a>&lt;Offered&gt;&gt;(account_address).offers;
+        <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(offers, <a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt; { offered, for, time_lock });
+    }<b>else</b> {
+        <b>let</b> offers = <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>&lt;<a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt;&gt;();
+        <b>if</b>(<b>exists</b>&lt;<a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt;&gt;(account_address)){
+            <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> offers, <b>move_from</b>&lt;<a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt;&gt;(account_address));
+        };
+        <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> offers, <a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt; { offered, for, time_lock });
+        <b>move_to</b>(account, <a href="Offer.md#0x1_Offer_Offers">Offers</a>&lt;Offered&gt; { offers });
+    }
 }
 </code></pre>
 
@@ -398,10 +417,25 @@ Also fails if no such value exists.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_redeem">redeem</a>&lt;Offered: store&gt;(account: &signer, offer_address: <b>address</b>): Offered <b>acquires</b> <a href="Offer.md#0x1_Offer">Offer</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_redeem">redeem</a>&lt;Offered: store&gt;(account: &signer, offer_address: <b>address</b>): Offered <b>acquires</b> <a href="Offer.md#0x1_Offer">Offer</a>, <a href="Offer.md#0x1_Offer_Offers">Offers</a> {
     <b>let</b> account_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account);
-    <b>assert</b>!(<b>exists</b>&lt;<a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt;&gt;(offer_address), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Offer.md#0x1_Offer_EOFFER_NOT_HAVE_OFFER">EOFFER_NOT_HAVE_OFFER</a>));
-    <b>let</b> <a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt; { offered, for, time_lock } = <b>move_from</b>&lt;<a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt;&gt;(offer_address);
+    <b>let</b> <a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt; { offered, for, time_lock } = <b>if</b>(<b>exists</b>&lt;<a href="Offer.md#0x1_Offer_Offers">Offers</a>&lt;Offered&gt;&gt;(offer_address)){
+        <b>let</b> op_index = <a href="Offer.md#0x1_Offer_find_offer">find_offer</a>&lt;Offered&gt;(offer_address, account_address);
+        <b>assert</b>!(<a href="Option.md#0x1_Option_is_some">Option::is_some</a>(&op_index),<a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Offer.md#0x1_Offer_EOFFER_DNE_FOR_ACCOUNT">EOFFER_DNE_FOR_ACCOUNT</a>));
+        <b>let</b> offers = &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="Offer.md#0x1_Offer_Offers">Offers</a>&lt;Offered&gt;&gt;(offer_address).offers;
+        <b>let</b> index = <a href="Option.md#0x1_Option_destroy_some">Option::destroy_some</a>(op_index);
+        <b>let</b> offer = <a href="Vector.md#0x1_Vector_remove">Vector::remove</a>(offers , index);
+        <b>if</b>(<a href="Vector.md#0x1_Vector_length">Vector::length</a>(offers) == 0){
+            <b>let</b> <a href="Offer.md#0x1_Offer_Offers">Offers</a> { offers } = <b>move_from</b>&lt;<a href="Offer.md#0x1_Offer_Offers">Offers</a>&lt;Offered&gt;&gt;(offer_address);
+            <a href="Vector.md#0x1_Vector_destroy_empty">Vector::destroy_empty</a>(offers);
+        };
+        offer
+    }<b>else</b> <b>if</b>(<b>exists</b>&lt;<a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt;&gt;(offer_address)){
+        <b>move_from</b>&lt;<a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt;&gt;(offer_address)
+    }<b>else</b>{
+        <b>abort</b> <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Offer.md#0x1_Offer_EOFFER_NOT_HAVE_OFFER">EOFFER_NOT_HAVE_OFFER</a>)
+    };
+
     <b>let</b> now = <a href="Timestamp.md#0x1_Timestamp_now_seconds">Timestamp::now_seconds</a>();
     <b>assert</b>!(account_address == for || account_address == offer_address, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Offer.md#0x1_Offer_EOFFER_DNE_FOR_ACCOUNT">EOFFER_DNE_FOR_ACCOUNT</a>));
     <b>assert</b>!(now &gt;= time_lock, <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="Offer.md#0x1_Offer_EOFFER_NOT_UNLOCKED">EOFFER_NOT_UNLOCKED</a>));
@@ -488,7 +522,7 @@ Returns true if an offer of type <code>Offered</code> exists at <code>offer_addr
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_exists_at">exists_at</a>&lt;Offered: store&gt;(offer_address: <b>address</b>): bool {
-    <b>exists</b>&lt;<a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt;&gt;(offer_address)
+    <b>exists</b>&lt;<a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt;&gt;(offer_address) || <b>exists</b>&lt;<a href="Offer.md#0x1_Offer_Offers">Offers</a>&lt;Offered&gt;&gt;(offer_address)
 }
 </code></pre>
 
@@ -561,9 +595,13 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_address_of">address_of</a>&lt;Offered: store&gt;(offer_address: <b>address</b>): <b>address</b> <b>acquires</b> <a href="Offer.md#0x1_Offer">Offer</a> {
-    <b>assert</b>!(<b>exists</b>&lt;<a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt;&gt;(offer_address), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Offer.md#0x1_Offer_EOFFER_NOT_HAVE_OFFER">EOFFER_NOT_HAVE_OFFER</a>));
-    <b>borrow_global</b>&lt;<a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt;&gt;(offer_address).for
+<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_address_of">address_of</a>&lt;Offered: store&gt;(offer_address: <b>address</b>): <b>address</b> <b>acquires</b> <a href="Offer.md#0x1_Offer">Offer</a>, <a href="Offer.md#0x1_Offer_Offers">Offers</a> {
+    <b>if</b>(<b>exists</b>&lt;<a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt;&gt;(offer_address)){
+        <b>borrow_global</b>&lt;<a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt;&gt;(offer_address).for
+    }<b>else</b>{
+        <b>assert</b>!(!<a href="Offer.md#0x1_Offer_is_offers_empty">is_offers_empty</a>&lt;Offered&gt;(offer_address), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Offer.md#0x1_Offer_EOFFER_OFFERS_EMPTY">EOFFER_OFFERS_EMPTY</a>));
+        <a href="Offer.md#0x1_Offer_address_of_v2">address_of_v2</a>&lt;Offered&gt;(offer_address, <a href="Offer.md#0x1_Offer_get_offers_length">get_offers_length</a>&lt;Offered&gt;(offer_address) - 1)
+    }
 
 }
 </code></pre>
@@ -842,6 +880,34 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
 
 </details>
 
+<a name="0x1_Offer_is_offers_empty"></a>
+
+## Function `is_offers_empty`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_is_offers_empty">is_offers_empty</a>&lt;Offered: store&gt;(offer_address: <b>address</b>): bool
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_is_offers_empty">is_offers_empty</a>&lt;Offered: store&gt;(offer_address: <b>address</b>): bool <b>acquires</b> <a href="Offer.md#0x1_Offer_Offers">Offers</a>{
+    <b>if</b>( <a href="Offer.md#0x1_Offer_get_offers_length">get_offers_length</a>&lt;Offered&gt;(offer_address) == 0){
+        <b>true</b>
+    }<b>else</b>{
+        <b>false</b>
+    }
+}
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Offer_take_offer"></a>
 
 ## Function `take_offer`
@@ -861,7 +927,7 @@ Take Offer and put to signer's Collection<Offered>.
 <pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Offer.md#0x1_Offer_take_offer">take_offer</a>&lt;Offered: store&gt;(
     signer: signer,
     offer_address: <b>address</b>,
-) <b>acquires</b> <a href="Offer.md#0x1_Offer">Offer</a> {
+) <b>acquires</b> <a href="Offer.md#0x1_Offer">Offer</a>, <a href="Offer.md#0x1_Offer_Offers">Offers</a> {
     <b>let</b> offered = <a href="Offer.md#0x1_Offer_redeem">redeem</a>&lt;Offered&gt;(&signer, offer_address);
     <a href="Collection2.md#0x1_Collection2_put">Collection2::put</a>(&signer, <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&signer), offered);
 }
