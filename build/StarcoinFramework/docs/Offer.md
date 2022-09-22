@@ -304,6 +304,18 @@ either the <code>for</code> address or the transaction sender.
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Offer_create_offers"></a>
 
 ## Function `create_offers`
@@ -348,7 +360,7 @@ either the <code>for</code> address or the transaction sender.
 
 
 
-<pre><code><b>aborts_if</b> <b>false</b>;
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -390,6 +402,18 @@ either the <code>for</code> address or the transaction sender.
     <a href="Vector.md#0x1_Vector_destroy_empty">Vector::destroy_empty</a>(for);
     <a href="Vector.md#0x1_Vector_destroy_empty">Vector::destroy_empty</a>(lock_periods);
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -503,6 +527,18 @@ Also fails if no such value exists.
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Offer_exists_at"></a>
 
 ## Function `exists_at`
@@ -533,7 +569,7 @@ Returns true if an offer of type <code>Offered</code> exists at <code>offer_addr
 
 
 
-<pre><code><b>aborts_if</b> <b>false</b>;
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -569,7 +605,7 @@ Returns true if an offer of type <code>Offered</code> exists at <code>offer_addr
 
 
 
-<pre><code><b>aborts_if</b> <b>false</b>;
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -614,6 +650,7 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
 
 
 <pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt;&gt;(offer_address);
+<b>aborts_if</b> !<b>exists</b>&lt;<a href="Offer.md#0x1_Offer_Offers">Offers</a>&lt;Offered&gt;&gt;(offer_address);
 </code></pre>
 
 
@@ -647,6 +684,18 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Offer_retake"></a>
 
 ## Function `retake`
@@ -674,6 +723,18 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Offer_retake_entry"></a>
 
 ## Function `retake_entry`
@@ -693,6 +754,18 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
     <b>let</b> offered = <a href="Offer.md#0x1_Offer_retake">retake</a>&lt;Offered&gt;(&signer);
     <a href="Collection2.md#0x1_Collection2_put">Collection2::put</a>(&signer, <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&signer), offered);
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -738,6 +811,18 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Offer_retake_v2_entry"></a>
 
 ## Function `retake_v2_entry`
@@ -757,6 +842,18 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
     <b>let</b> offered = <a href="Offer.md#0x1_Offer_retake_v2">retake_v2</a>&lt;Offered&gt;(&signer, idx);
     <a href="Collection2.md#0x1_Collection2_put">Collection2::put</a>(&signer, <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&signer), offered);
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -798,6 +895,18 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Offer_get_offers_info"></a>
 
 ## Function `get_offers_info`
@@ -827,6 +936,18 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Offer_unpack_Offer_info"></a>
 
 ## Function `unpack_Offer_info`
@@ -846,6 +967,18 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
     <b>let</b> <a href="Offer.md#0x1_Offer_OfferInfo">OfferInfo</a>{ for, time_lock } = offer_info;
     ( for, time_lock )
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -878,6 +1011,18 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Offer_is_offers_empty"></a>
 
 ## Function `is_offers_empty`
@@ -900,6 +1045,18 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
         <b>false</b>
     }
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
@@ -1057,12 +1214,24 @@ Take Offer and put to signer's Collection<Offered>.
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="@Module_Specification_1"></a>
 
 ## Module Specification
 
 
 
-<pre><code><b>pragma</b> verify = <b>true</b>;
+<pre><code><b>pragma</b> verify = <b>false</b>;
 <b>pragma</b> aborts_if_is_strict = <b>true</b>;
 </code></pre>
