@@ -741,6 +741,8 @@ module NFTGallery {
 
     const ERR_NFT_NOT_EXISTS: u64 = 101;
 
+    const ERR_NFTGALLERY_NOT_EXISTS:u64 = 102;
+
     spec module {
         pragma verify = false;
     }
@@ -796,6 +798,9 @@ module NFTGallery {
         owner: address,
         id: u64
     ): Option<NFT::NFTInfo<NFTMeta>> acquires NFTGallery {
+        if(!is_accept<NFTMeta,NFTBody>(owner)){
+            return Option::none<NFT::NFTInfo<NFTMeta>>()
+        };
         let gallery = borrow_global_mut<NFTGallery<NFTMeta, NFTBody>>(owner);
         let idx = find_by_id<NFTMeta, NFTBody>(&gallery.items, id);
 
@@ -814,6 +819,7 @@ module NFTGallery {
         owner: address, 
         idx: u64
     ): NFT::NFTInfo<NFTMeta> acquires NFTGallery {
+        assert!(exists<NFTGallery<NFTMeta, NFTBody>>(owner), Errors::not_published(ERR_NFTGALLERY_NOT_EXISTS));
         let gallery = borrow_global_mut<NFTGallery<NFTMeta, NFTBody>>(owner);
         let nft = Vector::borrow<NFT<NFTMeta, NFTBody>>(&gallery.items, idx);
         NFT::get_info(nft)
@@ -823,6 +829,9 @@ module NFTGallery {
     public fun get_nft_infos<NFTMeta: copy + store + drop, NFTBody: store>(
         owner: address
     ): vector<NFT::NFTInfo<NFTMeta>> acquires NFTGallery {
+        if(!is_accept<NFTMeta,NFTBody>(owner)){
+            return Vector::empty<NFT::NFTInfo<NFTMeta>>()
+        };
         let gallery = borrow_global_mut<NFTGallery<NFTMeta, NFTBody>>(owner);
         let infos = Vector::empty();
         let len = Vector::length(&gallery.items);
@@ -850,6 +859,7 @@ module NFTGallery {
         receiver: address,
         nft: NFT<NFTMeta, NFTBody>
     ) acquires NFTGallery {
+        assert!(exists<NFTGallery<NFTMeta, NFTBody>>(receiver), Errors::not_published(ERR_NFTGALLERY_NOT_EXISTS));
         let gallery = borrow_global_mut<NFTGallery<NFTMeta, NFTBody>>(receiver);
         Event::emit_event(&mut gallery.deposit_events, DepositEvent<NFTMeta> { id: NFT::get_id(&nft), owner: receiver });
         Vector::push_back(&mut gallery.items, nft);
@@ -860,6 +870,7 @@ module NFTGallery {
         sender: &signer
     ): NFT<NFTMeta, NFTBody> acquires NFTGallery {
         let nft = do_withdraw<NFTMeta, NFTBody>(sender, Option::none());
+        assert!(Option::is_some(&nft), Errors::not_published(ERR_NFT_NOT_EXISTS));
         Option::destroy_some(nft)
     }
 
@@ -877,6 +888,9 @@ module NFTGallery {
         id: Option<u64>
     ): Option<NFT<NFTMeta, NFTBody>> acquires NFTGallery {
         let sender_addr = Signer::address_of(sender);
+        if(!is_accept<NFTMeta,NFTBody>(sender_addr)){
+            return Option::none<NFT<NFTMeta, NFTBody>>()
+        };
         let gallery = borrow_global_mut<NFTGallery<NFTMeta, NFTBody>>(sender_addr);
         let len = Vector::length(&gallery.items);
         let nft = if (len == 0) {
@@ -928,6 +942,9 @@ module NFTGallery {
 
     /// Count all NFTs assigned to an owner
     public fun count_of<NFTMeta: copy + store + drop, NFTBody: store>(owner: address): u64 acquires NFTGallery {
+        if(!is_accept<NFTMeta,NFTBody>(owner)){
+            return 0
+        };
         let gallery = borrow_global_mut<NFTGallery<NFTMeta, NFTBody>>(owner);
         Vector::length(&gallery.items)
     }
@@ -935,6 +952,7 @@ module NFTGallery {
     /// Remove empty NFTGallery<Meta,Body>.
     public fun remove_empty_gallery<NFTMeta: copy + store + drop, NFTBody: store>(sender: &signer) acquires NFTGallery{
         let sender_addr = Signer::address_of(sender);
+        assert!(exists<NFTGallery<NFTMeta, NFTBody>>(sender_addr), Errors::not_published(ERR_NFTGALLERY_NOT_EXISTS));
         let NFTGallery<NFTMeta, NFTBody> {withdraw_events, deposit_events, items} = move_from<NFTGallery<NFTMeta, NFTBody>>(sender_addr);
            
         Event::destroy_handle<WithdrawEvent<NFTMeta>>(withdraw_events);

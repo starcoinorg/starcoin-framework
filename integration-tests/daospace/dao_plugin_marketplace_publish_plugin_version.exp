@@ -1,18 +1,12 @@
-processed 15 tasks
+processed 14 tasks
 
 task 6 'run'. lines 46-54:
 {
-  "gas_used": 176952,
+  "gas_used": 381523,
   "status": "Executed"
 }
 
 task 7 'run'. lines 56-64:
-{
-  "gas_used": 381209,
-  "status": "Executed"
-}
-
-task 8 'run'. lines 66-74:
 {
   "gas_used": 93711,
   "status": {
@@ -28,15 +22,15 @@ task 8 'run'. lines 66-74:
   }
 }
 
-task 9 'run'. lines 76-84:
+task 8 'run'. lines 66-74:
 {
-  "gas_used": 183982,
+  "gas_used": 187303,
   "status": "Executed"
 }
 
-task 10 'view'. lines 86-86:
+task 9 'view'. lines 76-76:
 store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
-    id: 1
+    id: 9
     name: 54657374506c7567696e
     description: 697066733a2f2f6465736372697074696f6e
     labels: [
@@ -61,15 +55,15 @@ store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<
     updated_at: 10
 }
 
-task 11 'run'. lines 88-101:
+task 10 'run'. lines 78-91:
 {
-  "gas_used": 1134753,
+  "gas_used": 1154679,
   "status": "Executed"
 }
 
-task 12 'view'. lines 103-103:
+task 11 'view'. lines 93-93:
 store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
-    id: 1
+    id: 9
     name: 54657374506c7567696e
     description: 697066733a2f2f6465736372697074696f6e
     labels: [
@@ -142,9 +136,9 @@ store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<
     updated_at: 10
 }
 
-task 13 'run'. lines 105-113:
+task 12 'run'. lines 95-103:
 {
-  "gas_used": 152443,
+  "gas_used": 155764,
   "status": {
     "MoveAbort": {
       "location": {
@@ -158,9 +152,9 @@ task 13 'run'. lines 105-113:
   }
 }
 
-task 14 'view'. lines 115-115:
+task 13 'view'. lines 105-105:
 store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
-    id: 1
+    id: 9
     name: 54657374506c7567696e
     description: 697066733a2f2f6465736372697074696f6e
     labels: [

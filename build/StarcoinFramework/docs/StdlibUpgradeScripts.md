@@ -17,8 +17,6 @@ The module for StdlibUpgrade init scripts
 -  [Function `do_upgrade_from_v7_to_v8`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v7_to_v8)
 -  [Function `upgrade_from_v11_to_v12`](#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12)
 -  [Function `do_upgrade_from_v11_to_v12`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12)
--  [Function `upgrade_from_v12_to_v12_1`](#0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v12_1)
--  [Function `do_upgrade_from_v12_to_v12_1`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1)
 -  [Module Specification](#@Module_Specification_0)
 
 
@@ -354,53 +352,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 <pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>() {
     <a href="Block.md#0x1_Block_checkpoints_init">Block::checkpoints_init</a>();
     <a href="DAORegistry.md#0x1_DAORegistry_initialize">DAORegistry::initialize</a>();
-}
-</code></pre>
 
-
-
-</details>
-
-<a name="0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v12_1"></a>
-
-## Function `upgrade_from_v12_to_v12_1`
-
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v12_1">upgrade_from_v12_to_v12_1</a>()
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v12_1">upgrade_from_v12_to_v12_1</a>()  {
-    <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1">do_upgrade_from_v12_to_v12_1</a>();
-}
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1"></a>
-
-## Function `do_upgrade_from_v12_to_v12_1`
-
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1">do_upgrade_from_v12_to_v12_1</a>()
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1">do_upgrade_from_v12_to_v12_1</a>() {
     <a href="DAOExtensionPoint.md#0x1_DAOExtensionPoint_initialize">DAOExtensionPoint::initialize</a>();
     <a href="DAOPluginMarketplace.md#0x1_DAOPluginMarketplace_initialize">DAOPluginMarketplace::initialize</a>();
 

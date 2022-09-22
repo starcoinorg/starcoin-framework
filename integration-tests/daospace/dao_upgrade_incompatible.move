@@ -4,15 +4,15 @@
 
 //# faucet --addr alice --amount 10000000000
 
-//# run --signers creator
-script {
-    use StarcoinFramework::StdlibUpgradeScripts;
-
-    fun upgrade_from_v11_to_v12() {
-        StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
-    }
-}
-// check: EXECUTED
+////# run --signers creator
+//script {
+//    use StarcoinFramework::StdlibUpgradeScripts;
+//
+//    fun upgrade_from_v11_to_v12() {
+//        StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
+//    }
+//}
+//// check: EXECUTED
 
 //# publish
 module creator::DAOHelper {
