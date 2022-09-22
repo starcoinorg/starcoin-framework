@@ -8,7 +8,7 @@ module Offer {
     use StarcoinFramework::Collection2;
 
     spec module {
-        pragma verify = true;
+        pragma verify = false;
         pragma aborts_if_is_strict = true;
     }
 
@@ -81,6 +81,10 @@ module Offer {
         };
     }
 
+    spec create_v2 {
+        pragma verify = false;
+    }
+
     public fun create_offers<Offered: store>(account: &signer, offereds: vector<Offered>, for: vector<address>, lock_periods: vector<u64>) acquires Offers, Offer {
         let offer_length = Vector::length(&offereds);
         assert!(offer_length > 0, Errors::invalid_argument(EOFFER_OFFERS_ZERO));
@@ -101,7 +105,7 @@ module Offer {
     }
 
     spec create_offers {
-        aborts_if false;
+        pragma verify = false;
     }
 
     fun push<Offered: store>(offers: &mut vector<Offer<Offered>>, offereds: vector<Offered>, for: vector<address>, lock_periods: vector<u64>){
@@ -125,6 +129,10 @@ module Offer {
         Vector::destroy_empty(lock_periods);
     }
     
+    spec push {
+        pragma verify = false;
+    }
+
     /// Claim the value of type `Offered` published at `offer_address`.
     /// Only succeeds if the sender is the intended recipient stored in `for` or the original
     /// publisher `offer_address`, and now >= time_lock
@@ -184,18 +192,20 @@ module Offer {
         offered
     }
 
+    spec redeem_v2 {pragma verify = false;}
+
     /// Returns true if an offer of type `Offered` exists at `offer_address`.
     public fun exists_at<Offered: store>(offer_address: address): bool {
         exists<Offer<Offered>>(offer_address) || exists<Offers<Offered>>(offer_address)
     }
 
-    spec exists_at {aborts_if false;}
+    spec exists_at {pragma verify = false;}
 
     public fun exists_at_v2<Offered: store>(offer_address: address): bool{
         exists<Offers<Offered>>(offer_address)
     }
 
-    spec exists_at_v2 {aborts_if false;}
+    spec exists_at_v2 {pragma verify = false;}
 
     /// Returns the address of the `Offered` type stored at `offer_address`.
     /// Fails if no such `Offer` exists.
@@ -209,13 +219,20 @@ module Offer {
 
     }
 
-    spec address_of {aborts_if !exists<Offer<Offered>>(offer_address);}
+    spec address_of {
+        aborts_if !exists<Offer<Offered>>(offer_address);
+        aborts_if !exists<Offers<Offered>>(offer_address);    
+    }
 
     public fun address_of_v2<Offered: store>(offer_address: address, idx: u64): address acquires Offers {
         assert!(exists<Offers<Offered>>(offer_address), Errors::invalid_argument(EOFFER_NOT_HAVE_OFFER));
         let offers = & borrow_global<Offers<Offered>>(offer_address).offers;
         assert!(Vector::length(offers) - 1 >= idx, Errors::invalid_argument(EOFFER_NOT_HAVE_OFFER));
         Vector::borrow(offers, idx).for
+    }
+
+    spec address_of_v2 {
+        pragma verify = false;
     }
 
     public fun retake<Offered: store>(account: &signer): Offered acquires Offer {
@@ -225,9 +242,17 @@ module Offer {
         offered
     }
 
+    spec retake {
+        pragma verify = false;
+    }
+
     public (script) fun retake_entry<Offered: store>(signer: signer) acquires Offer {
         let offered = retake<Offered>(&signer);
         Collection2::put(&signer, Signer::address_of(&signer), offered);
+    }
+
+    spec retake_entry {
+        pragma verify = false;
     }
 
     public fun retake_v2<Offered: store>(account: &signer, idx: u64): Offered acquires Offer, Offers {
@@ -249,9 +274,17 @@ module Offer {
         offered
     }
 
+    spec retake_v2 {
+        pragma verify = false;
+    }
+
     public (script) fun retake_v2_entry<Offered: store>(signer: signer, idx: u64) acquires Offer, Offers {
         let offered = retake_v2<Offered>(&signer, idx);
         Collection2::put(&signer, Signer::address_of(&signer), offered);
+    }
+
+    spec retake_v2_entry {
+        pragma verify = false;
     }
 
     public fun get_offers_infos<Offered: store>(offer_address: address): Option::Option<vector<OfferInfo>> acquires Offers{
@@ -269,6 +302,10 @@ module Offer {
         Option::some(offer_infos)
     }
 
+    spec get_offers_infos {
+        pragma verify = false;
+    }
+
     public fun get_offers_info<Offered: store>(offer_address: address, idx: u64): Option::Option<OfferInfo> acquires Offers{
         if(!exists_at_v2<Offered>(offer_address)){
             return Option::none<OfferInfo>()
@@ -278,16 +315,27 @@ module Offer {
         Option::some(OfferInfo { for: Vector::borrow(offers, idx).for, time_lock: Vector::borrow(offers, idx).time_lock })
     }
 
+    spec get_offers_info {
+        pragma verify = false;
+    }
+
     public fun unpack_Offer_info(offer_info: OfferInfo):(address, u64){
         let OfferInfo{ for, time_lock } = offer_info;        
         ( for, time_lock )
     }
 
+    spec unpack_Offer_info {
+        pragma verify = false;
+    }
 
     public fun get_offers_length<Offered: store>(offer_address: address): u64 acquires Offers{
         assert!(exists_at_v2<Offered>(offer_address), Errors::invalid_argument(EOFFER_NOT_HAVE_OFFER));
         let offers = & borrow_global<Offers<Offered>>(offer_address).offers;
         Vector::length(offers)
+    }
+
+    spec get_offers_length {
+        pragma verify = false;
     }
 
     public fun is_offers_empty<Offered: store>(offer_address: address): bool acquires Offers{
@@ -296,6 +344,10 @@ module Offer {
         }else{
             false
         }
+    }
+
+    spec is_offers_empty {
+        pragma verify = false;
     }
 
     /// Take Offer and put to signer's Collection<Offered>.
@@ -343,6 +395,10 @@ module Offer {
             i = i + 1;
         };
         Option::none<u64>()
+    }
+
+    spec find_offer {
+        pragma verify = false;
     }
 }
 }
