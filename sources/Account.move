@@ -854,6 +854,10 @@ module Account {
         }
     }
 
+    public(script) fun set_auto_accept_token_entry(account: signer, enable: bool) acquires AutoAcceptToken {
+        set_auto_accept_token(&account, enable);
+    }
+
     /// Configure whether auto-accept tokens.
     public fun set_auto_accept_token(account: &signer, enable: bool) acquires AutoAcceptToken {
         let addr = Signer::address_of(account);
@@ -1111,6 +1115,10 @@ module Account {
                 !exists<TransactionFee::TransactionFee<TokenType>>(CoreAddresses::GENESIS_ADDRESS());
         aborts_if txn_gas_price * (txn_max_gas_units - gas_units_remaining) > 0 &&
                 global<TransactionFee::TransactionFee<TokenType>>(CoreAddresses::GENESIS_ADDRESS()).fee.value + txn_gas_price * (txn_max_gas_units - gas_units_remaining) > max_u128();
+    }
+
+    public(script) fun remove_zero_balance_entry<TokenType: store>(account: signer) acquires Balance {
+        remove_zero_balance<TokenType>(&account);
     }
 
     /// Remove zero Balance

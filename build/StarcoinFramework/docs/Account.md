@@ -65,6 +65,7 @@ The module for the account resource that governs every account
 -  [Function `is_accepts_token`](#0x1_Account_is_accepts_token)
 -  [Function `is_accept_token`](#0x1_Account_is_accept_token)
 -  [Function `can_auto_accept_token`](#0x1_Account_can_auto_accept_token)
+-  [Function `set_auto_accept_token_entry`](#0x1_Account_set_auto_accept_token_entry)
 -  [Function `set_auto_accept_token`](#0x1_Account_set_auto_accept_token)
 -  [Function `try_accept_token`](#0x1_Account_try_accept_token)
 -  [Function `sequence_number_for_account`](#0x1_Account_sequence_number_for_account)
@@ -79,6 +80,7 @@ The module for the account resource that governs every account
 -  [Function `txn_prologue`](#0x1_Account_txn_prologue)
 -  [Function `txn_epilogue`](#0x1_Account_txn_epilogue)
 -  [Function `txn_epilogue_v2`](#0x1_Account_txn_epilogue_v2)
+-  [Function `remove_zero_balance_entry`](#0x1_Account_remove_zero_balance_entry)
 -  [Function `remove_zero_balance`](#0x1_Account_remove_zero_balance)
 -  [Function `make_event_store_if_not_exist`](#0x1_Account_make_event_store_if_not_exist)
 -  [Module Specification](#@Module_Specification_1)
@@ -2637,6 +2639,30 @@ Check whether the address can auto accept token.
 
 </details>
 
+<a name="0x1_Account_set_auto_accept_token_entry"></a>
+
+## Function `set_auto_accept_token_entry`
+
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_set_auto_accept_token_entry">set_auto_accept_token_entry</a>(account: signer, enable: bool)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_set_auto_accept_token_entry">set_auto_accept_token_entry</a>(account: signer, enable: bool) <b>acquires</b> <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a> {
+    <a href="Account.md#0x1_Account_set_auto_accept_token">set_auto_accept_token</a>(&account, enable);
+}
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Account_set_auto_accept_token"></a>
 
 ## Function `set_auto_accept_token`
@@ -3263,6 +3289,30 @@ It collects gas and bumps the sequence number
         !<b>exists</b>&lt;<a href="TransactionFee.md#0x1_TransactionFee_TransactionFee">TransactionFee::TransactionFee</a>&lt;TokenType&gt;&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 <b>aborts_if</b> txn_gas_price * (txn_max_gas_units - gas_units_remaining) &gt; 0 &&
         <b>global</b>&lt;<a href="TransactionFee.md#0x1_TransactionFee_TransactionFee">TransactionFee::TransactionFee</a>&lt;TokenType&gt;&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).fee.value + txn_gas_price * (txn_max_gas_units - gas_units_remaining) &gt; max_u128();
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_Account_remove_zero_balance_entry"></a>
+
+## Function `remove_zero_balance_entry`
+
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_remove_zero_balance_entry">remove_zero_balance_entry</a>&lt;TokenType: store&gt;(account: signer)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_remove_zero_balance_entry">remove_zero_balance_entry</a>&lt;TokenType: store&gt;(account: signer) <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a> {
+    <a href="Account.md#0x1_Account_remove_zero_balance">remove_zero_balance</a>&lt;TokenType&gt;(&account);
+}
 </code></pre>
 
 
