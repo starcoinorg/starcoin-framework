@@ -101,9 +101,7 @@ module Offer {
     }
 
     spec create_offers {
-        include Timestamp::AbortsIfTimestampNotExists;
-        aborts_if Timestamp::now_seconds() + lock_period > max_u64();
-        aborts_if exists<Offer<Offered>>(Signer::address_of(account));
+        aborts_if false;
     }
 
     fun push<Offered: store>(offers: &mut vector<Offer<Offered>>, offereds: vector<Offered>, for: vector<address>, lock_periods: vector<u64>){
