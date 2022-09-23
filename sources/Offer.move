@@ -253,8 +253,7 @@ module Offer {
             abort Errors::invalid_argument(EOFFER_NOT_HAVE_OFFER)
         };
         let now = Timestamp::now_seconds();
-        StarcoinFramework::Debug::print(&(time_lock + ( 3600 * 24 * 30 * 3)));
-        assert!(now >= time_lock + ( 3600 * 24 * 30  ), Errors::not_published(EOFFER_NOT_UNLOCKED));
+        assert!(now >= time_lock + ( 3600 * 24 * 30 * 3 ), Errors::not_published(EOFFER_NOT_UNLOCKED));
         offered
     }
 

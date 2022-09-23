@@ -158,7 +158,7 @@ script {
 }
 // check: EXECUTED
            
-//# block --author alice --timestamp 5270415000
+//# block --author alice --timestamp 7862415000
 
 //# run --signers alice
 script {

@@ -30,8 +30,7 @@
 -  [Module Specification](#@Module_Specification_1)
 
 
-<pre><code><b>use</b> <a href="Debug.md#0x1_Debug">0x1::Debug</a>;
-<b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
+<pre><code><b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
 <b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
 <b>use</b> <a href="Timestamp.md#0x1_Timestamp">0x1::Timestamp</a>;
@@ -732,8 +731,7 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
         <b>abort</b> <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Offer.md#0x1_Offer_EOFFER_NOT_HAVE_OFFER">EOFFER_NOT_HAVE_OFFER</a>)
     };
     <b>let</b> now = <a href="Timestamp.md#0x1_Timestamp_now_seconds">Timestamp::now_seconds</a>();
-    StarcoinFramework::Debug::print(&(time_lock + ( 3600 * 24 * 30 * 3)));
-    <b>assert</b>!(now &gt;= time_lock + ( 3600 * 24 * 30  ), <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="Offer.md#0x1_Offer_EOFFER_NOT_UNLOCKED">EOFFER_NOT_UNLOCKED</a>));
+    <b>assert</b>!(now &gt;= time_lock + ( 3600 * 24 * 30 * 3 ), <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="Offer.md#0x1_Offer_EOFFER_NOT_UNLOCKED">EOFFER_NOT_UNLOCKED</a>));
     offered
 }
 </code></pre>
