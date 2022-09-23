@@ -5,7 +5,6 @@ module Offer {
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option;
     use StarcoinFramework::Vector;
-    use StarcoinFramework::Collection2;
 
     spec module {
         pragma verify = false;
@@ -23,6 +22,8 @@ module Offer {
         for: address,
         time_lock: u64
     }
+
+    const ERR_DEPRECATED: u64 = 1;
 
     /// An offer of the specified type for the account does not match
     const EOFFER_DNE_FOR_ACCOUNT: u64 = 101;
@@ -235,29 +236,9 @@ module Offer {
         pragma verify = false;
     }
 
-    public fun retake<Offered: store>(account: &signer): Offered acquires Offer {
+    public fun retake<Offered: store>(account: &signer, idx: u64): Offered acquires Offer, Offers {
         let account_address = Signer::address_of(account);
-        assert!(exists_at<Offered>(account_address), Errors::invalid_argument(EOFFER_NOT_HAVE_OFFER));
-        let Offer<Offered> { offered: offered, for: _, time_lock: _ } = move_from<Offer<Offered>>(account_address);
-        offered
-    }
-
-    spec retake {
-        pragma verify = false;
-    }
-
-    public (script) fun retake_entry<Offered: store>(signer: signer) acquires Offer {
-        let offered = retake<Offered>(&signer);
-        Collection2::put(&signer, Signer::address_of(&signer), offered);
-    }
-
-    spec retake_entry {
-        pragma verify = false;
-    }
-
-    public fun retake_v2<Offered: store>(account: &signer, idx: u64): Offered acquires Offer, Offers {
-        let account_address = Signer::address_of(account);
-        let Offer<Offered> { offered: offered, for: _, time_lock: _ } = if(exists<Offers<Offered>>(account_address)){
+        let Offer<Offered> { offered: offered, for: _, time_lock: time_lock } = if(exists<Offers<Offered>>(account_address)){
             let offers = &mut borrow_global_mut<Offers<Offered>>(account_address).offers;
             assert!(Vector::length(offers) - 1 >= idx, Errors::invalid_argument(EOFFER_NOT_HAVE_OFFER));
             let offer = Vector::remove(offers, idx);
@@ -271,19 +252,13 @@ module Offer {
         }else{
             abort Errors::invalid_argument(EOFFER_NOT_HAVE_OFFER)
         };
+        let now = Timestamp::now_seconds();
+        StarcoinFramework::Debug::print(&(time_lock + ( 3600 * 24 * 30 * 3)));
+        assert!(now >= time_lock + ( 3600 * 24 * 30  ), Errors::not_published(EOFFER_NOT_UNLOCKED));
         offered
     }
 
-    spec retake_v2 {
-        pragma verify = false;
-    }
-
-    public (script) fun retake_v2_entry<Offered: store>(signer: signer, idx: u64) acquires Offer, Offers {
-        let offered = retake_v2<Offered>(&signer, idx);
-        Collection2::put(&signer, Signer::address_of(&signer), offered);
-    }
-
-    spec retake_v2_entry {
+    spec retake {
         pragma verify = false;
     }
 
@@ -319,12 +294,12 @@ module Offer {
         pragma verify = false;
     }
 
-    public fun unpack_Offer_info(offer_info: OfferInfo):(address, u64){
+    public fun unpack_offer_info(offer_info: OfferInfo):(address, u64){
         let OfferInfo{ for, time_lock } = offer_info;        
         ( for, time_lock )
     }
 
-    spec unpack_Offer_info {
+    spec unpack_offer_info {
         pragma verify = false;
     }
 
@@ -351,34 +326,15 @@ module Offer {
     }
 
     /// Take Offer and put to signer's Collection<Offered>.
-    public(script) fun take_offer<Offered: store>(
-        signer: signer,
-        offer_address: address,
-    ) acquires Offer, Offers {
-        let offered = redeem<Offered>(&signer, offer_address);
-        Collection2::put(&signer, Signer::address_of(&signer), offered);
+    public(script) fun take_offer<Offered: store>(_signer: signer, _offer_address: address){
+        abort Errors::invalid_state(ERR_DEPRECATED)
     }
 
     spec take_offer {
         pragma verify = false;
     }
 
-    public fun take_offer_v2<Offered :store>(signer: &signer, offer_address: address, idx: u64) acquires Offer, Offers{
-        let offered = redeem_v2<Offered>(signer, offer_address, idx);
-        Collection2::put(signer, Signer::address_of(signer), offered);
-    }
 
-    spec take_offer_v2 {
-        pragma verify = false;
-    }
-
-    public (script) fun take_offer_v2_entry<Offered :store>(signer: signer, offer_address: address, idx: u64) acquires Offer, Offers{
-        take_offer_v2<Offered>(&signer, offer_address, idx);
-    }
-
-    spec take_offer_v2_entry {
-        pragma verify = false;
-    }
 
     public fun find_offer<Offered: store>(offer_address: address, for: address):Option::Option<u64> acquires Offers {
         if(!exists_at_v2<Offered>(offer_address)){

@@ -20,22 +20,17 @@
 -  [Function `address_of`](#0x1_Offer_address_of)
 -  [Function `address_of_v2`](#0x1_Offer_address_of_v2)
 -  [Function `retake`](#0x1_Offer_retake)
--  [Function `retake_entry`](#0x1_Offer_retake_entry)
--  [Function `retake_v2`](#0x1_Offer_retake_v2)
--  [Function `retake_v2_entry`](#0x1_Offer_retake_v2_entry)
 -  [Function `get_offers_infos`](#0x1_Offer_get_offers_infos)
 -  [Function `get_offers_info`](#0x1_Offer_get_offers_info)
--  [Function `unpack_Offer_info`](#0x1_Offer_unpack_Offer_info)
+-  [Function `unpack_offer_info`](#0x1_Offer_unpack_offer_info)
 -  [Function `get_offers_length`](#0x1_Offer_get_offers_length)
 -  [Function `is_offers_empty`](#0x1_Offer_is_offers_empty)
 -  [Function `take_offer`](#0x1_Offer_take_offer)
--  [Function `take_offer_v2`](#0x1_Offer_take_offer_v2)
--  [Function `take_offer_v2_entry`](#0x1_Offer_take_offer_v2_entry)
 -  [Function `find_offer`](#0x1_Offer_find_offer)
 -  [Module Specification](#@Module_Specification_1)
 
 
-<pre><code><b>use</b> <a href="Collection2.md#0x1_Collection2">0x1::Collection2</a>;
+<pre><code><b>use</b> <a href="Debug.md#0x1_Debug">0x1::Debug</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
 <b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
@@ -211,6 +206,15 @@ Offer is not unlocked yet.
 
 
 <pre><code><b>const</b> <a href="Offer.md#0x1_Offer_EOFFER_OFFERS_ZERO">EOFFER_OFFERS_ZERO</a>: u64 = 103;
+</code></pre>
+
+
+
+<a name="0x1_Offer_ERR_DEPRECATED"></a>
+
+
+
+<pre><code><b>const</b> <a href="Offer.md#0x1_Offer_ERR_DEPRECATED">ERR_DEPRECATED</a>: u64 = 1;
 </code></pre>
 
 
@@ -702,7 +706,7 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_retake">retake</a>&lt;Offered: store&gt;(account: &signer): Offered
+<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_retake">retake</a>&lt;Offered: store&gt;(account: &signer, idx: u64): Offered
 </code></pre>
 
 
@@ -711,85 +715,9 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_retake">retake</a>&lt;Offered: store&gt;(account: &signer): Offered <b>acquires</b> <a href="Offer.md#0x1_Offer">Offer</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_retake">retake</a>&lt;Offered: store&gt;(account: &signer, idx: u64): Offered <b>acquires</b> <a href="Offer.md#0x1_Offer">Offer</a>, <a href="Offer.md#0x1_Offer_Offers">Offers</a> {
     <b>let</b> account_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account);
-    <b>assert</b>!(<a href="Offer.md#0x1_Offer_exists_at">exists_at</a>&lt;Offered&gt;(account_address), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Offer.md#0x1_Offer_EOFFER_NOT_HAVE_OFFER">EOFFER_NOT_HAVE_OFFER</a>));
-    <b>let</b> <a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt; { offered: offered, for: _, time_lock: _ } = <b>move_from</b>&lt;<a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt;&gt;(account_address);
-    offered
-}
-</code></pre>
-
-
-
-</details>
-
-<details>
-<summary>Specification</summary>
-
-
-
-<pre><code><b>pragma</b> verify = <b>false</b>;
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Offer_retake_entry"></a>
-
-## Function `retake_entry`
-
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Offer.md#0x1_Offer_retake_entry">retake_entry</a>&lt;Offered: store&gt;(signer: signer)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="Offer.md#0x1_Offer_retake_entry">retake_entry</a>&lt;Offered: store&gt;(signer: signer) <b>acquires</b> <a href="Offer.md#0x1_Offer">Offer</a> {
-    <b>let</b> offered = <a href="Offer.md#0x1_Offer_retake">retake</a>&lt;Offered&gt;(&signer);
-    <a href="Collection2.md#0x1_Collection2_put">Collection2::put</a>(&signer, <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&signer), offered);
-}
-</code></pre>
-
-
-
-</details>
-
-<details>
-<summary>Specification</summary>
-
-
-
-<pre><code><b>pragma</b> verify = <b>false</b>;
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Offer_retake_v2"></a>
-
-## Function `retake_v2`
-
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_retake_v2">retake_v2</a>&lt;Offered: store&gt;(account: &signer, idx: u64): Offered
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_retake_v2">retake_v2</a>&lt;Offered: store&gt;(account: &signer, idx: u64): Offered <b>acquires</b> <a href="Offer.md#0x1_Offer">Offer</a>, <a href="Offer.md#0x1_Offer_Offers">Offers</a> {
-    <b>let</b> account_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account);
-    <b>let</b> <a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt; { offered: offered, for: _, time_lock: _ } = <b>if</b>(<b>exists</b>&lt;<a href="Offer.md#0x1_Offer_Offers">Offers</a>&lt;Offered&gt;&gt;(account_address)){
+    <b>let</b> <a href="Offer.md#0x1_Offer">Offer</a>&lt;Offered&gt; { offered: offered, for: _, time_lock: time_lock } = <b>if</b>(<b>exists</b>&lt;<a href="Offer.md#0x1_Offer_Offers">Offers</a>&lt;Offered&gt;&gt;(account_address)){
         <b>let</b> offers = &<b>mut</b> <b>borrow_global_mut</b>&lt;<a href="Offer.md#0x1_Offer_Offers">Offers</a>&lt;Offered&gt;&gt;(account_address).offers;
         <b>assert</b>!(<a href="Vector.md#0x1_Vector_length">Vector::length</a>(offers) - 1 &gt;= idx, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Offer.md#0x1_Offer_EOFFER_NOT_HAVE_OFFER">EOFFER_NOT_HAVE_OFFER</a>));
         <b>let</b> offer = <a href="Vector.md#0x1_Vector_remove">Vector::remove</a>(offers, idx);
@@ -803,44 +731,10 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
     }<b>else</b>{
         <b>abort</b> <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Offer.md#0x1_Offer_EOFFER_NOT_HAVE_OFFER">EOFFER_NOT_HAVE_OFFER</a>)
     };
+    <b>let</b> now = <a href="Timestamp.md#0x1_Timestamp_now_seconds">Timestamp::now_seconds</a>();
+    StarcoinFramework::Debug::print(&(time_lock + ( 3600 * 24 * 30 * 3)));
+    <b>assert</b>!(now &gt;= time_lock + ( 3600 * 24 * 30  ), <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="Offer.md#0x1_Offer_EOFFER_NOT_UNLOCKED">EOFFER_NOT_UNLOCKED</a>));
     offered
-}
-</code></pre>
-
-
-
-</details>
-
-<details>
-<summary>Specification</summary>
-
-
-
-<pre><code><b>pragma</b> verify = <b>false</b>;
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Offer_retake_v2_entry"></a>
-
-## Function `retake_v2_entry`
-
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Offer.md#0x1_Offer_retake_v2_entry">retake_v2_entry</a>&lt;Offered: store&gt;(signer: signer, idx: u64)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="Offer.md#0x1_Offer_retake_v2_entry">retake_v2_entry</a>&lt;Offered: store&gt;(signer: signer, idx: u64) <b>acquires</b> <a href="Offer.md#0x1_Offer">Offer</a>, <a href="Offer.md#0x1_Offer_Offers">Offers</a> {
-    <b>let</b> offered = <a href="Offer.md#0x1_Offer_retake_v2">retake_v2</a>&lt;Offered&gt;(&signer, idx);
-    <a href="Collection2.md#0x1_Collection2_put">Collection2::put</a>(&signer, <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&signer), offered);
 }
 </code></pre>
 
@@ -948,13 +842,13 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
 
 </details>
 
-<a name="0x1_Offer_unpack_Offer_info"></a>
+<a name="0x1_Offer_unpack_offer_info"></a>
 
-## Function `unpack_Offer_info`
+## Function `unpack_offer_info`
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_unpack_Offer_info">unpack_Offer_info</a>(offer_info: <a href="Offer.md#0x1_Offer_OfferInfo">Offer::OfferInfo</a>): (<b>address</b>, u64)
+<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_unpack_offer_info">unpack_offer_info</a>(offer_info: <a href="Offer.md#0x1_Offer_OfferInfo">Offer::OfferInfo</a>): (<b>address</b>, u64)
 </code></pre>
 
 
@@ -963,7 +857,7 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_unpack_Offer_info">unpack_Offer_info</a>(offer_info: <a href="Offer.md#0x1_Offer_OfferInfo">OfferInfo</a>):(<b>address</b>, u64){
+<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_unpack_offer_info">unpack_offer_info</a>(offer_info: <a href="Offer.md#0x1_Offer_OfferInfo">OfferInfo</a>):(<b>address</b>, u64){
     <b>let</b> <a href="Offer.md#0x1_Offer_OfferInfo">OfferInfo</a>{ for, time_lock } = offer_info;
     ( for, time_lock )
 }
@@ -1070,7 +964,7 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
 Take Offer and put to signer's Collection<Offered>.
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Offer.md#0x1_Offer_take_offer">take_offer</a>&lt;Offered: store&gt;(signer: signer, offer_address: <b>address</b>)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Offer.md#0x1_Offer_take_offer">take_offer</a>&lt;Offered: store&gt;(_signer: signer, _offer_address: <b>address</b>)
 </code></pre>
 
 
@@ -1079,85 +973,8 @@ Take Offer and put to signer's Collection<Offered>.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Offer.md#0x1_Offer_take_offer">take_offer</a>&lt;Offered: store&gt;(
-    signer: signer,
-    offer_address: <b>address</b>,
-) <b>acquires</b> <a href="Offer.md#0x1_Offer">Offer</a>, <a href="Offer.md#0x1_Offer_Offers">Offers</a> {
-    <b>let</b> offered = <a href="Offer.md#0x1_Offer_redeem">redeem</a>&lt;Offered&gt;(&signer, offer_address);
-    <a href="Collection2.md#0x1_Collection2_put">Collection2::put</a>(&signer, <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&signer), offered);
-}
-</code></pre>
-
-
-
-</details>
-
-<details>
-<summary>Specification</summary>
-
-
-
-<pre><code><b>pragma</b> verify = <b>false</b>;
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Offer_take_offer_v2"></a>
-
-## Function `take_offer_v2`
-
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_take_offer_v2">take_offer_v2</a>&lt;Offered: store&gt;(signer: &signer, offer_address: <b>address</b>, idx: u64)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="Offer.md#0x1_Offer_take_offer_v2">take_offer_v2</a>&lt;Offered :store&gt;(signer: &signer, offer_address: <b>address</b>, idx: u64) <b>acquires</b> <a href="Offer.md#0x1_Offer">Offer</a>, <a href="Offer.md#0x1_Offer_Offers">Offers</a>{
-    <b>let</b> offered = <a href="Offer.md#0x1_Offer_redeem_v2">redeem_v2</a>&lt;Offered&gt;(signer, offer_address, idx);
-    <a href="Collection2.md#0x1_Collection2_put">Collection2::put</a>(signer, <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(signer), offered);
-}
-</code></pre>
-
-
-
-</details>
-
-<details>
-<summary>Specification</summary>
-
-
-
-<pre><code><b>pragma</b> verify = <b>false</b>;
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Offer_take_offer_v2_entry"></a>
-
-## Function `take_offer_v2_entry`
-
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Offer.md#0x1_Offer_take_offer_v2_entry">take_offer_v2_entry</a>&lt;Offered: store&gt;(signer: signer, offer_address: <b>address</b>, idx: u64)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="Offer.md#0x1_Offer_take_offer_v2_entry">take_offer_v2_entry</a>&lt;Offered :store&gt;(signer: signer, offer_address: <b>address</b>, idx: u64) <b>acquires</b> <a href="Offer.md#0x1_Offer">Offer</a>, <a href="Offer.md#0x1_Offer_Offers">Offers</a>{
-    <a href="Offer.md#0x1_Offer_take_offer_v2">take_offer_v2</a>&lt;Offered&gt;(&signer, offer_address, idx);
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Offer.md#0x1_Offer_take_offer">take_offer</a>&lt;Offered: store&gt;(_signer: signer, _offer_address: <b>address</b>){
+    <b>abort</b> <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="Offer.md#0x1_Offer_ERR_DEPRECATED">ERR_DEPRECATED</a>)
 }
 </code></pre>
 

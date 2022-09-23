@@ -133,7 +133,7 @@ script {
         let offers_length = Offer::get_offers_length<Token<STC>>(@alice);
         assert!(Vector::length(&offer_infos) == 3, 102);
         assert!(offers_length == 3,103);
-        let ( for, time_lock) = Offer::unpack_Offer_info(Vector::remove(&mut offer_infos, 0));
+        let ( for, time_lock) = Offer::unpack_offer_info(Vector::remove(&mut offer_infos, 0));
         assert!(for == @bob, 104);
         assert!(time_lock == 86410, 105);
 
@@ -157,6 +157,8 @@ script {
     }
 }
 // check: EXECUTED
+           
+//# block --author alice --timestamp 5270415000
 
 //# run --signers alice
 script {
@@ -166,9 +168,9 @@ script {
     use StarcoinFramework::STC::STC;
 
     fun retake_offer(account: signer) {
-        let token = Offer::retake_v2<Token<STC>>(&account, 1);
+        let token = Offer::retake<Token<STC>>(&account, 1);
         Account::deposit_to_self(&account, token);
-        let token = Offer::retake_v2<Token<STC>>(&account, 0);
+        let token = Offer::retake<Token<STC>>(&account, 0);
         Account::deposit_to_self(&account, token);
     }
 }
