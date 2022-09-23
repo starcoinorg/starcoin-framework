@@ -5,8 +5,6 @@ module TreasuryScripts {
     use StarcoinFramework::Offer;
     use StarcoinFramework::TreasuryWithdrawDaoProposal;
 
-    // TODO: migrate the implmentation to Treasury module in some way.
-    // For now, we will a dependency cycle if mirgrating directly.
     public(script) fun withdraw_and_split_lt_withdraw_cap<TokenT: store>(
         signer: signer,
         for_address: address,
@@ -37,8 +35,6 @@ module TreasuryScripts {
         pragma verify = false;
     }
 
-    // TODO: migrate the implmentation to Treasury module in some way.
-    // For now, we will a dependency cycle if mirgrating directly.
     public(script) fun withdraw_token_with_linear_withdraw_capability<TokenT: store>(
         signer: signer,
     ) {

@@ -310,12 +310,21 @@ module Account {
 
     native fun create_signer(addr: address): signer;
 
-    public(script) fun create_account_with_initial_amount<TokenType: store>(account: signer, fresh_address: address, _auth_key: vector<u8>, initial_amount: u128)
+    public(script) fun create_account_with_initial_amount<TokenType: store>(account: signer, fresh_address: address, _auth_key: vector<u8>, initial_amount: u128) 
+    acquires Account, Balance, AutoAcceptToken {
+        create_account_with_initial_amount_entry<TokenType>(account, fresh_address, _auth_key, initial_amount);
+    }
+
+    public(script) fun create_account_with_initial_amount_entry<TokenType: store>(account: signer, fresh_address: address, _auth_key: vector<u8>, initial_amount: u128)
     acquires Account, Balance, AutoAcceptToken {
          create_account_with_initial_amount_v2<TokenType>(account, fresh_address, initial_amount)
     }
 
     public(script) fun create_account_with_initial_amount_v2<TokenType: store>(account: signer, fresh_address: address, initial_amount: u128)
+    acquires Account, Balance, AutoAcceptToken {
+        create_account_with_initial_amount_v2_entry<TokenType>(account, fresh_address, initial_amount);
+    }
+    public(script) fun create_account_with_initial_amount_v2_entry<TokenType: store>(account: signer, fresh_address: address, initial_amount: u128)
     acquires Account, Balance, AutoAcceptToken {
         create_account_with_address<TokenType>(fresh_address);
         if (initial_amount > 0) {
@@ -756,12 +765,20 @@ module Account {
     }
 
     public(script) fun rotate_authentication_key(account: signer, new_key: vector<u8>) acquires Account, EventStore {
-        let key_rotation_capability = extract_key_rotation_capability(&account);
+        rotate_authentication_key_entry(account, new_key);
+    }
+
+    public(script) fun rotate_authentication_key_entry(account: signer, new_key: vector<u8>) acquires Account, EventStore {
+        do_rotate_authentication_key(&account, new_key);
+    }
+
+    public fun do_rotate_authentication_key(account: &signer, new_key: vector<u8>) acquires Account, EventStore {
+        let key_rotation_capability = extract_key_rotation_capability(account);
         rotate_authentication_key_with_capability(&key_rotation_capability, copy new_key);
         restore_key_rotation_capability(key_rotation_capability);
 
-        make_event_store_if_not_exist(&account);
-        let signer_addr = Signer::address_of(&account);
+        make_event_store_if_not_exist(account);
+        let signer_addr = Signer::address_of(account);
         let event_store = borrow_global_mut<EventStore>(signer_addr);
         Event::emit_event<RotateAuthKeyEvent>(
             &mut event_store.rotate_auth_key_events,
@@ -816,6 +833,10 @@ module Account {
     }
 
     public(script) fun accept_token<TokenType: store>(account: signer) acquires Account {
+        accept_token_entry<TokenType>(account);
+    }
+
+    public(script) fun accept_token_entry<TokenType: store>(account: signer) acquires Account {
         do_accept_token<TokenType>(&account);
     }
 

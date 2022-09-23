@@ -168,6 +168,10 @@ module Block {
         pragma verify = false;
     }
 
+    public (script) fun checkpoint_entry(_account: signer) acquires BlockMetadata, Checkpoints {
+        checkpoint();
+    }
+
     public fun checkpoint() acquires BlockMetadata, Checkpoints{
         let parent_block_number = get_current_block_number() - 1;
         let parent_block_hash   = get_parent_hash();
@@ -236,7 +240,12 @@ module Block {
         pragma verify = false;
     }
 
-    public fun update_state_root(header: vector<u8>)acquires  Checkpoints {
+    public (script) fun update_state_root_entry(_account: signer , header: vector<u8>)
+    acquires Checkpoints {
+        update_state_root(header);
+    }
+
+    public fun update_state_root(header: vector<u8>) acquires  Checkpoints {
         let checkpoints = borrow_global_mut<Checkpoints>(CoreAddresses::GENESIS_ADDRESS());
         base_update_state_root(checkpoints, header);
     }
@@ -432,24 +441,5 @@ module Block {
         Ring::destroy(ring);
     } 
 
-}
-module CheckpointScript {
-    use StarcoinFramework::Block;
-
-    public (script) fun checkpoint(_account: signer){
-        Block::checkpoint();
-    }
-
-    spec checkpoint {
-        pragma verify = false;
-    }
-
-    public (script) fun update_state_root(_account: signer , header: vector<u8>){
-        Block::update_state_root(header);
-    }
-
-    spec update_state_root {
-        pragma verify = false;
-    }
 }
 }
