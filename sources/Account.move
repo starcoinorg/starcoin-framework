@@ -312,19 +312,15 @@ module Account {
 
     public(script) fun create_account_with_initial_amount<TokenType: store>(account: signer, fresh_address: address, _auth_key: vector<u8>, initial_amount: u128) 
     acquires Account, Balance, AutoAcceptToken {
-        create_account_with_initial_amount_entry<TokenType>(account, fresh_address, _auth_key, initial_amount);
-    }
-
-    public(script) fun create_account_with_initial_amount_entry<TokenType: store>(account: signer, fresh_address: address, _auth_key: vector<u8>, initial_amount: u128)
-    acquires Account, Balance, AutoAcceptToken {
-         create_account_with_initial_amount_v2<TokenType>(account, fresh_address, initial_amount)
+        create_account_with_initial_amount_entry<TokenType>(account, fresh_address, initial_amount);
     }
 
     public(script) fun create_account_with_initial_amount_v2<TokenType: store>(account: signer, fresh_address: address, initial_amount: u128)
     acquires Account, Balance, AutoAcceptToken {
-        create_account_with_initial_amount_v2_entry<TokenType>(account, fresh_address, initial_amount);
+        create_account_with_initial_amount_entry<TokenType>(account, fresh_address, initial_amount);
     }
-    public(script) fun create_account_with_initial_amount_v2_entry<TokenType: store>(account: signer, fresh_address: address, initial_amount: u128)
+    
+    public(script) fun create_account_with_initial_amount_entry<TokenType: store>(account: signer, fresh_address: address, initial_amount: u128)
     acquires Account, Balance, AutoAcceptToken {
         create_account_with_address<TokenType>(fresh_address);
         if (initial_amount > 0) {

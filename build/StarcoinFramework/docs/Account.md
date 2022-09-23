@@ -34,9 +34,8 @@ The module for the account resource that governs every account
 -  [Function `make_account`](#0x1_Account_make_account)
 -  [Function `create_signer`](#0x1_Account_create_signer)
 -  [Function `create_account_with_initial_amount`](#0x1_Account_create_account_with_initial_amount)
--  [Function `create_account_with_initial_amount_entry`](#0x1_Account_create_account_with_initial_amount_entry)
 -  [Function `create_account_with_initial_amount_v2`](#0x1_Account_create_account_with_initial_amount_v2)
--  [Function `create_account_with_initial_amount_v2_entry`](#0x1_Account_create_account_with_initial_amount_v2_entry)
+-  [Function `create_account_with_initial_amount_entry`](#0x1_Account_create_account_with_initial_amount_entry)
 -  [Function `create_delegate_account`](#0x1_Account_create_delegate_account)
 -  [Function `generate_fresh_address`](#0x1_Account_generate_fresh_address)
 -  [Function `deposit_to_self`](#0x1_Account_deposit_to_self)
@@ -1233,7 +1232,44 @@ reserved address for the MoveVM.
 
 <pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount">create_account_with_initial_amount</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, _auth_key: vector&lt;u8&gt;, initial_amount: u128)
 <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a> {
-    <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType&gt;(account, fresh_address, _auth_key, initial_amount);
+    <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType&gt;(account, fresh_address, initial_amount);
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_Account_create_account_with_initial_amount_v2"></a>
+
+## Function `create_account_with_initial_amount_v2`
+
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_v2">create_account_with_initial_amount_v2</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_v2">create_account_with_initial_amount_v2</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
+<b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a> {
+    <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType&gt;(account, fresh_address, initial_amount);
 }
 </code></pre>
 
@@ -1259,7 +1295,7 @@ reserved address for the MoveVM.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, _auth_key: vector&lt;u8&gt;, initial_amount: u128)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
 </code></pre>
 
 
@@ -1268,69 +1304,7 @@ reserved address for the MoveVM.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, _auth_key: vector&lt;u8&gt;, initial_amount: u128)
-<b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a> {
-     <a href="Account.md#0x1_Account_create_account_with_initial_amount_v2">create_account_with_initial_amount_v2</a>&lt;TokenType&gt;(account, fresh_address, initial_amount)
-}
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Account_create_account_with_initial_amount_v2"></a>
-
-## Function `create_account_with_initial_amount_v2`
-
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_v2">create_account_with_initial_amount_v2</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_v2">create_account_with_initial_amount_v2</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
-<b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a> {
-    <a href="Account.md#0x1_Account_create_account_with_initial_amount_v2_entry">create_account_with_initial_amount_v2_entry</a>&lt;TokenType&gt;(account, fresh_address, initial_amount);
-}
-</code></pre>
-
-
-
-</details>
-
-<details>
-<summary>Specification</summary>
-
-
-
-<pre><code><b>pragma</b> verify = <b>false</b>;
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Account_create_account_with_initial_amount_v2_entry"></a>
-
-## Function `create_account_with_initial_amount_v2_entry`
-
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_v2_entry">create_account_with_initial_amount_v2_entry</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_v2_entry">create_account_with_initial_amount_v2_entry</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
 <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a> {
     <a href="Account.md#0x1_Account_create_account_with_address">create_account_with_address</a>&lt;TokenType&gt;(fresh_address);
     <b>if</b> (initial_amount &gt; 0) {
