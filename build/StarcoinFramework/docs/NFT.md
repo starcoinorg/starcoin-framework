@@ -33,7 +33,7 @@ Init a  NFTGallery for accept NFT<NFTMeta, NFTBody>
 
 
 <pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="NFT.md#0x1_NFTGalleryScripts_accept">accept</a>&lt;NFTMeta: <b>copy</b> + store + drop, NFTBody: store&gt;(sender: signer) {
-    <a href="NFT.md#0x1_NFTGallery_accept">NFTGallery::accept</a>&lt;NFTMeta, NFTBody&gt;(&sender);
+    <a href="NFT.md#0x1_NFTGallery_accept_entry">NFTGallery::accept_entry</a>&lt;NFTMeta, NFTBody&gt;(sender);
 }
 </code></pre>
 
@@ -61,7 +61,7 @@ Transfer NFT<NFTMeta, NFTBody> with <code>id</code> from <code>sender</code> to 
     sender: signer,
     id: u64, receiver: <b>address</b>
 ) {
-    <a href="NFT.md#0x1_NFTGallery_transfer">NFTGallery::transfer</a>&lt;NFTMeta, NFTBody&gt;(&sender, id, receiver);
+    <a href="NFT.md#0x1_NFTGallery_transfer_entry">NFTGallery::transfer_entry</a>&lt;NFTMeta, NFTBody&gt;(sender, id, receiver);
 }
 </code></pre>
 
@@ -86,7 +86,7 @@ Remove empty NFTGallery<Meta,Body>.
 
 
 <pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="NFT.md#0x1_NFTGalleryScripts_remove_empty_gallery">remove_empty_gallery</a>&lt;NFTMeta: <b>copy</b> + store + drop, NFTBody: store&gt;(sender: signer) {
-    <a href="NFT.md#0x1_NFTGallery_remove_empty_gallery">NFTGallery::remove_empty_gallery</a>&lt;NFTMeta, NFTBody&gt;(&sender);
+    <a href="NFT.md#0x1_NFTGallery_remove_empty_gallery_entry">NFTGallery::remove_empty_gallery_entry</a>&lt;NFTMeta, NFTBody&gt;(sender);
 }
 </code></pre>
 
