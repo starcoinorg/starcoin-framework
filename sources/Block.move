@@ -172,6 +172,10 @@ module Block {
         checkpoint();
     }
 
+    spec checkpoint_entry {
+        pragma verify = false;
+    }
+
     public fun checkpoint() acquires BlockMetadata, Checkpoints{
         let parent_block_number = get_current_block_number() - 1;
         let parent_block_hash   = get_parent_hash();
@@ -243,6 +247,10 @@ module Block {
     public (script) fun update_state_root_entry(_account: signer , header: vector<u8>)
     acquires Checkpoints {
         update_state_root(header);
+    }
+
+    spec update_state_root_entry {
+        pragma verify = false;
     }
 
     public fun update_state_root(header: vector<u8>) acquires  Checkpoints {

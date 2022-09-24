@@ -594,6 +594,18 @@ Call at block prologue
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Block_checkpoint"></a>
 
 ## Function `checkpoint`
@@ -793,6 +805,18 @@ Call at block prologue
 <b>acquires</b> <a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a> {
     <a href="Block.md#0x1_Block_update_state_root">update_state_root</a>(header);
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 
