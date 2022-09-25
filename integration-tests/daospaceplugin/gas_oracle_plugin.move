@@ -75,28 +75,23 @@ module alice::Token {
 // check: EXECUTED
 
 //# publish
-module alice::GasOracle {
-    use StarcoinFramework::STCTokenOracle::STCToken;
-    use StarcoinFramework::PriceOracle;
+module alice::Oracle {
     use alice::Token::AliceToken;
-    use StarcoinFramework::Signer;
+    use StarcoinFramework::GasOracle;
 
     public fun initialize(account: &signer) {
-        PriceOracle::register_oracle<STCToken<AliceToken>>(account, 9);
-        PriceOracle::init_data_source<STCToken<AliceToken>>(account, 0);
-        PriceOracle::update<STCToken<AliceToken>>(account, 100);
-        let address = Signer::address_of(account);
-        assert!(PriceOracle::read<STCToken<AliceToken>>(address) == 100, 101);
+        GasOracle::register<AliceToken>(account, 9);
+        GasOracle::init_data_source<AliceToken>(account, 0);
     }
 }
 // check: EXECUTED
 
 //# run --signers alice
 script {
-    use alice::GasOracle;
+    use alice::Oracle;
 
     fun main(account: signer) {
-        GasOracle::initialize(&account);
+        Oracle::initialize(&account);
     }
 }
 // check: EXECUTED
@@ -177,7 +172,7 @@ script {
     fun main(account: signer) {
         let description = b"oracle select proposal";
         let action_delay = 0;
-        GasOracleProposalPlugin::create_oracle_select_proposal<XDAO, AliceToken>(account, description, action_delay, @alice);
+        GasOracleProposalPlugin::create_oracle_add_proposal<XDAO, AliceToken>(account, description, action_delay, @alice);
         let proposal = DAOSpace::proposal<XDAO>(1);
         let proposer = DAOSpace::proposal_proposer(&proposal);
         let (start_time, end_time) = DAOSpace::proposal_time(&proposal);
@@ -233,6 +228,17 @@ script {
 }
 // check: EXECUTED
 
+//# run --signers alice
+script {
+    use alice::Token::AliceToken;
+    use StarcoinFramework::GasOracle;
+
+    fun main(account: signer) {
+        GasOracle::update<AliceToken>(&account, 100);
+    }
+}
+
+
 //# block --author=0x3 --timestamp 86840000
 
 //# run --signers alice
@@ -241,16 +247,15 @@ script {
     use StarcoinFramework::DAOSpace;
     use StarcoinFramework::GasOracleProposalPlugin;
     use alice::Token::AliceToken;
-    use StarcoinFramework::Debug;
 
     fun main(sender: signer) {
         let proposal_id = 1;
         let proposal_state = DAOSpace::proposal_state<XDAO>(proposal_id);
         assert!(proposal_state == 7, 106); // DAOSpace::EXECUTABLE
-        GasOracleProposalPlugin::execute_oracle_select_proposal<XDAO, AliceToken>(sender, proposal_id);
+        GasOracleProposalPlugin::execute_oracle_add_proposal<XDAO, AliceToken>(sender, proposal_id);
 
         let price = GasOracleProposalPlugin::gas_oracle_read<XDAO, AliceToken>();
-        Debug::print(&price);
+        assert!(price == 100, 107);
     }
 }
 // check: EXECUTED

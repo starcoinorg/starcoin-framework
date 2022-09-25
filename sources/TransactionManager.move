@@ -19,7 +19,7 @@ module TransactionManager {
     use StarcoinFramework::Epoch;
     use StarcoinFramework::Hash;
     use StarcoinFramework::Vector;
-    use StarcoinFramework::STCTokenOracle::STCToken;
+    use StarcoinFramework::GasOracle::STCToken;
     use StarcoinFramework::StarcoinDAO::StarcoinDAO;
     use StarcoinFramework::GasOracleProposalPlugin;
     use StarcoinFramework::STC;

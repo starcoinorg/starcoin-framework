@@ -23,10 +23,10 @@
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
 <b>use</b> <a href="Epoch.md#0x1_Epoch">0x1::Epoch</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
+<b>use</b> <a href="Oracle.md#0x1_GasOracle">0x1::GasOracle</a>;
 <b>use</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin">0x1::GasOracleProposalPlugin</a>;
 <b>use</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager">0x1::PackageTxnManager</a>;
 <b>use</b> <a href="STC.md#0x1_STC">0x1::STC</a>;
-<b>use</b> <a href="Oracle.md#0x1_STCTokenOracle">0x1::STCTokenOracle</a>;
 <b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
 <b>use</b> <a href="StarcoinDAO.md#0x1_StarcoinDAO">0x1::StarcoinDAO</a>;
 <b>use</b> <a href="Timestamp.md#0x1_Timestamp">0x1::Timestamp</a>;

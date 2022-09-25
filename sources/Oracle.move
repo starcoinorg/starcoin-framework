@@ -242,18 +242,22 @@ module PriceOracle {
     }
 }
 
-module STCTokenOracle {
+module GasOracle {
     use StarcoinFramework::PriceOracle;
 
     struct STCToken<phantom TokenType:store> has copy, store, drop {
     }
 
-    public(script) fun init_data_source<TokenType: store>(sender: signer, init_value: u128){
-        PriceOracle::init_data_source<STCToken<TokenType>>(&sender, init_value);
+    public fun register<TokenType:store>(sender: &signer, precision: u8){
+        PriceOracle::register_oracle<STCToken<TokenType>>(sender, precision);
+    }
+
+    public fun init_data_source<TokenType: store>(sender: &signer, init_value: u128){
+        PriceOracle::init_data_source<STCToken<TokenType>>(sender, init_value);
     }
     
-    public(script) fun update<TokenType:store>(sender: signer, value: u128){
-        PriceOracle::update<STCToken<TokenType>>(&sender, value);
+    public fun update<TokenType:store>(sender: &signer, value: u128){
+        PriceOracle::update<STCToken<TokenType>>(sender, value);
     }
 }
 
