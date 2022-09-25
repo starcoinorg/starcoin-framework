@@ -37,9 +37,6 @@ compiled_package_info:
       name: ChainId
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
-      name: CheckpointScript
-    : StarcoinFramework
-    ? address: "0x00000000000000000000000000000001"
       name: Collection
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -321,7 +318,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 1ADEA5313385E10ADEB6110458248AC32BAF6AD4D96BF3176C207B4AF8D5106B
+  source_digest: D7E6AADF60D6DBC2B4D201DAD7194CB302243FDE0120938288500A2ACB9E75B8
   build_flags:
     dev_mode: false
     test_mode: false
