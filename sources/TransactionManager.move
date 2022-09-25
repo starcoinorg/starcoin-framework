@@ -21,7 +21,7 @@ module TransactionManager {
     use StarcoinFramework::Vector;
     use StarcoinFramework::STCTokenOracle::STCToken;
     use StarcoinFramework::StarcoinDAO::StarcoinDAO;
-    use StarcoinFramework::GasTokenOracleProposalPlugin::{Self, OracleProposalPlugin};
+    use StarcoinFramework::GasOracleProposalPlugin;
     use StarcoinFramework::STC;
 
     spec module {
@@ -67,7 +67,7 @@ module TransactionManager {
         // specified by the transaction
         assert!(ChainId::get() == chain_id, Errors::invalid_argument(EPROLOGUE_BAD_CHAIN_ID));
         let stc_price= if (!STC::is_stc<TokenType>()){
-            GasTokenOracleProposalPlugin::gas_token_oracle_read<StarcoinDAO,OracleProposalPlugin, STCToken<TokenType>>()
+            GasOracleProposalPlugin::gas_oracle_read<StarcoinDAO, STCToken<TokenType>>()
         }else{
             1
         };
@@ -170,7 +170,7 @@ module TransactionManager {
         CoreAddresses::assert_genesis_address(&account);
         let stc_price =
         if (!STC::is_stc<TokenType>()){
-            GasTokenOracleProposalPlugin::gas_token_oracle_read<StarcoinDAO, OracleProposalPlugin, TokenType>()
+            GasOracleProposalPlugin::gas_oracle_read<StarcoinDAO, TokenType>()
         }else{
             1
         };

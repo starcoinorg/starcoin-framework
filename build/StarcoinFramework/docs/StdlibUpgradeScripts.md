@@ -32,6 +32,7 @@ The module for StdlibUpgrade init scripts
 <b>use</b> <a href="DAOExtensionPoint.md#0x1_DAOExtensionPoint">0x1::DAOExtensionPoint</a>;
 <b>use</b> <a href="DAOPluginMarketplace.md#0x1_DAOPluginMarketplace">0x1::DAOPluginMarketplace</a>;
 <b>use</b> <a href="DAORegistry.md#0x1_DAORegistry">0x1::DAORegistry</a>;
+<b>use</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin">0x1::GasOracleProposalPlugin</a>;
 <b>use</b> <a href="GenesisNFT.md#0x1_GenesisNFT">0x1::GenesisNFT</a>;
 <b>use</b> <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability">0x1::GenesisSignerCapability</a>;
 <b>use</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin">0x1::GrantProposalPlugin</a>;
@@ -412,6 +413,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
     <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_initialize">MintProposalPlugin::initialize</a>();
     <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_initialize">StakeToSBTPlugin::initialize</a>();
     <a href="UpgradeModulePlugin.md#0x1_UpgradeModulePlugin_initialize">UpgradeModulePlugin::initialize</a>();
+    <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_initialize">GasOracleProposalPlugin::initialize</a>();
 
     //TODO : config rate need mind
     <a href="StarcoinDAO.md#0x1_StarcoinDAO_create_dao">StarcoinDAO::create_dao</a>( 60000, 120000, 10, 10000, 1000 * 1000 * 1000 * 1000);

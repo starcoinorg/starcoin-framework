@@ -21,7 +21,7 @@ module StarcoinFramework::GenesisSignerCapability {
     friend StarcoinFramework::MintProposalPlugin;
     friend StarcoinFramework::StakeToSBTPlugin;
     friend StarcoinFramework::UpgradeModulePlugin;
-
+    friend StarcoinFramework::GasOracleProposalPlugin;
     const ENOT_GENESIS_ACCOUNT: u64 = 11;
 
     struct GenesisSignerCapability has key {

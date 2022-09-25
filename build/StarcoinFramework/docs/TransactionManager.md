@@ -23,7 +23,7 @@
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
 <b>use</b> <a href="Epoch.md#0x1_Epoch">0x1::Epoch</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
-<b>use</b> <a href="GasTokenOracleProposalPlugin.md#0x1_GasTokenOracleProposalPlugin">0x1::GasTokenOracleProposalPlugin</a>;
+<b>use</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin">0x1::GasOracleProposalPlugin</a>;
 <b>use</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager">0x1::PackageTxnManager</a>;
 <b>use</b> <a href="STC.md#0x1_STC">0x1::STC</a>;
 <b>use</b> <a href="Oracle.md#0x1_STCTokenOracle">0x1::STCTokenOracle</a>;
@@ -158,7 +158,7 @@ It verifies:
     // specified by the transaction
     <b>assert</b>!(<a href="ChainId.md#0x1_ChainId_get">ChainId::get</a>() == chain_id, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_BAD_CHAIN_ID">EPROLOGUE_BAD_CHAIN_ID</a>));
     <b>let</b> stc_price= <b>if</b> (!<a href="STC.md#0x1_STC_is_stc">STC::is_stc</a>&lt;TokenType&gt;()){
-        <a href="GasTokenOracleProposalPlugin.md#0x1_GasTokenOracleProposalPlugin_gas_token_oracle_read">GasTokenOracleProposalPlugin::gas_token_oracle_read</a>&lt;<a href="StarcoinDAO.md#0x1_StarcoinDAO">StarcoinDAO</a>,OracleProposalPlugin, STCToken&lt;TokenType&gt;&gt;()
+        <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_gas_oracle_read">GasOracleProposalPlugin::gas_oracle_read</a>&lt;<a href="StarcoinDAO.md#0x1_StarcoinDAO">StarcoinDAO</a>, STCToken&lt;TokenType&gt;&gt;()
     }<b>else</b>{
         1
     };
@@ -333,7 +333,7 @@ It collects gas and bumps the sequence number
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(&account);
     <b>let</b> stc_price =
     <b>if</b> (!<a href="STC.md#0x1_STC_is_stc">STC::is_stc</a>&lt;TokenType&gt;()){
-        <a href="GasTokenOracleProposalPlugin.md#0x1_GasTokenOracleProposalPlugin_gas_token_oracle_read">GasTokenOracleProposalPlugin::gas_token_oracle_read</a>&lt;<a href="StarcoinDAO.md#0x1_StarcoinDAO">StarcoinDAO</a>, OracleProposalPlugin, TokenType&gt;()
+        <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_gas_oracle_read">GasOracleProposalPlugin::gas_oracle_read</a>&lt;<a href="StarcoinDAO.md#0x1_StarcoinDAO">StarcoinDAO</a>, TokenType&gt;()
     }<b>else</b>{
         1
     };

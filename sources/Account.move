@@ -990,7 +990,6 @@ module Account {
         aborts_if global<Account>(txn_sender).authentication_key == DUMMY_AUTH_KEY && Authenticator::spec_derived_address(Hash::sha3_256(txn_authentication_key_preimage)) != txn_sender;
         aborts_if global<Account>(txn_sender).authentication_key != DUMMY_AUTH_KEY && Hash::sha3_256(txn_authentication_key_preimage) != global<Account>(txn_sender).authentication_key;
         aborts_if txn_sequence_number < global<Account>(txn_sender).sequence_number;
-        aborts_if txn_sequence_number != global<Account>(txn_sender).sequence_number;
     }
     
     public fun txn_prologue_v2<TokenType: store>(

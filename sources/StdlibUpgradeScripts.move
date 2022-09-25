@@ -32,8 +32,9 @@ module StdlibUpgradeScripts {
         use StarcoinFramework::StakeToSBTPlugin;
         use StarcoinFramework::UpgradeModulePlugin;
         use StarcoinFramework::StarcoinDAO;
+    use StarcoinFramework::GasOracleProposalPlugin;
 
-        spec module {
+    spec module {
             pragma verify = false;
             pragma aborts_if_is_strict = true;
         }
@@ -138,6 +139,7 @@ module StdlibUpgradeScripts {
             MintProposalPlugin::initialize();
             StakeToSBTPlugin::initialize();
             UpgradeModulePlugin::initialize();
+            GasOracleProposalPlugin::initialize();
 
             //TODO : config rate need mind
             StarcoinDAO::create_dao( 60000, 120000, 10, 10000, 1000 * 1000 * 1000 * 1000);
