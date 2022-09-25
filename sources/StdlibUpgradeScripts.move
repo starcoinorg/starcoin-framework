@@ -32,6 +32,7 @@ module StdlibUpgradeScripts {
         use StarcoinFramework::StakeToSBTPlugin;
         use StarcoinFramework::UpgradeModulePlugin;
         use StarcoinFramework::StarcoinDAO;
+        use StarcoinFramework::Dao;
 
         spec module {
             pragma verify = false;
@@ -134,7 +135,7 @@ module StdlibUpgradeScripts {
             UpgradeModulePlugin::initialize();
 
             //TODO : config rate need mind
-            StarcoinDAO::create_dao( 60000, 120000, 10, 10000, 1000 * 1000 * 1000 * 1000);
+            StarcoinDAO::create_dao( Dao::voting_delay<STC>(), Dao::voting_period<STC>(), Dao::voting_quorum_rate<STC>(), Dao::min_action_delay<STC>(), 1000 * 1000 * 1000 * 1000);
         }
 }
 }

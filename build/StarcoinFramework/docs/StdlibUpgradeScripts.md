@@ -30,6 +30,7 @@ The module for StdlibUpgrade init scripts
 <b>use</b> <a href="DAOExtensionPoint.md#0x1_DAOExtensionPoint">0x1::DAOExtensionPoint</a>;
 <b>use</b> <a href="DAOPluginMarketplace.md#0x1_DAOPluginMarketplace">0x1::DAOPluginMarketplace</a>;
 <b>use</b> <a href="DAORegistry.md#0x1_DAORegistry">0x1::DAORegistry</a>;
+<b>use</b> <a href="Dao.md#0x1_Dao">0x1::Dao</a>;
 <b>use</b> <a href="GenesisNFT.md#0x1_GenesisNFT">0x1::GenesisNFT</a>;
 <b>use</b> <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability">0x1::GenesisSignerCapability</a>;
 <b>use</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin">0x1::GrantProposalPlugin</a>;
@@ -366,7 +367,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
     <a href="UpgradeModulePlugin.md#0x1_UpgradeModulePlugin_initialize">UpgradeModulePlugin::initialize</a>();
 
     //TODO : config rate need mind
-    <a href="StarcoinDAO.md#0x1_StarcoinDAO_create_dao">StarcoinDAO::create_dao</a>( 60000, 120000, 10, 10000, 1000 * 1000 * 1000 * 1000);
+    <a href="StarcoinDAO.md#0x1_StarcoinDAO_create_dao">StarcoinDAO::create_dao</a>( <a href="Dao.md#0x1_Dao_voting_delay">Dao::voting_delay</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(), <a href="Dao.md#0x1_Dao_voting_period">Dao::voting_period</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(), <a href="Dao.md#0x1_Dao_voting_quorum_rate">Dao::voting_quorum_rate</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(), <a href="Dao.md#0x1_Dao_min_action_delay">Dao::min_action_delay</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(), 1000 * 1000 * 1000 * 1000);
 }
 </code></pre>
 
