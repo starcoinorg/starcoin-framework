@@ -85,6 +85,9 @@ compiled_package_info:
       name: Event
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: EventUtil
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: FixedPoint32
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -264,7 +267,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 2317458930368CCF368CBFCFD2A2D84B74B03521306A30839C2CFFA9D0DCF89E
+  source_digest: 292D789D77E5CCC4DC7A710845C6751F5308EBD27AECB68680A2DF92F7A057F6
   build_flags:
     dev_mode: false
     test_mode: false
