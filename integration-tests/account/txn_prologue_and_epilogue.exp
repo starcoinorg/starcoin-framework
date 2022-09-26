@@ -1,12 +1,12 @@
-processed 12 tasks
+processed 14 tasks
 
-task 3 'run'. lines 8-23:
+task 3 'run'. lines 8-29:
 {
-  "gas_used": 494124,
+  "gas_used": 621301,
   "status": "Executed"
 }
 
-task 4 'run'. lines 27-59:
+task 4 'run'. lines 31-63:
 {
   "gas_used": 180218,
   "status": {
@@ -22,9 +22,9 @@ task 4 'run'. lines 27-59:
   }
 }
 
-task 5 'run'. lines 63-89:
+task 5 'run'. lines 67-93:
 {
-  "gas_used": 322008,
+  "gas_used": 316547,
   "status": {
     "MoveAbort": {
       "location": {
@@ -38,7 +38,7 @@ task 5 'run'. lines 63-89:
   }
 }
 
-task 6 'run'. lines 93-121:
+task 6 'run'. lines 97-125:
 {
   "gas_used": 306271,
   "status": {
@@ -54,9 +54,9 @@ task 6 'run'. lines 93-121:
   }
 }
 
-task 7 'run'. lines 125-155:
+task 7 'run'. lines 129-159:
 {
-  "gas_used": 328456,
+  "gas_used": 322995,
   "status": {
     "MoveAbort": {
       "location": {
@@ -70,15 +70,15 @@ task 7 'run'. lines 125-155:
   }
 }
 
-task 8 'run'. lines 159-204:
+task 8 'run'. lines 163-208:
 {
-  "gas_used": 422198,
+  "gas_used": 411278,
   "status": "Executed"
 }
 
-task 9 'run'. lines 208-238:
+task 9 'run'. lines 212-242:
 {
-  "gas_used": 328326,
+  "gas_used": 322865,
   "status": {
     "MoveAbort": {
       "location": {
@@ -92,9 +92,9 @@ task 9 'run'. lines 208-238:
   }
 }
 
-task 10 'run'. lines 242-273:
+task 10 'run'. lines 246-277:
 {
-  "gas_used": 185963,
+  "gas_used": 180502,
   "status": {
     "MoveAbort": {
       "location": {
@@ -108,7 +108,7 @@ task 10 'run'. lines 242-273:
   }
 }
 
-task 11 'run'. lines 277-308:
+task 11 'run'. lines 281-312:
 {
   "gas_used": 174601,
   "status": {
@@ -122,4 +122,26 @@ task 11 'run'. lines 277-308:
       "abort_code": "2818"
     }
   }
+}
+
+task 12 'run'. lines 314-349:
+{
+  "gas_used": 344240,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Account"
+        }
+      },
+      "abort_code": "1031"
+    }
+  }
+}
+
+task 13 'run'. lines 351-399:
+{
+  "gas_used": 426973,
+  "status": "Executed"
 }

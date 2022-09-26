@@ -15,7 +15,7 @@ module Account {
     use StarcoinFramework::Errors;
     use StarcoinFramework::STC::{Self, STC};
     use StarcoinFramework::BCS;
-    use StarcoinFramework::Math;
+
     friend StarcoinFramework::StarcoinDAO;
 
     spec module {
@@ -1025,7 +1025,7 @@ module Account {
             );
         };
         // Check that the account has enough balance for all of the gas
-        let max_transaction_fee = Math::mul_div((txn_gas_price as u128) ,(txn_max_gas_units as u128), stc_price);
+        let max_transaction_fee = (txn_gas_price as u128)* (txn_max_gas_units as u128) * stc_price;
         assert!(
             max_transaction_fee <= MAX_U64,
             Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT),
@@ -1041,6 +1041,7 @@ module Account {
         // Check that the transaction sequence number matches the sequence number of the account
         assert!(txn_sequence_number >= sender_account.sequence_number, Errors::invalid_argument(EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD));
         assert!(txn_sequence_number == sender_account.sequence_number, Errors::invalid_argument(EPROLOGUE_SEQUENCE_NUMBER_TOO_NEW));
+
     }
 
 
@@ -1076,7 +1077,8 @@ module Account {
         CoreAddresses::assert_genesis_address(account);
         // Charge for gas
         let sender_balance = borrow_global_mut<Balance<TokenType>>(txn_sender);
-        let transaction_fee_amount= Math::mul_div((txn_gas_price as u128), ((txn_max_gas_units - gas_units_remaining) as u128), stc_price);
+
+        let transaction_fee_amount= (txn_gas_price as u128) * ((txn_max_gas_units - gas_units_remaining) as u128) * stc_price;
         assert!(
             balance_for(sender_balance) >= transaction_fee_amount,
             Errors::limit_exceeded(EINSUFFICIENT_BALANCE)
@@ -1096,7 +1098,7 @@ module Account {
                 transaction_fee_amount
             );
             deposit_to_balance(borrow_global_mut<Balance<TokenType>>(CoreAddresses::GENESIS_ADDRESS()), transaction_fee);
-            let stc_transaction_fee = withdraw_from_balance(borrow_global_mut<Balance<STC>>(CoreAddresses::GENESIS_ADDRESS()), transaction_fee_amount*stc_price);
+            let stc_transaction_fee = withdraw_from_balance(borrow_global_mut<Balance<STC>>(CoreAddresses::GENESIS_ADDRESS()), transaction_fee_amount/stc_price);
             TransactionFee::pay_fee(stc_transaction_fee);
         };
     }
