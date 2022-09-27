@@ -71,7 +71,7 @@ module StarcoinFramework::DAOAccount{
         let dao_address = Signer::address_of(&dao_signer);
         
         let upgrade_plan_cap = if(Config::config_exist_by_address<Version::Version>(dao_address)){
-            assert!(PackageTxnManager::is_have_upgrade_plan_cap(dao_address), Errors::already_published(ERR_UPGARDE_PLAN_CAP_NOT_EXISTS));
+            assert!(PackageTxnManager::is_have_upgrade_plan_cap(dao_address), Errors::not_published(ERR_UPGARDE_PLAN_CAP_NOT_EXISTS));
             PackageTxnManager::extract_submit_upgrade_plan_cap(&dao_signer)
         }else{
             Config::publish_new_config<Version::Version>(&dao_signer, Version::new_version(1));
