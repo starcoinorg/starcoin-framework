@@ -7,6 +7,9 @@ compiled_package_info:
     VMReserved: "0x00000000000000000000000000000000"
   module_resolution_metadata:
     ? address: "0x00000000000000000000000000000001"
+      name: ASCII
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: Account
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -318,7 +321,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: A155383ABA4B2CECDADAD666C4E012F372A73E64B9B0EA9CA977261219D8ED8E
+  source_digest: 4C96D09C5AAF229BF0BFA79CEEEC3E42D49C436FEBA79BBF776354A60A84F1BD
   build_flags:
     dev_mode: false
     test_mode: false
