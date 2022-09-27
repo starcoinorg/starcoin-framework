@@ -40,6 +40,7 @@ The module provides strategies for module upgrading.
 -  [Function `package_txn_prologue`](#0x1_PackageTxnManager_package_txn_prologue)
 -  [Function `package_txn_prologue_v2`](#0x1_PackageTxnManager_package_txn_prologue_v2)
 -  [Function `package_txn_epilogue`](#0x1_PackageTxnManager_package_txn_epilogue)
+-  [Function `exists_upgrade_plan_cap`](#0x1_PackageTxnManager_exists_upgrade_plan_cap)
 -  [Module Specification](#@Module_Specification_1)
 
 
@@ -1536,6 +1537,42 @@ Package txn finished, and clean UpgradePlan
 <b>aborts_if</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_spec_get_module_upgrade_strategy">spec_get_module_upgrade_strategy</a>(package_address) == 1
     && success && <a href="Option.md#0x1_Option_is_some">Option::is_some</a>(<b>global</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_TwoPhaseUpgrade">TwoPhaseUpgrade</a>&gt;(package_address).plan)
     && !<b>exists</b>&lt;<a href="Config.md#0x1_Config_Config">Config::Config</a>&lt;<a href="Version.md#0x1_Version_Version">Version::Version</a>&gt;&gt;(<b>global</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_TwoPhaseUpgrade">TwoPhaseUpgrade</a>&gt;(package_address).version_cap.account_address);
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_PackageTxnManager_exists_upgrade_plan_cap"></a>
+
+## Function `exists_upgrade_plan_cap`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_exists_upgrade_plan_cap">exists_upgrade_plan_cap</a>(addr: <b>address</b>): bool
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_exists_upgrade_plan_cap">exists_upgrade_plan_cap</a>(addr :<b>address</b>):bool{
+    <b>exists</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanCapability">UpgradePlanCapability</a>&gt;(addr)
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>aborts_if</b> <b>false</b>;
 </code></pre>
 
 
