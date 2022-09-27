@@ -40,7 +40,7 @@ The module provides strategies for module upgrading.
 -  [Function `package_txn_prologue`](#0x1_PackageTxnManager_package_txn_prologue)
 -  [Function `package_txn_prologue_v2`](#0x1_PackageTxnManager_package_txn_prologue_v2)
 -  [Function `package_txn_epilogue`](#0x1_PackageTxnManager_package_txn_epilogue)
--  [Function `is_have_upgrade_plan_cap`](#0x1_PackageTxnManager_is_have_upgrade_plan_cap)
+-  [Function `exists_upgrade_plan_cap`](#0x1_PackageTxnManager_exists_upgrade_plan_cap)
 -  [Module Specification](#@Module_Specification_1)
 
 
@@ -1543,13 +1543,13 @@ Package txn finished, and clean UpgradePlan
 
 </details>
 
-<a name="0x1_PackageTxnManager_is_have_upgrade_plan_cap"></a>
+<a name="0x1_PackageTxnManager_exists_upgrade_plan_cap"></a>
 
-## Function `is_have_upgrade_plan_cap`
+## Function `exists_upgrade_plan_cap`
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_is_have_upgrade_plan_cap">is_have_upgrade_plan_cap</a>(addr: <b>address</b>): bool
+<pre><code><b>public</b> <b>fun</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_exists_upgrade_plan_cap">exists_upgrade_plan_cap</a>(addr: <b>address</b>): bool
 </code></pre>
 
 
@@ -1558,7 +1558,7 @@ Package txn finished, and clean UpgradePlan
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_is_have_upgrade_plan_cap">is_have_upgrade_plan_cap</a>(addr :<b>address</b>):bool{
+<pre><code><b>public</b> <b>fun</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_exists_upgrade_plan_cap">exists_upgrade_plan_cap</a>(addr :<b>address</b>):bool{
     <b>exists</b>&lt;<a href="PackageTxnManager.md#0x1_PackageTxnManager_UpgradePlanCapability">UpgradePlanCapability</a>&gt;(addr)
 }
 </code></pre>
