@@ -16,7 +16,8 @@ module StarcoinFramework::DAOAccount{
 
     const ERR_ACCOUNT_CAP_NOT_EXISTS:u64 = 100;
     const ERR_ACCOUNT_CAP_EXISTS: u64 = 101;
-    const ERR_ACCOUNT_IS_NOT_SAME:u64 = 102;
+    const ERR_ACCOUNT_IS_NOT_SAME: u64 = 102;
+    const ERR_UPGARDE_PLAN_CAP_NOT_EXISTS: u64 = 103;
 
     /// DAOAccount
     struct DAOAccount has key{
@@ -70,7 +71,7 @@ module StarcoinFramework::DAOAccount{
         let dao_address = Signer::address_of(&dao_signer);
         
         let upgrade_plan_cap = if(Config::config_exist_by_address<Version::Version>(dao_address)){
-            //TODO if the account has extract the upgrade plan cap
+            assert!(PackageTxnManager::exists_upgrade_plan_cap(dao_address), Errors::not_published(ERR_UPGARDE_PLAN_CAP_NOT_EXISTS));
             PackageTxnManager::extract_submit_upgrade_plan_cap(&dao_signer)
         }else{
             Config::publish_new_config<Version::Version>(&dao_signer, Version::new_version(1));
