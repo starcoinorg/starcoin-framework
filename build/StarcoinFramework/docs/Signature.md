@@ -118,6 +118,19 @@ recover address from ECDSA signature, if recover fail, return None
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> opaque;
+<b>ensures</b> [abstract] <a href="Option.md#0x1_Option_is_none">Option::is_none</a>(result) || len(<a href="Option.md#0x1_Option_borrow">Option::borrow</a>(result).bytes) == <a href="Signature.md#0x1_EVMAddress_EVM_ADDR_LENGTH">EVMAddress::EVM_ADDR_LENGTH</a>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Signature_secp256k1_verify"></a>
 
 ## Function `secp256k1_verify`

@@ -22,6 +22,10 @@ module Signature {
             Option::some(EVMAddress::new(bytes))
         }
     }
+    spec ecrecover {
+        pragma opaque;
+        ensures [abstract] Option::is_none(result) || len(Option::borrow(result).bytes) == EVMAddress::EVM_ADDR_LENGTH;
+    }
 
     // verify eth secp256k1 sign and compare addr, if add equal return true
     public fun secp256k1_verify(signature: vector<u8>, addr: vector<u8>, message: vector<u8>) : bool{
