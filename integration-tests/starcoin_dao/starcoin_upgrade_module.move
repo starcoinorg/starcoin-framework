@@ -246,7 +246,6 @@ script{
     fun execute_proposal(sender: signer){
         assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 7 , 103);
         UpgradeModulePlugin::execute_proposal<StarcoinDAO>(&sender, 1);
-        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 8 , 103);
     }
 }
 // check: EXECUTED

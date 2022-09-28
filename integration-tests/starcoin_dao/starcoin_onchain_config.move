@@ -239,7 +239,6 @@ script{
     fun execute_proposal(sender: signer){
         assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 7 , 103);
         ConfigProposalPlugin::execute_proposal<StarcoinDAO, RewardConfig::RewardConfig>(&sender, 1);
-        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 8 , 104);
 
         assert!(RewardConfig::reward_delay() == 5, 105);
 

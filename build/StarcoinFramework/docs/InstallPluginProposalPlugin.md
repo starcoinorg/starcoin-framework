@@ -56,7 +56,7 @@
 
 
 
-<pre><code><b>struct</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_InstallPluginAction">InstallPluginAction</a>&lt;ToInstallPluginT&gt; <b>has</b> store
+<pre><code><b>struct</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_InstallPluginAction">InstallPluginAction</a>&lt;ToInstallPluginT&gt; <b>has</b> drop, store
 </code></pre>
 
 
