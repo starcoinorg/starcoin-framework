@@ -115,6 +115,12 @@ compiled_package_info:
       name: FixedPoint32
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: GasOracle
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: GasOracleProposalPlugin
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: Genesis
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -321,7 +327,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 5F39868CB8511B5984EA5AFAC56DD524087DB8401BE9901148BA2CBF177357E4
+  source_digest: 8EF29F90FF139AC49CC2FE59DA218D959B0B29842ABFA2203CAC3C96153AF336
   build_flags:
     dev_mode: false
     test_mode: false
