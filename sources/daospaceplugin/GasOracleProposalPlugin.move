@@ -8,6 +8,7 @@ module StarcoinFramework::GasOracleProposalPlugin {
     use StarcoinFramework::GenesisSignerCapability;
     use StarcoinFramework::Errors;
     use StarcoinFramework::PriceOracleAggregator;
+    use StarcoinFramework::Account;
 
     const ERR_PLUGIN_ORACLE_EXIST: u64 = 1001;
     const ERR_PLUGIN_ORACLE_NOT_EXIST: u64 = 1002;
@@ -77,6 +78,8 @@ module StarcoinFramework::GasOracleProposalPlugin {
         let OracleSourceAddAction<TokenType>{ source_address } = DAOSpace::execute_proposal<DAOT, GasOracleProposalPlugin, OracleSourceAddAction<TokenType>>(&proposal_cap, &sender, proposal_id);
         let storage_cap = DAOSpace::acquire_storage_cap<DAOT, GasOracleProposalPlugin>(&witness);
         let source_addresses = if (!DAOSpace::exists_storage<DAOT, GasOracleProposalPlugin, OracleSources<TokenType>>()) {
+            let genesis_singer= GenesisSignerCapability::get_genesis_signer();
+            Account::accept_token<TokenType>(genesis_singer);
             Vector::singleton(source_address)
         }else {
             let OracleSources<TokenType>{ source_addresses } = DAOSpace::take<DAOT, GasOracleProposalPlugin, OracleSources<TokenType>>(&storage_cap);
