@@ -1028,10 +1028,7 @@ module Account {
             );
         };
         // Check that the account has enough balance for all of the gas
-
-        let max_transaction_fee_stc = (txn_gas_price as u128) * (txn_max_gas_units as u128);
-        let max_transaction_fee_token = Math::mul_div((max_transaction_fee_stc as u128), stc_price, stc_price_scaling);
-
+        let (max_transaction_fee_stc,max_transaction_fee_token) = transaction_fee_simulate(txn_gas_price,txn_max_gas_units,0, stc_price, stc_price_scaling);
         assert!(
             max_transaction_fee_stc <= MAX_U64,
             Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT),
@@ -1041,9 +1038,13 @@ module Account {
                 (txn_sequence_number as u128) < MAX_U64,
                 Errors::limit_exceeded(EPROLOGUE_SEQUENCE_NUMBER_TOO_BIG)
             );
-            max_transaction_fee_token = if (max_transaction_fee_token ==0) { 1 } else { max_transaction_fee_token };
-            let balance_amount = balance<TokenType>(txn_sender);
-            assert!(balance_amount >= max_transaction_fee_token, Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT));
+            let balance_amount_token = balance<TokenType>(txn_sender);
+            assert!(balance_amount_token >= max_transaction_fee_token, Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT));
+            // FIXME: check stc amount of genesis?
+            /*
+            let balance_amount_stc= balance<STC>(CoreAddresses::GENESIS_ADDRESS());
+            assert!(balance_amount_stc >= max_transaction_fee_stc, Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT));
+            */
         };
         // Check that the transaction sequence number matches the sequence number of the account
         assert!(txn_sequence_number >= sender_account.sequence_number, Errors::invalid_argument(EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD));
@@ -1069,6 +1070,19 @@ module Account {
         pragma verify = false;
     }
 
+    public fun transaction_fee_simulate(
+        txn_gas_price:u64,
+        txn_max_gas_units: u64,
+        gas_units_remaining:u64,
+        stc_price: u128,
+        stc_price_scaling: u128,
+    ): (u128, u128){
+        let transaction_fee_stc =(txn_gas_price * (txn_max_gas_units - gas_units_remaining) as u128);
+        let transaction_fee_token= Math::mul_div((transaction_fee_stc as u128), stc_price, stc_price_scaling);
+        transaction_fee_token = if (transaction_fee_token == 0 && transaction_fee_stc > 0 ) { 1 } else { transaction_fee_token};
+        (transaction_fee_stc, transaction_fee_token)
+    }
+
     /// The epilogue is invoked at the end of transactions.
     /// It collects gas and bumps the sequence number
     public fun txn_epilogue_v2<TokenType: store>(
@@ -1084,16 +1098,21 @@ module Account {
     ) acquires Account, Balance {
         CoreAddresses::assert_genesis_address(account);
         // Charge for gas
-        let sender_balance = borrow_global_mut<Balance<TokenType>>(txn_sender);
-        let transaction_fee_amount_stc =(txn_gas_price * (txn_max_gas_units - gas_units_remaining) as u128);
-        let transaction_fee_amount_token= Math::mul_div(transaction_fee_amount_stc, stc_price, stc_price_scaling);
-        transaction_fee_amount_token = if (transaction_fee_amount_token ==0) { 1 } else { transaction_fee_amount_token };
-
+        let (transaction_fee_amount_stc,transaction_fee_amount_token) = transaction_fee_simulate(
+            txn_gas_price,
+            txn_max_gas_units,
+            gas_units_remaining,
+            stc_price,
+            stc_price_scaling);
         assert!(
-            balance_for(sender_balance) >= transaction_fee_amount_token,
+            balance<TokenType>(txn_sender) >= transaction_fee_amount_token,
             Errors::limit_exceeded(EINSUFFICIENT_BALANCE)
         );
-
+        /*
+        let genesis_balance_amount_stc=balance<STC>(CoreAddresses::GENESIS_ADDRESS());
+        assert!(genesis_balance_amount_stc >= transaction_fee_amount_stc,
+            Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT)
+        );*/
         // Load the transaction sender's account and balance resources
         let sender_account = borrow_global_mut<Account>(txn_sender);
         // Bump the sequence number
@@ -1103,13 +1122,13 @@ module Account {
             sender_account.authentication_key = Hash::sha3_256(txn_authentication_key_preimage);
         };
         if (transaction_fee_amount_stc > 0) {
-            let transaction_fee = withdraw_from_balance(
-                sender_balance,
+            let transaction_fee_token = withdraw_from_balance(
+            borrow_global_mut<Balance<TokenType>>(txn_sender),
                 transaction_fee_amount_token
             );
-            deposit_to_balance(borrow_global_mut<Balance<TokenType>>(CoreAddresses::GENESIS_ADDRESS()), transaction_fee);
-            let stc_transaction_fee = withdraw_from_balance(borrow_global_mut<Balance<STC>>(CoreAddresses::GENESIS_ADDRESS()), transaction_fee_amount_stc);
-            TransactionFee::pay_fee(stc_transaction_fee);
+            deposit_to_balance(borrow_global_mut<Balance<TokenType>>(CoreAddresses::GENESIS_ADDRESS()), transaction_fee_token);
+            let stc_fee_token = withdraw_from_balance(borrow_global_mut<Balance<STC>>(CoreAddresses::GENESIS_ADDRESS()), transaction_fee_amount_stc);
+            TransactionFee::pay_fee(stc_fee_token);
         };
     }
 

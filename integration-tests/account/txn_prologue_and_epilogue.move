@@ -400,3 +400,29 @@ script {
 
 }
 // check: EXECUTED
+
+
+//# run --signers Genesis
+script {
+    use StarcoinFramework::Account;
+
+    fun main(_account: signer){
+        let (txn_gas_price, txn_max_gas_units, gas_units_remaining,
+            stc_price, stc_price_scaling
+        ) = (1, 100000, 0, 43793, 1000000000000000);
+        let (stc_amount, token_amount) = Account::transaction_fee_simulate(txn_gas_price, txn_max_gas_units, gas_units_remaining,
+            stc_price, stc_price_scaling);
+        assert!(stc_amount==100000, 100);
+        assert!(token_amount==1, 101);
+
+        let (txn_gas_price, txn_max_gas_units, gas_units_remaining,
+            stc_price, stc_price_scaling
+        ) = (1000000, 100000, 0, 43793, 1000000000000000);
+        let (stc_amount, token_amount) = Account::transaction_fee_simulate(txn_gas_price, txn_max_gas_units, gas_units_remaining,
+            stc_price, stc_price_scaling);
+        assert!(stc_amount==100000000000, 102);
+        assert!(token_amount==4, 103);
+        
+    }
+}
+// check: EXECUTED
