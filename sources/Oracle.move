@@ -244,7 +244,6 @@ module PriceOracle {
 
 module GasOracle {
     use StarcoinFramework::PriceOracle;
-
     struct STCToken<phantom TokenType:store> has copy, store, drop {
     }
 
@@ -258,6 +257,9 @@ module GasOracle {
     
     public fun update<TokenType:store>(sender: &signer, value: u128){
         PriceOracle::update<STCToken<TokenType>>(sender, value);
+    }
+    public fun get_scaling_factor<TokenType: store>(): u128 {
+        PriceOracle::get_scaling_factor<STCToken<TokenType>>()
     }
 }
 

@@ -91,6 +91,7 @@ The module for the account resource that governs every account
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Event.md#0x1_Event">0x1::Event</a>;
 <b>use</b> <a href="Hash.md#0x1_Hash">0x1::Hash</a>;
+<b>use</b> <a href="Math.md#0x1_Math">0x1::Math</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
 <b>use</b> <a href="STC.md#0x1_STC">0x1::STC</a>;
 <b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
@@ -3071,6 +3072,7 @@ It verifies:
         txn_gas_price,
         txn_max_gas_units,
         1,
+        1,
     )
 }
 </code></pre>
@@ -3101,7 +3103,7 @@ It verifies:
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_txn_prologue_v2">txn_prologue_v2</a>&lt;TokenType: store&gt;(account: &signer, txn_sender: <b>address</b>, txn_sequence_number: u64, txn_authentication_key_preimage: vector&lt;u8&gt;, txn_gas_price: u64, txn_max_gas_units: u64, stc_price: u128)
+<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_txn_prologue_v2">txn_prologue_v2</a>&lt;TokenType: store&gt;(account: &signer, txn_sender: <b>address</b>, txn_sequence_number: u64, txn_authentication_key_preimage: vector&lt;u8&gt;, txn_gas_price: u64, txn_max_gas_units: u64, stc_price: u128, stc_price_scaling: u128)
 </code></pre>
 
 
@@ -3118,6 +3120,7 @@ It verifies:
     txn_gas_price: u64,
     txn_max_gas_units: u64,
     stc_price: u128,
+    stc_price_scaling: u128
 ) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a> {
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
 
@@ -3143,7 +3146,7 @@ It verifies:
         );
     };
     // Check that the account <b>has</b> enough balance for all of the gas
-    <b>let</b> max_transaction_fee = (txn_gas_price <b>as</b> u128)* (txn_max_gas_units <b>as</b> u128) * stc_price;
+    <b>let</b> max_transaction_fee = <a href="Math.md#0x1_Math_mul_div">Math::mul_div</a>(((txn_gas_price * txn_max_gas_units) <b>as</b> u128), stc_price, stc_price_scaling);
     <b>assert</b>!(
         max_transaction_fee &lt;= <a href="Account.md#0x1_Account_MAX_U64">MAX_U64</a>,
         <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_CANT_PAY_GAS_DEPOSIT">EPROLOGUE_CANT_PAY_GAS_DEPOSIT</a>),
@@ -3192,7 +3195,7 @@ It collects gas and bumps the sequence number
     txn_max_gas_units: u64,
     gas_units_remaining: u64,
 ) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a> {
-    <a href="Account.md#0x1_Account_txn_epilogue_v2">txn_epilogue_v2</a>&lt;TokenType&gt;(account, txn_sender, txn_sequence_number, <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>(), txn_gas_price, txn_max_gas_units, gas_units_remaining,1)
+    <a href="Account.md#0x1_Account_txn_epilogue_v2">txn_epilogue_v2</a>&lt;TokenType&gt;(account, txn_sender, txn_sequence_number, <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>(), txn_gas_price, txn_max_gas_units, gas_units_remaining,1,1)
 }
 </code></pre>
 
@@ -3220,7 +3223,7 @@ The epilogue is invoked at the end of transactions.
 It collects gas and bumps the sequence number
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_txn_epilogue_v2">txn_epilogue_v2</a>&lt;TokenType: store&gt;(account: &signer, txn_sender: <b>address</b>, txn_sequence_number: u64, txn_authentication_key_preimage: vector&lt;u8&gt;, txn_gas_price: u64, txn_max_gas_units: u64, gas_units_remaining: u64, stc_price: u128)
+<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_txn_epilogue_v2">txn_epilogue_v2</a>&lt;TokenType: store&gt;(account: &signer, txn_sender: <b>address</b>, txn_sequence_number: u64, txn_authentication_key_preimage: vector&lt;u8&gt;, txn_gas_price: u64, txn_max_gas_units: u64, gas_units_remaining: u64, stc_price: u128, stc_price_scaling: u128)
 </code></pre>
 
 
@@ -3238,12 +3241,13 @@ It collects gas and bumps the sequence number
     txn_max_gas_units: u64,
     gas_units_remaining: u64,
     stc_price: u128,
+    stc_price_scaling: u128,
 ) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a> {
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
     // Charge for gas
     <b>let</b> sender_balance = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;TokenType&gt;&gt;(txn_sender);
 
-    <b>let</b> transaction_fee_amount= (txn_gas_price <b>as</b> u128) * ((txn_max_gas_units - gas_units_remaining) <b>as</b> u128) * stc_price;
+    <b>let</b> transaction_fee_amount= <a href="Math.md#0x1_Math_mul_div">Math::mul_div</a>(((txn_gas_price * (txn_max_gas_units - gas_units_remaining)) <b>as</b> u128),stc_price, stc_price_scaling);
     <b>assert</b>!(
         <a href="Account.md#0x1_Account_balance_for">balance_for</a>(sender_balance) &gt;= transaction_fee_amount,
         <a href="Errors.md#0x1_Errors_limit_exceeded">Errors::limit_exceeded</a>(<a href="Account.md#0x1_Account_EINSUFFICIENT_BALANCE">EINSUFFICIENT_BALANCE</a>)
@@ -3263,7 +3267,7 @@ It collects gas and bumps the sequence number
             transaction_fee_amount
         );
         <a href="Account.md#0x1_Account_deposit_to_balance">deposit_to_balance</a>(<b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;TokenType&gt;&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()), transaction_fee);
-        <b>let</b> stc_transaction_fee = <a href="Account.md#0x1_Account_withdraw_from_balance">withdraw_from_balance</a>(<b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()), transaction_fee_amount/stc_price);
+        <b>let</b> stc_transaction_fee = <a href="Account.md#0x1_Account_withdraw_from_balance">withdraw_from_balance</a>(<b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()), (txn_gas_price <b>as</b> u128) * ((txn_max_gas_units - gas_units_remaining) <b>as</b> u128));
         <a href="TransactionFee.md#0x1_TransactionFee_pay_fee">TransactionFee::pay_fee</a>(stc_transaction_fee);
     };
 }

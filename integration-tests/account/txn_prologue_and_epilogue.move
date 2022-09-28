@@ -20,9 +20,9 @@ script {
         let address = Authenticator::derived_address(auth_key_vec);
         Account::create_account_with_address<STC>(address);
         Account::pay_from<STC>(&account, address, 5000);
-        let coin = DummyToken::mint(&account, 5000);
+        let coin = DummyToken::mint(&account, 500);
         Account::deposit(address, coin);
-        assert!(Account::balance<DummyToken>(address) == 5000, 1000);
+        assert!(Account::balance<DummyToken>(address) == 500, 1000);
 
     }
 }
@@ -331,7 +331,7 @@ script {
 
         let txn_sequence_number = 1;
         let txn_gas_price = 1;
-        let txn_max_gas_units = 2501;
+        let txn_max_gas_units = 2510;
         Account::do_accept_token<DummyToken>(&account);
 
         Account::txn_prologue_v2<DummyToken>(
@@ -341,7 +341,8 @@ script {
             txn_public_key,
             txn_gas_price,
             txn_max_gas_units,
-            2
+            2,
+            10,
         );
     }
 
@@ -377,7 +378,8 @@ script {
             txn_public_key,
             txn_gas_price,
             txn_max_gas_units,
-            2
+            2,
+            10,
         );
         // execute the txn...
         let gas_units_remaining = 10;
@@ -390,6 +392,7 @@ script {
             txn_max_gas_units,
             gas_units_remaining,
             2,
+            10,
         );
         let seq = Account::sequence_number(txn_sender);
         assert!(seq == 2, 1006);

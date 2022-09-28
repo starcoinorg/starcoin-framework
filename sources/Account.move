@@ -15,6 +15,7 @@ module Account {
     use StarcoinFramework::Errors;
     use StarcoinFramework::STC::{Self, STC};
     use StarcoinFramework::BCS;
+    use StarcoinFramework::Math;
 
     friend StarcoinFramework::StarcoinDAO;
 
@@ -982,6 +983,7 @@ module Account {
             txn_gas_price,
             txn_max_gas_units,
             1,
+            1,
         )
     }
     spec txn_prologue {
@@ -1000,6 +1002,7 @@ module Account {
         txn_gas_price: u64,
         txn_max_gas_units: u64,
         stc_price: u128,
+        stc_price_scaling: u128
     ) acquires Account, Balance {
         CoreAddresses::assert_genesis_address(account);
 
@@ -1025,7 +1028,7 @@ module Account {
             );
         };
         // Check that the account has enough balance for all of the gas
-        let max_transaction_fee = (txn_gas_price as u128)* (txn_max_gas_units as u128) * stc_price;
+        let max_transaction_fee = Math::mul_div(((txn_gas_price * txn_max_gas_units) as u128), stc_price, stc_price_scaling);
         assert!(
             max_transaction_fee <= MAX_U64,
             Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT),
@@ -1055,7 +1058,7 @@ module Account {
         txn_max_gas_units: u64,
         gas_units_remaining: u64,
     ) acquires Account, Balance {
-        txn_epilogue_v2<TokenType>(account, txn_sender, txn_sequence_number, Vector::empty(), txn_gas_price, txn_max_gas_units, gas_units_remaining,1)
+        txn_epilogue_v2<TokenType>(account, txn_sender, txn_sequence_number, Vector::empty(), txn_gas_price, txn_max_gas_units, gas_units_remaining,1,1)
     }
 
     spec txn_epilogue {
@@ -1073,12 +1076,13 @@ module Account {
         txn_max_gas_units: u64,
         gas_units_remaining: u64,
         stc_price: u128,
+        stc_price_scaling: u128,
     ) acquires Account, Balance {
         CoreAddresses::assert_genesis_address(account);
         // Charge for gas
         let sender_balance = borrow_global_mut<Balance<TokenType>>(txn_sender);
 
-        let transaction_fee_amount= (txn_gas_price as u128) * ((txn_max_gas_units - gas_units_remaining) as u128) * stc_price;
+        let transaction_fee_amount= Math::mul_div(((txn_gas_price * (txn_max_gas_units - gas_units_remaining)) as u128),stc_price, stc_price_scaling);
         assert!(
             balance_for(sender_balance) >= transaction_fee_amount,
             Errors::limit_exceeded(EINSUFFICIENT_BALANCE)
@@ -1098,7 +1102,7 @@ module Account {
                 transaction_fee_amount
             );
             deposit_to_balance(borrow_global_mut<Balance<TokenType>>(CoreAddresses::GENESIS_ADDRESS()), transaction_fee);
-            let stc_transaction_fee = withdraw_from_balance(borrow_global_mut<Balance<STC>>(CoreAddresses::GENESIS_ADDRESS()), transaction_fee_amount/stc_price);
+            let stc_transaction_fee = withdraw_from_balance(borrow_global_mut<Balance<STC>>(CoreAddresses::GENESIS_ADDRESS()), (txn_gas_price as u128) * ((txn_max_gas_units - gas_units_remaining) as u128));
             TransactionFee::pay_fee(stc_transaction_fee);
         };
     }
