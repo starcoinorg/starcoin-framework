@@ -328,7 +328,7 @@ module StarcoinFramework::StakeToSBTPlugin {
 
     /// Unstake a item from a item object
     fun unstake_item<DAOT: store, TokenT: store>(
-        _member: address,
+        member: address,
         item: Stake<DAOT, TokenT>
     ): Token::Token<TokenT> {
         let Stake<DAOT, TokenT> {
@@ -337,10 +337,22 @@ module StarcoinFramework::StakeToSBTPlugin {
             lock_time,
             stake_time,
             weight: _,
-            sbt_amount: _,
+            sbt_amount,
         } = item;
 
         assert!((Timestamp::now_seconds() - stake_time) > lock_time, Errors::invalid_state(ERR_PLUGIN_STILL_LOCKED));
+
+        // Deduct the corresponding SBT amount if the signer account is a DAO member while unstake
+        if (DAOSpace::is_member<DAOT>(member)) {
+            let witness = StakeToSBTPlugin {};
+            let member_cap =
+                DAOSpace::acquire_member_cap<DAOT, StakeToSBTPlugin>(&witness);
+
+            // Decrease the SBT using `sbt_amount` which from unwrapped Stake data,
+            // rather than the value that calculate a SBT amount from lock time and weight,
+            // because of the `weight` could change at any time
+            DAOSpace::decrease_member_sbt(&member_cap, member, sbt_amount);
+        };
 
         token
     }
