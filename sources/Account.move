@@ -355,7 +355,7 @@ module Account {
             Vector::append(&mut seed_bytes, BCS::to_bytes(&try_times));
 
             let seed_hash = Hash::sha3_256(seed_bytes);
-            
+
             let i = 0;
             let address_bytes = Vector::empty();
             while (i < ADDRESS_LENGTH) {
@@ -993,7 +993,7 @@ module Account {
         aborts_if global<Account>(txn_sender).authentication_key != DUMMY_AUTH_KEY && Hash::sha3_256(txn_authentication_key_preimage) != global<Account>(txn_sender).authentication_key;
         aborts_if txn_sequence_number < global<Account>(txn_sender).sequence_number;
     }
-    
+
     public fun txn_prologue_v2<TokenType: store>(
         account: &signer,
         txn_sender: address,
@@ -1028,18 +1028,22 @@ module Account {
             );
         };
         // Check that the account has enough balance for all of the gas
-        let max_transaction_fee = Math::mul_div(((txn_gas_price * txn_max_gas_units) as u128), stc_price, stc_price_scaling);
+
+        let max_transaction_fee_stc = (txn_gas_price as u128) * (txn_max_gas_units as u128);
+        let max_transaction_fee_token = Math::mul_div((max_transaction_fee_stc as u128), stc_price, stc_price_scaling);
+
         assert!(
-            max_transaction_fee <= MAX_U64,
+            max_transaction_fee_stc <= MAX_U64,
             Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT),
         );
-        if (max_transaction_fee > 0) {
+        if (max_transaction_fee_stc > 0) {
             assert!(
                 (txn_sequence_number as u128) < MAX_U64,
                 Errors::limit_exceeded(EPROLOGUE_SEQUENCE_NUMBER_TOO_BIG)
             );
+            max_transaction_fee_token = if (max_transaction_fee_token ==0) { 1 } else { max_transaction_fee_token };
             let balance_amount = balance<TokenType>(txn_sender);
-            assert!(balance_amount >= max_transaction_fee, Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT));
+            assert!(balance_amount >= max_transaction_fee_token, Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT));
         };
         // Check that the transaction sequence number matches the sequence number of the account
         assert!(txn_sequence_number >= sender_account.sequence_number, Errors::invalid_argument(EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD));
@@ -1081,13 +1085,15 @@ module Account {
         CoreAddresses::assert_genesis_address(account);
         // Charge for gas
         let sender_balance = borrow_global_mut<Balance<TokenType>>(txn_sender);
+        let transaction_fee_amount_stc =(txn_gas_price * (txn_max_gas_units - gas_units_remaining) as u128);
+        let transaction_fee_amount_token= Math::mul_div(transaction_fee_amount_stc, stc_price, stc_price_scaling);
+        transaction_fee_amount_token = if (transaction_fee_amount_token ==0) { 1 } else { transaction_fee_amount_token };
 
-        let transaction_fee_amount= Math::mul_div(((txn_gas_price * (txn_max_gas_units - gas_units_remaining)) as u128),stc_price, stc_price_scaling);
         assert!(
-            balance_for(sender_balance) >= transaction_fee_amount,
+            balance_for(sender_balance) >= transaction_fee_amount_token,
             Errors::limit_exceeded(EINSUFFICIENT_BALANCE)
         );
-        
+
         // Load the transaction sender's account and balance resources
         let sender_account = borrow_global_mut<Account>(txn_sender);
         // Bump the sequence number
@@ -1096,17 +1102,17 @@ module Account {
         if (is_dummy_auth_key(sender_account) && !Vector::is_empty(&txn_authentication_key_preimage)){
             sender_account.authentication_key = Hash::sha3_256(txn_authentication_key_preimage);
         };
-        if (transaction_fee_amount > 0) {
+        if (transaction_fee_amount_stc > 0) {
             let transaction_fee = withdraw_from_balance(
                 sender_balance,
-                transaction_fee_amount
+                transaction_fee_amount_token
             );
             deposit_to_balance(borrow_global_mut<Balance<TokenType>>(CoreAddresses::GENESIS_ADDRESS()), transaction_fee);
-            let stc_transaction_fee = withdraw_from_balance(borrow_global_mut<Balance<STC>>(CoreAddresses::GENESIS_ADDRESS()), (txn_gas_price as u128) * ((txn_max_gas_units - gas_units_remaining) as u128));
+            let stc_transaction_fee = withdraw_from_balance(borrow_global_mut<Balance<STC>>(CoreAddresses::GENESIS_ADDRESS()), transaction_fee_amount_stc);
             TransactionFee::pay_fee(stc_transaction_fee);
         };
     }
-    
+
     spec txn_epilogue_v2 {
         pragma verify = false; // Todo: fix me, cost too much time
         aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();

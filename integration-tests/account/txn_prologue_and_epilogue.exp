@@ -24,7 +24,7 @@ task 4 'run'. lines 31-63:
 
 task 5 'run'. lines 67-93:
 {
-  "gas_used": 322493,
+  "gas_used": 322791,
   "status": {
     "MoveAbort": {
       "location": {
@@ -56,7 +56,7 @@ task 6 'run'. lines 97-125:
 
 task 7 'run'. lines 129-159:
 {
-  "gas_used": 328941,
+  "gas_used": 329239,
   "status": {
     "MoveAbort": {
       "location": {
@@ -72,13 +72,13 @@ task 7 'run'. lines 129-159:
 
 task 8 'run'. lines 163-208:
 {
-  "gas_used": 423206,
+  "gas_used": 423726,
   "status": "Executed"
 }
 
 task 9 'run'. lines 212-242:
 {
-  "gas_used": 328811,
+  "gas_used": 329109,
   "status": {
     "MoveAbort": {
       "location": {
@@ -94,7 +94,7 @@ task 9 'run'. lines 212-242:
 
 task 10 'run'. lines 246-277:
 {
-  "gas_used": 186448,
+  "gas_used": 186742,
   "status": {
     "MoveAbort": {
       "location": {
@@ -126,7 +126,7 @@ task 11 'run'. lines 281-312:
 
 task 12 'run'. lines 314-350:
 {
-  "gas_used": 351024,
+  "gas_used": 351322,
   "status": {
     "MoveAbort": {
       "location": {
@@ -142,6 +142,6 @@ task 12 'run'. lines 314-350:
 
 task 13 'run'. lines 352-402:
 {
-  "gas_used": 440865,
+  "gas_used": 441385,
   "status": "Executed"
 }
