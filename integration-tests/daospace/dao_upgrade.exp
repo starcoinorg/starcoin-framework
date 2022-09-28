@@ -2,19 +2,8 @@ processed 17 tasks
 
 task 4 'run'. lines 97-105:
 {
-  "gas_used": 32087,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOPluginMarketplace"
-        }
-      },
-      "function": 12,
-      "code_offset": 16
-    }
-  }
+  "gas_used": 526517,
+  "status": "Executed"
 }
 
 task 8 'run'. lines 121-128:
@@ -31,18 +20,8 @@ task 9 'run'. lines 130-144:
 
 task 10 'run'. lines 145-154:
 {
-  "gas_used": 852048,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOSpace"
-        }
-      },
-      "abort_code": "179201"
-    }
-  }
+  "gas_used": 1095207,
+  "status": "Executed"
 }
 
 task 11 'deploy'. lines 156-156:
@@ -50,26 +29,12 @@ Publish failure: Discard { status_code: StrView(2015), status_code_name: "UNEXPE
 
 task 13 'run'. lines 160-167:
 {
-  "gas_used": 19348,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 123208,
+  "status": "Executed"
 }
-
-task 15 'deploy'. lines 171-171:
-Publish failure: Discard { status_code: StrView(2015), status_code_name: "UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION" }
 
 task 16 'run'. lines 173-180:
 {
-  "gas_used": 600,
-  "status": "MiscellaneousError"
+  "gas_used": 11344,
+  "status": "Executed"
 }

@@ -2,34 +2,22 @@ processed 17 tasks
 
 task 6 'run'. lines 32-40:
 {
-  "gas_used": 45401,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOExtensionPoint"
-        }
-      },
-      "function": 9,
-      "code_offset": 22
-    }
-  }
+  "gas_used": 418615,
+  "status": "Executed"
 }
 
 task 7 'run'. lines 42-61:
 {
-  "gas_used": 42895,
+  "gas_used": 64233,
   "status": {
-    "ExecutionFailure": {
+    "MoveAbort": {
       "location": {
         "Module": {
           "address": "0x00000000000000000000000000000001",
           "name": "DAOExtensionPoint"
         }
       },
-      "function": 12,
-      "code_offset": 10
+      "abort_code": "26113"
     }
   }
 }
@@ -41,26 +29,55 @@ task 8 'run'. lines 63-72:
 }
 
 task 9 'view'. lines 74-74:
-[No Resource Exists]
+store key 0x00000000000000000000000000000001::NFTGallery::NFTGallery<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta, 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTBody> {
+    withdraw_events: store 0x00000000000000000000000000000001::Event::EventHandle<0x00000000000000000000000000000001::NFTGallery::WithdrawEvent<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta>> {
+        counter: 0
+        guid: 0300000000000000b5d577dc9ce59725e29886632e69ecdf
+    }
+    deposit_events: store 0x00000000000000000000000000000001::Event::EventHandle<0x00000000000000000000000000000001::NFTGallery::DepositEvent<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta>> {
+        counter: 1
+        guid: 0400000000000000b5d577dc9ce59725e29886632e69ecdf
+    }
+    items: [
+        store 0x00000000000000000000000000000001::NFT::NFT<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta, 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTBody> {
+            creator: 1
+            id: 1
+            base_meta: copy drop store 0x00000000000000000000000000000001::NFT::Metadata {
+                name: 457874506f696e744f776e65724e4654
+                image: 
+                image_data: 697066733a2f2f516d6454776468466936317a68524d334d74504c78754b7961717633655045434c47734d6739704d726550763469
+                description: 54686520657874656e73696f6e20706f696e74206f776e6572204e4654
+            }
+            type_meta: copy drop store 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta {
+                extpoint_id: 1
+                registry_address: 1
+            }
+            body: store 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTBody {
+                dummy_field: false
+            }
+        },
+    ]
+}
 
 task 10 'run'. lines 76-85:
 {
-  "gas_used": 51453,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "NFTGallery"
-        }
-      },
-      "abort_code": "25861"
-    }
-  }
+  "gas_used": 200904,
+  "status": "Executed"
 }
 
 task 11 'view'. lines 87-87:
-[No Resource Exists]
+store key 0x00000000000000000000000000000001::NFTGallery::NFTGallery<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta, 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTBody> {
+    withdraw_events: store 0x00000000000000000000000000000001::Event::EventHandle<0x00000000000000000000000000000001::NFTGallery::WithdrawEvent<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta>> {
+        counter: 1
+        guid: 0300000000000000b5d577dc9ce59725e29886632e69ecdf
+    }
+    deposit_events: store 0x00000000000000000000000000000001::Event::EventHandle<0x00000000000000000000000000000001::NFTGallery::DepositEvent<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta>> {
+        counter: 1
+        guid: 0400000000000000b5d577dc9ce59725e29886632e69ecdf
+    }
+    items: [
+    ]
+}
 
 task 12 'view'. lines 89-89:
 store key 0x00000000000000000000000000000001::NFTGallery::NFTGallery<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta, 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTBody> {
@@ -69,48 +86,77 @@ store key 0x00000000000000000000000000000001::NFTGallery::NFTGallery<0x000000000
         guid: 0300000000000000a7dcef9aef26202fce82a7c7d6672afb
     }
     deposit_events: store 0x00000000000000000000000000000001::Event::EventHandle<0x00000000000000000000000000000001::NFTGallery::DepositEvent<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta>> {
-        counter: 0
+        counter: 1
         guid: 0400000000000000a7dcef9aef26202fce82a7c7d6672afb
     }
     items: [
+        store 0x00000000000000000000000000000001::NFT::NFT<0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta, 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTBody> {
+            creator: 1
+            id: 1
+            base_meta: copy drop store 0x00000000000000000000000000000001::NFT::Metadata {
+                name: 457874506f696e744f776e65724e4654
+                image: 
+                image_data: 697066733a2f2f516d6454776468466936317a68524d334d74504c78754b7961717633655045434c47734d6739704d726550763469
+                description: 54686520657874656e73696f6e20706f696e74206f776e6572204e4654
+            }
+            type_meta: copy drop store 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTMeta {
+                extpoint_id: 1
+                registry_address: 1
+            }
+            body: store 0x00000000000000000000000000000001::DAOExtensionPoint::OwnerNFTBody {
+                dummy_field: false
+            }
+        },
     ]
 }
 
 task 13 'run'. lines 91-110:
 {
-  "gas_used": 42895,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOExtensionPoint"
-        }
-      },
-      "function": 12,
-      "code_offset": 10
-    }
-  }
+  "gas_used": 183643,
+  "status": "Executed"
 }
 
 task 14 'view'. lines 112-112:
-[No Resource Exists]
+store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
+    next_id: 2
+}
 
 task 15 'view'. lines 114-114:
-[No Resource Exists]
+store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::TestExtentionPoint> {
+    id: 1
+    name: 74657374
+    description: 697066733a2f2f6465736372697074696f6e32
+    labels: [
+        4f533d53746172636f696e,
+        53746f72653d49504653,
+    ]
+    next_version_number: 2
+    versions: [
+        store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
+            number: 1
+            tag: 76302e312e30
+            types_d_ts: 697066733a2f2f74797065735f645f7473
+            document: 697066733a2f2f70625f646f63
+            created_at: 10
+        },
+    ]
+    star_count: 0
+    created_at: 10
+    updated_at: 10
+}
 
 task 16 'run'. lines 117-133:
 {
-  "gas_used": 39934,
+  "gas_used": 150116,
   "status": {
     "MoveAbort": {
       "location": {
         "Module": {
           "address": "0x00000000000000000000000000000001",
-          "name": "NFTGallery"
+          "name": "NFT"
         }
       },
-      "abort_code": "25861"
+      "abort_code": "26372"
     }
   }
 }

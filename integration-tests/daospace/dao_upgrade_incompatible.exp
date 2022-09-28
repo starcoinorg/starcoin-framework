@@ -2,19 +2,8 @@ processed 20 tasks
 
 task 4 'run'. lines 87-95:
 {
-  "gas_used": 32087,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOPluginMarketplace"
-        }
-      },
-      "function": 12,
-      "code_offset": 16
-    }
-  }
+  "gas_used": 526517,
+  "status": "Executed"
 }
 
 task 9 'run'. lines 117-132:
@@ -25,65 +14,30 @@ task 9 'run'. lines 117-132:
 
 task 10 'run'. lines 134-143:
 {
-  "gas_used": 852048,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOSpace"
-        }
-      },
-      "abort_code": "179201"
-    }
-  }
+  "gas_used": 1095207,
+  "status": "Executed"
 }
 
 task 12 'run'. lines 147-155:
 {
-  "gas_used": 19348,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 123208,
+  "status": "Executed"
 }
-
-task 14 'deploy'. lines 159-159:
-Publish failure: Discard { status_code: StrView(2015), status_code_name: "UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION" }
 
 task 15 'run'. lines 161-169:
 {
-  "gas_used": 600,
-  "status": "MiscellaneousError"
+  "gas_used": 11346,
+  "status": "Executed"
 }
 
 task 16 'run'. lines 171-179:
 {
-  "gas_used": 19348,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 123208,
+  "status": "Executed"
 }
 
 task 18 'deploy'. lines 183-184:
-Publish failure: Discard { status_code: StrView(2015), status_code_name: "UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION" }
+Publish failure: MiscellaneousError
 
 task 19 'run'. lines 186-194:
 {

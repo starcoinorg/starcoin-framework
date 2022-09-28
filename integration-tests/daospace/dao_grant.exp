@@ -18,58 +18,25 @@ task 5 'run'. lines 13-21:
 
 task 8 'run'. lines 123-134:
 {
-  "gas_used": 32087,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOPluginMarketplace"
-        }
-      },
-      "function": 12,
-      "code_offset": 16
-    }
-  }
+  "gas_used": 1812265,
+  "status": "Executed"
 }
 
 task 9 'run'. lines 136-155:
 {
-  "gas_used": 20805,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 315396,
+  "status": "Executed"
 }
 
 task 10 'run'. lines 157-191:
 {
-  "gas_used": 24093,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 561697,
+  "status": "Executed"
 }
 
 task 12 'run'. lines 195-207:
 {
-  "gas_used": 14149,
+  "gas_used": 52853,
   "status": {
     "MoveAbort": {
       "location": {
@@ -78,56 +45,25 @@ task 12 'run'. lines 195-207:
           "name": "DAOSpace"
         }
       },
-      "abort_code": "78081"
+      "abort_code": "77319"
     }
   }
 }
 
 task 13 'run'. lines 209-229:
 {
-  "gas_used": 15037,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOSpace"
-        }
-      },
-      "abort_code": "78081"
-    }
-  }
+  "gas_used": 241369,
+  "status": "Executed"
 }
 
 task 15 'run'. lines 233-253:
 {
-  "gas_used": 15181,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOSpace"
-        }
-      },
-      "abort_code": "78081"
-    }
-  }
+  "gas_used": 229003,
+  "status": "Executed"
 }
 
 task 16 'run'. lines 255-269:
 {
-  "gas_used": 20421,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 192361,
+  "status": "Executed"
 }

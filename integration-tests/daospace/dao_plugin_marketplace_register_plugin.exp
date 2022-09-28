@@ -2,88 +2,77 @@ processed 13 tasks
 
 task 6 'run'. lines 31-39:
 {
-  "gas_used": 32113,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOPluginMarketplace"
-        }
-      },
-      "function": 12,
-      "code_offset": 16
-    }
-  }
+  "gas_used": 381523,
+  "status": "Executed"
 }
 
 task 7 'run'. lines 41-49:
 {
-  "gas_used": 32113,
+  "gas_used": 33042,
   "status": {
-    "ExecutionFailure": {
+    "MoveAbort": {
       "location": {
         "Module": {
           "address": "0x00000000000000000000000000000001",
           "name": "DAOPluginMarketplace"
         }
       },
-      "function": 12,
-      "code_offset": 16
+      "abort_code": "26630"
     }
   }
 }
 
 task 8 'run'. lines 51-59:
 {
-  "gas_used": 32113,
+  "gas_used": 33042,
   "status": {
-    "ExecutionFailure": {
+    "MoveAbort": {
       "location": {
         "Module": {
           "address": "0x00000000000000000000000000000001",
           "name": "DAOPluginMarketplace"
         }
       },
-      "function": 12,
-      "code_offset": 16
+      "abort_code": "26630"
     }
   }
 }
 
 task 10 'run'. lines 87-95:
 {
-  "gas_used": 46029,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOPluginMarketplace"
-        }
-      },
-      "function": 12,
-      "code_offset": 16
-    }
-  }
+  "gas_used": 429499,
+  "status": "Executed"
 }
 
 task 11 'view'. lines 97-97:
-[No Resource Exists]
+store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin2::TestPlugin2> {
+    id: 11
+    name: 54657374506c7567696e32
+    description: 697066733a2f2f6465736372697074696f6e
+    labels: [
+        4f533d53746172636f696e,
+        53746f72653d49504653,
+    ]
+    next_version_number: 1
+    versions: [
+    ]
+    star_count: 0
+    created_at: 10
+    updated_at: 10
+}
 
 task 12 'run'. lines 99-107:
 {
-  "gas_used": 46029,
+  "gas_used": 46958,
   "status": {
-    "ExecutionFailure": {
+    "MoveAbort": {
       "location": {
         "Module": {
           "address": "0x00000000000000000000000000000001",
           "name": "DAOPluginMarketplace"
         }
       },
-      "function": 12,
-      "code_offset": 16
+      "abort_code": "26630"
     }
   }
 }

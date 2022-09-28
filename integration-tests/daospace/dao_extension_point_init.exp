@@ -1,10 +1,22 @@
 processed 5 tasks
 
 task 3 'view'. lines 7-7:
-[No Resource Exists]
+store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
+    next_id: 1
+}
 
 task 4 'run'. lines 9-17:
 {
-  "gas_used": 177755,
-  "status": "Executed"
+  "gas_used": 13211,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOExtensionPoint"
+        }
+      },
+      "abort_code": "25606"
+    }
+  }
 }

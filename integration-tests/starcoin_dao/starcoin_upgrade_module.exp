@@ -2,70 +2,26 @@ processed 44 tasks
 
 task 11 'run'. lines 23-37:
 {
-  "gas_used": 80303,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 594906,
+  "status": "Executed"
 }
 
 task 12 'run'. lines 39-53:
 {
-  "gas_used": 80303,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 594906,
+  "status": "Executed"
 }
 
 task 13 'run'. lines 55-69:
 {
-  "gas_used": 80303,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 594906,
+  "status": "Executed"
 }
 
 task 14 'run'. lines 71-85:
 {
-  "gas_used": 80303,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 594906,
+  "status": "Executed"
 }
 
 task 18 'run'. lines 93-104:
@@ -82,19 +38,8 @@ task 21 'run'. lines 111-120:
 
 task 23 'run'. lines 127-137:
 {
-  "gas_used": 19514,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 434673,
+  "status": "Executed"
 }
 
 task 25 'call'. lines 142-144:
@@ -102,18 +47,8 @@ task 25 'call'. lines 142-144:
 
 task 27 'run'. lines 147-159:
 {
-  "gas_used": 44734,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOSpace"
-        }
-      },
-      "abort_code": "51201"
-    }
-  }
+  "gas_used": 6111871,
+  "status": "Executed"
 }
 
 task 28 'call'. lines 160-162:
@@ -121,18 +56,8 @@ task 28 'call'. lines 160-162:
 
 task 30 'run'. lines 165-177:
 {
-  "gas_used": 44470,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOSpace"
-        }
-      },
-      "abort_code": "51201"
-    }
-  }
+  "gas_used": 5442229,
+  "status": "Executed"
 }
 
 task 31 'call'. lines 178-180:
@@ -140,18 +65,8 @@ task 31 'call'. lines 178-180:
 
 task 33 'run'. lines 183-195:
 {
-  "gas_used": 44470,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOSpace"
-        }
-      },
-      "abort_code": "51201"
-    }
-  }
+  "gas_used": 5442229,
+  "status": "Executed"
 }
 
 task 34 'call'. lines 196-198:
@@ -159,70 +74,24 @@ task 34 'call'. lines 196-198:
 
 task 36 'run'. lines 202-212:
 {
-  "gas_used": 44470,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOSpace"
-        }
-      },
-      "abort_code": "51201"
-    }
-  }
+  "gas_used": 5442229,
+  "status": "Executed"
 }
 
 task 38 'run'. lines 216-225:
 {
-  "gas_used": 8786,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 72220,
+  "status": "Executed"
 }
 
 task 39 'run'. lines 227-236:
 {
-  "gas_used": 10567,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 173612,
+  "status": "Executed"
 }
 
 task 41 'run'. lines 240-252:
 {
-  "gas_used": 8786,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 518637,
+  "status": "Executed"
 }
-
-task 43 'deploy'. lines 256-256:
-Publish failure: Discard { status_code: StrView(2015), status_code_name: "UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION" }

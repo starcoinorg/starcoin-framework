@@ -483,7 +483,6 @@ module StarcoinFramework::DAOSpace {
     fun do_install_plugin<DAOT: store, ToInstallPluginT:store>(granted_caps: vector<CapType>) acquires DAOAccountCapHolder {
         assert!(DAOPluginMarketplace::exists_plugin<ToInstallPluginT>(), Errors::invalid_state(ERR_PLUGIN_NOT_EXIST));
         assert_no_repeat(&granted_caps);
-
         let dao_signer = dao_signer<DAOT>();
         let plugin_id = DAOPluginMarketplace::take_plugin_id<ToInstallPluginT>();
 
