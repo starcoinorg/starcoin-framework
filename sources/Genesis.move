@@ -452,7 +452,6 @@ module Genesis {
             
         };
         StdlibUpgradeScripts::do_upgrade_from_v11_to_v12();
-        StdlibUpgradeScripts::do_upgrade_from_v12_to_v12_1();
         //Start time, Timestamp::is_genesis() will return false. this call should at the end of genesis init.
         Timestamp::set_time_has_started(&genesis_account);
         Account::release_genesis_signer(genesis_account);

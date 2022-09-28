@@ -1,46 +1,75 @@
-processed 18 tasks
+processed 17 tasks
 
-task 3 'run'. lines 7-15:
+task 4 'run'. lines 97-105:
 {
-  "gas_used": 7183581,
-  "status": "Executed"
+  "gas_used": 32087,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOPluginMarketplace"
+        }
+      },
+      "function": 12,
+      "code_offset": 16
+    }
+  }
 }
 
-task 5 'run'. lines 97-105:
-{
-  "gas_used": 522882,
-  "status": "Executed"
-}
-
-task 9 'run'. lines 121-128:
+task 8 'run'. lines 121-128:
 {
   "gas_used": 600,
   "status": "MiscellaneousError"
 }
 
-task 10 'run'. lines 130-144:
+task 9 'run'. lines 130-144:
 {
-  "gas_used": 173698,
+  "gas_used": 200239,
   "status": "Executed"
 }
 
-task 11 'run'. lines 145-154:
+task 10 'run'. lines 145-154:
 {
-  "gas_used": 1047820,
-  "status": "Executed"
+  "gas_used": 852048,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOSpace"
+        }
+      },
+      "abort_code": "179201"
+    }
+  }
 }
 
-task 12 'deploy'. lines 156-156:
+task 11 'deploy'. lines 156-156:
 Publish failure: Discard { status_code: StrView(2015), status_code_name: "UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION" }
 
-task 14 'run'. lines 160-167:
+task 13 'run'. lines 160-167:
 {
-  "gas_used": 110070,
-  "status": "Executed"
+  "gas_used": 19348,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAORegistry"
+        }
+      },
+      "function": 0,
+      "code_offset": 1
+    }
+  }
 }
 
-task 17 'run'. lines 173-180:
+task 15 'deploy'. lines 171-171:
+Publish failure: Discard { status_code: StrView(2015), status_code_name: "UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION" }
+
+task 16 'run'. lines 173-180:
 {
-  "gas_used": 11344,
-  "status": "Executed"
+  "gas_used": 600,
+  "status": "MiscellaneousError"
 }

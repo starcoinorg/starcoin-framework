@@ -1,26 +1,79 @@
-processed 15 tasks
+processed 14 tasks
 
 task 6 'run'. lines 46-54:
 {
-  "gas_used": 176952,
-  "status": "Executed"
+  "gas_used": 32113,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOPluginMarketplace"
+        }
+      },
+      "function": 12,
+      "code_offset": 16
+    }
+  }
 }
 
-task 7 'run'. lines 56-64:
+task 7 'run'. lines 56-67:
 {
-  "gas_used": 381209,
-  "status": "Executed"
+  "gas_used": 23993,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOPluginMarketplace"
+        }
+      },
+      "function": 13,
+      "code_offset": 17
+    }
+  }
 }
 
-task 8 'run'. lines 66-77:
+task 8 'run'. lines 69-80:
 {
-  "gas_used": 59320,
-  "status": "Executed"
+  "gas_used": 23993,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOPluginMarketplace"
+        }
+      },
+      "function": 13,
+      "code_offset": 17
+    }
+  }
 }
 
-task 9 'run'. lines 79-90:
+task 9 'run'. lines 82-93:
 {
-  "gas_used": 15374,
+  "gas_used": 23993,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOPluginMarketplace"
+        }
+      },
+      "function": 13,
+      "code_offset": 17
+    }
+  }
+}
+
+task 10 'view'. lines 95-95:
+[No Resource Exists]
+
+task 11 'run'. lines 98-109:
+{
+  "gas_used": 18574,
   "status": {
     "MoveAbort": {
       "location": {
@@ -29,54 +82,15 @@ task 9 'run'. lines 79-90:
           "name": "DAOPluginMarketplace"
         }
       },
-      "abort_code": "26881"
+      "abort_code": "27137"
     }
   }
 }
 
-task 10 'run'. lines 92-103:
-{
-  "gas_used": 59320,
-  "status": "Executed"
-}
+task 12 'view'. lines 111-111:
+[No Resource Exists]
 
-task 11 'view'. lines 105-105:
-store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
-    id: 1
-    name: 54657374506c7567696e
-    description: 697066733a2f2f6465736372697074696f6e
-    labels: [
-    ]
-    next_version_number: 1
-    versions: [
-    ]
-    star_count: 2
-    created_at: 10
-    updated_at: 10
-}
-
-task 12 'run'. lines 108-119:
-{
-  "gas_used": 46959,
-  "status": "Executed"
-}
-
-task 13 'view'. lines 121-121:
-store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
-    id: 1
-    name: 54657374506c7567696e
-    description: 697066733a2f2f6465736372697074696f6e
-    labels: [
-    ]
-    next_version_number: 1
-    versions: [
-    ]
-    star_count: 1
-    created_at: 10
-    updated_at: 10
-}
-
-task 14 'run'. lines 123-134:
+task 13 'run'. lines 113-124:
 {
   "gas_used": 18574,
   "status": {

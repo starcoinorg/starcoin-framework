@@ -97,3 +97,4 @@ script {
         );
     }
 }
+// check: ExecutionFailure, WrappedConfigModifyCapability is migrate to StarcoinDAO

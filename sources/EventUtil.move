@@ -4,7 +4,7 @@ module StarcoinFramework::EventUtil {
     use StarcoinFramework::Errors;
 
     const ERR_INIT_REPEATE: u64 = 101;
-    const ERR_RESOURCE_NOT_EXISTS: u64 = 101;
+    const ERR_RESOURCE_NOT_EXISTS: u64 = 102;
 
     struct EventHandleWrapper<phantom EventT: store + drop> has key {
         handle: Event::EventHandle<EventT>,

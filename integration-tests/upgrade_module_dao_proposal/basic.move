@@ -127,6 +127,7 @@ script {
         );
     }
 }
+// check: ExecutionFailure, UpgradeModuleCapability is move to StarcoinDAO
 
 //# run --signers alice
 script {

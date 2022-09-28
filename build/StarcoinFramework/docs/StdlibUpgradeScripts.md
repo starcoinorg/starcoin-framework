@@ -17,8 +17,6 @@ The module for StdlibUpgrade init scripts
 -  [Function `do_upgrade_from_v7_to_v8`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v7_to_v8)
 -  [Function `upgrade_from_v11_to_v12`](#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12)
 -  [Function `do_upgrade_from_v11_to_v12`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12)
--  [Function `upgrade_from_v12_to_v12_1`](#0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v12_1)
--  [Function `do_upgrade_from_v12_to_v12_1`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1)
 -  [Module Specification](#@Module_Specification_0)
 
 
@@ -32,6 +30,7 @@ The module for StdlibUpgrade init scripts
 <b>use</b> <a href="DAOExtensionPoint.md#0x1_DAOExtensionPoint">0x1::DAOExtensionPoint</a>;
 <b>use</b> <a href="DAOPluginMarketplace.md#0x1_DAOPluginMarketplace">0x1::DAOPluginMarketplace</a>;
 <b>use</b> <a href="DAORegistry.md#0x1_DAORegistry">0x1::DAORegistry</a>;
+<b>use</b> <a href="Dao.md#0x1_Dao">0x1::Dao</a>;
 <b>use</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin">0x1::GasOracleProposalPlugin</a>;
 <b>use</b> <a href="GenesisNFT.md#0x1_GenesisNFT">0x1::GenesisNFT</a>;
 <b>use</b> <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability">0x1::GenesisSignerCapability</a>;
@@ -355,53 +354,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 <pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>() {
     <a href="Block.md#0x1_Block_checkpoints_init">Block::checkpoints_init</a>();
     <a href="DAORegistry.md#0x1_DAORegistry_initialize">DAORegistry::initialize</a>();
-}
-</code></pre>
 
-
-
-</details>
-
-<a name="0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v12_1"></a>
-
-## Function `upgrade_from_v12_to_v12_1`
-
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v12_1">upgrade_from_v12_to_v12_1</a>()
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v12_1">upgrade_from_v12_to_v12_1</a>()  {
-    <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1">do_upgrade_from_v12_to_v12_1</a>();
-}
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1"></a>
-
-## Function `do_upgrade_from_v12_to_v12_1`
-
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1">do_upgrade_from_v12_to_v12_1</a>()
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1">do_upgrade_from_v12_to_v12_1</a>() {
     <a href="DAOExtensionPoint.md#0x1_DAOExtensionPoint_initialize">DAOExtensionPoint::initialize</a>();
     <a href="DAOPluginMarketplace.md#0x1_DAOPluginMarketplace_initialize">DAOPluginMarketplace::initialize</a>();
 
@@ -416,7 +369,11 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
     <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_initialize">GasOracleProposalPlugin::initialize</a>();
 
     //TODO : config rate need mind
-    <a href="StarcoinDAO.md#0x1_StarcoinDAO_create_dao">StarcoinDAO::create_dao</a>( 60000, 120000, 10, 10000, 1000 * 1000 * 1000 * 1000);
+    // voting_delay: 60000 ms
+    // voting_period: 3600000 ms
+    // voting_quorum_rate: 4
+    // min_action_delay: 3600000 ms
+    <a href="StarcoinDAO.md#0x1_StarcoinDAO_create_dao">StarcoinDAO::create_dao</a>( <a href="Dao.md#0x1_Dao_voting_delay">Dao::voting_delay</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(), <a href="Dao.md#0x1_Dao_voting_period">Dao::voting_period</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(), <a href="Dao.md#0x1_Dao_voting_quorum_rate">Dao::voting_quorum_rate</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(), <a href="Dao.md#0x1_Dao_min_action_delay">Dao::min_action_delay</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(), 1000 * 1000 * 1000 * 1000);
 }
 </code></pre>
 

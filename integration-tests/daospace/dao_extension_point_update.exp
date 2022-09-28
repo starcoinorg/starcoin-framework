@@ -1,64 +1,58 @@
-processed 12 tasks
+processed 11 tasks
 
 task 6 'run'. lines 32-40:
 {
-  "gas_used": 177755,
-  "status": "Executed"
-}
-
-task 7 'run'. lines 42-50:
-{
-  "gas_used": 418301,
-  "status": "Executed"
-}
-
-task 8 'run'. lines 52-71:
-{
-  "gas_used": 64233,
+  "gas_used": 45401,
   "status": {
-    "MoveAbort": {
+    "ExecutionFailure": {
       "location": {
         "Module": {
           "address": "0x00000000000000000000000000000001",
           "name": "DAOExtensionPoint"
         }
       },
-      "abort_code": "26113"
+      "function": 9,
+      "code_offset": 22
     }
   }
 }
 
-task 9 'run'. lines 73-92:
+task 7 'run'. lines 42-61:
 {
-  "gas_used": 180322,
-  "status": "Executed"
+  "gas_used": 42895,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOExtensionPoint"
+        }
+      },
+      "function": 12,
+      "code_offset": 10
+    }
+  }
 }
 
-task 10 'view'. lines 94-94:
-store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
-    next_id: 2
+task 8 'run'. lines 63-82:
+{
+  "gas_used": 42895,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOExtensionPoint"
+        }
+      },
+      "function": 12,
+      "code_offset": 10
+    }
+  }
 }
 
-task 11 'view'. lines 96-96:
-store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::TestExtentionPoint> {
-    id: 1
-    name: 74657374
-    description: 697066733a2f2f6465736372697074696f6e32
-    labels: [
-        4f533d53746172636f696e,
-        53746f72653d49504653,
-    ]
-    next_version_number: 2
-    versions: [
-        store 0x00000000000000000000000000000001::DAOExtensionPoint::Version {
-            number: 1
-            tag: 76302e312e30
-            types_d_ts: 697066733a2f2f74797065735f645f7473
-            document: 697066733a2f2f70625f646f63
-            created_at: 10
-        },
-    ]
-    star_count: 0
-    created_at: 10
-    updated_at: 10
-}
+task 9 'view'. lines 84-84:
+[No Resource Exists]
+
+task 10 'view'. lines 86-86:
+[No Resource Exists]

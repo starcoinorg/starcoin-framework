@@ -1,58 +1,225 @@
-processed 24 tasks
+processed 41 tasks
 
-task 4 'run'. lines 9-17:
+task 11 'run'. lines 23-37:
 {
-  "gas_used": 7176381,
-  "status": "Executed"
+  "gas_used": 80303,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAORegistry"
+        }
+      },
+      "function": 0,
+      "code_offset": 1
+    }
+  }
 }
 
-task 5 'run'. lines 19-33:
+task 12 'run'. lines 39-53:
 {
-  "gas_used": 590106,
-  "status": "Executed"
+  "gas_used": 80303,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAORegistry"
+        }
+      },
+      "function": 0,
+      "code_offset": 1
+    }
+  }
 }
 
-task 9 'run'. lines 42-53:
+task 13 'run'. lines 55-69:
+{
+  "gas_used": 80303,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAORegistry"
+        }
+      },
+      "function": 0,
+      "code_offset": 1
+    }
+  }
+}
+
+task 14 'run'. lines 71-85:
+{
+  "gas_used": 80303,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAORegistry"
+        }
+      },
+      "function": 0,
+      "code_offset": 1
+    }
+  }
+}
+
+task 18 'run'. lines 93-104:
 {
   "gas_used": 101440,
   "status": "Executed"
 }
 
-task 12 'run'. lines 60-69:
+task 21 'run'. lines 111-120:
 {
   "gas_used": 575872,
   "status": "Executed"
 }
 
-task 13 'run'. lines 72-81:
+task 22 'run'. lines 123-132:
 {
-  "gas_used": 448939,
-  "status": "Executed"
+  "gas_used": 39453,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAORegistry"
+        }
+      },
+      "function": 0,
+      "code_offset": 1
+    }
+  }
 }
 
-task 15 'call'. lines 85-85:
+task 24 'call'. lines 136-136:
 "0xa7dcef9aef26202fce82a7c7d6672afb/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>>"
 
-task 17 'run'. lines 90-100:
+task 26 'run'. lines 140-153:
 {
-  "gas_used": 6111871,
-  "status": "Executed"
+  "gas_used": 44734,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOSpace"
+        }
+      },
+      "abort_code": "51201"
+    }
+  }
 }
 
-task 19 'run'. lines 104-112:
+task 27 'call'. lines 154-156:
+"0xb5d577dc9ce59725e29886632e69ecdf/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>>"
+
+task 29 'run'. lines 159-170:
 {
-  "gas_used": 72156,
-  "status": "Executed"
+  "gas_used": 44470,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOSpace"
+        }
+      },
+      "abort_code": "51201"
+    }
+  }
 }
 
-task 21 'run'. lines 116-125:
+task 30 'call'. lines 171-173:
+"0x9255386a0faee0205777b798ba4fc6c4/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>>"
+
+task 32 'run'. lines 176-188:
 {
-  "gas_used": 173612,
-  "status": "Executed"
+  "gas_used": 44470,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOSpace"
+        }
+      },
+      "abort_code": "51201"
+    }
+  }
 }
 
-task 23 'run'. lines 129-145:
+task 33 'call'. lines 189-191:
+"0xb0c32ba18ae392ec1978360105bc3956/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>>"
+
+task 35 'run'. lines 195-205:
 {
-  "gas_used": 495761,
-  "status": "Executed"
+  "gas_used": 44470,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOSpace"
+        }
+      },
+      "abort_code": "51201"
+    }
+  }
+}
+
+task 37 'run'. lines 209-217:
+{
+  "gas_used": 8786,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAORegistry"
+        }
+      },
+      "function": 0,
+      "code_offset": 1
+    }
+  }
+}
+
+task 38 'run'. lines 219-228:
+{
+  "gas_used": 10567,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAORegistry"
+        }
+      },
+      "function": 0,
+      "code_offset": 1
+    }
+  }
+}
+
+task 40 'run'. lines 232-248:
+{
+  "gas_used": 8786,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAORegistry"
+        }
+      },
+      "function": 0,
+      "code_offset": 1
+    }
+  }
 }

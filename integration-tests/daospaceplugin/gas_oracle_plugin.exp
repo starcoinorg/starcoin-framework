@@ -1,10 +1,13 @@
 processed 28 tasks
 
 task 3 'run'. lines 7-15:
-{
-  "gas_used": 7183581,
-  "status": "Executed"
-}
+Error: error[E03003]: unbound module member
+   ┌─ /var/folders/c2/7vlrphqn0w9d469dsc7k8wyc0000gn/T/.tmp35Pxfn:11:9
+   │
+11 │         StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
+   │         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Invalid module access. Unbound function 'upgrade_from_v12_to_v12_1' in module 'StarcoinFramework::StdlibUpgradeScripts'
+
+
 
 task 7 'run'. lines 89-97:
 {
@@ -14,14 +17,35 @@ task 7 'run'. lines 89-97:
 
 task 8 'run'. lines 99-108:
 {
-  "gas_used": 1162585,
-  "status": "Executed"
+  "gas_used": 1031566,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOSpace"
+        }
+      },
+      "abort_code": "179201"
+    }
+  }
 }
 
 task 10 'run'. lines 112-126:
 {
-  "gas_used": 264828,
-  "status": "Executed"
+  "gas_used": 37244,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAORegistry"
+        }
+      },
+      "function": 0,
+      "code_offset": 1
+    }
+  }
 }
 
 task 14 'run'. lines 134-145:
@@ -38,8 +62,19 @@ task 17 'run'. lines 152-161:
 
 task 18 'run'. lines 164-189:
 {
-  "gas_used": 449602,
-  "status": "Executed"
+  "gas_used": 18945,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAORegistry"
+        }
+      },
+      "function": 0,
+      "code_offset": 1
+    }
+  }
 }
 
 task 20 'call'. lines 193-193:
@@ -47,14 +82,35 @@ task 20 'call'. lines 193-193:
 
 task 22 'run'. lines 197-212:
 {
-  "gas_used": 7794857,
-  "status": "Executed"
+  "gas_used": 32667,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOSpace"
+        }
+      },
+      "abort_code": "51201"
+    }
+  }
 }
 
 task 24 'run'. lines 216-229:
 {
-  "gas_used": 173636,
-  "status": "Executed"
+  "gas_used": 8850,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAORegistry"
+        }
+      },
+      "function": 0,
+      "code_offset": 1
+    }
+  }
 }
 
 task 25 'run'. lines 231-239:
@@ -65,6 +121,17 @@ task 25 'run'. lines 231-239:
 
 task 27 'run'. lines 244-261:
 {
-  "gas_used": 579290,
-  "status": "Executed"
+  "gas_used": 8850,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAORegistry"
+        }
+      },
+      "function": 0,
+      "code_offset": 1
+    }
+  }
 }

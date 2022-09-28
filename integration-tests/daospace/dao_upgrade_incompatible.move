@@ -4,16 +4,6 @@
 
 //# faucet --addr alice --amount 10000000000
 
-//# run --signers creator
-script {
-    use StarcoinFramework::StdlibUpgradeScripts;
-
-    fun upgrade_from_v11_to_v12() {
-        StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
-    }
-}
-// check: EXECUTED
-
 //# publish
 module creator::DAOHelper {
     use StarcoinFramework::DAOPluginMarketplace;
@@ -111,6 +101,12 @@ module creator::test {
 
 //# package
 module creator::test {
+    public fun hello() {}
+    public fun world(_i: u8) {}
+}
+
+//# package
+module creator::test {
     public fun hello(_i: u8) {}
 
     public fun world(_i: u8) {}
@@ -153,7 +149,7 @@ script {
     use creator::DAOHelper;
 
     fun main(_sender: signer, package_hash: vector<u8>) {
-        DAOHelper::submit_upgrade_plan(package_hash, 2, false);
+        DAOHelper::submit_upgrade_plan(package_hash, 2, true);
     }
 }
 //check: EXECUTED
@@ -161,9 +157,18 @@ script {
 //# block --author 0x1 --timestamp 86600000
 
 //# deploy {{$.package[1].file}} --signers alice
-//check: Publish failure: MiscellaneousError
 
-//# run --signers alice --args {{$.package[1].package_hash}}
+//# run --signers alice
+script {
+    use creator::test;
+
+    fun main(_sender: signer) {
+        test::world(2);
+    }
+}
+//check: EXECUTED
+
+//# run --signers alice --args {{$.package[2].package_hash}}
 script {
     use creator::DAOHelper;
 
@@ -175,14 +180,15 @@ script {
 
 //# block --author 0x1 --timestamp 86700000
 
-//# deploy {{$.package[1].file}} --signers alice
+//# deploy {{$.package[2].file}} --signers alice
+//check: Publish failure: MiscellaneousError
 
 //# run --signers alice
 script {
     use creator::test;
 
     fun main(_sender: signer) {
-        test::world(1);
+        test::hello(3);
     }
 }
-//check: EXECUTED
+//check: ABORT. incompatiable upgrade is not allowed.

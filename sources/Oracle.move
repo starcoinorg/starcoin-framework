@@ -193,14 +193,21 @@ module PriceOracle {
         scaling_factor: u128,
     }
 
-    public fun register_oracle<OracleT: copy + store + drop>(sender: &signer, precision: u8) {
+    public(script) fun register_oracle_entry<OracleT: copy+store+drop>(sender: signer, precision: u8){
+        register_oracle<OracleT>(&sender, precision);
+    }
+
+    public fun register_oracle<OracleT: copy+store+drop>(sender: &signer, precision: u8){
         let scaling_factor = Math::pow(10, (precision as u64));
         Oracle::register_oracle<OracleT, PriceOracleInfo>(sender, PriceOracleInfo{
             scaling_factor,
         });
     }
+    public(script) fun init_data_source_entry<OracleT: copy+store+drop>(sender: signer, init_value: u128){
+        init_data_source<OracleT>(&sender, init_value);
+    }
 
-    public fun init_data_source<OracleT: copy + store + drop>(sender: &signer, init_value: u128) {
+    public fun init_data_source<OracleT: copy+store+drop>(sender: &signer, init_value: u128){
         Oracle::init_data_source<OracleT, PriceOracleInfo, u128>(sender, init_value);
     }
 
@@ -212,8 +219,11 @@ module PriceOracle {
         let info = Oracle::get_oracle_info<OracleT, PriceOracleInfo>();
         info.scaling_factor
     }
+    public(script) fun update_entry<OracleT: copy+store+drop>(sender: signer, value: u128){
+        update<OracleT>(&sender, value);
+    }
 
-    public fun update<OracleT: copy + store + drop>(sender: &signer, value: u128) {
+    public fun update<OracleT: copy+store+drop>(sender: &signer, value: u128){
         Oracle::update<OracleT, u128>(sender, value);
     }
 
@@ -291,15 +301,15 @@ module PriceOracleScripts{
     use StarcoinFramework::PriceOracle;
 
     public(script) fun register_oracle<OracleT: copy+store+drop>(sender: signer, precision: u8){
-        PriceOracle::register_oracle<OracleT>(&sender, precision)
+        PriceOracle::register_oracle_entry<OracleT>(sender, precision);
     }
 
     public(script) fun init_data_source<OracleT: copy+store+drop>(sender: signer, init_value: u128){
-        PriceOracle::init_data_source<OracleT>(&sender, init_value);
+        PriceOracle::init_data_source_entry<OracleT>(sender, init_value);
     }
 
     public(script) fun update<OracleT: copy+store+drop>(sender: signer, value: u128){
-        PriceOracle::update<OracleT>(&sender, value);
+        PriceOracle::update_entry<OracleT>(sender, value);
     }
 }
 

@@ -32,7 +32,8 @@ module StdlibUpgradeScripts {
         use StarcoinFramework::StakeToSBTPlugin;
         use StarcoinFramework::UpgradeModulePlugin;
         use StarcoinFramework::StarcoinDAO;
-    use StarcoinFramework::GasOracleProposalPlugin;
+        use StarcoinFramework::GasOracleProposalPlugin;
+        use StarcoinFramework::Dao;
 
     spec module {
             pragma verify = false;
@@ -121,13 +122,7 @@ module StdlibUpgradeScripts {
         public fun do_upgrade_from_v11_to_v12() {
             Block::checkpoints_init();
             DAORegistry::initialize();
-        }
 
-        public(script) fun upgrade_from_v12_to_v12_1()  {
-            do_upgrade_from_v12_to_v12_1();
-        }
-
-        public fun do_upgrade_from_v12_to_v12_1() {
             DAOExtensionPoint::initialize();
             DAOPluginMarketplace::initialize();
 
@@ -142,7 +137,11 @@ module StdlibUpgradeScripts {
             GasOracleProposalPlugin::initialize();
 
             //TODO : config rate need mind
-            StarcoinDAO::create_dao( 60000, 120000, 10, 10000, 1000 * 1000 * 1000 * 1000);
+            // voting_delay: 60000 ms
+            // voting_period: 3600000 ms
+            // voting_quorum_rate: 4
+            // min_action_delay: 3600000 ms
+            StarcoinDAO::create_dao( Dao::voting_delay<STC>(), Dao::voting_period<STC>(), Dao::voting_quorum_rate<STC>(), Dao::min_action_delay<STC>(), 1000 * 1000 * 1000 * 1000);
         }
 }
 }
