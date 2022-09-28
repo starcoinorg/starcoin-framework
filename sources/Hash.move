@@ -9,6 +9,27 @@ module Hash {
     native public fun sha3_256(data: vector<u8>): vector<u8>;
     native public fun keccak_256(data: vector<u8>): vector<u8>;
     native public fun ripemd160(data: vector<u8>): vector<u8>;
+
+    spec sha2_256 {
+        pragma opaque;
+        ensures [abstract] len(result) == 32;
+    }
+
+    spec sha3_256 {
+        pragma opaque;
+        ensures [abstract] len(result) == 32;
+    }
+
+    spec keccak_256 {
+        pragma opaque;
+        ensures [abstract] len(result) == 32;
+    }
+
+    spec ripemd160 {
+        pragma opaque;
+        ensures [abstract] len(result) == 20;
+    }
 }
 
 }
+

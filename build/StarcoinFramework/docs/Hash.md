@@ -39,6 +39,19 @@ The module provide sha-hash functionality for Move.
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> opaque;
+<b>ensures</b> [abstract] len(result) == 32;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Hash_sha3_256"></a>
 
 ## Function `sha3_256`
@@ -55,6 +68,19 @@ The module provide sha-hash functionality for Move.
 
 
 <pre><code><b>native</b> <b>public</b> <b>fun</b> <a href="Hash.md#0x1_Hash_sha3_256">sha3_256</a>(data: vector&lt;u8&gt;): vector&lt;u8&gt;;
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> opaque;
+<b>ensures</b> [abstract] len(result) == 32;
 </code></pre>
 
 
@@ -83,6 +109,19 @@ The module provide sha-hash functionality for Move.
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> opaque;
+<b>ensures</b> [abstract] len(result) == 32;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Hash_ripemd160"></a>
 
 ## Function `ripemd160`
@@ -99,6 +138,19 @@ The module provide sha-hash functionality for Move.
 
 
 <pre><code><b>native</b> <b>public</b> <b>fun</b> <a href="Hash.md#0x1_Hash_ripemd160">ripemd160</a>(data: vector&lt;u8&gt;): vector&lt;u8&gt;;
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> opaque;
+<b>ensures</b> [abstract] len(result) == 20;
 </code></pre>
 
 
