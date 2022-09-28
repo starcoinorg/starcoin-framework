@@ -3,7 +3,7 @@ on:
   pull_request:
     branches:
       - main
-      - genesis_dao 
+      - genesis_dao
 
 jobs:
   build-and-test:
@@ -21,7 +21,7 @@ jobs:
           profile: minimal
       - name: setup environment
         run: |
-          bash scripts/dev_setup.sh -b -t -y -p 
+          bash scripts/dev_setup.sh -b -t -y -p
       - name: test
         run: |
           source "$HOME/.profile"
@@ -29,7 +29,7 @@ jobs:
       - name: integration test
         run: |
           source "$HOME/.profile"
-          mpm integration-test
+          mpm integration-test --current-as-stdlib
       - name: move-prover-test
         run: |
           source "$HOME/.profile"

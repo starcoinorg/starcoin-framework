@@ -367,6 +367,10 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
     <a href="UpgradeModulePlugin.md#0x1_UpgradeModulePlugin_initialize">UpgradeModulePlugin::initialize</a>();
 
     //TODO : config rate need mind
+    // voting_delay: 60000 ms
+    // voting_period: 3600000 ms
+    // voting_quorum_rate: 4
+    // min_action_delay: 3600000 ms
     <a href="StarcoinDAO.md#0x1_StarcoinDAO_create_dao">StarcoinDAO::create_dao</a>( <a href="Dao.md#0x1_Dao_voting_delay">Dao::voting_delay</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(), <a href="Dao.md#0x1_Dao_voting_period">Dao::voting_period</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(), <a href="Dao.md#0x1_Dao_voting_quorum_rate">Dao::voting_quorum_rate</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(), <a href="Dao.md#0x1_Dao_min_action_delay">Dao::min_action_delay</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(), 1000 * 1000 * 1000 * 1000);
 }
 </code></pre>
