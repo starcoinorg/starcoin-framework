@@ -3159,11 +3159,10 @@ It verifies:
         );
         <b>let</b> balance_amount_token = <a href="Account.md#0x1_Account_balance">balance</a>&lt;TokenType&gt;(txn_sender);
         <b>assert</b>!(balance_amount_token &gt;= max_transaction_fee_token, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_CANT_PAY_GAS_DEPOSIT">EPROLOGUE_CANT_PAY_GAS_DEPOSIT</a>));
-        // FIXME: check stc amount of genesis?
-        /*
-        <b>let</b> balance_amount_stc= <a href="Account.md#0x1_Account_balance">balance</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
-        <b>assert</b>!(balance_amount_stc &gt;= max_transaction_fee_stc, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_CANT_PAY_GAS_DEPOSIT">EPROLOGUE_CANT_PAY_GAS_DEPOSIT</a>));
-        */
+        <b>if</b> (!is_stc&lt;TokenType&gt;()){
+            <b>let</b> balance_amount_stc= <a href="Account.md#0x1_Account_balance">balance</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+            <b>assert</b>!(balance_amount_stc &gt;= max_transaction_fee_stc, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_CANT_PAY_GAS_DEPOSIT">EPROLOGUE_CANT_PAY_GAS_DEPOSIT</a>));
+        }
     };
     // Check that the transaction sequence number matches the sequence number of the account
     <b>assert</b>!(txn_sequence_number &gt;= sender_account.sequence_number, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD">EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD</a>));
@@ -3294,11 +3293,12 @@ It collects gas and bumps the sequence number
         <a href="Account.md#0x1_Account_balance">balance</a>&lt;TokenType&gt;(txn_sender) &gt;= transaction_fee_amount_token,
         <a href="Errors.md#0x1_Errors_limit_exceeded">Errors::limit_exceeded</a>(<a href="Account.md#0x1_Account_EINSUFFICIENT_BALANCE">EINSUFFICIENT_BALANCE</a>)
     );
-    /*
-    <b>let</b> genesis_balance_amount_stc=<a href="Account.md#0x1_Account_balance">balance</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
-    <b>assert</b>!(genesis_balance_amount_stc &gt;= transaction_fee_amount_stc,
-        <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_CANT_PAY_GAS_DEPOSIT">EPROLOGUE_CANT_PAY_GAS_DEPOSIT</a>)
-    );*/
+    <b>if</b> (!is_stc&lt;TokenType&gt;()){
+        <b>let</b> genesis_balance_amount_stc=<a href="Account.md#0x1_Account_balance">balance</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+        <b>assert</b>!(genesis_balance_amount_stc &gt;= transaction_fee_amount_stc,
+            <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Account.md#0x1_Account_EPROLOGUE_CANT_PAY_GAS_DEPOSIT">EPROLOGUE_CANT_PAY_GAS_DEPOSIT</a>)
+        );
+    };
     // Load the transaction sender's account and balance resources
     <b>let</b> sender_account = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account">Account</a>&gt;(txn_sender);
     // Bump the sequence number

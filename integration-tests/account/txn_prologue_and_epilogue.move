@@ -1,9 +1,8 @@
 //# init -n dev
 
-//# faucet --addr alice --amount 10000000
-
 //# faucet --addr Genesis
 
+//# faucet --addr alice --amount 10000000
 
 //# run --signers alice
 // create txn sender account

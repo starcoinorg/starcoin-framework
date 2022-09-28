@@ -13,7 +13,7 @@ module Account {
     use StarcoinFramework::TransactionFee;
     use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Errors;
-    use StarcoinFramework::STC::{Self, STC};
+    use StarcoinFramework::STC::{Self, STC, is_stc};
     use StarcoinFramework::BCS;
     use StarcoinFramework::Math;
 
@@ -1040,11 +1040,10 @@ module Account {
             );
             let balance_amount_token = balance<TokenType>(txn_sender);
             assert!(balance_amount_token >= max_transaction_fee_token, Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT));
-            // FIXME: check stc amount of genesis?
-            /*
-            let balance_amount_stc= balance<STC>(CoreAddresses::GENESIS_ADDRESS());
-            assert!(balance_amount_stc >= max_transaction_fee_stc, Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT));
-            */
+            if (!is_stc<TokenType>()){
+                let balance_amount_stc= balance<STC>(CoreAddresses::GENESIS_ADDRESS());
+                assert!(balance_amount_stc >= max_transaction_fee_stc, Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT));
+            }
         };
         // Check that the transaction sequence number matches the sequence number of the account
         assert!(txn_sequence_number >= sender_account.sequence_number, Errors::invalid_argument(EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD));
@@ -1108,11 +1107,12 @@ module Account {
             balance<TokenType>(txn_sender) >= transaction_fee_amount_token,
             Errors::limit_exceeded(EINSUFFICIENT_BALANCE)
         );
-        /*
-        let genesis_balance_amount_stc=balance<STC>(CoreAddresses::GENESIS_ADDRESS());
-        assert!(genesis_balance_amount_stc >= transaction_fee_amount_stc,
-            Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT)
-        );*/
+        if (!is_stc<TokenType>()){
+            let genesis_balance_amount_stc=balance<STC>(CoreAddresses::GENESIS_ADDRESS());
+            assert!(genesis_balance_amount_stc >= transaction_fee_amount_stc,
+                Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT)
+            );
+        };
         // Load the transaction sender's account and balance resources
         let sender_account = borrow_global_mut<Account>(txn_sender);
         // Bump the sequence number
