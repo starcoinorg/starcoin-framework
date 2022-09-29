@@ -21,11 +21,11 @@ module StarcoinFramework::GasOracleProposalPlugin {
         precision: u8
     }
 
-    struct OracleSourceAddAction<phantom TokenType: store> has store {
+    struct OracleSourceAddAction<phantom TokenType: store> has store, drop {
         source_address: address
     }
 
-    struct OracleSourceRemoveAction<phantom TokenType: store> has store {
+    struct OracleSourceRemoveAction<phantom TokenType: store> has store, drop {
         source_address: address
     }
 
