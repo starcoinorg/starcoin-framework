@@ -8,7 +8,7 @@ module StarcoinFramework::UpgradeModulePlugin {
 
     struct UpgradeModulePlugin has store, drop{}
 
-    struct UpgradeModuleAction has store {
+    struct UpgradeModuleAction has store, drop {
         package_hash: vector<u8>,
         version: u64,
         enforced: bool

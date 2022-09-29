@@ -1,4 +1,4 @@
-//# init -n dev --debug
+//# init -n dev
 
 //// creator address is 0x662ba5a1a1da0f1c70a9762c7eeb7aaf
 //# faucet --addr creator --amount 100000000000
@@ -9,17 +9,6 @@
 //# faucet --addr bob --amount 10000000000
 
 //# faucet --addr cindy --amount 10000000000
-
-
-////# run --signers creator
-//script{
-//    use StarcoinFramework::StdlibUpgradeScripts;
-//
-//    fun main(){
-//        StdlibUpgradeScripts::upgrade_from_v11_to_v12();
-//    }
-//}
-//// check: EXECUTED
 
 //# publish
 module creator::DAOHelper {
@@ -73,7 +62,7 @@ module creator::DAOHelper {
 
     struct XPlugin has store, drop{}
 
-    struct XAction<phantom TokenT> has store {
+    struct XAction<phantom TokenT> has store, drop {
         total: u128,
         receiver: address,
     }

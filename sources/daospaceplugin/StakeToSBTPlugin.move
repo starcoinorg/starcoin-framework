@@ -73,7 +73,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         weight: u64,
     }
 
-    struct AcceptTokenCap<phantom DAOT, phantom TokenT> has store {}
+    struct AcceptTokenCap<phantom DAOT, phantom TokenT> has store, drop {}
 
     /// Events
     ///

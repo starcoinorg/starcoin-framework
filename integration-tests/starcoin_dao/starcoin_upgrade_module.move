@@ -246,7 +246,7 @@ script{
     fun execute_proposal(sender: signer){
         assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 7 , 103);
         UpgradeModulePlugin::execute_proposal<StarcoinDAO>(&sender, 1);
-        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 8 , 103);
+        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 8 , 104);
     }
 }
 // check: EXECUTED
@@ -254,3 +254,16 @@ script{
 //# block --author=0x3 --timestamp 93880000
 
 //# deploy {{$.package[0].file}} --signers alice
+
+//# run --signers alice
+script{
+    use StarcoinFramework::DAOSpace;
+    use StarcoinFramework::StarcoinDAO::StarcoinDAO;
+
+    fun execute_proposal(sender: signer){
+        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 8 , 104);
+        DAOSpace::clean_proposals<StarcoinDAO>(&sender);
+        let _ = DAOSpace::proposal<StarcoinDAO>(1);
+    }
+}
+// check: ABORT, code 103175, proposal 1 not exist.

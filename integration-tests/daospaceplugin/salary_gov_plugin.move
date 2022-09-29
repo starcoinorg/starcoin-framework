@@ -31,7 +31,7 @@ module creator::SalaryGovPlugin {
         last_receive_time: u64,
     }
 
-    struct BossProposalAction<phantom DAOT> has key, store {
+    struct BossProposalAction<phantom DAOT> has key, store, drop {
         boss: address,
     }
 
