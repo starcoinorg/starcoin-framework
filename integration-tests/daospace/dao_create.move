@@ -4,8 +4,6 @@
 
 //# faucet --addr bob --amount 10000000000
 
-//# faucet --addr carol --amount 10000000000
-
 //# block --author=0x3 --timestamp 900000
 
 //# run --signers alice
@@ -79,7 +77,7 @@ script{
 
 //# block --author=0x3 --timestamp 90240000
 
-//# deploy {{$.package[0].file}} --signers alice
+//# deploy {{$.package[0].file}} --signers bob
 
 //# run --signers alice
 script{
