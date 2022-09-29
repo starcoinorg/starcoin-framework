@@ -16,16 +16,7 @@ script{
 }
 // check: EXECUTED
 
-//# call-api state.get_resource ["{{$.faucet[0].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}","0x00000000000000000000000000000001::DAOAccount::DAOAccountCap",{"decode":true}]
-
-//# run --signers alice --args {{$.call-api[0].json.dao_address}}
-script{
-
-    fun main(_sender: signer, addr: address){
-        StarcoinFramework::Debug::print(&addr);
-    }
-}
-// check: EXECUTED
+//# view --address alice --resource 0x1::DAOAccount::DAOAccountCap
 
 //# package
 module 0xbf3a917cf4fb6425b95cc12763e6038b::XDAO {

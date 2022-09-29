@@ -1,4 +1,4 @@
-processed 12 tasks
+processed 11 tasks
 
 task 4 'run'. lines 9-17:
 {
@@ -6,19 +6,18 @@ task 4 'run'. lines 9-17:
   "status": "Executed"
 }
 
-task 6 'run'. lines 21-28:
-{
-  "gas_used": 10191,
-  "status": "Executed"
+task 5 'view'. lines 19-19:
+store key 0x00000000000000000000000000000001::DAOAccount::DAOAccountCap {
+    dao_address: bf3a917cf4fb6425b95cc12763e6038b
 }
 
-task 8 'run'. lines 68-76:
+task 7 'run'. lines 59-67:
 {
   "gas_used": 79013,
   "status": "Executed"
 }
 
-task 11 'run'. lines 82-93:
+task 10 'run'. lines 73-84:
 {
   "gas_used": 1054663,
   "status": "Executed"
