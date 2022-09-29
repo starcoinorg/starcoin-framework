@@ -67,16 +67,29 @@ module 0xbf3a917cf4fb6425b95cc12763e6038b::XDAO {
     }
 }
 
+//# run --signers alice --args {{$.package[0].package_hash}}
+script{
+    use StarcoinFramework::DAOAccount;
+
+    fun main(sender: signer, package_hash: vector<u8>){
+        DAOAccount::submit_upgrade_plan_entry(sender, package_hash, 1, false);
+    }
+}
+// check: EXECUTED
+
 //# block --author=0x3 --timestamp 90240000
 
 //# deploy {{$.package[0].file}} --signers alice
 
 //# run --signers alice
 script{
-    use StarcoinFramework::XDAO;
+    use StarcoinFramework::DAOSpace;
+    use StarcoinFramework::IdentifierNFT;
+    use 0xbf3a917cf4fb6425b95cc12763e6038b::XDAO::{Self, X};
 
     fun main(sender: signer){
-        XDAO::create_new_proposal_dao(sender, 1000, 1000, 1000, 1000, 1000);
+        IdentifierNFT::accept<DAOSpace::DAOMember<X>, DAOSpace::DAOMemberBody<X>>(&sender);
+        XDAO::create_new_proposal_dao(sender, 1000, 1000, 1, 1000, 1000);
     }
 }
 // check: EXECUTED
