@@ -347,7 +347,6 @@ module StarcoinFramework::DAOSpace {
             proposal_create_event: Event::new_event_handle<ProposalCreatedEvent>(&dao_signer),
             vote_event: Event::new_event_handle<VotedEvent>(&dao_signer),
             proposal_action_event: Event::new_event_handle<ProposalActionEvent>(&dao_signer),
-            proposal_rejection_event: Event::new_event_handle<ProposalRejectionEvent>(&dao_signer),
         });
 
         // dao event emit
@@ -1372,8 +1371,6 @@ module StarcoinFramework::DAOSpace {
         vote_event: Event::EventHandle<VotedEvent>,
         /// proposal action event.
         proposal_action_event: Event::EventHandle<ProposalActionEvent>,
-        /// event when proposal is rejected.
-        proposal_rejection_event: Event::EventHandle<ProposalRejectionEvent>,
     }
 
     /// emitted when proposal created.
@@ -1411,13 +1408,8 @@ module StarcoinFramework::DAOSpace {
         proposal_id: u64,
         /// the sender.
         sender: address,
-    }
-
-    /// emitted when proposal is rejected.
-    struct ProposalRejectionEvent has drop, store {
-        dao_id: u64,
-        proposal_id: u64,
-        sender: address,
+        /// proposal state after the action: EXTRACTED or REJECTED
+        state: u8,
     }
 
     /// propose a proposal.
@@ -1711,7 +1703,10 @@ module StarcoinFramework::DAOSpace {
         let sender_addr = Signer::address_of(sender);
         assert!(exists<ProposalActions<ActionT>>(dao_address), Errors::invalid_state(ERR_PROPOSAL_ACTIONS_NOT_EXIST));
 
-        let (proposal, actionT, deposit) = take_proposal_action(dao_address, proposal_id);
+        let (actionT, deposit) = take_proposal_action(dao_address, proposal_id);
+
+        let global_proposals = borrow_global_mut<GlobalProposals>(dao_address);
+        let proposal = borrow_proposal(global_proposals, proposal_id);
 
         Account::deposit(proposal.proposer, deposit);
 
@@ -1719,14 +1714,56 @@ module StarcoinFramework::DAOSpace {
         let dao_id = dao_id(dao_address);
         let proposal_event = borrow_global_mut<ProposalEvent<DAOT>>(dao_address);
         Event::emit_event(&mut proposal_event.proposal_action_event,
-            ProposalActionEvent { dao_id, proposal_id, sender: sender_addr }
+            ProposalActionEvent { dao_id, proposal_id, sender: sender_addr, state: EXTRACTED }
         );
 
         actionT
     }
 
-    fun take_proposal_action<ActionT: store+drop>(dao_address: address, proposal_id: u64): (Proposal, ActionT, Token<STC>)
-    acquires ProposalActions, GlobalProposals, GlobalProposalActions {
+    // Clean proposals that have been rejected or executed.
+    public fun clean_proposals<DAOT: store>(_sender: &signer) 
+    acquires GlobalProposals, GlobalProposalActions {
+        let dao_address = dao_address<DAOT>();
+        let global_proposals = borrow_global_mut<GlobalProposals>(dao_address);
+
+        let i = 0;
+        let len = Vector::length(&global_proposals.proposals);
+        while(i < len){
+            let proposal = Vector::borrow(&global_proposals.proposals, i);
+            let state = proposal_state_with_proposal<DAOT>(proposal);
+            if (state == EXTRACTED || state == REJECTED) {
+                let _ = Vector::remove(&mut global_proposals.proposals, i);
+                len = len - 1;
+            } else {
+                i = i + 1;
+            }
+        };
+    }
+
+    public (script) fun clean_proposals_entry<DAOT: store>(sender: signer) 
+    acquires GlobalProposals, GlobalProposalActions {
+        clean_proposals<DAOT>(&sender);
+    }
+
+    // Clean specific proposal by proposal id, only for rejected or executed proposals
+    public fun clean_proposal_by_id<DAOT: store>(_sender: &signer, proposal_id: u64) 
+    acquires GlobalProposals, GlobalProposalActions {
+        let dao_address = dao_address<DAOT>();
+        let global_proposals = borrow_global_mut<GlobalProposals>(dao_address);
+        let proposal = borrow_proposal(global_proposals, proposal_id);
+        let state = proposal_state_with_proposal<DAOT>(proposal);
+        assert!(state == EXTRACTED || state == REJECTED, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
+
+        let _ = remove_proposal(global_proposals, proposal_id);
+    }
+
+    public (script) fun clean_proposal_by_id_entry<DAOT: store>(sender: signer, proposal_id: u64)
+    acquires GlobalProposals, GlobalProposalActions {
+        clean_proposal_by_id<DAOT>(&sender, proposal_id)
+    }
+
+    fun take_proposal_action<ActionT: store+drop>(dao_address: address, proposal_id: u64): (ActionT, Token<STC>)
+    acquires ProposalActions, GlobalProposalActions {
         let actions = borrow_global_mut<ProposalActions<ActionT>>(dao_address);
         let index_opt = find_action(&actions.actions, proposal_id);
         assert!(Option::is_some(&index_opt), Errors::invalid_argument(ERR_ACTION_INDEX_INVALID));
@@ -1741,10 +1778,7 @@ module StarcoinFramework::DAOSpace {
         let propopsal_action_index = Option::extract(&mut proposal_action_index_opt);
         let ProposalActionIndex{ proposal_id:_,} = Vector::remove(&mut global_proposal_actions.proposal_action_indexs, propopsal_action_index);
 
-        let global_proposals = borrow_global_mut<GlobalProposals>(dao_address);
-        let proposal = remove_proposal(global_proposals, proposal_id);
-
-        (proposal, action, deposit)
+        (action, deposit)
     }
 
     fun remove_proposal(proposals: &mut GlobalProposals, proposal_id: u64): Proposal {
@@ -1822,20 +1856,29 @@ module StarcoinFramework::DAOSpace {
 
     /// Proposals are rejected when their nowithveto option reaches a certain threshold
     /// A portion of the pledged tokens will be rewarded to the executor who executes the proposal
-    public fun reject_proposal<DAOT: store, ActionT: store+drop>(sender: &signer, proposal_id: u64) acquires ProposalActions, GlobalProposals, GlobalProposalActions{
+    public fun reject_proposal<DAOT: store, ActionT: store+drop>(sender: &signer, proposal_id: u64) 
+    acquires DAO, ProposalEvent, ProposalActions, GlobalProposals, GlobalProposalActions{
         // Only  REJECTED proposal's action can be burn token.
         assert!(proposal_state<DAOT>(proposal_id) == REJECTED, Errors::invalid_state(ERR_PROPOSAL_STATE_INVALID));
         let dao_address = dao_address<DAOT>();
         assert!(exists<ProposalActions<ActionT>>(dao_address), Errors::invalid_state(ERR_PROPOSAL_ACTIONS_NOT_EXIST));
-        let (_, _, token) = take_proposal_action<ActionT>(dao_address, proposal_id);
+        let (_, token) = take_proposal_action<ActionT>(dao_address, proposal_id);
         // Part of the token is awarded to whoever executes this method , TODO: 10 %
         let award_amount = Token::value(&token) / 10;
         let (burn_token , award_token) = Token::split(token, award_amount);
         Account::deposit(Signer::address_of(sender), award_token);
         STC::burn(burn_token);
+
+        // emit event
+        let dao_id = dao_id(dao_address);
+        let proposal_event = borrow_global_mut<ProposalEvent<DAOT>>(dao_address);
+        Event::emit_event(&mut proposal_event.proposal_action_event,
+            ProposalActionEvent { dao_id, proposal_id, sender: Signer::address_of(sender), state: REJECTED }
+        );
     }
 
-    public (script) fun reject_proposal_entry<DAOT: store, ActionT: store+drop>(sender: signer, proposal_id: u64) acquires ProposalActions, GlobalProposals, GlobalProposalActions{
+    public (script) fun reject_proposal_entry<DAOT: store, ActionT: store+drop>(sender: signer, proposal_id: u64)
+    acquires DAO, ProposalEvent, ProposalActions, GlobalProposals, GlobalProposalActions{
         reject_proposal<DAOT, ActionT>(&sender, proposal_id);
     }
 
