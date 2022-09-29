@@ -1,4 +1,4 @@
-processed 44 tasks
+processed 45 tasks
 
 task 11 'run'. lines 23-37:
 {
@@ -92,6 +92,22 @@ task 39 'run'. lines 227-236:
 
 task 41 'run'. lines 240-252:
 {
-  "gas_used": 518637,
+  "gas_used": 519740,
   "status": "Executed"
+}
+
+task 44 'run'. lines 258-269:
+{
+  "gas_used": 148462,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOSpace"
+        }
+      },
+      "abort_code": "103175"
+    }
+  }
 }

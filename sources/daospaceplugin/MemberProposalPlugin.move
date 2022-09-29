@@ -9,7 +9,7 @@ module StarcoinFramework::MemberProposalPlugin{
 
     struct MemberProposalPlugin has store, drop{}
 
-    struct MemberJoinAction has store {
+    struct MemberJoinAction has store, drop {
         member: address,
         init_sbt: u128,
         image_url: vector<u8> ,
