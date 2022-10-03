@@ -338,7 +338,7 @@ It collects gas and bumps the sequence number
     }<b>else</b>{
         (1,1)
     };
-    <a href="Account.md#0x1_Account_txn_epilogue_v2">Account::txn_epilogue_v2</a>&lt;TokenType&gt;(
+    <a href="Account.md#0x1_Account_txn_epilogue_v3">Account::txn_epilogue_v3</a>&lt;TokenType&gt;(
         &account,
         txn_sender,
         txn_sequence_number,
