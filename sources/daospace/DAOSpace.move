@@ -39,7 +39,7 @@ module StarcoinFramework::DAOSpace {
 
     /// member
     const ERR_EXPECT_MEMBER: u64 = 200;
-    const ERR_EXPECT_NOT_MEMBER: u64 = 2001;
+    const ERR_EXPECT_NOT_MEMBER: u64 = 201;
 
     /// config or arguments
     const ERR_ACTION_DELAY_TOO_SMALL: u64 = 300;
