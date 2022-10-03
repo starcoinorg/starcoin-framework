@@ -1083,7 +1083,7 @@ module Account {
         txn_max_gas_units: u64,
         gas_units_remaining: u64,
     ) acquires Account, Balance {
-        txn_epilogue_v2<TokenType>(account, txn_sender, txn_sequence_number, Vector::empty(), txn_gas_price, txn_max_gas_units, gas_units_remaining,1,1)
+        txn_epilogue_v3<TokenType>(account, txn_sender, txn_sequence_number, Vector::empty(), txn_gas_price, txn_max_gas_units, gas_units_remaining,1,1)
     }
 
     spec txn_epilogue {
@@ -1102,10 +1102,48 @@ module Account {
         transaction_fee_token = if (transaction_fee_token == 0 && transaction_fee_stc > 0 ) { 1 } else { transaction_fee_token};
         (transaction_fee_stc, transaction_fee_token)
     }
-
     /// The epilogue is invoked at the end of transactions.
     /// It collects gas and bumps the sequence number
     public fun txn_epilogue_v2<TokenType: store>(
+        account: &signer,
+        txn_sender: address,
+        txn_sequence_number: u64,
+        txn_authentication_key_preimage: vector<u8>,
+        txn_gas_price: u64,
+        txn_max_gas_units: u64,
+        gas_units_remaining: u64,
+    ) acquires Account, Balance {
+        txn_epilogue_v3<TokenType>(
+            account,
+            txn_sender,
+            txn_sequence_number,
+            txn_authentication_key_preimage,
+            txn_gas_price,
+            txn_max_gas_units,
+            gas_units_remaining,1,1)
+    }
+
+    spec txn_epilogue_v2 {
+        pragma verify = false; // Todo: fix me, cost too much time
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
+        aborts_if !exists<Account>(txn_sender);
+        aborts_if !exists<Balance<TokenType>>(txn_sender);
+        aborts_if txn_max_gas_units < gas_units_remaining;
+        let transaction_fee_amount = txn_gas_price * (txn_max_gas_units - gas_units_remaining);
+        aborts_if transaction_fee_amount > max_u128();
+        aborts_if global<Balance<TokenType>>(txn_sender).token.value < transaction_fee_amount;
+        aborts_if txn_sequence_number + 1 > max_u64();
+        aborts_if txn_gas_price * (txn_max_gas_units - gas_units_remaining) > 0 &&
+                  global<Balance<TokenType>>(txn_sender).token.value  < txn_gas_price * (txn_max_gas_units - gas_units_remaining);
+        aborts_if txn_gas_price * (txn_max_gas_units - gas_units_remaining) > 0 &&
+                  !exists<TransactionFee::TransactionFee<TokenType>>(CoreAddresses::GENESIS_ADDRESS());
+        aborts_if txn_gas_price * (txn_max_gas_units - gas_units_remaining) > 0 &&
+                  global<TransactionFee::TransactionFee<TokenType>>(CoreAddresses::GENESIS_ADDRESS()).fee.value + txn_gas_price * (txn_max_gas_units - gas_units_remaining) > max_u128();
+    }
+
+    /// The epilogue is invoked at the end of transactions.
+    /// It collects gas and bumps the sequence number
+    public fun txn_epilogue_v3<TokenType: store>(
         account: &signer,
         txn_sender: address,
         txn_sequence_number: u64,
