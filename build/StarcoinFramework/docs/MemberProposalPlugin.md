@@ -245,7 +245,7 @@
     <b>let</b> proposal_cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_proposal_cap">DAOSpace::acquire_proposal_cap</a>&lt;DAOT, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>&gt;(&witness);
     <b>let</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_MemberJoinAction">MemberJoinAction</a>{member, init_sbt, image_data, image_url} = <a href="DAOSpace.md#0x1_DAOSpace_execute_proposal">DAOSpace::execute_proposal</a>&lt;DAOT, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_MemberJoinAction">MemberJoinAction</a>&gt;(&proposal_cap, sender, proposal_id);
     <b>let</b> member_cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_member_cap">DAOSpace::acquire_member_cap</a>&lt;DAOT, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>&gt;(&witness);
-    <a href="DAOSpace.md#0x1_DAOSpace_join_member">DAOSpace::join_member</a>(&member_cap, member, <a href="Option.md#0x1_Option_some">Option::some</a>(image_data), <a href="Option.md#0x1_Option_some">Option::some</a>(image_url) , init_sbt);
+    <a href="DAOSpace.md#0x1_DAOSpace_member_offer">DAOSpace::member_offer</a>(&member_cap, member, <a href="Option.md#0x1_Option_some">Option::some</a>(image_data), <a href="Option.md#0x1_Option_some">Option::some</a>(image_url) , init_sbt);
 }
 </code></pre>
 
