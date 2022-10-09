@@ -1,6 +1,5 @@
 /// Called by other contract which need proposal config
 module StarcoinFramework::ConfigProposalPlugin {
-    use StarcoinFramework::GenesisSignerCapability;
     use StarcoinFramework::Option;
     use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
@@ -13,11 +12,9 @@ module StarcoinFramework::ConfigProposalPlugin {
         config: ConfigT,
     }
 
-    public fun initialize() {
-        let signer = GenesisSignerCapability::get_genesis_signer();
-        
+    public fun initialize(sender: &signer) {
         DAOPluginMarketplace::register_plugin<ConfigProposalPlugin>(
-            &signer,
+            sender,
             b"0x1::ConfigProposalPlugin",
             b"The config proposal plugin",
             Option::none(),
@@ -28,7 +25,7 @@ module StarcoinFramework::ConfigProposalPlugin {
 
         let witness = ConfigProposalPlugin{};
         DAOPluginMarketplace::publish_plugin_version<ConfigProposalPlugin>(
-            &signer, 
+            sender,
             &witness,
             b"v0.1.0", 
             *&implement_extpoints,

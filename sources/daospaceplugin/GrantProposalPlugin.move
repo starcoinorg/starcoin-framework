@@ -1,6 +1,5 @@
 //TODO find more good name
 module StarcoinFramework::GrantProposalPlugin{
-    use StarcoinFramework::GenesisSignerCapability;
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option;
     use StarcoinFramework::DAOPluginMarketplace;
@@ -30,11 +29,9 @@ module StarcoinFramework::GrantProposalPlugin{
         grantee:address
     }
 
-    public fun initialize() {
-        let signer = GenesisSignerCapability::get_genesis_signer();
-        
+    public fun initialize(sender: &signer) {
         DAOPluginMarketplace::register_plugin<GrantProposalPlugin>(
-            &signer,
+            sender,
             b"0x1::GrantProposalPlugin",
             b"The plugin for grant proposal",
             Option::none(),
@@ -45,7 +42,7 @@ module StarcoinFramework::GrantProposalPlugin{
 
         let witness = GrantProposalPlugin{};
         DAOPluginMarketplace::publish_plugin_version<GrantProposalPlugin>(
-            &signer, 
+            sender,
             &witness,
             b"v0.1.0", 
             *&implement_extpoints,
