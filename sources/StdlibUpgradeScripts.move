@@ -34,7 +34,8 @@ module StdlibUpgradeScripts {
         use StarcoinFramework::StarcoinDAO;
         use StarcoinFramework::GasOracleProposalPlugin;
         use StarcoinFramework::Dao;
-
+        use StarcoinFramework::TreasuryPlugin;
+        
     spec module {
             pragma verify = false;
             pragma aborts_if_is_strict = true;
@@ -136,6 +137,7 @@ module StdlibUpgradeScripts {
             StakeToSBTPlugin::initialize(&genessis_signer);
             UpgradeModulePlugin::initialize(&genessis_signer);
             GasOracleProposalPlugin::initialize(&genessis_signer);
+            TreasuryPlugin::initialize(&genessis_signer);
 
             //TODO : config rate need mind
             // voting_delay: 60000 ms
@@ -143,6 +145,10 @@ module StdlibUpgradeScripts {
             // voting_quorum_rate: 4
             // min_action_delay: 3600000 ms
             StarcoinDAO::create_dao( Dao::voting_delay<STC>(), Dao::voting_period<STC>(), Dao::voting_quorum_rate<STC>(), Dao::min_action_delay<STC>(), 1000 * 1000 * 1000 * 1000);
+
+           let signer = GenesisSignerCapability::get_genesis_signer();
+           let cap = TreasuryWithdrawDaoProposal::takeout_withdraw_capability<STC>(&signer);
+           TreasuryPlugin::delegate_capability<STC>(&signer, cap);
         }
 }
 }
