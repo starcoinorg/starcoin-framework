@@ -590,7 +590,7 @@ module StarcoinFramework::DAOSpace {
 
     // Membership function
 
-    struct OfferMemeber<phantom DAOT: store> has drop, store{
+    struct OfferMemeber<phantom DAOT> has drop, store{
         to_address: address,
         image_data:Option::Option<vector<u8>>,
         image_url:Option::Option<vector<u8>>,
@@ -636,7 +636,7 @@ module StarcoinFramework::DAOSpace {
     public fun join_member<DAOT: store>(sender: &signer) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
         let dao_address = dao_address<DAOT>();
         let op_index = Offer::find_offer<OfferMemeber<DAOT>>(dao_address, Signer::address_of(sender));
-        assert!(Option::is_none(&op_index),1003);
+        assert!(Option::is_some(&op_index),1003);
         let OfferMemeber<DAOT> {
             to_address,
             image_data,
@@ -761,6 +761,10 @@ module StarcoinFramework::DAOSpace {
         do_join_member<DAOT>(to_address, image_data, image_url, init_sbt);
     }
 
+    public fun join_member_with_member_cap<DAOT: store, Plugin>(_cap: &DAOMemberCap<DAOT, Plugin>, to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
+        do_join_member<DAOT>(to_address, image_data, image_url, init_sbt);
+    }
+
     /// Increment the member SBT
     public fun increase_member_sbt<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, member_addr: address, amount: u128) acquires DAONFTUpdateCapHolder, DAOSBTMintCapHolder, MemberEvent {
         ensure_member<DAOT>(member_addr);
@@ -867,6 +871,11 @@ module StarcoinFramework::DAOSpace {
     /// Check the `member_addr` account is a member of DAOT
     public fun is_member<DAOT: store>(member_addr: address): bool {
         IdentifierNFT::owns<DAOMember<DAOT>, DAOMemberBody<DAOT>>(member_addr)
+    }
+
+    public fun is_exist_member_offer<DAOT>(member_addr: address):bool{
+        let dao_address = dao_address<DAOT>();
+        Option::is_some(&Offer::find_offer<OfferMemeber<DAOT>>(dao_address, member_addr))
     }
 
     struct PluginEvent<phantom DAOT : store, phantom PluginT: store, phantom EventT: store + drop> has key, store {
@@ -977,7 +986,7 @@ module StarcoinFramework::DAOSpace {
     public fun grant_accept_offer<DAOT, Plugin, TokenT:store>(sender: &signer) {
         let dao_address = dao_address<DAOT>();
         let op_index = Offer::find_offer<DAOGrantWithdrawTokenKey<DAOT, Plugin, TokenT>>(dao_address, Signer::address_of(sender));
-        assert!(Option::is_none(&op_index),1003);
+        assert!(Option::is_some(&op_index),1003);
         let grant_key = Offer::redeem_v2<DAOGrantWithdrawTokenKey<DAOT, Plugin, TokenT>>(sender, dao_address, Option::destroy_some(op_index));
         move_to(sender, grant_key)
     }
@@ -1101,7 +1110,7 @@ module StarcoinFramework::DAOSpace {
         Account::deposit<TokenT>(account_address, token);
     }
 
-    public fun query_grant_can_withdraw<DAOT, Plugin, TokenT:store>(addr: address):u128 acquires DAOGrantWithdrawTokenKey{
+    public fun query_grant_withdrawable_amount<DAOT, Plugin, TokenT:store>(addr: address):u128 acquires DAOGrantWithdrawTokenKey{
         assert!(exists<DAOGrantWithdrawTokenKey<DAOT, Plugin, TokenT>>(addr) , Errors::invalid_state(ERR_NOT_HAVE_GRANT));
         let cap = borrow_global<DAOGrantWithdrawTokenKey<DAOT, Plugin, TokenT>>(addr);
         let now = Timestamp::now_seconds();

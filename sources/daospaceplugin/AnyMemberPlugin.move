@@ -45,7 +45,7 @@ module StarcoinFramework::AnyMemberPlugin{
         let witness = AnyMemberPlugin{};
         let member_cap = DAOSpace::acquire_member_cap<DAOT, AnyMemberPlugin>(&witness);
         IdentifierNFT::accept<DAOSpace::DAOMember<DAOT>,DAOSpace::DAOMemberBody<DAOT>>(sender);
-        DAOSpace::member_offer(&member_cap, Signer::address_of(sender), Option::some(image_data), Option::some(image_url), 1);
+        DAOSpace::join_member_with_member_cap(&member_cap, Signer::address_of(sender), Option::some(image_data), Option::some(image_url), 1);
     }
 
     public (script) fun join_entry<DAOT: store>(sender: signer, image_data:vector<u8>, image_url:vector<u8>){

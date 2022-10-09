@@ -81,8 +81,7 @@ module creator::SalaryGovPlugin {
 
         let witness = SalaryGovPlugin {};
         let cap = DAOSpace::acquire_member_cap<DAOT, SalaryGovPlugin>(&witness);
-        DAOSpace::join_member<DAOT, SalaryGovPlugin>(&cap, member, Option::some(image_data), Option::some(image_url), 0);
-
+        DAOSpace::join_member_with_member_cap<DAOT, SalaryGovPlugin>(&cap, member, Option::some(image_data), Option::some(image_url), 0);
         move_to(&sender, SalaryReceive<DAOT, TokenT> {
             last_receive_time: Timestamp::now_seconds(),
         });
