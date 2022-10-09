@@ -165,7 +165,7 @@ script{
         assert!(DAOSpace::query_grant_info_withdraw(&grant_info)== 500000000,1012);
         assert!(DAOSpace::query_grant_info_start_time(&grant_info) == 86400,1013);
         assert!(DAOSpace::query_grant_info_period(&grant_info) == 0,1014);
-        assert!(query_grant_withdrawable_amount<X, XPlugin, STC::STC>(@bob) == 0,1015);
+        assert!(query_grant_withdrawable_amount<X, XPlugin, STC::STC>(@bob) == 500000000,1015);
 
         DAOHelper::grant_revoke(@bob);
         assert!(DAOSpace::is_exist_grant<X, XPlugin, STC::STC>(@bob) == false, 1016);

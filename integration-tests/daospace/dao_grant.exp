@@ -14,13 +14,8 @@ task 9 'run'. lines 121-140:
 
 task 10 'run'. lines 142-174:
 {
-  "gas_used": 515887,
-  "status": {
-    "MoveAbort": {
-      "location": "Script",
-      "abort_code": "1015"
-    }
-  }
+  "gas_used": 630999,
+  "status": "Executed"
 }
 
 task 12 'run'. lines 178-190:
