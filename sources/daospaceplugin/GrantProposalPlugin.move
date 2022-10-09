@@ -25,10 +25,7 @@ module StarcoinFramework::GrantProposalPlugin{
     }
 
     struct GrantRevokeAction<phantom TokenT:store> has store, drop {
-        grantee: address,
-        total: u128,
-        start_time:u64,
-        period:u64
+        grantee: address
     }
 
     public fun initialize() {
@@ -93,23 +90,23 @@ module StarcoinFramework::GrantProposalPlugin{
         execute_grant_proposal<DAOT, TokenT>(&sender, proposal_id);
     }
 
-    public fun create_grant_revoke_proposal<DAOT: store, TokenT:store>(sender: &signer, description: vector<u8>, grantee:address, total: u128, start_time:u64, period: u64, action_delay:u64){
+    public fun create_grant_revoke_proposal<DAOT: store, TokenT:store>(sender: &signer, description: vector<u8>, grantee: address, action_delay: u64){
         let witness = GrantProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, GrantProposalPlugin>(&witness);
-        let action = GrantRevokeAction<TokenT>{ grantee, total, start_time, period };
+        let action = GrantRevokeAction<TokenT>{ grantee };
         DAOSpace::create_proposal(&cap, sender, action, description, action_delay);
     }
 
-    public (script) fun create_grant_revoke_proposal_entry<DAOT: store, TokenT:store>(sender: signer, description: vector<u8>, grantee:address, total: u128, start_time:u64, period: u64, action_delay:u64){
-        create_grant_revoke_proposal<DAOT, TokenT>(&sender, description, grantee, total, start_time, period, action_delay);
+    public (script) fun create_grant_revoke_proposal_entry<DAOT: store, TokenT:store>(sender: signer, description: vector<u8>, grantee: address, action_delay: u64){
+        create_grant_revoke_proposal<DAOT, TokenT>(&sender, description, grantee, action_delay);
     }
 
     public fun execute_grant_revoke_proposal<DAOT: store, TokenT:store>(sender: &signer, proposal_id: u64){
         let witness = GrantProposalPlugin{};
         let proposal_cap = DAOSpace::acquire_proposal_cap<DAOT, GrantProposalPlugin>(&witness);
-        let GrantRevokeAction{ grantee, total, start_time, period } = DAOSpace::execute_proposal<DAOT, GrantProposalPlugin, GrantRevokeAction<TokenT>>(&proposal_cap, sender, proposal_id);
+        let GrantRevokeAction{ grantee } = DAOSpace::execute_proposal<DAOT, GrantProposalPlugin, GrantRevokeAction<TokenT>>(&proposal_cap, sender, proposal_id);
         let grant_cap = DAOSpace::acquire_grant_cap<DAOT, GrantProposalPlugin>(&witness);
-        DAOSpace::grant_revoke<DAOT, GrantProposalPlugin, TokenT>(&grant_cap , grantee, total, start_time, period);
+        DAOSpace::grant_revoke<DAOT, GrantProposalPlugin, TokenT>(&grant_cap , grantee);
     }
 
     public (script) fun execute_grant_revoke_proposal_entry<DAOT: store, TokenT:store>(sender: signer, proposal_id: u64){
