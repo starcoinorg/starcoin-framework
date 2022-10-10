@@ -108,6 +108,7 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::TransactionTimeoutConfig`](TransactionTimeoutConfig.md#0x1_TransactionTimeoutConfig)
 -  [`0x1::TransferScripts`](TransferScripts.md#0x1_TransferScripts)
 -  [`0x1::Treasury`](Treasury.md#0x1_Treasury)
+-  [`0x1::TreasuryPlugin`](TreasuryPlugin.md#0x1_TreasuryPlugin)
 -  [`0x1::TreasuryScripts`](TreasuryScripts.md#0x1_TreasuryScripts)
 -  [`0x1::TreasuryWithdrawDaoProposal`](TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal)
 -  [`0x1::TypeInfo`](TypeInfo.md#0x1_TypeInfo)

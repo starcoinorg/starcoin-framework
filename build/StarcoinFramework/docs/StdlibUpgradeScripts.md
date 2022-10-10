@@ -50,6 +50,7 @@ The module for StdlibUpgrade init scripts
 <b>use</b> <a href="Timestamp.md#0x1_Timestamp">0x1::Timestamp</a>;
 <b>use</b> <a href="Token.md#0x1_Token">0x1::Token</a>;
 <b>use</b> <a href="Treasury.md#0x1_Treasury">0x1::Treasury</a>;
+<b>use</b> <a href="TreasuryPlugin.md#0x1_TreasuryPlugin">0x1::TreasuryPlugin</a>;
 <b>use</b> <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal">0x1::TreasuryWithdrawDaoProposal</a>;
 <b>use</b> <a href="UpgradeModulePlugin.md#0x1_UpgradeModulePlugin">0x1::UpgradeModulePlugin</a>;
 </code></pre>
@@ -368,6 +369,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
     <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_initialize">StakeToSBTPlugin::initialize</a>(&genessis_signer);
     <a href="UpgradeModulePlugin.md#0x1_UpgradeModulePlugin_initialize">UpgradeModulePlugin::initialize</a>(&genessis_signer);
     <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_initialize">GasOracleProposalPlugin::initialize</a>(&genessis_signer);
+    <a href="TreasuryPlugin.md#0x1_TreasuryPlugin_initialize">TreasuryPlugin::initialize</a>(&genessis_signer);
 
     //TODO : config rate need mind
     // voting_delay: 60000 ms
@@ -375,6 +377,10 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
     // voting_quorum_rate: 4
     // min_action_delay: 3600000 ms
     <a href="StarcoinDAO.md#0x1_StarcoinDAO_create_dao">StarcoinDAO::create_dao</a>( <a href="Dao.md#0x1_Dao_voting_delay">Dao::voting_delay</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(), <a href="Dao.md#0x1_Dao_voting_period">Dao::voting_period</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(), <a href="Dao.md#0x1_Dao_voting_quorum_rate">Dao::voting_quorum_rate</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(), <a href="Dao.md#0x1_Dao_min_action_delay">Dao::min_action_delay</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(), 1000 * 1000 * 1000 * 1000);
+
+   <b>let</b> signer = <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability_get_genesis_signer">GenesisSignerCapability::get_genesis_signer</a>();
+   <b>let</b> cap = <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_takeout_withdraw_capability">TreasuryWithdrawDaoProposal::takeout_withdraw_capability</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(&signer);
+   <a href="TreasuryPlugin.md#0x1_TreasuryPlugin_delegate_capability">TreasuryPlugin::delegate_capability</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(&signer, cap);
 }
 </code></pre>
 
