@@ -1,5 +1,4 @@
 module StarcoinFramework::TreasuryPlugin {
-    use StarcoinFramework::GenesisSignerCapability;
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option;
     use StarcoinFramework::DAOPluginMarketplace;
@@ -35,11 +34,9 @@ module StarcoinFramework::TreasuryPlugin {
         period: u64,
     }
 
-    public fun initialize() {
-        let signer = GenesisSignerCapability::get_genesis_signer();
-
+    public fun initialize(sender: &signer) {
         DAOPluginMarketplace::register_plugin<TreasuryPlugin>(
-            &signer,
+            sender,
             b"0x1::TreasuryPlugin",
             b"The plugin for withdraw token from Treasury.",
             Option::none(),
@@ -50,7 +47,7 @@ module StarcoinFramework::TreasuryPlugin {
 
         let witness = TreasuryPlugin {};
         DAOPluginMarketplace::publish_plugin_version<TreasuryPlugin>(
-            &signer,
+            sender,
             &witness,
             b"v0.1.0",
             *&implement_extpoints,
