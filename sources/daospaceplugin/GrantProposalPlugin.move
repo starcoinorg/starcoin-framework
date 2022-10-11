@@ -6,6 +6,7 @@ module StarcoinFramework::GrantProposalPlugin{
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Vector;
     use StarcoinFramework::InstallPluginProposalPlugin;
+    use StarcoinFramework::Errors;
 
     struct GrantProposalPlugin has store, drop{}
 
@@ -61,8 +62,10 @@ module StarcoinFramework::GrantProposalPlugin{
     const ERR_GRANTTREASURY_WITHDRAW_NOT_GRANTEE :u64 = 101;
     const ERR_GRANTTREASURY_WITHDRAW_TOO_MORE :u64 = 102;
     const ERR_SENDER_NOT_SAME :u64 = 103;
+    const ERR_GRANT_OFFER_EXIST :u64 = 104;
+    const ERR_GRANT_OFFER_NOT_EXIST :u64 = 105;
 
-    public fun create_grant_proposal<DAOT: store, TokenT:store>(sender: &signer, description: vector<u8>,grantee: address, total: u128, start_time:u64, period: u64, action_delay:u64){
+    public fun create_grant_proposal<DAOT: store, TokenT:store>(sender: &signer, description: vector<u8>, grantee: address, total: u128, start_time:u64, period: u64, action_delay:u64){
         let witness = GrantProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, GrantProposalPlugin>(&witness);
         let action = GrantCreateAction<TokenT>{
@@ -71,6 +74,7 @@ module StarcoinFramework::GrantProposalPlugin{
             start_time:start_time,
             period:period
         };
+        assert!(!DAOSpace::is_exist_grant<DAOT, GrantProposalPlugin, TokenT>(grantee), Errors::already_published(ERR_GRANT_OFFER_EXIST));
         DAOSpace::create_proposal(&cap, sender, action, description, action_delay);
     }
 
@@ -106,6 +110,7 @@ module StarcoinFramework::GrantProposalPlugin{
         let proposal_cap = DAOSpace::acquire_proposal_cap<DAOT, GrantProposalPlugin>(&witness);
         let GrantRevokeAction{ grantee } = DAOSpace::execute_proposal<DAOT, GrantProposalPlugin, GrantRevokeAction<TokenT>>(&proposal_cap, sender, proposal_id);
         let grant_cap = DAOSpace::acquire_grant_cap<DAOT, GrantProposalPlugin>(&witness);
+        assert!(DAOSpace::is_exist_grant<DAOT, GrantProposalPlugin, TokenT>(grantee), Errors::already_published(ERR_GRANT_OFFER_NOT_EXIST));
         DAOSpace::grant_revoke<DAOT, GrantProposalPlugin, TokenT>(&grant_cap , grantee);
     }
 

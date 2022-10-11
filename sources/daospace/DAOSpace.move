@@ -342,6 +342,9 @@ module StarcoinFramework::DAOSpace {
             dao_create_event: Event::new_event_handle<DAOCreatedEvent>(&dao_signer),
         });
         move_to(&dao_signer ,MemberEvent{
+            member_creater_offer_event_handler: Event::new_event_handle<MemberCreaterOfferEvent>(&dao_signer),
+            member_reback_offer_event_handler: Event::new_event_handle<MemberRebackOfferEvent>(&dao_signer),
+            member_use_offer_event_handler: Event::new_event_handle<MemberUseOfferEvent>(&dao_signer),
             member_join_event_handler:Event::new_event_handle<MemberJoinEvent>(&dao_signer),
             member_quit_event_handler:Event::new_event_handle<MemberQuitEvent>(&dao_signer),
             member_revoke_event_handler:Event::new_event_handle<MemberRevokeEvent>(&dao_signer),
@@ -412,6 +415,9 @@ module StarcoinFramework::DAOSpace {
 
     /// member event
     struct MemberEvent has key, store{
+        member_creater_offer_event_handler:Event::EventHandle<MemberCreaterOfferEvent>,
+        member_reback_offer_event_handler:Event::EventHandle<MemberRebackOfferEvent>,
+        member_use_offer_event_handler:Event::EventHandle<MemberUseOfferEvent>,
         member_join_event_handler:Event::EventHandle<MemberJoinEvent>,
         member_quit_event_handler:Event::EventHandle<MemberQuitEvent>,
         member_revoke_event_handler:Event::EventHandle<MemberRevokeEvent>,
@@ -419,9 +425,51 @@ module StarcoinFramework::DAOSpace {
         member_decrease_sbt_event_handler:Event::EventHandle<MemberDecreaseSBTEvent>,
     }
 
+
+    struct MemberCreaterOfferEvent has drop, store{
+        /// dao id
+        dao_id: u64,
+        //address
+        addr: address,
+        //image_data
+        image_data:Option::Option<vector<u8>>,
+        //image_url
+        image_url:Option::Option<vector<u8>>,
+        // SBT
+        sbt: u128,
+    }
+
+    struct MemberRebackOfferEvent has drop, store{
+        /// dao id
+        dao_id: u64,
+        //address
+        addr: address,
+        //image_data
+        image_data:Option::Option<vector<u8>>,
+        //image_url
+        image_url:Option::Option<vector<u8>>,
+        // SBT
+        sbt: u128,
+    }
+
+    struct MemberUseOfferEvent has drop, store{
+        /// dao id
+        dao_id: u64,
+        //address
+        addr: address,
+        //image_data
+        image_data:Option::Option<vector<u8>>,
+        //image_url
+        image_url:Option::Option<vector<u8>>,
+        // SBT
+        sbt: u128,
+    }
+
     struct MemberJoinEvent has drop, store{
         /// dao id
         dao_id: u64,
+        // type: direct/offer
+        type: vector<u8>,
         //Member id
         member_id : u64,
         //address
@@ -597,35 +645,75 @@ module StarcoinFramework::DAOSpace {
         init_sbt: u128
     }
 
-    public fun member_offer<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires  DAOAccountCapHolder {
+    public fun member_offer<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAOAccountCapHolder, MemberEvent, DAO {
         let dao_address = dao_address<DAOT>();
         let dao_signer = dao_signer<DAOT>();
+        let memeber_event = borrow_global_mut<MemberEvent>(dao_address);
         if(is_member<DAOT>(to_address)){
+            Event::emit_event(&mut memeber_event.member_reback_offer_event_handler, MemberRebackOfferEvent {
+                dao_id: dao_id(dao_address),
+                addr:to_address,
+                image_data,
+                image_url,
+                sbt: init_sbt,
+            });
             return
         };
 
         let op_index = Offer::find_offer<OfferMemeber<DAOT>>(dao_address, to_address);
         if(Option::is_some(&op_index)){
-            //TODO: return or reoffer
-            Offer::retake<OfferMemeber<DAOT>>(&dao_signer, Option::destroy_some(op_index));
+            let OfferMemeber<DAOT>{
+                to_address,
+                image_data,
+                image_url,
+                init_sbt
+            } = Offer::retake<OfferMemeber<DAOT>>(&dao_signer, Option::destroy_some(op_index));
+            Event::emit_event(&mut memeber_event.member_reback_offer_event_handler, MemberRebackOfferEvent {
+                dao_id: dao_id(dao_address),
+                addr:to_address,
+                image_data,
+                image_url,
+                sbt: init_sbt,
+            });
             return
         };
 
         let offered = OfferMemeber<DAOT> {
             to_address,
-            image_data,
-            image_url,
+            image_data: copy image_data,
+            image_url: copy image_url,
             init_sbt
         };
         Offer::create_v2<OfferMemeber<DAOT>>(&dao_signer, offered, to_address, 0);
+
+        Event::emit_event(&mut memeber_event.member_creater_offer_event_handler, MemberCreaterOfferEvent {
+            dao_id: dao_id(dao_address),
+            addr:to_address,
+            image_data,
+            image_url,
+            sbt: init_sbt,
+        });
     }
 
-    public fun member_offer_revoke<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, to_address: address) acquires  DAOAccountCapHolder{
+    public fun member_offer_revoke<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, to_address: address) acquires DAOAccountCapHolder, MemberEvent, DAO {
         let dao_address = dao_address<DAOT>();
         let dao_signer = dao_signer<DAOT>();
         let op_index = Offer::find_offer<OfferMemeber<DAOT>>(dao_address, to_address);
+        let memeber_event = borrow_global_mut<MemberEvent>(dao_address);
         if(Option::is_some(&op_index)){
-            Offer::retake<OfferMemeber<DAOT>>(&dao_signer, Option::destroy_some(op_index));
+            let OfferMemeber<DAOT>{
+                to_address,
+                image_data,
+                image_url,
+                init_sbt
+            } = Offer::retake<OfferMemeber<DAOT>>(&dao_signer, Option::destroy_some(op_index));
+            Event::emit_event(&mut memeber_event.member_reback_offer_event_handler, MemberRebackOfferEvent {
+                dao_id: dao_id(dao_address),
+                addr:to_address,
+                image_data,
+                image_url,
+                sbt: init_sbt,
+            });
         }else{
 
         };
@@ -633,24 +721,43 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// Join DAO and get a membership by self
-    public fun join_member<DAOT: store>(sender: &signer) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
+    public fun join_member<DAOT: store>(sender: &signer) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent, DAONFTUpdateCapHolder {
         let dao_address = dao_address<DAOT>();
         let op_index = Offer::find_offer<OfferMemeber<DAOT>>(dao_address, Signer::address_of(sender));
         assert!(Option::is_some(&op_index),1003);
+        let memeber_event = borrow_global_mut<MemberEvent>(dao_address);
         let OfferMemeber<DAOT> {
             to_address,
             image_data,
             image_url,
             init_sbt
         }= Offer::redeem_v2<OfferMemeber<DAOT>>(sender, dao_address, Option::destroy_some(op_index));
-        do_join_member<DAOT>(to_address, image_data, image_url, init_sbt);
+        Event::emit_event(&mut memeber_event.member_use_offer_event_handler, MemberUseOfferEvent {
+            dao_id: dao_id(dao_address),
+            addr:to_address,
+            image_data: copy image_data,
+            image_url: copy image_url,
+            sbt: init_sbt,
+        });
+        if(is_member<DAOT>(to_address)){
+            increase_member_sbt<DAOT, DAOT>(&DAOMemberCap<DAOT, DAOT>{}, to_address, init_sbt);
+        }else{
+            do_join_member<DAOT>(to_address, image_data, image_url, init_sbt);
+            Event::emit_event(&mut memeber_event.member_join_event_handler, MemberJoinEvent {
+                dao_id: dao_id(dao_address),
+                type:b"offer",
+                member_id:Option::destroy_some(query_member_id<DAOT>(to_address)),
+                addr:to_address,
+                sbt: init_sbt,
+            });
+        }
     }
 
-    public (script) fun join_member_entry<DAOT: store>(sender: signer) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
+    public (script) fun join_member_entry<DAOT: store>(sender: signer) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent , DAONFTUpdateCapHolder {
         join_member<DAOT>(&sender)
     }
 
-    fun do_join_member<DAOT: store>(to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
+    fun do_join_member<DAOT: store>(to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO {
         ensure_not_member<DAOT>(to_address);
         let member_id = next_member_id<DAOT>();
 
@@ -682,13 +789,6 @@ module StarcoinFramework::DAOSpace {
 
         let nft = NFT::mint_with_cap_v2(dao_address, nft_mint_cap, basemeta, meta, body);
         IdentifierNFT::grant_to(nft_mint_cap, to_address, nft);
-        let memeber_event = borrow_global_mut<MemberEvent>(dao_address);
-        Event::emit_event(&mut memeber_event.member_join_event_handler, MemberJoinEvent {
-            dao_id: dao_id(dao_address),
-            member_id,
-            addr:to_address,
-            sbt: init_sbt,
-        });
     }
 
     /// Member quit DAO by self
@@ -758,11 +858,29 @@ module StarcoinFramework::DAOSpace {
     }
 
     public fun join_member_with_root_cap<DAOT: store>(_cap: &DAORootCap<DAOT>, to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
+        let dao_address = dao_address<DAOT>();
+        let memeber_event = borrow_global_mut<MemberEvent>(dao_address);
         do_join_member<DAOT>(to_address, image_data, image_url, init_sbt);
+        Event::emit_event(&mut memeber_event.member_join_event_handler, MemberJoinEvent {
+            dao_id: dao_id(dao_address),
+            type:b"direct",
+            member_id:Option::destroy_some(query_member_id<DAOT>(to_address)),
+            addr:to_address,
+            sbt: init_sbt,
+        });
     }
 
     public fun join_member_with_member_cap<DAOT: store, Plugin>(_cap: &DAOMemberCap<DAOT, Plugin>, to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
+        let dao_address = dao_address<DAOT>();
+        let memeber_event = borrow_global_mut<MemberEvent>(dao_address);
         do_join_member<DAOT>(to_address, image_data, image_url, init_sbt);
+        Event::emit_event(&mut memeber_event.member_join_event_handler, MemberJoinEvent {
+            dao_id: dao_id(dao_address),
+            type:b"direct",
+            member_id:Option::destroy_some(query_member_id<DAOT>(to_address)),
+            addr:to_address,
+            sbt: init_sbt,
+        });
     }
 
     /// Increment the member SBT
@@ -868,6 +986,15 @@ module StarcoinFramework::DAOSpace {
         result
     }
 
+    /// Query member id of the member
+    public fun query_member_id<DAOT: store>(member_addr: address): Option::Option<u64>{
+        if(!is_member<DAOT>(member_addr)){
+            return Option::none<u64>()
+        };
+        let nft_info = Option::destroy_some(IdentifierNFT::get_nft_info<DAOMember<DAOT>, DAOMemberBody<DAOT>>(member_addr));
+        let (_, _, _, type_meta) = NFT::unpack_info(nft_info);
+        Option::some(type_meta.id)
+    }
     /// Check the `member_addr` account is a member of DAOT
     public fun is_member<DAOT: store>(member_addr: address): bool {
         IdentifierNFT::owns<DAOMember<DAOT>, DAOMemberBody<DAOT>>(member_addr)

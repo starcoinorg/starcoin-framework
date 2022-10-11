@@ -6,6 +6,10 @@ module StarcoinFramework::MemberProposalPlugin{
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Vector;
     use StarcoinFramework::InstallPluginProposalPlugin;
+    use StarcoinFramework::Errors;
+
+    const ERR_MEMBER_EXIST:u64 = 101;
+    const ERR_MEMBER_OFFER_EXIST:u64 = 102;
 
     struct MemberProposalPlugin has store, drop{}
 
@@ -55,6 +59,8 @@ module StarcoinFramework::MemberProposalPlugin{
             image_data,
             image_url
         };
+        assert!(!DAOSpace::is_exist_member_offer<DAOT>(member), Errors::already_published(ERR_MEMBER_OFFER_EXIST));
+        assert!(!DAOSpace::is_member<DAOT>(member), Errors::already_published(ERR_MEMBER_EXIST));
         DAOSpace::create_proposal(&cap, sender, action, description, action_delay);
     }
 
