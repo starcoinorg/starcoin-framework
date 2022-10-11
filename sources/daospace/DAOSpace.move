@@ -342,9 +342,7 @@ module StarcoinFramework::DAOSpace {
             dao_create_event: Event::new_event_handle<DAOCreatedEvent>(&dao_signer),
         });
         move_to(&dao_signer ,MemberEvent{
-            member_creater_offer_event_handler: Event::new_event_handle<MemberCreaterOfferEvent>(&dao_signer),
-            member_reback_offer_event_handler: Event::new_event_handle<MemberRebackOfferEvent>(&dao_signer),
-            member_use_offer_event_handler: Event::new_event_handle<MemberUseOfferEvent>(&dao_signer),
+            member_offer_event_handler: Event::new_event_handle<MemberOfferEvent>(&dao_signer),
             member_join_event_handler:Event::new_event_handle<MemberJoinEvent>(&dao_signer),
             member_quit_event_handler:Event::new_event_handle<MemberQuitEvent>(&dao_signer),
             member_revoke_event_handler:Event::new_event_handle<MemberRevokeEvent>(&dao_signer),
@@ -415,9 +413,7 @@ module StarcoinFramework::DAOSpace {
 
     /// member event
     struct MemberEvent has key, store{
-        member_creater_offer_event_handler:Event::EventHandle<MemberCreaterOfferEvent>,
-        member_reback_offer_event_handler:Event::EventHandle<MemberRebackOfferEvent>,
-        member_use_offer_event_handler:Event::EventHandle<MemberUseOfferEvent>,
+        member_offer_event_handler:Event::EventHandle<MemberOfferEvent>,
         member_join_event_handler:Event::EventHandle<MemberJoinEvent>,
         member_quit_event_handler:Event::EventHandle<MemberQuitEvent>,
         member_revoke_event_handler:Event::EventHandle<MemberRevokeEvent>,
@@ -425,10 +421,15 @@ module StarcoinFramework::DAOSpace {
         member_decrease_sbt_event_handler:Event::EventHandle<MemberDecreaseSBTEvent>,
     }
 
+    const MEMBER_OFFER_CREATE: u8 = 0;
+    const MEMBER_OFFER_REBACK: u8 = 1;
+    const MEMBER_OFFER_USE: u8 = 2;
 
-    struct MemberCreaterOfferEvent has drop, store{
+    struct MemberOfferEvent has drop, store{
         /// dao id
         dao_id: u64,
+        //type: Create: 0 / Reback: 1 / Use: 2
+        type: u8,
         //address
         addr: address,
         //image_data
@@ -439,37 +440,15 @@ module StarcoinFramework::DAOSpace {
         sbt: u128,
     }
 
-    struct MemberRebackOfferEvent has drop, store{
-        /// dao id
-        dao_id: u64,
-        //address
-        addr: address,
-        //image_data
-        image_data:Option::Option<vector<u8>>,
-        //image_url
-        image_url:Option::Option<vector<u8>>,
-        // SBT
-        sbt: u128,
-    }
 
-    struct MemberUseOfferEvent has drop, store{
-        /// dao id
-        dao_id: u64,
-        //address
-        addr: address,
-        //image_data
-        image_data:Option::Option<vector<u8>>,
-        //image_url
-        image_url:Option::Option<vector<u8>>,
-        // SBT
-        sbt: u128,
-    }
+    const MEMBERJOIN_DIRECT :u8 = 0;
+    const MEMBERJOIN_OFFER :u8 = 1;
 
     struct MemberJoinEvent has drop, store{
         /// dao id
         dao_id: u64,
         // type: direct/offer
-        type: vector<u8>,
+        type: u8,
         //Member id
         member_id : u64,
         //address
@@ -650,9 +629,10 @@ module StarcoinFramework::DAOSpace {
         let dao_signer = dao_signer<DAOT>();
         let memeber_event = borrow_global_mut<MemberEvent>(dao_address);
         if(is_member<DAOT>(to_address)){
-            Event::emit_event(&mut memeber_event.member_reback_offer_event_handler, MemberRebackOfferEvent {
+            Event::emit_event(&mut memeber_event.member_offer_event_handler, MemberOfferEvent {
                 dao_id: dao_id(dao_address),
                 addr:to_address,
+                type:MEMBER_OFFER_REBACK,
                 image_data,
                 image_url,
                 sbt: init_sbt,
@@ -668,9 +648,10 @@ module StarcoinFramework::DAOSpace {
                 image_url,
                 init_sbt
             } = Offer::retake<OfferMemeber<DAOT>>(&dao_signer, Option::destroy_some(op_index));
-            Event::emit_event(&mut memeber_event.member_reback_offer_event_handler, MemberRebackOfferEvent {
+            Event::emit_event(&mut memeber_event.member_offer_event_handler, MemberOfferEvent {
                 dao_id: dao_id(dao_address),
                 addr:to_address,
+                type:MEMBER_OFFER_REBACK,
                 image_data,
                 image_url,
                 sbt: init_sbt,
@@ -686,9 +667,10 @@ module StarcoinFramework::DAOSpace {
         };
         Offer::create_v2<OfferMemeber<DAOT>>(&dao_signer, offered, to_address, 0);
 
-        Event::emit_event(&mut memeber_event.member_creater_offer_event_handler, MemberCreaterOfferEvent {
+        Event::emit_event(&mut memeber_event.member_offer_event_handler, MemberOfferEvent {
             dao_id: dao_id(dao_address),
             addr:to_address,
+            type:MEMBER_OFFER_CREATE,
             image_data,
             image_url,
             sbt: init_sbt,
@@ -707,17 +689,15 @@ module StarcoinFramework::DAOSpace {
                 image_url,
                 init_sbt
             } = Offer::retake<OfferMemeber<DAOT>>(&dao_signer, Option::destroy_some(op_index));
-            Event::emit_event(&mut memeber_event.member_reback_offer_event_handler, MemberRebackOfferEvent {
+            Event::emit_event(&mut memeber_event.member_offer_event_handler, MemberOfferEvent {
                 dao_id: dao_id(dao_address),
                 addr:to_address,
+                type:MEMBER_OFFER_REBACK,
                 image_data,
                 image_url,
                 sbt: init_sbt,
             });
-        }else{
-
-        };
-        return
+        }
     }
 
     /// Join DAO and get a membership by self
@@ -732,9 +712,10 @@ module StarcoinFramework::DAOSpace {
             image_url,
             init_sbt
         }= Offer::redeem_v2<OfferMemeber<DAOT>>(sender, dao_address, Option::destroy_some(op_index));
-        Event::emit_event(&mut memeber_event.member_use_offer_event_handler, MemberUseOfferEvent {
+        Event::emit_event(&mut memeber_event.member_offer_event_handler, MemberOfferEvent {
             dao_id: dao_id(dao_address),
             addr:to_address,
+            type:MEMBER_OFFER_USE,
             image_data: copy image_data,
             image_url: copy image_url,
             sbt: init_sbt,
@@ -745,7 +726,7 @@ module StarcoinFramework::DAOSpace {
             do_join_member<DAOT>(to_address, image_data, image_url, init_sbt);
             Event::emit_event(&mut memeber_event.member_join_event_handler, MemberJoinEvent {
                 dao_id: dao_id(dao_address),
-                type:b"offer",
+                type:MEMBERJOIN_OFFER,
                 member_id:Option::destroy_some(query_member_id<DAOT>(to_address)),
                 addr:to_address,
                 sbt: init_sbt,
@@ -863,7 +844,7 @@ module StarcoinFramework::DAOSpace {
         do_join_member<DAOT>(to_address, image_data, image_url, init_sbt);
         Event::emit_event(&mut memeber_event.member_join_event_handler, MemberJoinEvent {
             dao_id: dao_id(dao_address),
-            type:b"direct",
+            type:MEMBERJOIN_DIRECT,
             member_id:Option::destroy_some(query_member_id<DAOT>(to_address)),
             addr:to_address,
             sbt: init_sbt,
@@ -876,7 +857,7 @@ module StarcoinFramework::DAOSpace {
         do_join_member<DAOT>(to_address, image_data, image_url, init_sbt);
         Event::emit_event(&mut memeber_event.member_join_event_handler, MemberJoinEvent {
             dao_id: dao_id(dao_address),
-            type:b"direct",
+            type:MEMBERJOIN_DIRECT,
             member_id:Option::destroy_some(query_member_id<DAOT>(to_address)),
             addr:to_address,
             sbt: init_sbt,
