@@ -10,6 +10,7 @@ TreasuryWithdrawDaoProposal is a dao proposal for withdraw Token from Treasury.
 -  [Struct `WithdrawToken`](#0x1_TreasuryWithdrawDaoProposal_WithdrawToken)
 -  [Constants](#@Constants_0)
 -  [Function `plugin`](#0x1_TreasuryWithdrawDaoProposal_plugin)
+-  [Function `takeout_withdraw_capability`](#0x1_TreasuryWithdrawDaoProposal_takeout_withdraw_capability)
 -  [Function `propose_withdraw`](#0x1_TreasuryWithdrawDaoProposal_propose_withdraw)
 -  [Function `execute_withdraw_proposal`](#0x1_TreasuryWithdrawDaoProposal_execute_withdraw_proposal)
 -  [Function `withdraw_for_block_reward`](#0x1_TreasuryWithdrawDaoProposal_withdraw_for_block_reward)
@@ -108,12 +109,11 @@ WithdrawToken request.
 
 
 
-<a name="0x1_TreasuryWithdrawDaoProposal_ERR_NEED_RECEIVER_TO_EXECUTE"></a>
-
-Only receiver can execute TreasuryWithdrawDaoProposal
+<a name="0x1_TreasuryWithdrawDaoProposal_ERR_CAPABILITY_NOT_EXIST"></a>
 
 
-<pre><code><b>const</b> <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_ERR_NEED_RECEIVER_TO_EXECUTE">ERR_NEED_RECEIVER_TO_EXECUTE</a>: u64 = 102;
+
+<pre><code><b>const</b> <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_ERR_CAPABILITY_NOT_EXIST">ERR_CAPABILITY_NOT_EXIST</a>: u64 = 104;
 </code></pre>
 
 
@@ -124,6 +124,16 @@ The withdraw amount of propose is too many.
 
 
 <pre><code><b>const</b> <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_ERR_TOO_MANY_WITHDRAW_AMOUNT">ERR_TOO_MANY_WITHDRAW_AMOUNT</a>: u64 = 103;
+</code></pre>
+
+
+
+<a name="0x1_TreasuryWithdrawDaoProposal_ERR_NEED_RECEIVER_TO_EXECUTE"></a>
+
+Only receiver can execute TreasuryWithdrawDaoProposal
+
+
+<pre><code><b>const</b> <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_ERR_NEED_RECEIVER_TO_EXECUTE">ERR_NEED_RECEIVER_TO_EXECUTE</a>: u64 = 102;
 </code></pre>
 
 
@@ -168,6 +178,37 @@ Should be called by token issuer.
 <b>aborts_if</b> <b>exists</b>&lt;<a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_WrappedWithdrawCapability">WrappedWithdrawCapability</a>&lt;TokenT&gt;&gt;(sender);
 <b>ensures</b> !<b>exists</b>&lt;<a href="Treasury.md#0x1_Treasury_WithdrawCapability">Treasury::WithdrawCapability</a>&lt;TokenT&gt;&gt;(sender);
 <b>ensures</b> <b>exists</b>&lt;<a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_WrappedWithdrawCapability">WrappedWithdrawCapability</a>&lt;TokenT&gt;&gt;(sender);
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_TreasuryWithdrawDaoProposal_takeout_withdraw_capability"></a>
+
+## Function `takeout_withdraw_capability`
+
+withdraw Treasury::WithdrawCapability
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_takeout_withdraw_capability">takeout_withdraw_capability</a>&lt;TokenT: store&gt;(sender: &signer): <a href="Treasury.md#0x1_Treasury_WithdrawCapability">Treasury::WithdrawCapability</a>&lt;TokenT&gt;
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_takeout_withdraw_capability">takeout_withdraw_capability</a>&lt;TokenT: store&gt;(sender: &signer): <a href="Treasury.md#0x1_Treasury_WithdrawCapability">Treasury::WithdrawCapability</a>&lt;TokenT&gt;
+<b>acquires</b> <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_WrappedWithdrawCapability">WrappedWithdrawCapability</a> {
+    <b>let</b> token_issuer = <a href="Token.md#0x1_Token_token_address">Token::token_address</a>&lt;TokenT&gt;();
+    <b>assert</b>!(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender) == token_issuer, <a href="Errors.md#0x1_Errors_requires_address">Errors::requires_address</a>(<a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_ERR_NOT_AUTHORIZED">ERR_NOT_AUTHORIZED</a>));
+
+    <b>assert</b>!(<b>exists</b>&lt;<a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_WrappedWithdrawCapability">WrappedWithdrawCapability</a>&lt;TokenT&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender)), <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_ERR_CAPABILITY_NOT_EXIST">ERR_CAPABILITY_NOT_EXIST</a>));
+    <b>let</b> <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_WrappedWithdrawCapability">WrappedWithdrawCapability</a>&lt;TokenT&gt; { cap } = <b>move_from</b>&lt;<a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_WrappedWithdrawCapability">WrappedWithdrawCapability</a>&lt;TokenT&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender));
+    cap
+}
 </code></pre>
 
 

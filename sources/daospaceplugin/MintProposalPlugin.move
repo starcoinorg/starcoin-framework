@@ -1,5 +1,4 @@
 module StarcoinFramework::MintProposalPlugin{
-    use StarcoinFramework::GenesisSignerCapability;
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option;
     use StarcoinFramework::DAOPluginMarketplace;
@@ -20,11 +19,9 @@ module StarcoinFramework::MintProposalPlugin{
         amount: u128,
     }
 
-    public fun initialize() {
-        let signer = GenesisSignerCapability::get_genesis_signer();
-        
+    public fun initialize(sender: &signer) {
         DAOPluginMarketplace::register_plugin<MintProposalPlugin>(
-            &signer,
+            sender,
             b"0x1::MintProposalPlugin",
             b"The plugin for minting tokens.",
             Option::none(),
@@ -35,7 +32,7 @@ module StarcoinFramework::MintProposalPlugin{
 
         let witness = MintProposalPlugin{};
         DAOPluginMarketplace::publish_plugin_version<MintProposalPlugin>(
-            &signer,
+            sender,
             &witness,
             b"v0.1.0", 
             *&implement_extpoints,

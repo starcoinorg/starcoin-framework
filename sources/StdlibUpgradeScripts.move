@@ -34,7 +34,8 @@ module StdlibUpgradeScripts {
         use StarcoinFramework::StarcoinDAO;
         use StarcoinFramework::GasOracleProposalPlugin;
         use StarcoinFramework::Dao;
-
+        use StarcoinFramework::TreasuryPlugin;
+        
     spec module {
             pragma verify = false;
             pragma aborts_if_is_strict = true;
@@ -120,21 +121,23 @@ module StdlibUpgradeScripts {
         }
 
         public fun do_upgrade_from_v11_to_v12() {
+            let genessis_signer = GenesisSignerCapability::get_genesis_signer();
             Block::checkpoints_init();
             DAORegistry::initialize();
 
             DAOExtensionPoint::initialize();
             DAOPluginMarketplace::initialize();
 
-            AnyMemberPlugin::initialize();
-            ConfigProposalPlugin::initialize();
-            GrantProposalPlugin::initialize();
-            InstallPluginProposalPlugin::initialize();
-            MemberProposalPlugin::initialize();
-            MintProposalPlugin::initialize();
-            StakeToSBTPlugin::initialize();
-            UpgradeModulePlugin::initialize();
-            GasOracleProposalPlugin::initialize();
+            AnyMemberPlugin::initialize(&genessis_signer);
+            ConfigProposalPlugin::initialize(&genessis_signer);
+            GrantProposalPlugin::initialize(&genessis_signer);
+            InstallPluginProposalPlugin::initialize(&genessis_signer);
+            MemberProposalPlugin::initialize(&genessis_signer);
+            MintProposalPlugin::initialize(&genessis_signer);
+            StakeToSBTPlugin::initialize(&genessis_signer);
+            UpgradeModulePlugin::initialize(&genessis_signer);
+            GasOracleProposalPlugin::initialize(&genessis_signer);
+            TreasuryPlugin::initialize(&genessis_signer);
 
             //TODO : config rate need mind
             // voting_delay: 60000 ms
@@ -142,6 +145,10 @@ module StdlibUpgradeScripts {
             // voting_quorum_rate: 4
             // min_action_delay: 3600000 ms
             StarcoinDAO::create_dao( Dao::voting_delay<STC>(), Dao::voting_period<STC>(), Dao::voting_quorum_rate<STC>(), Dao::min_action_delay<STC>(), 1000 * 1000 * 1000 * 1000);
+
+           let signer = GenesisSignerCapability::get_genesis_signer();
+           let cap = TreasuryWithdrawDaoProposal::takeout_withdraw_capability<STC>(&signer);
+           TreasuryPlugin::delegate_capability<STC>(&signer, cap);
         }
 }
 }

@@ -1,5 +1,4 @@
 module StarcoinFramework::StakeToSBTPlugin {
-    use StarcoinFramework::GenesisSignerCapability;
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option;
     use StarcoinFramework::DAOPluginMarketplace;
@@ -22,11 +21,9 @@ module StarcoinFramework::StakeToSBTPlugin {
 
     struct StakeToSBTPlugin has store, drop {}
 
-    public fun initialize() {
-        let signer = GenesisSignerCapability::get_genesis_signer();
-
+    public fun initialize(sender: &signer) {
         DAOPluginMarketplace::register_plugin<StakeToSBTPlugin>(
-            &signer,
+            sender,
             b"0x1::StakeToSBTPlugin",
             b"The plugin for stake to SBT",
             Option::none(),
@@ -37,7 +34,7 @@ module StarcoinFramework::StakeToSBTPlugin {
 
         let witness = StakeToSBTPlugin {};
         DAOPluginMarketplace::publish_plugin_version<StakeToSBTPlugin>(
-            &signer,
+            sender,
             &witness,
             b"v0.1.0",
             *&implement_extpoints,

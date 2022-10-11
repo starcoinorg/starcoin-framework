@@ -1,5 +1,4 @@
 module StarcoinFramework::UpgradeModulePlugin {
-    use StarcoinFramework::GenesisSignerCapability;
     use StarcoinFramework::Option;
     use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
@@ -14,11 +13,9 @@ module StarcoinFramework::UpgradeModulePlugin {
         enforced: bool
     }
 
-    public fun initialize() {
-        let signer = GenesisSignerCapability::get_genesis_signer();
-        
+    public fun initialize(sender: &signer) {
         DAOPluginMarketplace::register_plugin<UpgradeModulePlugin>(
-            &signer,
+            sender,
             b"0x1::UpgradeModulePlugin",
             b"The plugin for upgrade module.",
             Option::none(),
@@ -29,7 +26,7 @@ module StarcoinFramework::UpgradeModulePlugin {
 
         let witness = UpgradeModulePlugin{};
         DAOPluginMarketplace::publish_plugin_version<UpgradeModulePlugin>(
-            &signer,
+            sender,
             &witness,
             b"v0.1.0",
             *&implement_extpoints,

@@ -33,11 +33,9 @@ module StarcoinFramework::GasOracleProposalPlugin {
         source_addresses: vector<address>
     }
 
-    public fun initialize() {
-        let signer = GenesisSignerCapability::get_genesis_signer();
-
+    public fun initialize(sender: &signer) {
         DAOPluginMarketplace::register_plugin<GasOracleProposalPlugin>(
-            &signer,
+            sender,
             b"0x1::GasOraclePlugin",
             b"The plugin for gas oracle.",
             Option::none(),
@@ -48,7 +46,7 @@ module StarcoinFramework::GasOracleProposalPlugin {
 
         let witness = GasOracleProposalPlugin{};
         DAOPluginMarketplace::publish_plugin_version<GasOracleProposalPlugin>(
-            &signer,
+            sender,
             &witness,
             b"v0.1.0",
             *&implement_extpoints,
