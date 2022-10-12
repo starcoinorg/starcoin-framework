@@ -2,22 +2,17 @@ module StarcoinFramework::StarcoinDAO{
     use StarcoinFramework::DAOAccount;
     use StarcoinFramework::Account;
     use StarcoinFramework::DAOSpace;
-    use StarcoinFramework::UpgradeModuleDaoProposal;
     use StarcoinFramework::UpgradeModulePlugin::{Self, UpgradeModulePlugin};
     use StarcoinFramework::ConfigProposalPlugin::{Self, ConfigProposalPlugin};
     use StarcoinFramework::StakeToSBTPlugin::{Self, StakeToSBTPlugin};  
     use StarcoinFramework::InstallPluginProposalPlugin::{Self, InstallPluginProposalPlugin};
     use StarcoinFramework::STC::STC;
     use StarcoinFramework::Option;
-    use StarcoinFramework::OnChainConfigDao;
-    use StarcoinFramework::TransactionPublishOption;
-    use StarcoinFramework::VMConfig;
-    use StarcoinFramework::ConsensusConfig;
-    use StarcoinFramework::RewardConfig;
-    use StarcoinFramework::TransactionTimeoutConfig;
     use StarcoinFramework::GasOracleProposalPlugin::GasOracleProposalPlugin;
     use StarcoinFramework::GasOracleProposalPlugin;
     use StarcoinFramework::TreasuryPlugin::{Self, TreasuryPlugin};
+    use StarcoinFramework::Config;
+    use StarcoinFramework::PackageTxnManager;
 
     friend StarcoinFramework::Genesis;
     friend StarcoinFramework::StdlibUpgradeScripts;
@@ -27,6 +22,7 @@ module StarcoinFramework::StarcoinDAO{
     const NAME: vector<u8> = b"StarcoinDAO";
     
     public (friend) fun create_dao(
+        upgrade_plan_cap: PackageTxnManager::UpgradePlanCapability,
         voting_delay: u64,
         voting_period: u64,
         voting_quorum_rate: u8,
@@ -35,7 +31,6 @@ module StarcoinFramework::StarcoinDAO{
     ){
 
         let signer_cap = Account::get_genesis_capability();
-        let upgrade_plan_cap = UpgradeModuleDaoProposal::get_genesis_upgrade_cap<STC>();
         let dao_account_cap = DAOAccount::upgrade_to_dao_with_signer_cap_and_upgrade_plan_cap(signer_cap, upgrade_plan_cap);
 
         let config = DAOSpace::new_dao_config(
@@ -48,12 +43,6 @@ module StarcoinFramework::StarcoinDAO{
 
 
         let dao_root_cap = DAOSpace::create_dao<StarcoinDAO>(dao_account_cap, *&NAME,Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", StarcoinDAO{}, config);
-        
-        DAOSpace::set_custom_config_cap<StarcoinDAO, TransactionPublishOption::TransactionPublishOption>(OnChainConfigDao::config_cap<STC, TransactionPublishOption::TransactionPublishOption>());
-        DAOSpace::set_custom_config_cap<StarcoinDAO, VMConfig::VMConfig>(OnChainConfigDao::config_cap<STC, VMConfig::VMConfig>());
-        DAOSpace::set_custom_config_cap<StarcoinDAO, ConsensusConfig::ConsensusConfig>(OnChainConfigDao::config_cap<STC, ConsensusConfig::ConsensusConfig>());
-        DAOSpace::set_custom_config_cap<StarcoinDAO, RewardConfig::RewardConfig>(OnChainConfigDao::config_cap<STC, RewardConfig::RewardConfig>());
-        DAOSpace::set_custom_config_cap<StarcoinDAO, TransactionTimeoutConfig::TransactionTimeoutConfig>(OnChainConfigDao::config_cap<STC, TransactionTimeoutConfig::TransactionTimeoutConfig>());
 
         DAOSpace::install_plugin_with_root_cap<StarcoinDAO, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
         DAOSpace::install_plugin_with_root_cap<StarcoinDAO, UpgradeModulePlugin>(&dao_root_cap, UpgradeModulePlugin::required_caps());
@@ -66,5 +55,9 @@ module StarcoinFramework::StarcoinDAO{
         StakeToSBTPlugin::set_sbt_weight_with_root_cap<StarcoinDAO, STC>(&dao_root_cap, 60000, 1000);
         
         DAOSpace::burn_root_cap(dao_root_cap);
+    }
+
+    public (friend) fun delegate_config_capability<TokenT: store, ConfigT: copy + drop + store>(cap: Config::ModifyConfigCapability<ConfigT>) {
+        DAOSpace::set_custom_config_cap<StarcoinDAO, ConfigT>(cap);
     }
 }
