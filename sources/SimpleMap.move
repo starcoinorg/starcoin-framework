@@ -12,6 +12,11 @@ module StarcoinFramework::SimpleMap {
     use StarcoinFramework::Compare;
     use StarcoinFramework::BCS;
 
+    spec module {
+        pragma verify = false;
+        pragma aborts_if_is_strict = true;
+    }
+
     /// Map key already exists
     const EKEY_ALREADY_EXISTS: u64 = 1;
     /// Map key is not found
