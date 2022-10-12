@@ -83,7 +83,7 @@ module StarcoinFramework::GrantProposalPlugin{
         let GrantCreateAction{grantee, total, start_time, period} = DAOSpace::execute_proposal<DAOT, GrantProposalPlugin, GrantCreateAction<TokenT>>(&proposal_cap, sender, proposal_id);
         assert!(grantee == Signer::address_of(sender),Errors::not_published(ERR_SENDER_NOT_SAME));
         let grant_cap = DAOSpace::acquire_grant_cap<DAOT, GrantProposalPlugin>(&witness);
-        DAOSpace::create_grant<DAOT, GrantProposalPlugin, TokenT>(&grant_cap, sender, total, start_time, period);
+        DAOSpace::grant_offer<DAOT, GrantProposalPlugin, TokenT>(&grant_cap, Signer::address_of(sender), total, start_time, period);
     }
 
     public (script) fun execute_grant_proposal_entry<DAOT: store, TokenT:store>(sender: signer, proposal_id: u64){
@@ -111,42 +111,6 @@ module StarcoinFramework::GrantProposalPlugin{
 
     public (script) fun execute_grant_revoke_proposal_entry<DAOT: store, TokenT:store>(sender: signer, proposal_id: u64){
         execute_grant_revoke_proposal<DAOT, TokenT>(&sender, proposal_id);
-    }
-
-    public fun create_grant_config_proposal<DAOT: store, TokenT:store>(sender: &signer, description: vector<u8>, old_grantee: address, new_grantee: address, total: u128, period: u64, start_time:u64, action_delay:u64){
-        let witness = GrantProposalPlugin{};
-        let cap = DAOSpace::acquire_proposal_cap<DAOT, GrantProposalPlugin>(&witness);
-        let action = GrantConfigAction<TokenT>{
-            old_grantee: old_grantee,
-            new_grantee: new_grantee,
-            total:total,
-            start_time:start_time,
-            period:period
-        };
-        DAOSpace::create_proposal(&cap, sender, action, description,action_delay);
-    }
-
-    public (script) fun create_grant_config_proposal_entry<DAOT: store, TokenT:store>(sender: signer, description: vector<u8>, old_grantee: address, new_grantee: address, total: u128, period: u64, start_time:u64, action_delay:u64){
-        create_grant_config_proposal<DAOT, TokenT>(&sender, description, old_grantee, new_grantee, total, period, start_time, action_delay);
-    }
-
-    public fun execute_grant_config_proposal<DAOT: store, TokenT:store>(sender: &signer, proposal_id: u64){
-        let witness = GrantProposalPlugin{};
-        let proposal_cap = DAOSpace::acquire_proposal_cap<DAOT, GrantProposalPlugin>(&witness);
-        let GrantConfigAction{
-            old_grantee: old_grantee,
-            new_grantee: new_grantee,
-            total:total,
-            start_time:start_time,
-            period:period
-        } = DAOSpace::execute_proposal<DAOT, GrantProposalPlugin, GrantConfigAction<TokenT>>(&proposal_cap, sender, proposal_id);
-        assert!(new_grantee == Signer::address_of(sender),Errors::not_published(ERR_SENDER_NOT_SAME));
-        let grant_cap = DAOSpace::acquire_grant_cap<DAOT, GrantProposalPlugin>(&witness);
-        DAOSpace::grant_config<DAOT, GrantProposalPlugin, TokenT>(&grant_cap , old_grantee , sender, total, start_time, period);
-    }
-
-    public (script) fun execute_grant_config_proposal_entry<DAOT: store, TokenT:store>(sender: signer, proposal_id: u64){
-        execute_grant_config_proposal<DAOT, TokenT>(&sender, proposal_id);
     }
 
     public fun install_plugin_proposal<DAOT:store>(sender: &signer, description: vector<u8>, action_delay:u64){
