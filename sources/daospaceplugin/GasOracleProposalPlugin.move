@@ -61,13 +61,13 @@ module StarcoinFramework::GasOracleProposalPlugin {
         caps
     }
 
-    public(script) fun create_oracle_add_proposal<DAOT: store, TokenType: store>(sender: signer, description: vector<u8>, action_delay: u64, source_address: address) {
+    public(script) fun create_oracle_add_proposal<DAOT: store, TokenType: store>(sender: signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay: u64, source_address: address) {
         let witness = GasOracleProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, GasOracleProposalPlugin>(&witness);
         let action = OracleSourceAddAction<TokenType>{
             source_address
         };
-        DAOSpace::create_proposal(&cap, &sender, action, description, action_delay);
+        DAOSpace::create_proposal(&cap, &sender, action, title, introduction, description, action_delay);
     }
 
     public(script) fun execute_oracle_add_proposal<DAOT: store, TokenType: store>(sender: signer, proposal_id: u64) {
@@ -89,13 +89,13 @@ module StarcoinFramework::GasOracleProposalPlugin {
         DAOSpace::save(&storage_cap, OracleSources<TokenType>{ source_addresses });
     }
 
-    public(script) fun create_oracle_remove_proposal<DAOT: store, TokenType: store>(sender: signer, description: vector<u8>, action_delay: u64, source_address: address) {
+    public(script) fun create_oracle_remove_proposal<DAOT: store, TokenType: store>(sender: signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay: u64, source_address: address) {
         let witness = GasOracleProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, GasOracleProposalPlugin>(&witness);
         let action = OracleSourceRemoveAction<TokenType>{
             source_address
         };
-        DAOSpace::create_proposal(&cap, &sender, action, description, action_delay);
+        DAOSpace::create_proposal(&cap, &sender, action, title, introduction, description, action_delay);
     }
 
     public(script) fun execute_oracle_remove_proposal<DAOT: store, TokenType: store>(sender: signer, proposal_id: u64) {
@@ -118,11 +118,11 @@ module StarcoinFramework::GasOracleProposalPlugin {
         PriceOracleAggregator::latest_price_average_aggregator<STCToken<TokenType>>(&source_addresses, ORACLE_UPDATED_IN)
     }
 
-    public fun install_plugin_proposal<DAOT: store>(sender: &signer, description: vector<u8>, action_delay: u64) {
-        InstallPluginProposalPlugin::create_proposal<DAOT, GasOracleProposalPlugin>(sender, required_caps(), description, action_delay);
+    public fun install_plugin_proposal<DAOT: store>(sender: &signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay: u64) {
+        InstallPluginProposalPlugin::create_proposal<DAOT, GasOracleProposalPlugin>(sender, required_caps(), title, introduction, description, action_delay);
     }
 
-    public(script) fun install_plugin_proposal_entry<DAOT: store>(sender: signer, description: vector<u8>, action_delay: u64) {
-        install_plugin_proposal<DAOT>(&sender, description, action_delay);
+    public(script) fun install_plugin_proposal_entry<DAOT: store>(sender: signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay: u64) {
+        install_plugin_proposal<DAOT>(&sender, title, introduction, description, action_delay);
     }
 }
