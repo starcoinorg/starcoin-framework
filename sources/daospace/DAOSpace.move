@@ -1672,6 +1672,7 @@ module StarcoinFramework::DAOSpace {
     /// propose a proposal.
     /// `action`: the actual action to execute.
     /// `action_delay`: the delay to execute after the proposal is agreed
+    /// `additional_quorum_votes_rate`: used to increase the base quorum_votes_rate.
     public fun create_proposal<DAOT: store, PluginT, ActionT: store+drop>(
         _cap: &DAOProposalCap<DAOT, PluginT>,
         sender: &signer,
@@ -1680,6 +1681,7 @@ module StarcoinFramework::DAOSpace {
         introduction: vector<u8>,
         extend: vector<u8>,
         action_delay: u64,
+        additional_quorum_votes_rate: Option::Option<u8>,
     ): u64 acquires DAO, GlobalProposals, DAOAccountCapHolder, ProposalActions, ProposalEvent, GlobalProposalActions {
         // check DAO member
         let sender_addr = Signer::address_of(sender);
@@ -1697,7 +1699,7 @@ module StarcoinFramework::DAOSpace {
         let proposal_id = next_proposal_id<DAOT>();
         let proposer = Signer::address_of(sender);
         let start_time = Timestamp::now_milliseconds() + voting_delay<DAOT>();
-        let quorum_votes = quorum_votes<DAOT>();
+        let quorum_votes = quorum_votes<DAOT>(additional_quorum_votes_rate);
         let voting_period = voting_period<DAOT>();
 
         let (block_number,state_root) = block_number_and_state_root();
@@ -2428,9 +2430,23 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// Quorum votes to make proposal valid.
-    public fun quorum_votes<DAOT: store>(): u128 {
+    public fun quorum_votes<DAOT: store>(additional: Option::Option<u8>): u128 {
+        let additional_rate = if (Option::is_none(&additional)) {
+            0u8
+        } else {
+            Option::extract(&mut additional)
+        };
+        assert!(
+            additional_rate >= 0 && additional_rate < 100,
+            Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID),
+        );
+
         let market_cap = Token::market_cap<DAOT>();
-        let rate = voting_quorum_rate<DAOT>();
+        let rate = voting_quorum_rate<DAOT>() + additional_rate;
+        assert!(
+            rate > 0 && rate <= 100,
+            Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID),
+        );
         let rate = (rate as u128);
         market_cap * rate / 100
     }

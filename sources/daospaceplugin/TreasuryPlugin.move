@@ -17,6 +17,9 @@ module StarcoinFramework::TreasuryPlugin {
     const ERR_TOO_MANY_WITHDRAW_AMOUNT: u64 = 103;
     const ERR_CAPABILITY_NOT_EXIST: u64 = 104;
 
+    // TODO: confirm the value
+    const ADDITIONAL_QUORUM_VOTES_RATE: u8 = 10;
+
     struct TreasuryPlugin has store, drop {}
 
     /// A wrapper of Token MintCapability.
