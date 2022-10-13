@@ -64,24 +64,22 @@ module alice::Token {
 }
 // check: EXECUTED
 
-//# publish
-module alice::Oracle {
-    use alice::Token::AliceToken;
+//# run --signers alice
+script {
     use StarcoinFramework::GasOracle;
-
-    public fun initialize(account: &signer) {
-        GasOracle::register<AliceToken>(account, 9);
-        GasOracle::init_data_source<AliceToken>(account, 0);
+    use alice::Token::AliceToken;
+    fun main(account: signer) {
+        GasOracle::register<AliceToken>(account,9);
     }
 }
 // check: EXECUTED
 
 //# run --signers alice
 script {
-    use alice::Oracle;
-
+    use StarcoinFramework::GasOracle;
+    use alice::Token::AliceToken;
     fun main(account: signer) {
-        Oracle::initialize(&account);
+        GasOracle::init_data_source<AliceToken>(account,0);
     }
 }
 // check: EXECUTED
@@ -224,7 +222,7 @@ script {
     use StarcoinFramework::GasOracle;
 
     fun main(account: signer) {
-        GasOracle::update<AliceToken>(&account, 100);
+        GasOracle::update<AliceToken>(account, 100);
     }
 }
 

@@ -158,7 +158,7 @@ It verifies:
     // specified by the transaction
     <b>assert</b>!(<a href="ChainId.md#0x1_ChainId_get">ChainId::get</a>() == chain_id, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_BAD_CHAIN_ID">EPROLOGUE_BAD_CHAIN_ID</a>));
     <b>let</b> (stc_price,scaling_factor)= <b>if</b> (!<a href="STC.md#0x1_STC_is_stc">STC::is_stc</a>&lt;TokenType&gt;()){
-        (<a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_gas_oracle_read">GasOracleProposalPlugin::gas_oracle_read</a>&lt;<a href="StarcoinDAO.md#0x1_StarcoinDAO">StarcoinDAO</a>, STCToken&lt;TokenType&gt;&gt;(),<a href="Oracle.md#0x1_GasOracle_get_scaling_factor">GasOracle::get_scaling_factor</a>&lt;TokenType&gt;())
+        (<a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_gas_oracle_read">GasOracleProposalPlugin::gas_oracle_read</a>&lt;<a href="StarcoinDAO.md#0x1_StarcoinDAO">StarcoinDAO</a>, TokenType&gt;(),<a href="Oracle.md#0x1_GasOracle_get_scaling_factor">GasOracle::get_scaling_factor</a>&lt;TokenType&gt;())
     }<b>else</b>{
         (1,1)
     };
