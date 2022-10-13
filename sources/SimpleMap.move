@@ -1,13 +1,21 @@
 /// This module provides a solution for sorted maps, that is it has the properties that
 /// 1) Keys point to Values
 /// 2) Each Key must be unique
-/// 3) A Key can be found within O(N) time
-/// 4) The keys are unsorted.
+/// 3) A Key can be found within O(Log N) time
+/// 4) The data is stored as sorted by Key
 /// 5) Adds and removals take O(N) time
-module StarcoinFramework::simple_map {
+module StarcoinFramework::SimpleMap {
+
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option;
     use StarcoinFramework::Vector;
+    use StarcoinFramework::Compare;
+    use StarcoinFramework::BCS;
+
+    spec module {
+        pragma verify = false;
+        pragma aborts_if_is_strict = true;
+    }
 
     /// Map key already exists
     const EKEY_ALREADY_EXISTS: u64 = 1;
@@ -37,7 +45,7 @@ module StarcoinFramework::simple_map {
         map: &SimpleMap<Key, Value>,
         key: &Key,
     ): &Value {
-        let maybe_idx = find(map, key);
+        let (maybe_idx, _) = find(map, key);
         assert!(Option::is_some(&maybe_idx), Errors::invalid_argument(EKEY_NOT_FOUND));
         let idx = Option::extract(&mut maybe_idx);
         &Vector::borrow(&map.data, idx).value
@@ -47,7 +55,7 @@ module StarcoinFramework::simple_map {
         map: &mut SimpleMap<Key, Value>,
         key: &Key,
     ): &mut Value {
-        let maybe_idx = find(map, key);
+        let (maybe_idx, _) = find(map, key);
         assert!(Option::is_some(&maybe_idx), Errors::invalid_argument(EKEY_NOT_FOUND));
         let idx = Option::extract(&mut maybe_idx);
         &mut Vector::borrow_mut(&mut map.data, idx).value
@@ -57,7 +65,7 @@ module StarcoinFramework::simple_map {
         map: &SimpleMap<Key, Value>,
         key: &Key,
     ): bool {
-        let maybe_idx = find(map, key);
+        let (maybe_idx, _) = find(map, key);
         Option::is_some(&maybe_idx)
     }
 
@@ -71,60 +79,67 @@ module StarcoinFramework::simple_map {
         key: Key,
         value: Value,
     ) {
-        let maybe_idx = find(map, &key);
+        let (maybe_idx, maybe_placement) = find(map, &key);
         assert!(Option::is_none(&maybe_idx), Errors::invalid_argument(EKEY_ALREADY_EXISTS));
 
+        // Append to the end and then swap elements until the list is ordered again
         Vector::push_back(&mut map.data, Element { key, value });
-    }
 
-    /// Insert key/value pair or update an existing key to a new value
-    public fun upsert<Key: store, Value: store>(
-        map: &mut SimpleMap<Key, Value>,
-        key: Key,
-        value: Value
-    ): (Option::Option<Key>, Option::Option<Value>) {
-        let data = &mut map.data;
-        let len = Vector::length(data);
-        let i = 0;
-        while (i < len) {
-            let element = Vector::borrow(data, i);
-            if (&element.key == &key) {
-                Vector::push_back(data, Element { key, value});
-                Vector::swap(data, i, len);
-                let Element { key, value } = Vector::pop_back(data);
-                return (Option::some(key), Option::some(value))
-            };
-            i = i + 1;
+        let placement = Option::extract(&mut maybe_placement);
+        let end = Vector::length(&map.data) - 1;
+        while (placement < end) {
+            Vector::swap(&mut map.data, placement, end);
+            placement = placement + 1;
         };
-        Vector::push_back(&mut map.data, Element { key, value });
-        (Option::none(), Option::none())
     }
 
     public fun remove<Key: store, Value: store>(
         map: &mut SimpleMap<Key, Value>,
         key: &Key,
     ): (Key, Value) {
-        let maybe_idx = find(map, key);
+        let (maybe_idx, _) = find(map, key);
         assert!(Option::is_some(&maybe_idx), Errors::invalid_argument(EKEY_NOT_FOUND));
+
         let placement = Option::extract(&mut maybe_idx);
-        let Element { key, value } = Vector::swap_remove(&mut map.data, placement);
+        let end = Vector::length(&map.data) - 1;
+
+        while (placement < end) {
+            Vector::swap(&mut map.data, placement, placement + 1);
+            placement = placement + 1;
+        };
+
+        let Element { key, value } = Vector::pop_back(&mut map.data);
         (key, value)
     }
 
     fun find<Key: store, Value: store>(
         map: &SimpleMap<Key, Value>,
         key: &Key,
-    ): Option::Option<u64>{
-        let leng = Vector::length(&map.data);
-        let i = 0;
-        while (i < leng) {
-            let element = Vector::borrow(&map.data, i);
-            if (&element.key == key){
-                return Option::some(i)
-            };
-            i = i + 1;
+    ): (Option::Option<u64>, Option::Option<u64>) {
+        let length = Vector::length(&map.data);
+
+        if (length == 0) {
+            return (Option::none(), Option::some(0))
         };
-        Option::none<u64>()
+
+        let left = 0;
+        let right = length;
+
+        while (left != right) {
+            let mid = left + (right - left) / 2;
+            let potential_key = &Vector::borrow(&map.data, mid).key;
+            if (Compare::is_less_than(Compare::cmp_bytes(&BCS::to_bytes(potential_key), &BCS::to_bytes(key)))) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            };
+        };
+
+        if (left != length && key == &Vector::borrow(&map.data, left).key) {
+            (Option::some(left), Option::none())
+        } else {
+            (Option::none(), Option::some(left))
+        }
     }
 
     #[test]
@@ -161,6 +176,36 @@ module StarcoinFramework::simple_map {
     }
 
     #[test]
+    public fun test_several() {
+        let map = create<u64, u64>();
+        add(&mut map, 6, 6);
+        add(&mut map, 1, 1);
+        add(&mut map, 5, 5);
+        add(&mut map, 2, 2);
+        add(&mut map, 3, 3);
+        add(&mut map, 0, 0);
+        add(&mut map, 7, 7);
+        add(&mut map, 4, 4);
+
+        let idx = 0;
+        while (idx < Vector::length(&map.data)) {
+            assert!(idx == Vector::borrow(&map.data, idx).key, idx);
+            idx = idx + 1;
+        };
+
+        remove(&mut map, &0);
+        remove(&mut map, &1);
+        remove(&mut map, &2);
+        remove(&mut map, &3);
+        remove(&mut map, &4);
+        remove(&mut map, &5);
+        remove(&mut map, &6);
+        remove(&mut map, &7);
+
+        destroy_empty(map);
+    }
+
+    #[test]
     #[expected_failure]
     public fun add_twice() {
         let map = create<u64, u64>();
@@ -181,6 +226,7 @@ module StarcoinFramework::simple_map {
 
         destroy_empty(map);
     }
+<<<<<<< HEAD
 
     #[test]
     public fun upsert_test() {
@@ -206,3 +252,6 @@ module StarcoinFramework::simple_map {
         assert!(borrow(&map, &1) == &4, 9);
     }
 }
+=======
+}
+>>>>>>> ae436d0 ([Feature] Simple map (#182))

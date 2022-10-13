@@ -77,7 +77,7 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::Signature`](Signature.md#0x1_Signature)
 -  [`0x1::SignedInteger64`](SignedInteger64.md#0x1_SignedInteger64)
 -  [`0x1::Signer`](Signer.md#0x1_Signer)
--  [`0x1::StarcoinVerifier`](StarcoinVerifier.md#0x1_StarcoinVerifier)
+-  [`0x1::SimpleMap`](SimpleMap.md#0x1_SimpleMap)
 -  [`0x1::StdlibUpgradeScripts`](StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts)
 -  [`0x1::StructuredHash`](StarcoinVerifier.md#0x1_StructuredHash)
 -  [`0x1::Timestamp`](Timestamp.md#0x1_Timestamp)
@@ -99,4 +99,3 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::Version`](Version.md#0x1_Version)
 -  [`0x1::YieldFarming`](YieldFarming.md#0x1_YieldFarming)
 -  [`0x1::YieldFarmingV2`](YieldFarmingV2.md#0x1_YieldFarmingV2)
--  [`0x1::simple_map`](SimpleMap.md#0x1_simple_map)
