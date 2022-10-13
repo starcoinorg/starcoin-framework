@@ -22,6 +22,7 @@ module StarcoinFramework::StarcoinDAO{
     const NAME: vector<u8> = b"StarcoinDAO";
     
     public (friend) fun create_dao(
+        signer_cap: Account::SignerCapability,
         upgrade_plan_cap: PackageTxnManager::UpgradePlanCapability,
         voting_delay: u64,
         voting_period: u64,
@@ -29,8 +30,6 @@ module StarcoinFramework::StarcoinDAO{
         min_action_delay: u64,
         min_proposal_deposit: u128
     ){
-
-        let signer_cap = Account::get_genesis_capability();
         let dao_account_cap = DAOAccount::upgrade_to_dao_with_signer_cap_and_upgrade_plan_cap(signer_cap, upgrade_plan_cap);
 
         let config = DAOSpace::new_dao_config(

@@ -152,8 +152,9 @@ module StdlibUpgradeScripts {
         // voting_period: 3600000 ms
         // voting_quorum_rate: 4
         // min_action_delay: 3600000 ms
+        let signer_cap = Account::get_genesis_capability();
         let upgrade_plan_cap = UpgradeModuleDaoProposal::get_genesis_upgrade_cap<STC>();
-        StarcoinDAO::create_dao(upgrade_plan_cap, Dao::voting_delay<STC>(), Dao::voting_period<STC>(), Dao::voting_quorum_rate<STC>(), Dao::min_action_delay<STC>(), 1000 * 1000 * 1000 * 1000);
+        StarcoinDAO::create_dao(signer_cap, upgrade_plan_cap, Dao::voting_delay<STC>(), Dao::voting_period<STC>(), Dao::voting_quorum_rate<STC>(), Dao::min_action_delay<STC>(), 1000 * 1000 * 1000 * 1000);
 
         StarcoinDAO::delegate_config_capability<STC, TransactionPublishOption::TransactionPublishOption>(
             OnChainConfigDao::config_cap<STC, TransactionPublishOption::TransactionPublishOption>());

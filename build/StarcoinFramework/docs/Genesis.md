@@ -435,8 +435,9 @@ The module for init Genesis
     <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_initialize">GasOracleProposalPlugin::initialize</a>(&genesis_account);
     <a href="TreasuryPlugin.md#0x1_TreasuryPlugin_initialize">TreasuryPlugin::initialize</a>(&genesis_account);
 
+    <b>let</b> signer_cap = <a href="Account.md#0x1_Account_get_genesis_capability">Account::get_genesis_capability</a>();
     <b>let</b> upgrade_plan_cap = <a href="PackageTxnManager.md#0x1_PackageTxnManager_extract_submit_upgrade_plan_cap">PackageTxnManager::extract_submit_upgrade_plan_cap</a>(&genesis_account);
-    <a href="StarcoinDAO.md#0x1_StarcoinDAO_create_dao">StarcoinDAO::create_dao</a>(upgrade_plan_cap, voting_delay, voting_period, voting_quorum_rate, min_action_delay, 1000 * 1000 * 1000 * 1000);
+    <a href="StarcoinDAO.md#0x1_StarcoinDAO_create_dao">StarcoinDAO::create_dao</a>(signer_cap, upgrade_plan_cap, voting_delay, voting_period, voting_quorum_rate, min_action_delay, 1000 * 1000 * 1000 * 1000);
 
     <a href="StarcoinDAO.md#0x1_StarcoinDAO_delegate_config_capability">StarcoinDAO::delegate_config_capability</a>&lt;<a href="STC.md#0x1_STC">STC</a>, <a href="TransactionPublishOption.md#0x1_TransactionPublishOption_TransactionPublishOption">TransactionPublishOption::TransactionPublishOption</a>&gt;(
         <a href="Config.md#0x1_Config_extract_modify_config_capability">Config::extract_modify_config_capability</a>&lt;<a href="TransactionPublishOption.md#0x1_TransactionPublishOption_TransactionPublishOption">TransactionPublishOption::TransactionPublishOption</a>&gt;(&genesis_account));

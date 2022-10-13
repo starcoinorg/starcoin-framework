@@ -370,8 +370,9 @@ module StarcoinFramework::Genesis {
         GasOracleProposalPlugin::initialize(&genesis_account);
         TreasuryPlugin::initialize(&genesis_account);
 
+        let signer_cap = Account::get_genesis_capability();
         let upgrade_plan_cap = PackageTxnManager::extract_submit_upgrade_plan_cap(&genesis_account);
-        StarcoinDAO::create_dao(upgrade_plan_cap, voting_delay, voting_period, voting_quorum_rate, min_action_delay, 1000 * 1000 * 1000 * 1000);
+        StarcoinDAO::create_dao(signer_cap, upgrade_plan_cap, voting_delay, voting_period, voting_quorum_rate, min_action_delay, 1000 * 1000 * 1000 * 1000);
 
         StarcoinDAO::delegate_config_capability<STC, TransactionPublishOption::TransactionPublishOption>(
             Config::extract_modify_config_capability<TransactionPublishOption::TransactionPublishOption>(&genesis_account));
