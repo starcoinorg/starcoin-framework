@@ -42,6 +42,7 @@ module StarcoinFramework::Genesis {
     use StarcoinFramework::GasOracleProposalPlugin;
     use StarcoinFramework::RewardConfig;
     use StarcoinFramework::LanguageVersion;
+    use StarcoinFramework::Errors;
 
     spec module {
         pragma verify = false; // break after enabling v2 compilation scheme
@@ -50,99 +51,55 @@ module StarcoinFramework::Genesis {
     }
 
     public(script) fun initialize(
-        stdlib_version: u64,
-        // block reward and stc config
-        reward_delay: u64,
-        total_stc_amount: u128,
-        pre_mine_stc_amount: u128,
-        time_mint_stc_amount: u128,
-        time_mint_stc_period: u64,
-        parent_hash: vector<u8>,
-        association_auth_key: vector<u8>,
-        genesis_auth_key: vector<u8>,
-        chain_id: u8,
-        genesis_timestamp: u64,
+        _stdlib_version: u64,
+        // block reward config
+        _reward_delay: u64,
+        _pre_mine_stc_amount: u128,
+        _time_mint_stc_amount: u128,
+        _time_mint_stc_period: u64,
+        _parent_hash: vector<u8>,
+        _association_auth_key: vector<u8>,
+        _genesis_auth_key: vector<u8>,
+        _chain_id: u8,
+        _genesis_timestamp: u64,
         //consensus config
-        uncle_rate_target: u64,
-        epoch_block_count: u64,
-        base_block_time_target: u64,
-        base_block_difficulty_window: u64,
-        base_reward_per_block: u128,
-        base_reward_per_uncle_percent: u64,
-        min_block_time_target: u64,
-        max_block_time_target: u64,
-        base_max_uncles_per_block: u64,
-        base_block_gas_limit: u64,
-        strategy: u8,
+        _uncle_rate_target: u64,
+        _epoch_block_count: u64,
+        _base_block_time_target: u64,
+        _base_block_difficulty_window: u64,
+        _base_reward_per_block: u128,
+        _base_reward_per_uncle_percent: u64,
+        _min_block_time_target: u64,
+        _max_block_time_target: u64,
+        _base_max_uncles_per_block: u64,
+        _base_block_gas_limit: u64,
+        _strategy: u8,
         //vm config
-        script_allowed: bool,
-        module_publishing_allowed: bool,
-        instruction_schedule: vector<u8>,
-        native_schedule: vector<u8>,
+        _script_allowed: bool,
+        _module_publishing_allowed: bool,
+        _instruction_schedule: vector<u8>,
+        _native_schedule: vector<u8>,
         //gas constants
-        global_memory_per_byte_cost: u64,
-        global_memory_per_byte_write_cost: u64,
-        min_transaction_gas_units: u64,
-        large_transaction_cutoff: u64,
-        instrinsic_gas_per_byte: u64,
-        maximum_number_of_gas_units: u64,
-        min_price_per_gas_unit: u64,
-        max_price_per_gas_unit: u64,
-        max_transaction_size_in_bytes: u64,
-        gas_unit_scaling_factor: u64,
-        default_account_size: u64,
+        _global_memory_per_byte_cost: u64,
+        _global_memory_per_byte_write_cost: u64,
+        _min_transaction_gas_units: u64,
+        _large_transaction_cutoff: u64,
+        _instrinsic_gas_per_byte: u64,
+        _maximum_number_of_gas_units: u64,
+        _min_price_per_gas_unit: u64,
+        _max_price_per_gas_unit: u64,
+        _max_transaction_size_in_bytes: u64,
+        _gas_unit_scaling_factor: u64,
+        _default_account_size: u64,
         // dao config
-        voting_delay: u64,
-        voting_period: u64,
-        voting_quorum_rate: u8,
-        min_action_delay: u64,
+        _voting_delay: u64,
+        _voting_period: u64,
+        _voting_quorum_rate: u8,
+        _min_action_delay: u64,
         // transaction timeout config
-        transaction_timeout: u64,
+        _transaction_timeout: u64,
     ) {
-        Self::do_initialize(
-            stdlib_version,
-            reward_delay,
-            total_stc_amount,
-            pre_mine_stc_amount,
-            time_mint_stc_amount,
-            time_mint_stc_period,
-            parent_hash,
-            association_auth_key,
-            genesis_auth_key,
-            chain_id,
-            genesis_timestamp,
-            uncle_rate_target,
-            epoch_block_count,
-            base_block_time_target,
-            base_block_difficulty_window,
-            base_reward_per_block,
-            base_reward_per_uncle_percent,
-            min_block_time_target,
-            max_block_time_target,
-            base_max_uncles_per_block,
-            base_block_gas_limit,
-            strategy,
-            script_allowed,
-            module_publishing_allowed,
-            instruction_schedule,
-            native_schedule,
-            global_memory_per_byte_cost,
-            global_memory_per_byte_write_cost,
-            min_transaction_gas_units,
-            large_transaction_cutoff,
-            instrinsic_gas_per_byte,
-            maximum_number_of_gas_units,
-            min_price_per_gas_unit,
-            max_price_per_gas_unit,
-            max_transaction_size_in_bytes,
-            gas_unit_scaling_factor,
-            default_account_size,
-            voting_delay,
-            voting_period,
-            voting_quorum_rate,
-            min_action_delay,
-            transaction_timeout,
-        );
+        abort Errors::deprecated(1)
     }
 
     public(script) fun initialize_v2(
@@ -350,7 +307,7 @@ module StarcoinFramework::Genesis {
         BlockReward::initialize(&genesis_account, reward_delay);
 
         // stc should be initialized after genesis_account's module upgrade strategy set and all on chain config init.
-        let withdraw_cap = STC::initialize_v2(&genesis_account, total_stc_amount);
+        let withdraw_cap = STC::initialize_v3(&genesis_account, total_stc_amount);
         Account::do_accept_token<STC>(&genesis_account);
         Account::do_accept_token<STC>(&association);
 

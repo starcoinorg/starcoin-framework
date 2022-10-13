@@ -1,20 +1,10 @@
-address StarcoinFramework {
 /// STC is the token of Starcoin blockchain.
 /// It uses apis defined in the `Token` module.
-module STC {
+module StarcoinFramework::STC {
     use StarcoinFramework::Token::{Self, Token};
-    use StarcoinFramework::Dao;
-    use StarcoinFramework::ModifyDaoConfigProposal;
-    use StarcoinFramework::UpgradeModuleDaoProposal;
-    use StarcoinFramework::PackageTxnManager;
-    use StarcoinFramework::OnChainConfigDao;
-    use StarcoinFramework::TransactionPublishOption;
-    use StarcoinFramework::VMConfig;
-    use StarcoinFramework::ConsensusConfig;
-    use StarcoinFramework::RewardConfig;
-    use StarcoinFramework::TransactionTimeoutConfig;
     use StarcoinFramework::Treasury;
     use StarcoinFramework::CoreAddresses;
+    use StarcoinFramework::Errors;
 
     spec module {
         pragma verify = false;
@@ -22,7 +12,7 @@ module STC {
     }
 
     /// STC token marker.
-    struct STC has copy, drop, store { }
+    struct STC has copy, drop, store {}
 
     /// precision of STC token.
     const PRECISION: u8 = 9;
@@ -34,45 +24,24 @@ module STC {
 
     /// STC initialization.
     public fun initialize(
-        account: &signer,
-        voting_delay: u64,
-        voting_period: u64,
-        voting_quorum_rate: u8,
-        min_action_delay: u64,
+        _account: &signer,
+        _voting_delay: u64,
+        _voting_period: u64,
+        _voting_quorum_rate: u8,
+        _min_action_delay: u64,
     ) {
-        Token::register_token<STC>(account, PRECISION);
-        let burn_cap = Token::remove_burn_capability<STC>(account);
-        move_to(account, SharedBurnCapability { cap: burn_cap });
-        Dao::plugin<STC>(
-            account,
-            voting_delay,
-            voting_period,
-            voting_quorum_rate,
-            min_action_delay,
-        );
-        ModifyDaoConfigProposal::plugin<STC>(account);
-        let upgrade_plan_cap = PackageTxnManager::extract_submit_upgrade_plan_cap(account);
-        UpgradeModuleDaoProposal::plugin<STC>(
-            account,
-            upgrade_plan_cap,
-        );
-        // the following configurations are gov-ed by Dao.
-        OnChainConfigDao::plugin<STC, TransactionPublishOption::TransactionPublishOption>(account);
-        OnChainConfigDao::plugin<STC, VMConfig::VMConfig>(account);
-        OnChainConfigDao::plugin<STC, ConsensusConfig::ConsensusConfig>(account);
-        OnChainConfigDao::plugin<STC, RewardConfig::RewardConfig>(account);
-        OnChainConfigDao::plugin<STC, TransactionTimeoutConfig::TransactionTimeoutConfig>(account);
+        abort Errors::deprecated(1)
     }
 
     spec initialize {
-        include Token::RegisterTokenAbortsIf<STC>{precision: PRECISION};
+        pragma verify = false;
     }
 
-    public fun upgrade_from_v1_to_v2(account: &signer,total_amount: u128,): Treasury::WithdrawCapability<STC> {
+    public fun upgrade_from_v1_to_v2(account: &signer, total_amount: u128, ): Treasury::WithdrawCapability<STC> {
         CoreAddresses::assert_genesis_address(account);
 
         // Mint all stc, and destroy mint capability
-        let total_stc = Token::mint<STC>(account, total_amount-Token::market_cap<STC>());
+        let total_stc = Token::mint<STC>(account, total_amount - Token::market_cap<STC>());
         let withdraw_cap = Treasury::initialize(account, total_stc);
         let mint_cap = Token::remove_mint_capability<STC>(account);
         Token::destroy_mint_capability(mint_cap);
@@ -83,8 +52,25 @@ module STC {
         pragma verify = false;
     }
 
+
     /// STC initialization.
     public fun initialize_v2(
+        _account: &signer,
+        _total_amount: u128,
+        _voting_delay: u64,
+        _voting_period: u64,
+        _voting_quorum_rate: u8,
+        _min_action_delay: u64,
+    ): Treasury::WithdrawCapability<STC> {
+        abort Errors::deprecated(1)
+    }
+
+    spec initialize_v2 {
+        pragma verify = false;
+    }
+
+    /// STC initialization.
+    public fun initialize_v3(
         account: &signer,
         total_amount: u128,
     ): Treasury::WithdrawCapability<STC> {
@@ -102,8 +88,8 @@ module STC {
         withdraw_cap
     }
 
-    spec initialize_v2 {
-        include Token::RegisterTokenAbortsIf<STC>{precision: PRECISION};
+    spec initialize_v3 {
+        include Token::RegisterTokenAbortsIf<STC> { precision: PRECISION };
     }
 
     /// Returns true if `TokenType` is `STC::STC`
@@ -111,8 +97,7 @@ module STC {
         Token::is_same_token<STC, TokenType>()
     }
 
-    spec is_stc {
-    }
+    spec is_stc {}
 
     /// Burn STC tokens.
     /// It can be called by anyone.
@@ -131,7 +116,5 @@ module STC {
         Token::token_address<STC>()
     }
 
-    spec token_address {
-    }
-}
+    spec token_address {}
 }

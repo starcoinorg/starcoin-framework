@@ -28,6 +28,7 @@ The module for init Genesis
 <b>use</b> <a href="DAORegistry.md#0x1_DAORegistry">0x1::DAORegistry</a>;
 <b>use</b> <a href="DummyToken.md#0x1_DummyToken">0x1::DummyToken</a>;
 <b>use</b> <a href="Epoch.md#0x1_Epoch">0x1::Epoch</a>;
+<b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin">0x1::GasOracleProposalPlugin</a>;
 <b>use</b> <a href="GenesisNFT.md#0x1_GenesisNFT">0x1::GenesisNFT</a>;
 <b>use</b> <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability">0x1::GenesisSignerCapability</a>;
@@ -65,7 +66,7 @@ The module for init Genesis
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Genesis.md#0x1_Genesis_initialize">initialize</a>(stdlib_version: u64, reward_delay: u64, total_stc_amount: u128, pre_mine_stc_amount: u128, time_mint_stc_amount: u128, time_mint_stc_period: u64, parent_hash: vector&lt;u8&gt;, association_auth_key: vector&lt;u8&gt;, genesis_auth_key: vector&lt;u8&gt;, chain_id: u8, genesis_timestamp: u64, uncle_rate_target: u64, epoch_block_count: u64, base_block_time_target: u64, base_block_difficulty_window: u64, base_reward_per_block: u128, base_reward_per_uncle_percent: u64, min_block_time_target: u64, max_block_time_target: u64, base_max_uncles_per_block: u64, base_block_gas_limit: u64, strategy: u8, script_allowed: bool, module_publishing_allowed: bool, instruction_schedule: vector&lt;u8&gt;, native_schedule: vector&lt;u8&gt;, global_memory_per_byte_cost: u64, global_memory_per_byte_write_cost: u64, min_transaction_gas_units: u64, large_transaction_cutoff: u64, instrinsic_gas_per_byte: u64, maximum_number_of_gas_units: u64, min_price_per_gas_unit: u64, max_price_per_gas_unit: u64, max_transaction_size_in_bytes: u64, gas_unit_scaling_factor: u64, default_account_size: u64, voting_delay: u64, voting_period: u64, voting_quorum_rate: u8, min_action_delay: u64, transaction_timeout: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Genesis.md#0x1_Genesis_initialize">initialize</a>(_stdlib_version: u64, _reward_delay: u64, _pre_mine_stc_amount: u128, _time_mint_stc_amount: u128, _time_mint_stc_period: u64, _parent_hash: vector&lt;u8&gt;, _association_auth_key: vector&lt;u8&gt;, _genesis_auth_key: vector&lt;u8&gt;, _chain_id: u8, _genesis_timestamp: u64, _uncle_rate_target: u64, _epoch_block_count: u64, _base_block_time_target: u64, _base_block_difficulty_window: u64, _base_reward_per_block: u128, _base_reward_per_uncle_percent: u64, _min_block_time_target: u64, _max_block_time_target: u64, _base_max_uncles_per_block: u64, _base_block_gas_limit: u64, _strategy: u8, _script_allowed: bool, _module_publishing_allowed: bool, _instruction_schedule: vector&lt;u8&gt;, _native_schedule: vector&lt;u8&gt;, _global_memory_per_byte_cost: u64, _global_memory_per_byte_write_cost: u64, _min_transaction_gas_units: u64, _large_transaction_cutoff: u64, _instrinsic_gas_per_byte: u64, _maximum_number_of_gas_units: u64, _min_price_per_gas_unit: u64, _max_price_per_gas_unit: u64, _max_transaction_size_in_bytes: u64, _gas_unit_scaling_factor: u64, _default_account_size: u64, _voting_delay: u64, _voting_period: u64, _voting_quorum_rate: u8, _min_action_delay: u64, _transaction_timeout: u64)
 </code></pre>
 
 
@@ -75,99 +76,55 @@ The module for init Genesis
 
 
 <pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Genesis.md#0x1_Genesis_initialize">initialize</a>(
-    stdlib_version: u64,
-    // block reward and stc config
-    reward_delay: u64,
-    total_stc_amount: u128,
-    pre_mine_stc_amount: u128,
-    time_mint_stc_amount: u128,
-    time_mint_stc_period: u64,
-    parent_hash: vector&lt;u8&gt;,
-    association_auth_key: vector&lt;u8&gt;,
-    genesis_auth_key: vector&lt;u8&gt;,
-    chain_id: u8,
-    genesis_timestamp: u64,
+    _stdlib_version: u64,
+    // block reward config
+    _reward_delay: u64,
+    _pre_mine_stc_amount: u128,
+    _time_mint_stc_amount: u128,
+    _time_mint_stc_period: u64,
+    _parent_hash: vector&lt;u8&gt;,
+    _association_auth_key: vector&lt;u8&gt;,
+    _genesis_auth_key: vector&lt;u8&gt;,
+    _chain_id: u8,
+    _genesis_timestamp: u64,
     //consensus config
-    uncle_rate_target: u64,
-    epoch_block_count: u64,
-    base_block_time_target: u64,
-    base_block_difficulty_window: u64,
-    base_reward_per_block: u128,
-    base_reward_per_uncle_percent: u64,
-    min_block_time_target: u64,
-    max_block_time_target: u64,
-    base_max_uncles_per_block: u64,
-    base_block_gas_limit: u64,
-    strategy: u8,
+    _uncle_rate_target: u64,
+    _epoch_block_count: u64,
+    _base_block_time_target: u64,
+    _base_block_difficulty_window: u64,
+    _base_reward_per_block: u128,
+    _base_reward_per_uncle_percent: u64,
+    _min_block_time_target: u64,
+    _max_block_time_target: u64,
+    _base_max_uncles_per_block: u64,
+    _base_block_gas_limit: u64,
+    _strategy: u8,
     //vm config
-    script_allowed: bool,
-    module_publishing_allowed: bool,
-    instruction_schedule: vector&lt;u8&gt;,
-    native_schedule: vector&lt;u8&gt;,
+    _script_allowed: bool,
+    _module_publishing_allowed: bool,
+    _instruction_schedule: vector&lt;u8&gt;,
+    _native_schedule: vector&lt;u8&gt;,
     //gas constants
-    global_memory_per_byte_cost: u64,
-    global_memory_per_byte_write_cost: u64,
-    min_transaction_gas_units: u64,
-    large_transaction_cutoff: u64,
-    instrinsic_gas_per_byte: u64,
-    maximum_number_of_gas_units: u64,
-    min_price_per_gas_unit: u64,
-    max_price_per_gas_unit: u64,
-    max_transaction_size_in_bytes: u64,
-    gas_unit_scaling_factor: u64,
-    default_account_size: u64,
+    _global_memory_per_byte_cost: u64,
+    _global_memory_per_byte_write_cost: u64,
+    _min_transaction_gas_units: u64,
+    _large_transaction_cutoff: u64,
+    _instrinsic_gas_per_byte: u64,
+    _maximum_number_of_gas_units: u64,
+    _min_price_per_gas_unit: u64,
+    _max_price_per_gas_unit: u64,
+    _max_transaction_size_in_bytes: u64,
+    _gas_unit_scaling_factor: u64,
+    _default_account_size: u64,
     // dao config
-    voting_delay: u64,
-    voting_period: u64,
-    voting_quorum_rate: u8,
-    min_action_delay: u64,
+    _voting_delay: u64,
+    _voting_period: u64,
+    _voting_quorum_rate: u8,
+    _min_action_delay: u64,
     // transaction timeout config
-    transaction_timeout: u64,
+    _transaction_timeout: u64,
 ) {
-    <a href="Genesis.md#0x1_Genesis_do_initialize">Self::do_initialize</a>(
-        stdlib_version,
-        reward_delay,
-        total_stc_amount,
-        pre_mine_stc_amount,
-        time_mint_stc_amount,
-        time_mint_stc_period,
-        parent_hash,
-        association_auth_key,
-        genesis_auth_key,
-        chain_id,
-        genesis_timestamp,
-        uncle_rate_target,
-        epoch_block_count,
-        base_block_time_target,
-        base_block_difficulty_window,
-        base_reward_per_block,
-        base_reward_per_uncle_percent,
-        min_block_time_target,
-        max_block_time_target,
-        base_max_uncles_per_block,
-        base_block_gas_limit,
-        strategy,
-        script_allowed,
-        module_publishing_allowed,
-        instruction_schedule,
-        native_schedule,
-        global_memory_per_byte_cost,
-        global_memory_per_byte_write_cost,
-        min_transaction_gas_units,
-        large_transaction_cutoff,
-        instrinsic_gas_per_byte,
-        maximum_number_of_gas_units,
-        min_price_per_gas_unit,
-        max_price_per_gas_unit,
-        max_transaction_size_in_bytes,
-        gas_unit_scaling_factor,
-        default_account_size,
-        voting_delay,
-        voting_period,
-        voting_quorum_rate,
-        min_action_delay,
-        transaction_timeout,
-    );
+    <b>abort</b> <a href="Errors.md#0x1_Errors_deprecated">Errors::deprecated</a>(1)
 }
 </code></pre>
 
@@ -415,7 +372,7 @@ The module for init Genesis
     <a href="BlockReward.md#0x1_BlockReward_initialize">BlockReward::initialize</a>(&genesis_account, reward_delay);
 
     // stc should be initialized after genesis_account's <b>module</b> upgrade strategy set and all on chain config init.
-    <b>let</b> withdraw_cap = <a href="STC.md#0x1_STC_initialize_v2">STC::initialize_v2</a>(&genesis_account, total_stc_amount);
+    <b>let</b> withdraw_cap = <a href="STC.md#0x1_STC_initialize_v3">STC::initialize_v3</a>(&genesis_account, total_stc_amount);
     <a href="Account.md#0x1_Account_do_accept_token">Account::do_accept_token</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(&genesis_account);
     <a href="Account.md#0x1_Account_do_accept_token">Account::do_accept_token</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(&association);
 
