@@ -17,7 +17,8 @@ module Account {
     use StarcoinFramework::BCS;
     use StarcoinFramework::Math;
 
-    friend StarcoinFramework::StarcoinDAO;
+    friend StarcoinFramework::Genesis;
+    friend StarcoinFramework::StdlibUpgradeScripts;
 
     spec module {
         pragma verify = false;
