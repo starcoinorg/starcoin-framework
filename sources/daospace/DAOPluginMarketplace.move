@@ -5,8 +5,6 @@ module StarcoinFramework::DAOPluginMarketplace {
     use StarcoinFramework::Signer;
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::Vector;
-    use StarcoinFramework::NFT;
-    use StarcoinFramework::NFTGallery;
     use StarcoinFramework::Option::{Self, Option};
     use StarcoinFramework::Event;
     use StarcoinFramework::TypeInfo::{Self, TypeInfo};
@@ -59,19 +57,6 @@ module StarcoinFramework::DAOPluginMarketplace {
         created_at: u64, //creation time
     }
 
-    /// Plugin Owner NFT
-    struct PluginOwnerNFTMeta has copy, store, drop {
-        plugin_id: u64,
-        registry_address: address,
-    }
-
-    struct PluginOwnerNFTBody has store{}
-
-    struct PluginOwnerNFTMintCapHolder has key {
-        cap: NFT::MintCapability<PluginOwnerNFTMeta>,
-        nft_metadata: NFT::Metadata,
-    }
-
     fun next_plugin_id(plugin_registry: &mut PluginRegistry): u64 {
         let plugin_id = plugin_registry.next_plugin_id;
         plugin_registry.next_plugin_id = plugin_id + 1;
@@ -82,37 +67,6 @@ module StarcoinFramework::DAOPluginMarketplace {
         let version_number = plugin.next_version_number;
         plugin.next_version_number = version_number + 1;
         version_number
-    }
-
-    fun has_plugin_owner_nft(sender_addr: address, plugin_id: u64): bool {
-        if (!NFTGallery::is_accept<PluginOwnerNFTMeta, PluginOwnerNFTBody>(sender_addr)) {
-            return false
-        };
-
-        let nft_infos = NFTGallery::get_nft_infos<PluginOwnerNFTMeta, PluginOwnerNFTBody>(sender_addr);
-        let len = Vector::length(&nft_infos);
-        if (len == 0) {
-            return false
-        };
-
-        let idx = len - 1;
-        loop {
-            let nft_info = Vector::borrow(&nft_infos, idx);
-            let (_, _, _, type_meta) = NFT::unpack_info<PluginOwnerNFTMeta>(*nft_info);
-            if (type_meta.plugin_id == plugin_id) {
-                return true
-            };
-
-            if (idx == 0) {
-                return false
-            };
-            
-            idx = idx - 1;
-        }
-    }
-
-    fun ensure_exists_plugin_owner_nft(sender_addr: address, plugin_id: u64) {
-        assert!(has_plugin_owner_nft(sender_addr, plugin_id), Errors::invalid_state(ERR_EXPECT_PLUGIN_NFT));
     }
 
     fun assert_tag_no_repeat(v: &vector<PluginVersion>, tag:vector<u8>) {
@@ -188,19 +142,6 @@ module StarcoinFramework::DAOPluginMarketplace {
         assert!(!exists<PluginRegistry>(CoreAddresses::GENESIS_ADDRESS()), Errors::already_published(ERR_ALREADY_INITIALIZED));
         let signer = GenesisSignerCapability::get_genesis_signer();
 
-        let nft_name = b"PluginOwnerNFT";
-        let nft_image = b"ipfs://QmdTwdhFi61zhRM3MtPLxuKyaqv3ePECLGsMg9pMrePv4i";
-        let nft_description = b"The plugin owner NFT";
-        let basemeta = NFT::new_meta_with_image_data(nft_name, nft_image, nft_description);
-        let basemeta_bak = *&basemeta;
-        NFT::register_v2<PluginOwnerNFTMeta>(&signer, basemeta);
-
-        let nft_mint_cap = NFT::remove_mint_capability<PluginOwnerNFTMeta>(&signer);
-        move_to(&signer, PluginOwnerNFTMintCapHolder{
-            cap: nft_mint_cap,
-            nft_metadata: basemeta_bak,
-        });
-
         move_to(&signer, PluginRegistry{
             next_plugin_id: 1,
         });
@@ -210,8 +151,8 @@ module StarcoinFramework::DAOPluginMarketplace {
         });
     }
 
-    public fun register_plugin<PluginT: store>(sender: &signer, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>): u64 
-        acquires PluginRegistry, PluginOwnerNFTMintCapHolder, RegistryEventHandlers {
+    public fun register_plugin<PluginT: store>(_witness: &PluginT, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>): u64 
+        acquires PluginRegistry, RegistryEventHandlers {
         assert_string_length(&name, MAX_INPUT_LEN);
         assert_string_length(&description, MAX_TEXT_LEN);
 
@@ -247,16 +188,6 @@ module StarcoinFramework::DAOPluginMarketplace {
             unstar: Event::new_event_handle<UnstarPluginEvent<PluginT>>(&genesis_account),
             update_plugin: Event::new_event_handle<UpdatePluginInfoEvent<PluginT>>(&genesis_account),
         });
-
-        // grant owner NFT to sender
-        let nft_mint_cap = borrow_global_mut<PluginOwnerNFTMintCapHolder>(CoreAddresses::GENESIS_ADDRESS());
-        let meta = PluginOwnerNFTMeta{
-            registry_address: CoreAddresses::GENESIS_ADDRESS(),
-            plugin_id: copy plugin_id,
-        };
-
-        let nft = NFT::mint_with_cap_v2(CoreAddresses::GENESIS_ADDRESS(), &mut nft_mint_cap.cap, *&nft_mint_cap.nft_metadata, meta, PluginOwnerNFTBody{});
-        NFTGallery::deposit(sender, nft);
 
         // registry register event emit
         let registry_event_handlers = borrow_global_mut<RegistryEventHandlers>(CoreAddresses::GENESIS_ADDRESS());
@@ -297,8 +228,7 @@ module StarcoinFramework::DAOPluginMarketplace {
 
         let sender_addr = Signer::address_of(sender);
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
-        
-        ensure_exists_plugin_owner_nft(copy sender_addr, plugin.id);
+
         assert_tag_no_repeat(&plugin.versions, copy tag);
 
         // Remove the old version when the number of versions is greater than MAX_VERSION_COUNT
@@ -395,7 +325,6 @@ module StarcoinFramework::DAOPluginMarketplace {
 
         let sender_addr = Signer::address_of(sender);
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
-        ensure_exists_plugin_owner_nft(sender_addr, plugin.id);
 
         plugin.name = name;
         plugin.description = description;

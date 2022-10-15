@@ -18,15 +18,26 @@ module creator::TestPlugin {
     const NAME: vector<u8> = b"TestPlugin";
 
     /// directly upgrade the sender account to DAOAccount and create DAO
-    public(script) fun register(sender: signer) {
+    public(script) fun register(_sender: signer) {
+        let witness = TestPlugin{};
         DAOPluginMarketplace::register_plugin<TestPlugin>(
-            &sender,
+            &witness,
             NAME, 
             b"ipfs://description",
             Option::none(),
         );
     }
 }
+
+//# run --signers Genesis
+script {
+    use StarcoinFramework::DAOPluginMarketplace;
+
+    fun main(_sender: signer) {
+        DAOPluginMarketplace::initialize();
+    }
+}
+// check: Executed
 
 //# run --signers creator
 script {
@@ -70,13 +81,15 @@ module creator::TestPlugin2 {
     const NAME: vector<u8> = b"TestPlugin2";
 
     /// directly upgrade the sender account to DAOAccount and create DAO
-    public(script) fun register(sender: signer) {
+    public(script) fun register(_sender: signer) {
+        let witness = TestPlugin2{};
+
         let labels = Vector::empty<vector<u8>>();
         Vector::push_back<vector<u8>>(&mut labels, b"OS=Starcoin");
         Vector::push_back<vector<u8>>(&mut labels, b"Store=IPFS");
 
         DAOPluginMarketplace::register_plugin<TestPlugin2>(
-            &sender,
+            &witness,
             NAME, 
             b"ipfs://description",
             Option::some(labels),

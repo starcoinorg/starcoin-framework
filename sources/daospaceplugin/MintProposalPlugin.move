@@ -20,8 +20,10 @@ module StarcoinFramework::MintProposalPlugin{
     }
 
     public fun initialize(sender: &signer) {
+        let witness = MintProposalPlugin{};
+
         DAOPluginMarketplace::register_plugin<MintProposalPlugin>(
-            sender,
+            &witness,
             b"0x1::MintProposalPlugin",
             b"The plugin for minting tokens.",
             Option::none(),
@@ -30,7 +32,6 @@ module StarcoinFramework::MintProposalPlugin{
         let implement_extpoints = Vector::empty<vector<u8>>();
         let depend_extpoints = Vector::empty<vector<u8>>();
 
-        let witness = MintProposalPlugin{};
         DAOPluginMarketplace::publish_plugin_version<MintProposalPlugin>(
             sender,
             &witness,

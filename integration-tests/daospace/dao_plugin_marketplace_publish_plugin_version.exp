@@ -1,14 +1,26 @@
-processed 14 tasks
+processed 15 tasks
 
-task 6 'run'. lines 46-54:
+task 6 'run'. lines 47-55:
 {
-  "gas_used": 381523,
+  "gas_used": 56639,
   "status": "Executed"
 }
 
-task 7 'run'. lines 56-64:
+task 7 'run'. lines 57-65:
 {
-  "gas_used": 93711,
+  "gas_used": 235944,
+  "status": "Executed"
+}
+
+task 8 'run'. lines 67-75:
+{
+  "gas_used": 136126,
+  "status": "Executed"
+}
+
+task 9 'run'. lines 77-85:
+{
+  "gas_used": 88831,
   "status": {
     "MoveAbort": {
       "location": {
@@ -17,20 +29,14 @@ task 7 'run'. lines 56-64:
           "name": "DAOPluginMarketplace"
         }
       },
-      "abort_code": "26369"
+      "abort_code": "27399"
     }
   }
 }
 
-task 8 'run'. lines 66-74:
-{
-  "gas_used": 187303,
-  "status": "Executed"
-}
-
-task 9 'view'. lines 76-76:
+task 10 'view'. lines 87-87:
 store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
-    id: 11
+    id: 1
     name: 54657374506c7567696e
     description: 697066733a2f2f6465736372697074696f6e
     labels: [
@@ -55,15 +61,15 @@ store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<
     updated_at: 10
 }
 
-task 10 'run'. lines 78-91:
+task 11 'run'. lines 89-102:
 {
-  "gas_used": 1154679,
+  "gas_used": 847617,
   "status": "Executed"
 }
 
-task 11 'view'. lines 93-93:
+task 12 'view'. lines 104-104:
 store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
-    id: 11
+    id: 1
     name: 54657374506c7567696e
     description: 697066733a2f2f6465736372697074696f6e
     labels: [
@@ -136,9 +142,9 @@ store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<
     updated_at: 10
 }
 
-task 12 'run'. lines 95-103:
+task 13 'run'. lines 106-114:
 {
-  "gas_used": 155764,
+  "gas_used": 104587,
   "status": {
     "MoveAbort": {
       "location": {
@@ -152,9 +158,9 @@ task 12 'run'. lines 95-103:
   }
 }
 
-task 13 'view'. lines 105-105:
+task 14 'view'. lines 116-116:
 store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
-    id: 11
+    id: 1
     name: 54657374506c7567696e
     description: 697066733a2f2f6465736372697074696f6e
     labels: [

@@ -18,9 +18,10 @@ module creator::TestPlugin {
 
     const NAME: vector<u8> = b"TestPlugin";
 
-    public(script) fun register(sender: signer) {
+    public(script) fun register(_sender: signer) {
+        let witness = TestPlugin{};
         DAOPluginMarketplace::register_plugin<TestPlugin>(
-            &sender,
+            &witness,
             NAME, 
             b"ipfs://description",
             Option::none(),
@@ -42,6 +43,16 @@ module creator::TestPlugin {
         );
     }
 }
+
+//# run --signers Genesis
+script {
+    use StarcoinFramework::DAOPluginMarketplace;
+
+    fun main(_sender: signer) {
+        DAOPluginMarketplace::initialize();
+    }
+}
+// check: Executed
 
 //# run --signers bob
 script {

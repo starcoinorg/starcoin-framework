@@ -12,8 +12,10 @@ module StarcoinFramework::InstallPluginProposalPlugin{
     }
 
     public fun initialize(sender: &signer) {
+        let witness = InstallPluginProposalPlugin{};
+
         DAOPluginMarketplace::register_plugin<InstallPluginProposalPlugin>(
-            sender,
+            &witness,
             b"0x1::InstallPluginProposalPlugin",
             b"The plugin for install plugin proposal",
             Option::none(),
@@ -22,7 +24,6 @@ module StarcoinFramework::InstallPluginProposalPlugin{
         let implement_extpoints = Vector::empty<vector<u8>>();
         let depend_extpoints = Vector::empty<vector<u8>>();
 
-        let witness = InstallPluginProposalPlugin{};
         DAOPluginMarketplace::publish_plugin_version<InstallPluginProposalPlugin>(
             sender,
             &witness,

@@ -30,8 +30,10 @@ module StarcoinFramework::GrantProposalPlugin{
     }
 
     public fun initialize(sender: &signer) {
+        let witness = GrantProposalPlugin{};
+
         DAOPluginMarketplace::register_plugin<GrantProposalPlugin>(
-            sender,
+            &witness,
             b"0x1::GrantProposalPlugin",
             b"The plugin for grant proposal",
             Option::none(),
@@ -39,8 +41,7 @@ module StarcoinFramework::GrantProposalPlugin{
 
         let implement_extpoints = Vector::empty<vector<u8>>();
         let depend_extpoints = Vector::empty<vector<u8>>();
-
-        let witness = GrantProposalPlugin{};
+        
         DAOPluginMarketplace::publish_plugin_version<GrantProposalPlugin>(
             sender,
             &witness,
