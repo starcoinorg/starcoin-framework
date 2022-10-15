@@ -106,12 +106,10 @@ module StarcoinFramework::TreasuryPlugin {
             period,
         };
 
-        let scale = if (!DAOSpace::exists_custom_config<DAOT, QuorumScale>()) {
+        if (!DAOSpace::exists_custom_config<DAOT, QuorumScale>()) {
             set_scale_factor_inner<DAOT>(0u8);
-            0u8
-        } else {
-            DAOSpace::get_custom_config<DAOT, QuorumScale>().scale
         };
+        let scale = DAOSpace::get_custom_config<DAOT, QuorumScale>().scale;
         DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay, Option::some(scale));
     }
 
