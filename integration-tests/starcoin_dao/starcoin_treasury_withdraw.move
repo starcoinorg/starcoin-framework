@@ -124,6 +124,28 @@ script{
     use StarcoinFramework::StarcoinDAO::StarcoinDAO;
     use StarcoinFramework::TreasuryPlugin;
     use StarcoinFramework::STC::STC;
+    use StarcoinFramework::Token;
+    use StarcoinFramework::Treasury;
+    use StarcoinFramework::DAOSpace;
+
+    //alice create proposal
+    fun create_proposal(sender: signer){
+        let market_cap = Token::market_cap<STC>();
+        let balance_in_treasury = Treasury::balance<STC>();
+        let supply = market_cap - balance_in_treasury;
+        let rate = DAOSpace::voting_quorum_rate<StarcoinDAO>();
+        let rate = (rate as u128);
+        let amount = supply * rate / 100 + 1;
+        TreasuryPlugin::create_withdraw_proposal<StarcoinDAO, STC>(&sender, b"Withdraw treasury", @alice, amount, 1000, 3600000);
+    }
+}
+// check: ABORT, code: 26375, reason:withdraw amount out of limit.
+
+//# run --signers alice
+script{
+    use StarcoinFramework::StarcoinDAO::StarcoinDAO;
+    use StarcoinFramework::TreasuryPlugin;
+    use StarcoinFramework::STC::STC;
 
     //alice create proposal
     fun create_proposal(sender: signer){
@@ -131,7 +153,6 @@ script{
     }
 }
 // check: EXECUTED
-
 
 //# block --author=0x3 --timestamp 86520000
 
