@@ -74,6 +74,7 @@ module StarcoinFramework::TreasuryPlugin {
 
     public fun required_caps(): vector<CapType> {
         let caps = Vector::singleton(DAOSpace::proposal_cap_type());
+        Vector::push_back(&mut caps, DAOSpace::modify_config_cap_type());
         caps
     }
 
