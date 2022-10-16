@@ -1,45 +1,45 @@
 processed 20 tasks
 
-task 4 'run'. lines 88-96:
+task 4 'run'. lines 87-95:
 {
-  "gas_used": 329658,
+  "gas_used": 333211,
   "status": "Executed"
 }
 
-task 9 'run'. lines 118-133:
+task 9 'run'. lines 117-132:
 {
   "gas_used": 200239,
   "status": "Executed"
 }
 
-task 10 'run'. lines 135-144:
+task 10 'run'. lines 134-143:
 {
   "gas_used": 1121690,
   "status": "Executed"
 }
 
-task 12 'run'. lines 148-156:
+task 12 'run'. lines 147-155:
 {
   "gas_used": 123208,
   "status": "Executed"
 }
 
-task 15 'run'. lines 162-170:
+task 15 'run'. lines 161-169:
 {
   "gas_used": 11346,
   "status": "Executed"
 }
 
-task 16 'run'. lines 172-180:
+task 16 'run'. lines 171-179:
 {
   "gas_used": 123208,
   "status": "Executed"
 }
 
-task 18 'deploy'. lines 184-185:
+task 18 'deploy'. lines 183-184:
 Publish failure: MiscellaneousError
 
-task 19 'run'. lines 187-195:
+task 19 'run'. lines 186-194:
 {
   "gas_used": 600,
   "status": "MiscellaneousError"

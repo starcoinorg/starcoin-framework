@@ -35,7 +35,7 @@ module creator::SalaryGovPlugin {
         boss: address,
     }
 
-    public fun initialize(sender: &signer) {
+    public fun initialize(_sender: &signer) {
         let witness = SalaryGovPlugin{};
 
         DAOPluginMarketplace::register_plugin<SalaryGovPlugin>(
@@ -49,7 +49,6 @@ module creator::SalaryGovPlugin {
         let depend_extpoints = Vector::empty<vector<u8>>();
 
         DAOPluginMarketplace::publish_plugin_version<SalaryGovPlugin>(
-            sender,
             &witness,
             b"v0.1.0", 
             *&implement_extpoints,

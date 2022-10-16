@@ -118,7 +118,7 @@ module StarcoinFramework::DAOPluginMarketplace {
     }
 
     struct PluginPublishVersionEvent<phantom PluginT> has drop, store{
-        sender: address,
+        plugin_type: TypeInfo,
         version_number: u64,
     }
 
@@ -214,7 +214,6 @@ module StarcoinFramework::DAOPluginMarketplace {
     }
 
     public fun publish_plugin_version<PluginT>(
-        sender: &signer, 
         _witness: &PluginT,
         tag: vector<u8>,
         implement_extpoints: vector<vector<u8>>, 
@@ -226,7 +225,6 @@ module StarcoinFramework::DAOPluginMarketplace {
         assert_string_array_length(&depend_extpoints, MAX_ITEMS_COUNT, MAX_INPUT_LEN);
         assert_string_length(&js_entry_uri, MAX_TEXT_LEN);
 
-        let sender_addr = Signer::address_of(sender);
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
 
         assert_tag_no_repeat(&plugin.versions, copy tag);
@@ -260,7 +258,7 @@ module StarcoinFramework::DAOPluginMarketplace {
         let plugin_event_handlers = borrow_global_mut<PluginEventHandlers<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
         Event::emit_event(&mut plugin_event_handlers.publish_version,
             PluginPublishVersionEvent {
-                sender: copy sender_addr,
+                plugin_type: TypeInfo::type_of<PluginT>(),
                 version_number: copy version_number,
             },
         );

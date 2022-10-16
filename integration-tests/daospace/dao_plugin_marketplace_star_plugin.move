@@ -28,13 +28,12 @@ module creator::TestPlugin {
         );
     }
 
-    public(script) fun publish_version(sender: signer) {
+    public(script) fun publish_version(_sender: signer) {
         let vec = Vector::empty<vector<u8>>();
         Vector::push_back<vector<u8>>(&mut vec, b"test_plugin");
 
         let witness = TestPlugin{};
         DAOPluginMarketplace::publish_plugin_version<TestPlugin>(
-            &sender,
             &witness,
             b"v0.1.0", 
             *&vec, 

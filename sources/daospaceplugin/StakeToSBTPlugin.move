@@ -21,7 +21,7 @@ module StarcoinFramework::StakeToSBTPlugin {
 
     struct StakeToSBTPlugin has store, drop {}
 
-    public fun initialize(sender: &signer) {
+    public fun initialize(_sender: &signer) {
         let witness = StakeToSBTPlugin {};
 
         DAOPluginMarketplace::register_plugin<StakeToSBTPlugin>(
@@ -35,7 +35,6 @@ module StarcoinFramework::StakeToSBTPlugin {
         let depend_extpoints = Vector::empty<vector<u8>>();
 
         DAOPluginMarketplace::publish_plugin_version<StakeToSBTPlugin>(
-            sender,
             &witness,
             b"v0.1.0",
             *&implement_extpoints,

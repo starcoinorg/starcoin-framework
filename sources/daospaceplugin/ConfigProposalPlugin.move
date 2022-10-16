@@ -12,7 +12,7 @@ module StarcoinFramework::ConfigProposalPlugin {
         config: ConfigT,
     }
 
-    public fun initialize(sender: &signer) {
+    public fun initialize(_sender: &signer) {
         let witness = ConfigProposalPlugin{};
 
         DAOPluginMarketplace::register_plugin<ConfigProposalPlugin>(
@@ -26,7 +26,6 @@ module StarcoinFramework::ConfigProposalPlugin {
         let depend_extpoints = Vector::empty<vector<u8>>();
 
         DAOPluginMarketplace::publish_plugin_version<ConfigProposalPlugin>(
-            sender,
             &witness,
             b"v0.1.0", 
             *&implement_extpoints,

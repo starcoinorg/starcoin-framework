@@ -11,7 +11,7 @@ module StarcoinFramework::InstallPluginProposalPlugin{
         required_caps: vector<CapType>,
     }
 
-    public fun initialize(sender: &signer) {
+    public fun initialize(_sender: &signer) {
         let witness = InstallPluginProposalPlugin{};
 
         DAOPluginMarketplace::register_plugin<InstallPluginProposalPlugin>(
@@ -25,7 +25,6 @@ module StarcoinFramework::InstallPluginProposalPlugin{
         let depend_extpoints = Vector::empty<vector<u8>>();
 
         DAOPluginMarketplace::publish_plugin_version<InstallPluginProposalPlugin>(
-            sender,
             &witness,
             b"v0.1.0", 
             *&implement_extpoints,

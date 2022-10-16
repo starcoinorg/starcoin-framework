@@ -34,7 +34,7 @@ module StarcoinFramework::TreasuryPlugin {
         period: u64,
     }
 
-    public fun initialize(sender: &signer) {
+    public fun initialize(_sender: &signer) {
         let witness = TreasuryPlugin {};
 
         DAOPluginMarketplace::register_plugin<TreasuryPlugin>(
@@ -48,7 +48,6 @@ module StarcoinFramework::TreasuryPlugin {
         let depend_extpoints = Vector::empty<vector<u8>>();
 
         DAOPluginMarketplace::publish_plugin_version<TreasuryPlugin>(
-            sender,
             &witness,
             b"v0.1.0",
             *&implement_extpoints,
