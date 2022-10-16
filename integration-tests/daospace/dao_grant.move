@@ -59,8 +59,9 @@ module creator::DAOHelper {
     struct XPlugin has store, drop{}
 
     public fun initialize_x_plugin(sender: &signer) {
+        let witness = XPlugin{};
         DAOPluginMarketplace::register_plugin<XPlugin>(
-            sender,
+            &witness,
             b"0x1::XPlugin",
             b"The X plugin.",
             Option::none(),
@@ -69,7 +70,6 @@ module creator::DAOHelper {
         let implement_extpoints = Vector::empty<vector<u8>>();
         let depend_extpoints = Vector::empty<vector<u8>>();
 
-        let witness = XPlugin{};
         DAOPluginMarketplace::publish_plugin_version<XPlugin>(
             sender,
             &witness,

@@ -1,24 +1,18 @@
-processed 15 tasks
+processed 14 tasks
 
 task 6 'run'. lines 47-55:
-{
-  "gas_used": 56639,
-  "status": "Executed"
-}
-
-task 7 'run'. lines 57-65:
 {
   "gas_used": 235944,
   "status": "Executed"
 }
 
-task 8 'run'. lines 67-75:
+task 7 'run'. lines 57-65:
 {
   "gas_used": 136126,
   "status": "Executed"
 }
 
-task 9 'run'. lines 77-85:
+task 8 'run'. lines 67-75:
 {
   "gas_used": 88831,
   "status": {
@@ -34,9 +28,9 @@ task 9 'run'. lines 77-85:
   }
 }
 
-task 10 'view'. lines 87-87:
+task 9 'view'. lines 77-77:
 store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
-    id: 1
+    id: 11
     name: 54657374506c7567696e
     description: 697066733a2f2f6465736372697074696f6e
     labels: [
@@ -61,15 +55,15 @@ store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<
     updated_at: 10
 }
 
-task 11 'run'. lines 89-102:
+task 10 'run'. lines 79-92:
 {
   "gas_used": 847617,
   "status": "Executed"
 }
 
-task 12 'view'. lines 104-104:
+task 11 'view'. lines 94-94:
 store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
-    id: 1
+    id: 11
     name: 54657374506c7567696e
     description: 697066733a2f2f6465736372697074696f6e
     labels: [
@@ -142,7 +136,7 @@ store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<
     updated_at: 10
 }
 
-task 13 'run'. lines 106-114:
+task 12 'run'. lines 96-104:
 {
   "gas_used": 104587,
   "status": {
@@ -158,9 +152,9 @@ task 13 'run'. lines 106-114:
   }
 }
 
-task 14 'view'. lines 116-116:
+task 13 'view'. lines 106-106:
 store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
-    id: 1
+    id: 11
     name: 54657374506c7567696e
     description: 697066733a2f2f6465736372697074696f6e
     labels: [

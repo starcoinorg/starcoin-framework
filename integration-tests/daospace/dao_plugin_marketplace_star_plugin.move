@@ -44,16 +44,6 @@ module creator::TestPlugin {
     }
 }
 
-//# run --signers Genesis
-script {
-    use StarcoinFramework::DAOPluginMarketplace;
-
-    fun main(_sender: signer) {
-        DAOPluginMarketplace::initialize();
-    }
-}
-// check: Executed
-
 //# run --signers bob
 script {
     use creator::TestPlugin;
