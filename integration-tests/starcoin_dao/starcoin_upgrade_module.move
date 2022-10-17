@@ -131,7 +131,7 @@ script{
 
     //alice create proposal
     fun create_proposal(sender: signer, package_hash: vector<u8>){
-        UpgradeModulePlugin::create_proposal<StarcoinDAO>(&sender, b"Upgrade module", 3600000, package_hash, 1, true);
+        UpgradeModulePlugin::create_proposal<StarcoinDAO>(&sender,b"Upgrade module", b"Upgrade module" ,b"Upgrade module", 3600000, package_hash, 1, true);
     }
 }
 // check: EXECUTED

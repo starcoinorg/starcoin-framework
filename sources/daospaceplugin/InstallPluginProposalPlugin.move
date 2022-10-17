@@ -40,7 +40,7 @@ module StarcoinFramework::InstallPluginProposalPlugin{
     }
 
     //TODO how to unify arguments.
-    public fun create_proposal<DAOT: store, ToInstallPluginT: store>(sender: &signer, required_caps: vector<CapType>, description: vector<u8>, action_delay: u64){
+    public fun create_proposal<DAOT: store, ToInstallPluginT: store>(sender: &signer, required_caps: vector<CapType>, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay: u64){
         let witness = InstallPluginProposalPlugin{};
 
         let cap = DAOSpace::acquire_proposal_cap<DAOT, InstallPluginProposalPlugin>(&witness);
@@ -48,7 +48,7 @@ module StarcoinFramework::InstallPluginProposalPlugin{
             required_caps,
         };
 
-        DAOSpace::create_proposal(&cap, sender, action, description, action_delay);
+        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay);
     }
 
     public fun execute_proposal<DAOT: store, ToInstallPluginT: store>(sender: &signer, proposal_id: u64){

@@ -160,7 +160,7 @@ script {
     fun main(account: signer) {
         let description = b"oracle select proposal";
         let action_delay = 0;
-        GasOracleProposalPlugin::create_oracle_add_proposal<XDAO, AliceToken>(account, description, action_delay, @alice);
+        GasOracleProposalPlugin::create_oracle_add_proposal<XDAO, AliceToken>(account, b"oracle select proposal",b"oracle select proposal", description, action_delay, @alice);
         let proposal = DAOSpace::proposal<XDAO>(1);
         let proposer = DAOSpace::proposal_proposer(&proposal);
         let (start_time, end_time) = DAOSpace::proposal_time(&proposal);

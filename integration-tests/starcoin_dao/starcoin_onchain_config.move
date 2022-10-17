@@ -127,7 +127,7 @@ script {
 
     fun propose (sender: signer){
         assert!(RewardConfig::reward_delay() == 1, 101);
-        OnChainStarcoinDAOConfig::propose_update_reward_config(&sender, b"update", 5 , 3600000);
+        OnChainStarcoinDAOConfig::propose_update_reward_config(&sender, b"update",b"update",b"update", 5 , 3600000);
     }
 }
 

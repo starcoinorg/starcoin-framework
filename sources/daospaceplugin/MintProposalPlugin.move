@@ -60,18 +60,18 @@ module StarcoinFramework::MintProposalPlugin{
         delegate_token_mint_cap<DAOT, TokenT>(&sender);
     }
 
-    public fun create_mint_proposal<DAOT: store, TokenT:store>(sender: &signer, description: vector<u8>, receiver: address, amount: u128, action_delay: u64){
+    public fun create_mint_proposal<DAOT: store, TokenT:store>(sender: &signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, receiver: address, amount: u128, action_delay: u64){
         let witness = MintProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, MintProposalPlugin>(&witness);
         let action = MintTokenAction<TokenT>{
             receiver,
             amount,
         };
-        DAOSpace::create_proposal(&cap, sender, action, description, action_delay);
+        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay);
     }
 
-    public (script) fun create_mint_proposal_entry<DAOT: store, TokenT:store>(sender: signer, description: vector<u8>, receiver: address, amount: u128, action_delay: u64){
-        create_mint_proposal<DAOT, TokenT>(&sender, description, receiver, amount, action_delay);
+    public (script) fun create_mint_proposal_entry<DAOT: store, TokenT:store>(sender: signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, receiver: address, amount: u128, action_delay: u64){
+        create_mint_proposal<DAOT, TokenT>(&sender, description, title, introduction, receiver, amount, action_delay);
     }
 
     public fun execute_mint_proposal<DAOT: store, TokenT:store>(sender: &signer, proposal_id: u64){
@@ -87,12 +87,12 @@ module StarcoinFramework::MintProposalPlugin{
         execute_mint_proposal<DAOT, TokenT>(&sender, proposal_id);
     }
 
-    public fun install_plugin_proposal<DAOT:store>(sender:&signer, description: vector<u8>, action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, MintProposalPlugin>(sender, required_caps(), description, action_delay);
+    public fun install_plugin_proposal<DAOT:store>(sender:&signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, MintProposalPlugin>(sender,required_caps(), title, introduction,  description, action_delay);
     }
 
-    public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, description: vector<u8>, action_delay:u64){
-        install_plugin_proposal<DAOT>(&sender, description, action_delay);
+    public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay:u64){
+        install_plugin_proposal<DAOT>(&sender, title, introduction, description, action_delay);
     }
 
 }

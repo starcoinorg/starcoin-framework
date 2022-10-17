@@ -47,7 +47,7 @@ module StarcoinFramework::MemberProposalPlugin{
         caps 
     }
 
-    public fun create_proposal<DAOT: store>(sender: &signer, description: vector<u8>, member: address, image_data:vector<u8>, image_url:vector<u8>, init_sbt: u128, action_delay: u64){
+    public fun create_proposal<DAOT: store>(sender: &signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, member: address, image_data:vector<u8>, image_url:vector<u8>, init_sbt: u128, action_delay: u64){
         let witness = MemberProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, MemberProposalPlugin>(&witness);
         let action = MemberJoinAction{
@@ -58,11 +58,11 @@ module StarcoinFramework::MemberProposalPlugin{
         };
         assert!(!DAOSpace::is_exist_member_offer<DAOT>(member), Errors::already_published(ERR_MEMBER_OFFER_EXIST));
         assert!(!DAOSpace::is_member<DAOT>(member), Errors::already_published(ERR_MEMBER_EXIST));
-        DAOSpace::create_proposal(&cap, sender, action, description, action_delay);
+        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay);
     }
 
-    public (script) fun create_proposal_entry<DAOT: store>(sender: signer, description: vector<u8>, member: address, image_data:vector<u8>, image_url:vector<u8>, init_sbt: u128, action_delay: u64){
-        create_proposal<DAOT>(&sender, description, member, image_data, image_url, init_sbt, action_delay);
+    public (script) fun create_proposal_entry<DAOT: store>(sender: signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, member: address, image_data:vector<u8>, image_url:vector<u8>, init_sbt: u128, action_delay: u64){
+        create_proposal<DAOT>(&sender, title, introduction, description, member, image_data, image_url, init_sbt, action_delay);
     }
 
     public fun execute_proposal<DAOT: store>(sender: &signer, proposal_id: u64){
@@ -77,12 +77,12 @@ module StarcoinFramework::MemberProposalPlugin{
         execute_proposal<DAOT>(&sender, proposal_id);
     }
 
-    public fun install_plugin_proposal<DAOT:store>(sender:&signer, description: vector<u8>,action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, MemberJoinAction>(sender, required_caps(), description, action_delay);
+    public fun install_plugin_proposal<DAOT:store>(sender:&signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>,action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, MemberJoinAction>(sender, required_caps(), title, introduction, description, action_delay);
     }
 
-    public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, description: vector<u8>, action_delay:u64){
-        install_plugin_proposal<DAOT>(&sender, description, action_delay);
+    public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay:u64){
+        install_plugin_proposal<DAOT>(&sender, title, introduction, description, action_delay);
     }
 
 }
