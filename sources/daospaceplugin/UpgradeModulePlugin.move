@@ -52,7 +52,7 @@ module StarcoinFramework::UpgradeModulePlugin {
         DAOSpace::create_proposal<
             DAOT,
             UpgradeModulePlugin,
-            UpgradeModuleAction>(&cap, sender, action, title, introduction, description, action_delay);
+            UpgradeModuleAction>(&cap, sender, action, title, introduction, description, action_delay, Option::none<u8>());
     }
 
     public (script) fun create_proposal_entry <DAOT: store>(sender: signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay:u64, package_hash: vector<u8>, version: u64, enforced: bool) {

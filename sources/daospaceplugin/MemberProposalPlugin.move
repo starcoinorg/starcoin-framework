@@ -58,7 +58,7 @@ module StarcoinFramework::MemberProposalPlugin{
         };
         assert!(!DAOSpace::is_exist_member_offer<DAOT>(member), Errors::already_published(ERR_MEMBER_OFFER_EXIST));
         assert!(!DAOSpace::is_member<DAOT>(member), Errors::already_published(ERR_MEMBER_EXIST));
-        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay);
+        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay, Option::none<u8>());
     }
 
     public (script) fun create_proposal_entry<DAOT: store>(sender: signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, member: address, image_data:vector<u8>, image_url:vector<u8>, init_sbt: u128, action_delay: u64){

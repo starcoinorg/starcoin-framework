@@ -168,7 +168,7 @@ module creator::SalaryGovPlugin {
         let action = BossProposalAction<DAOT> {
             boss: Signer::address_of(&sender)
         };
-        DAOSpace::create_proposal(&cap, &sender, action, title, introduction, description, action_delay);
+        DAOSpace::create_proposal(&cap, &sender, action, title, introduction, description, action_delay, Option::none<u8>());
     }
 
     public(script) fun execute_proposal<DAOT: store>(sender: signer, proposal_id: u64) {

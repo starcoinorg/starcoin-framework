@@ -81,7 +81,7 @@ module creator::DAOHelper {
             total,
             receiver,
         };
-        let proposal_id = DAOSpace::create_proposal(&cap, sender, action,b"title",b"ipfs://introduction", b"ipfs://extend", action_delay);
+        let proposal_id = DAOSpace::create_proposal(&cap, sender, action,b"title",b"ipfs://introduction", b"ipfs://extend", action_delay, Option::none<u8>());
         checkpoint<DAOT>(proposal_id);
 
         proposal_id

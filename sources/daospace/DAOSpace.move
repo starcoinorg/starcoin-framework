@@ -2443,13 +2443,12 @@ module StarcoinFramework::DAOSpace {
         );
 
         let market_cap = Token::market_cap<DAOT>();
-        let rate = voting_quorum_rate<DAOT>();
-        let rate = rate + rate * scale_factor / 100;
+        let rate = (voting_quorum_rate<DAOT>() as u128);
+        let rate = rate + rate * (scale_factor as u128) / 100;
         assert!(
             rate > 0 && rate <= 100,
             Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID),
         );
-        let rate = (rate as u128);
         market_cap * rate / 100
     }
 
