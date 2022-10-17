@@ -129,7 +129,7 @@
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_initialize">initialize</a>(sender: &signer)
+<pre><code><b>public</b> <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_initialize">initialize</a>(_sender: &signer)
 </code></pre>
 
 
@@ -138,9 +138,11 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_initialize">initialize</a>(sender: &signer) {
+<pre><code><b>public</b> <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_initialize">initialize</a>(_sender: &signer) {
+    <b>let</b> witness = <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>{};
+
     <a href="DAOPluginMarketplace.md#0x1_DAOPluginMarketplace_register_plugin">DAOPluginMarketplace::register_plugin</a>&lt;<a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>&gt;(
-        sender,
+        &witness,
         b"<a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">0x1::MemberProposalPlugin</a>",
         b"The plugin for member proposal",
         <a href="Option.md#0x1_Option_none">Option::none</a>(),
@@ -149,9 +151,7 @@
     <b>let</b> implement_extpoints = <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>&lt;vector&lt;u8&gt;&gt;();
     <b>let</b> depend_extpoints = <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>&lt;vector&lt;u8&gt;&gt;();
 
-    <b>let</b> witness = <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>{};
     <a href="DAOPluginMarketplace.md#0x1_DAOPluginMarketplace_publish_plugin_version">DAOPluginMarketplace::publish_plugin_version</a>&lt;<a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>&gt;(
-        sender,
         &witness,
         b"v0.1.0",
         *&implement_extpoints,

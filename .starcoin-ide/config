@@ -1,0 +1,5 @@
+[mpm.package.build]
+OPTIONS=["--doc", "--abi", "--force"]
+
+[mpm.integration-test]
+OPTIONS=["--current-as-stdlib"]
