@@ -1634,6 +1634,8 @@ module StarcoinFramework::DAOSpace {
         title: vector<u8>,
         /// the proposal id.
         proposal_id: u64,
+        /// introduction of proposal , short introduction
+        introduction:vector<u8>,
         /// extend of proposal , ipfs:// | { "title":"xxxxx",........ }
         extend: vector<u8>,
         /// proposer is the user who create the proposal.
@@ -1772,7 +1774,7 @@ module StarcoinFramework::DAOSpace {
         let dao_id = dao_id(dao_address);
         let proposal_event = borrow_global_mut<ProposalEvent<DAOT>>(dao_address);
         Event::emit_event(&mut proposal_event.proposal_create_event,
-            ProposalCreatedEvent { dao_id, proposal_id, title, extend: copy extend, proposer },
+            ProposalCreatedEvent { dao_id, proposal_id, title,  introduction: copy introduction, extend: copy extend, proposer },
         );
 
         proposal_id
