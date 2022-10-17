@@ -2,13 +2,19 @@ processed 14 tasks
 
 task 6 'run'. lines 46-54:
 {
-  "gas_used": 381523,
+  "gas_used": 235944,
   "status": "Executed"
 }
 
 task 7 'run'. lines 56-64:
 {
-  "gas_used": 93711,
+  "gas_used": 139939,
+  "status": "Executed"
+}
+
+task 8 'run'. lines 66-74:
+{
+  "gas_used": 82611,
   "status": {
     "MoveAbort": {
       "location": {
@@ -17,15 +23,9 @@ task 7 'run'. lines 56-64:
           "name": "DAOPluginMarketplace"
         }
       },
-      "abort_code": "26369"
+      "abort_code": "27399"
     }
   }
-}
-
-task 8 'run'. lines 66-74:
-{
-  "gas_used": 187303,
-  "status": "Executed"
 }
 
 task 9 'view'. lines 76-76:
@@ -57,7 +57,7 @@ store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<
 
 task 10 'run'. lines 78-91:
 {
-  "gas_used": 1154679,
+  "gas_used": 870495,
   "status": "Executed"
 }
 
@@ -138,7 +138,7 @@ store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<
 
 task 12 'run'. lines 95-103:
 {
-  "gas_used": 155764,
+  "gas_used": 98367,
   "status": {
     "MoveAbort": {
       "location": {

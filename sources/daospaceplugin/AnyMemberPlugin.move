@@ -15,9 +15,11 @@ module StarcoinFramework::AnyMemberPlugin{
         caps 
     }
 
-    public fun initialize(sender: &signer) {
+    public fun initialize(_sender: &signer) {
+        let witness = AnyMemberPlugin{};
+
         DAOPluginMarketplace::register_plugin<AnyMemberPlugin>(
-            sender,
+            &witness,
             b"0x1::AnyMemberPlugin",
             b"The member plugin that allow all member to do join.",
             Option::none(),
@@ -26,9 +28,7 @@ module StarcoinFramework::AnyMemberPlugin{
         let implement_extpoints = Vector::empty<vector<u8>>();
         let depend_extpoints = Vector::empty<vector<u8>>();
 
-        let witness = AnyMemberPlugin{};
         DAOPluginMarketplace::publish_plugin_version<AnyMemberPlugin>(
-            sender,
             &witness,
             b"v0.1.0", 
             *&implement_extpoints,

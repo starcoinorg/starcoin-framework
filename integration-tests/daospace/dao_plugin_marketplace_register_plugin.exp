@@ -1,14 +1,14 @@
 processed 13 tasks
 
-task 6 'run'. lines 31-39:
+task 6 'run'. lines 32-40:
 {
-  "gas_used": 381523,
+  "gas_used": 235944,
   "status": "Executed"
 }
 
-task 7 'run'. lines 41-49:
+task 7 'run'. lines 42-50:
 {
-  "gas_used": 33042,
+  "gas_used": 33113,
   "status": {
     "MoveAbort": {
       "location": {
@@ -22,9 +22,9 @@ task 7 'run'. lines 41-49:
   }
 }
 
-task 8 'run'. lines 51-59:
+task 8 'run'. lines 52-60:
 {
-  "gas_used": 33042,
+  "gas_used": 33113,
   "status": {
     "MoveAbort": {
       "location": {
@@ -38,13 +38,13 @@ task 8 'run'. lines 51-59:
   }
 }
 
-task 10 'run'. lines 87-95:
+task 10 'run'. lines 90-98:
 {
-  "gas_used": 429499,
+  "gas_used": 283920,
   "status": "Executed"
 }
 
-task 11 'view'. lines 97-97:
+task 11 'view'. lines 100-100:
 store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin2::TestPlugin2> {
     id: 12
     name: 54657374506c7567696e32
@@ -61,9 +61,9 @@ store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<
     updated_at: 10
 }
 
-task 12 'run'. lines 99-107:
+task 12 'run'. lines 102-110:
 {
-  "gas_used": 46958,
+  "gas_used": 47029,
   "status": {
     "MoveAbort": {
       "location": {

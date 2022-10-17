@@ -34,9 +34,11 @@ module StarcoinFramework::TreasuryPlugin {
         period: u64,
     }
 
-    public fun initialize(sender: &signer) {
+    public fun initialize(_sender: &signer) {
+        let witness = TreasuryPlugin {};
+
         DAOPluginMarketplace::register_plugin<TreasuryPlugin>(
-            sender,
+            &witness,
             b"0x1::TreasuryPlugin",
             b"The plugin for withdraw token from Treasury.",
             Option::none(),
@@ -45,9 +47,7 @@ module StarcoinFramework::TreasuryPlugin {
         let implement_extpoints = Vector::empty<vector<u8>>();
         let depend_extpoints = Vector::empty<vector<u8>>();
 
-        let witness = TreasuryPlugin {};
         DAOPluginMarketplace::publish_plugin_version<TreasuryPlugin>(
-            sender,
             &witness,
             b"v0.1.0",
             *&implement_extpoints,

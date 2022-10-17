@@ -33,9 +33,11 @@ module StarcoinFramework::GasOracleProposalPlugin {
         source_addresses: vector<address>
     }
 
-    public fun initialize(sender: &signer) {
+    public fun initialize(_sender: &signer) {
+        let witness = GasOracleProposalPlugin{};
+
         DAOPluginMarketplace::register_plugin<GasOracleProposalPlugin>(
-            sender,
+            &witness,
             b"0x1::GasOraclePlugin",
             b"The plugin for gas oracle.",
             Option::none(),
@@ -43,10 +45,8 @@ module StarcoinFramework::GasOracleProposalPlugin {
 
         let implement_extpoints = Vector::empty<vector<u8>>();
         let depend_extpoints = Vector::empty<vector<u8>>();
-
-        let witness = GasOracleProposalPlugin{};
+        
         DAOPluginMarketplace::publish_plugin_version<GasOracleProposalPlugin>(
-            sender,
             &witness,
             b"v0.1.0",
             *&implement_extpoints,
