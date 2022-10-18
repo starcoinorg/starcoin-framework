@@ -45,14 +45,14 @@ module StarcoinFramework::UpgradeModulePlugin {
         let witness = UpgradeModulePlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, UpgradeModulePlugin>(&witness);
         let action = UpgradeModuleAction{
-            package_hash: package_hash,
-            version: version,
-            enforced: enforced
+            package_hash,
+            version,
+            enforced
         };
         DAOSpace::create_proposal<
             DAOT,
             UpgradeModulePlugin,
-            UpgradeModuleAction>(&cap, sender, action, title, introduction, description, action_delay);
+            UpgradeModuleAction>(&cap, sender, action, title, introduction, description, action_delay, Option::none<u8>());
     }
 
     public (script) fun create_proposal_entry <DAOT: store>(sender: signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay:u64, package_hash: vector<u8>, version: u64, enforced: bool) {
@@ -67,9 +67,9 @@ module StarcoinFramework::UpgradeModulePlugin {
             DAOSpace::acquire_upgrade_module_cap<DAOT, UpgradeModulePlugin>(&witness);
 
         let UpgradeModuleAction{
-            package_hash: package_hash,
-            version: version,
-            enforced: enforced 
+            package_hash,
+            version,
+            enforced
         } = DAOSpace::execute_proposal<
             DAOT,
             UpgradeModulePlugin,

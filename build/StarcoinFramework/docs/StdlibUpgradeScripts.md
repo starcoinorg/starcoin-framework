@@ -404,6 +404,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
     <b>let</b> signer = <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability_get_genesis_signer">GenesisSignerCapability::get_genesis_signer</a>();
     <b>let</b> cap = <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_takeout_withdraw_capability">TreasuryWithdrawDaoProposal::takeout_withdraw_capability</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(&signer);
     <a href="TreasuryPlugin.md#0x1_TreasuryPlugin_delegate_capability">TreasuryPlugin::delegate_capability</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(&signer, cap);
+    <a href="StarcoinDAO.md#0x1_StarcoinDAO_set_treasury_withdraw_proposal_scale">StarcoinDAO::set_treasury_withdraw_proposal_scale</a>(100);
 
     // clean <b>old</b> DAO resources
     <a href="ModifyDaoConfigProposal.md#0x1_ModifyDaoConfigProposal_destroy_modify_config_capability">ModifyDaoConfigProposal::destroy_modify_config_capability</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(&genessis_signer);

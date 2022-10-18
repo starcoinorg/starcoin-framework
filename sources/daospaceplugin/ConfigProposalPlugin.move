@@ -49,7 +49,7 @@ module StarcoinFramework::ConfigProposalPlugin {
         DAOSpace::create_proposal<
             DAOT,
             ConfigProposalPlugin,
-            ConfigProposalAction<ConfigT>>(&cap, sender, action, title, introduction, description, action_delay);
+            ConfigProposalAction<ConfigT>>(&cap, sender, action, title, introduction, description, action_delay, Option::none<u8>());
     }
 
     public fun execute_proposal<DAOT: store, ConfigT: copy + drop + store>(sender: &signer, proposal_id: u64) {

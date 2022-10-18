@@ -48,7 +48,7 @@ module StarcoinFramework::InstallPluginProposalPlugin{
             required_caps,
         };
 
-        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay);
+        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay, Option::none<u8>());
     }
 
     public fun execute_proposal<DAOT: store, ToInstallPluginT: store>(sender: &signer, proposal_id: u64){

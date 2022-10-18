@@ -67,7 +67,7 @@ module StarcoinFramework::GasOracleProposalPlugin {
         let action = OracleSourceAddAction<TokenType>{
             source_address
         };
-        DAOSpace::create_proposal(&cap, &sender, action, title, introduction, description, action_delay);
+        DAOSpace::create_proposal(&cap, &sender, action, title, introduction, description, action_delay, Option::none<u8>());
     }
 
     public(script) fun execute_oracle_add_proposal<DAOT: store, TokenType: store>(sender: signer, proposal_id: u64) {
@@ -95,7 +95,7 @@ module StarcoinFramework::GasOracleProposalPlugin {
         let action = OracleSourceRemoveAction<TokenType>{
             source_address
         };
-        DAOSpace::create_proposal(&cap, &sender, action, title, introduction, description, action_delay);
+        DAOSpace::create_proposal(&cap, &sender, action, title, introduction, description, action_delay, Option::none<u8>());
     }
 
     public(script) fun execute_oracle_remove_proposal<DAOT: store, TokenType: store>(sender: signer, proposal_id: u64) {
