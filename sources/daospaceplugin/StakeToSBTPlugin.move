@@ -452,7 +452,8 @@ module StarcoinFramework::StakeToSBTPlugin {
             title,
             introduction,
             description,
-            action_delay);
+            action_delay,
+            Option::none<u8>());
     }
 
     public(script) fun create_weight_proposal_entry<DAOT: store, TokenT: store>(
@@ -513,7 +514,8 @@ module StarcoinFramework::StakeToSBTPlugin {
             title,
             introduction,
             description,
-            action_delay
+            action_delay,
+            Option::none<u8>()
         );
     }
 

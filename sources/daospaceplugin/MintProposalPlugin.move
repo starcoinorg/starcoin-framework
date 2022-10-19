@@ -67,7 +67,7 @@ module StarcoinFramework::MintProposalPlugin{
             receiver,
             amount,
         };
-        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay);
+        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay, Option::none<u8>());
     }
 
     public (script) fun create_mint_proposal_entry<DAOT: store, TokenT:store>(sender: signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, receiver: address, amount: u128, action_delay: u64){

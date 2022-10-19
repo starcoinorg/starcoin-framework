@@ -16,12 +16,20 @@ module StarcoinFramework::TreasuryPlugin {
     /// The withdraw amount of propose is too many.
     const ERR_TOO_MANY_WITHDRAW_AMOUNT: u64 = 103;
     const ERR_CAPABILITY_NOT_EXIST: u64 = 104;
+    const ERR_INVALID_SCALE_FACTOR: u64 = 105;
 
     struct TreasuryPlugin has store, drop {}
 
     /// A wrapper of Token MintCapability.
     struct WithdrawCapabilityHolder<phantom TokenT> has key {
         cap: Treasury::WithdrawCapability<TokenT>,
+    }
+
+    /// Scale up quorum_votes for withdraw proposal.
+    /// `scale` must be in [0, 100].
+    /// The final quorum_votes = (1.0 + scale / 100) * base_quorum_votes
+    struct QuorumScale has copy, drop, store {
+        scale: u8,
     }
 
     /// WithdrawToken request.
@@ -66,6 +74,7 @@ module StarcoinFramework::TreasuryPlugin {
 
     public fun required_caps(): vector<CapType> {
         let caps = Vector::singleton(DAOSpace::proposal_cap_type());
+        Vector::push_back(&mut caps, DAOSpace::modify_config_cap_type());
         caps
     }
 
@@ -97,7 +106,12 @@ module StarcoinFramework::TreasuryPlugin {
             amount,
             period,
         };
-        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay);
+
+        if (!DAOSpace::exists_custom_config<DAOT, QuorumScale>()) {
+            set_scale_factor_inner<DAOT>(0u8);
+        };
+        let scale = DAOSpace::get_custom_config<DAOT, QuorumScale>().scale;
+        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay, Option::some(scale));
     }
 
     public(script) fun create_withdraw_proposal_entry<DAOT: store, TokenT: store>(
@@ -138,5 +152,19 @@ module StarcoinFramework::TreasuryPlugin {
         CoreAddresses::assert_genesis_address(signer);
         let cap = borrow_global_mut<WithdrawCapabilityHolder<TokenT>>(Signer::address_of(signer));
         Treasury::withdraw_with_capability(&mut cap.cap, reward)
+    }
+
+    public fun set_scale_factor<DAOT: store>(scale: u8, _witness: &DAOT) {
+        assert!(
+            scale >= 0 && scale <= 100,
+            Errors::invalid_argument(ERR_INVALID_SCALE_FACTOR),
+        );
+        set_scale_factor_inner<DAOT>(scale);
+    }
+
+    fun set_scale_factor_inner<DAOT: store>(scale: u8) {
+        let plugin = TreasuryPlugin {};
+        let cap = DAOSpace::acquire_modify_config_cap<DAOT, TreasuryPlugin>(&plugin);
+        DAOSpace::set_custom_config<DAOT, TreasuryPlugin, QuorumScale>(&mut cap, QuorumScale { scale });
     }
 }

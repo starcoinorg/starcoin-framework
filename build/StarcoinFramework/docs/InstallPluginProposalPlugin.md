@@ -167,7 +167,7 @@
         required_caps,
     };
 
-    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, sender, action, title, introduction, description, action_delay);
+    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, sender, action, title, introduction, description, action_delay, <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u8&gt;());
 }
 </code></pre>
 

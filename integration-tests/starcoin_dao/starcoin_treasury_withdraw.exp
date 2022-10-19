@@ -1,4 +1,4 @@
-processed 45 tasks
+processed 44 tasks
 
 task 11 'run'. lines 23-37:
 {
@@ -36,78 +36,84 @@ task 21 'run'. lines 111-120:
   "status": "Executed"
 }
 
-task 23 'run'. lines 127-137:
+task 22 'run'. lines 122-142:
 {
-  "gas_used": 453671,
-  "status": "Executed"
-}
-
-task 25 'call'. lines 142-144:
-"0xa7dcef9aef26202fce82a7c7d6672afb/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>>"
-
-task 27 'run'. lines 147-159:
-{
-  "gas_used": 6111871,
-  "status": "Executed"
-}
-
-task 28 'call'. lines 160-162:
-"0xb5d577dc9ce59725e29886632e69ecdf/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>>"
-
-task 30 'run'. lines 165-177:
-{
-  "gas_used": 5442229,
-  "status": "Executed"
-}
-
-task 31 'call'. lines 178-180:
-"0x9255386a0faee0205777b798ba4fc6c4/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>>"
-
-task 33 'run'. lines 183-195:
-{
-  "gas_used": 5442229,
-  "status": "Executed"
-}
-
-task 34 'call'. lines 196-198:
-"0xb0c32ba18ae392ec1978360105bc3956/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>>"
-
-task 36 'run'. lines 202-212:
-{
-  "gas_used": 5442229,
-  "status": "Executed"
-}
-
-task 38 'run'. lines 216-225:
-{
-  "gas_used": 72220,
-  "status": "Executed"
-}
-
-task 39 'run'. lines 227-236:
-{
-  "gas_used": 173612,
-  "status": "Executed"
-}
-
-task 41 'run'. lines 240-252:
-{
-  "gas_used": 519740,
-  "status": "Executed"
-}
-
-task 44 'run'. lines 258-269:
-{
-  "gas_used": 148462,
+  "gas_used": 90735,
   "status": {
     "MoveAbort": {
       "location": {
         "Module": {
           "address": "0x00000000000000000000000000000001",
-          "name": "DAOSpace"
+          "name": "TreasuryPlugin"
         }
       },
-      "abort_code": "103175"
+      "abort_code": "26375"
     }
   }
+}
+
+task 23 'run'. lines 144-155:
+{
+  "gas_used": 537949,
+  "status": "Executed"
+}
+
+task 25 'call'. lines 159-161:
+"0xa7dcef9aef26202fce82a7c7d6672afb/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>>"
+
+task 27 'run'. lines 164-176:
+{
+  "gas_used": 6111871,
+  "status": "Executed"
+}
+
+task 28 'call'. lines 177-179:
+"0xb5d577dc9ce59725e29886632e69ecdf/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>>"
+
+task 30 'run'. lines 182-194:
+{
+  "gas_used": 5442229,
+  "status": "Executed"
+}
+
+task 31 'call'. lines 195-197:
+"0x9255386a0faee0205777b798ba4fc6c4/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>>"
+
+task 33 'run'. lines 200-212:
+{
+  "gas_used": 5442229,
+  "status": "Executed"
+}
+
+task 34 'call'. lines 213-215:
+"0xb0c32ba18ae392ec1978360105bc3956/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x00000000000000000000000000000001::StarcoinDAO::StarcoinDAO>>"
+
+task 36 'run'. lines 219-229:
+{
+  "gas_used": 5442229,
+  "status": "Executed"
+}
+
+task 38 'run'. lines 233-243:
+{
+  "gas_used": 72220,
+  "status": "Executed"
+}
+
+task 39 'run'. lines 245-255:
+{
+  "gas_used": 173612,
+  "status": "Executed"
+}
+
+task 41 'run'. lines 259-272:
+{
+  "gas_used": 456032,
+  "status": "Executed"
+}
+
+task 43 'run'. lines 276-292:
+{
+  "gas_used": 124032,
+  "status": "Executed"
 }

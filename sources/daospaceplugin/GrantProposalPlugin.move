@@ -70,7 +70,7 @@ module StarcoinFramework::GrantProposalPlugin{
             start_time:start_time,
             period:period
         };
-        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay);
+        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay, Option::none<u8>());
     }
 
     public (script) fun create_grant_proposal_entry<DAOT: store, TokenT:store>(sender: signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>,grantee: address, total: u128, start_time:u64, period: u64, action_delay:u64){
@@ -94,7 +94,7 @@ module StarcoinFramework::GrantProposalPlugin{
         let witness = GrantProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, GrantProposalPlugin>(&witness);
         let action = GrantRevokeAction<TokenT>{ grantee };
-        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay);
+        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay, Option::none<u8>());
     }
 
     public (script) fun create_grant_revoke_proposal_entry<DAOT: store, TokenT:store>(sender: signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, grantee:address, action_delay:u64){
