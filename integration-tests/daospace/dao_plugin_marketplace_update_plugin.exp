@@ -1,12 +1,12 @@
 processed 10 tasks
 
-task 6 'run'. lines 47-55:
+task 6 'run'. lines 46-54:
 {
   "gas_used": 235944,
   "status": "Executed"
 }
 
-task 7 'view'. lines 57-57:
+task 7 'view'. lines 56-56:
 store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
     id: 11
     name: 54657374506c7567696e
@@ -21,13 +21,13 @@ store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<
     updated_at: 10
 }
 
-task 8 'run'. lines 59-67:
+task 8 'run'. lines 58-66:
 {
-  "gas_used": 135663,
+  "gas_used": 139490,
   "status": "Executed"
 }
 
-task 9 'view'. lines 69-69:
+task 9 'view'. lines 68-68:
 store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
     id: 11
     name: 54657374506c7567696e
