@@ -103,7 +103,11 @@ Keep this in mind when using this function to compare addresses.
     <b>while</b> (i1 &gt; 0 && i2 &gt; 0) {
         i1 = i1 - 1;
         i2 = i2 - 1;
-        <b>let</b> elem_cmp = <a href="Compare.md#0x1_Compare_cmp_u8">cmp_u8</a>(*<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v1, i1), *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v2, i2));
+        <b>let</b> v1 = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v1, i1);
+        <b>let</b> v2 = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v2, i2);
+        <b>let</b> elem_cmp = <b>if</b> (v1 == v2) <a href="Compare.md#0x1_Compare_EQUAL">EQUAL</a>
+            <b>else</b> <b>if</b> (v1 &lt; v2) <a href="Compare.md#0x1_Compare_LESS_THAN">LESS_THAN</a>
+            <b>else</b> <a href="Compare.md#0x1_Compare_GREATER_THAN">GREATER_THAN</a>;
         <b>if</b> (elem_cmp != 0) <b>return</b> elem_cmp
         // <b>else</b>, compare next element
     };
@@ -147,16 +151,18 @@ Keep this in mind when using this function to compare addresses.
     <b>let</b> l1 = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(v1);
     <b>let</b> l2 = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(v2);
     <b>let</b> len_cmp = <a href="Compare.md#0x1_Compare_cmp_u64">cmp_u64</a>(l1, l2);
-    <b>let</b> i1 = 0;
-    <b>let</b> i2 = 0;
-    <b>while</b> (i1 &lt; l1 && i2 &lt; l2) {
-        <b>let</b> elem_cmp = <a href="Compare.md#0x1_Compare_cmp_u8">cmp_u8</a>(*<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v1, i1), *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v2, i2));
+    <b>let</b> i = 0;
+    <b>while</b> (i &lt; l1 && i &lt; l2) {
+        <b>let</b> v1 = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v1, i);
+        <b>let</b> v2 = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v2, i);
+        <b>let</b> elem_cmp = <b>if</b> (v1 == v2) <a href="Compare.md#0x1_Compare_EQUAL">EQUAL</a>
+            <b>else</b> <b>if</b> (v1 &lt; v2) <a href="Compare.md#0x1_Compare_LESS_THAN">LESS_THAN</a>
+            <b>else</b> <a href="Compare.md#0x1_Compare_GREATER_THAN">GREATER_THAN</a>;
         <b>if</b> (elem_cmp != 0) {
             <b>return</b> elem_cmp
         };
         // <b>else</b>, compare next element
-        i1 = i1 + 1;
-        i2 = i2 + 1;
+        i = i + 1;
     };
     // all compared elements equal; <b>use</b> length comparison <b>to</b> <b>break</b> the tie
     len_cmp
