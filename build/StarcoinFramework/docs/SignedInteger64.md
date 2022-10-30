@@ -73,7 +73,7 @@ Multiply a u64 integer by a signed integer number.
 
 <pre><code><b>public</b> <b>fun</b> <a href="SignedInteger64.md#0x1_SignedInteger64_multiply_u64">multiply_u64</a>(num: u64, multiplier: <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a>): <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> {
     <b>let</b> product = multiplier.value * num;
-    <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: (product <b>as</b> u64), is_negative: multiplier.is_negative }
+    <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: product, is_negative: multiplier.is_negative }
 }
 </code></pre>
 
@@ -111,7 +111,7 @@ Divide a u64 integer by a signed integer number.
 
 <pre><code><b>public</b> <b>fun</b> <a href="SignedInteger64.md#0x1_SignedInteger64_divide_u64">divide_u64</a>(num: u64, divisor: <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a>): <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> {
     <b>let</b> quotient = num / divisor.value;
-    <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: (quotient <b>as</b> u64), is_negative: divisor.is_negative }
+    <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: quotient, is_negative: divisor.is_negative }
 }
 </code></pre>
 
@@ -150,14 +150,14 @@ Sub: <code>num - minus</code>
 <pre><code><b>public</b> <b>fun</b> <a href="SignedInteger64.md#0x1_SignedInteger64_sub_u64">sub_u64</a>(num: u64, minus: <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a>): <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> {
     <b>if</b> (minus.is_negative) {
         <b>let</b> result = num + minus.value;
-        <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: (result <b>as</b> u64), is_negative: <b>false</b> }
+        <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: result, is_negative: <b>false</b> }
     } <b>else</b> {
         <b>if</b> (num &gt;= minus.value) {
             <b>let</b> result = num - minus.value;
-            <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: (result <b>as</b> u64), is_negative: <b>false</b> }
+            <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: result, is_negative: <b>false</b> }
         }<b>else</b> {
             <b>let</b> result = minus.value - num;
-            <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: (result <b>as</b> u64), is_negative: <b>true</b> }
+            <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: result, is_negative: <b>true</b> }
         }
     }
 }
@@ -199,14 +199,14 @@ Add: <code>num + addend</code>
     <b>if</b> (addend.is_negative) {
         <b>if</b> (num &gt;= addend.value) {
             <b>let</b> result = num - addend.value;
-            <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: (result <b>as</b> u64), is_negative: <b>false</b> }
+            <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: result, is_negative: <b>false</b> }
         }<b>else</b> {
             <b>let</b> result = addend.value - num;
-            <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: (result <b>as</b> u64), is_negative: <b>true</b> }
+            <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: result, is_negative: <b>true</b> }
         }
     } <b>else</b> {
         <b>let</b> result = num + addend.value;
-        <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: (result <b>as</b> u64), is_negative: <b>false</b> }
+        <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: result, is_negative: <b>false</b> }
     }
 }
 </code></pre>

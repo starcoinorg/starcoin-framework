@@ -16,27 +16,27 @@ module SignedInteger64 {
     /// Multiply a u64 integer by a signed integer number.
     public fun multiply_u64(num: u64, multiplier: SignedInteger64): SignedInteger64 {
         let product = multiplier.value * num;
-        SignedInteger64 { value: (product as u64), is_negative: multiplier.is_negative }
+        SignedInteger64 { value: product, is_negative: multiplier.is_negative }
     }
 
     /// Divide a u64 integer by a signed integer number.
     public fun divide_u64(num: u64, divisor: SignedInteger64): SignedInteger64 {
         let quotient = num / divisor.value;
-        SignedInteger64 { value: (quotient as u64), is_negative: divisor.is_negative }
+        SignedInteger64 { value: quotient, is_negative: divisor.is_negative }
     }
 
     /// Sub: `num - minus`
     public fun sub_u64(num: u64, minus: SignedInteger64): SignedInteger64 {
         if (minus.is_negative) {
             let result = num + minus.value;
-            SignedInteger64 { value: (result as u64), is_negative: false }
+            SignedInteger64 { value: result, is_negative: false }
         } else {
             if (num >= minus.value) {
                 let result = num - minus.value;
-                SignedInteger64 { value: (result as u64), is_negative: false }
+                SignedInteger64 { value: result, is_negative: false }
             }else {
                 let result = minus.value - num;
-                SignedInteger64 { value: (result as u64), is_negative: true }
+                SignedInteger64 { value: result, is_negative: true }
             }
         }
     }
@@ -46,14 +46,14 @@ module SignedInteger64 {
         if (addend.is_negative) {
             if (num >= addend.value) {
                 let result = num - addend.value;
-                SignedInteger64 { value: (result as u64), is_negative: false }
+                SignedInteger64 { value: result, is_negative: false }
             }else {
                 let result = addend.value - num;
-                SignedInteger64 { value: (result as u64), is_negative: true }
+                SignedInteger64 { value: result, is_negative: true }
             }
         } else {
             let result = num + addend.value;
-            SignedInteger64 { value: (result as u64), is_negative: false }
+            SignedInteger64 { value: result, is_negative: false }
         }
     }
 
