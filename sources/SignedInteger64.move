@@ -31,7 +31,7 @@ module SignedInteger64 {
             let result = num + minus.value;
             SignedInteger64 { value: (result as u64), is_negative: false }
         } else {
-            if (num > minus.value)  {
+            if (num >= minus.value) {
                 let result = num - minus.value;
                 SignedInteger64 { value: (result as u64), is_negative: false }
             }else {
@@ -40,19 +40,20 @@ module SignedInteger64 {
             }
         }
     }
+
     /// Add: `num + addend`
     public fun add_u64(num: u64, addend: SignedInteger64): SignedInteger64 {
         if (addend.is_negative) {
-           if (num > addend.value)  {
-               let result = num - addend.value;
-               SignedInteger64 { value: (result as u64), is_negative: false }
-           }else {
-               let result = addend.value - num;
-               SignedInteger64 { value: (result as u64), is_negative: true }
-           }
+            if (num >= addend.value) {
+                let result = num - addend.value;
+                SignedInteger64 { value: (result as u64), is_negative: false }
+            }else {
+                let result = addend.value - num;
+                SignedInteger64 { value: (result as u64), is_negative: true }
+            }
         } else {
-             let result = num + addend.value;
-             SignedInteger64 { value: (result as u64), is_negative: false }
+            let result = num + addend.value;
+            SignedInteger64 { value: (result as u64), is_negative: false }
         }
     }
 
@@ -73,10 +74,8 @@ module SignedInteger64 {
 
     // **************** SPECIFICATIONS ****************
 
-    
-
     spec multiply_u64 {
-       aborts_if multiplier.value * num > max_u64();
+        aborts_if multiplier.value * num > max_u64();
     }
 
     spec divide_u64 {
@@ -88,7 +87,7 @@ module SignedInteger64 {
     }
 
     spec add_u64 {
-       aborts_if !addend.is_negative && num + addend.value > max_u64();
+        aborts_if !addend.is_negative && num + addend.value > max_u64();
     }
 
     spec create_from_raw_value {
@@ -105,6 +104,6 @@ module SignedInteger64 {
         aborts_if false;
         ensures result == num.is_negative;
     }
-}
 
+}
 }

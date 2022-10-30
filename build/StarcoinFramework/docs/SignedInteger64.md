@@ -152,7 +152,7 @@ Sub: <code>num - minus</code>
         <b>let</b> result = num + minus.value;
         <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: (result <b>as</b> u64), is_negative: <b>false</b> }
     } <b>else</b> {
-        <b>if</b> (num &gt; minus.value)  {
+        <b>if</b> (num &gt;= minus.value) {
             <b>let</b> result = num - minus.value;
             <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: (result <b>as</b> u64), is_negative: <b>false</b> }
         }<b>else</b> {
@@ -197,16 +197,16 @@ Add: <code>num + addend</code>
 
 <pre><code><b>public</b> <b>fun</b> <a href="SignedInteger64.md#0x1_SignedInteger64_add_u64">add_u64</a>(num: u64, addend: <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a>): <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> {
     <b>if</b> (addend.is_negative) {
-       <b>if</b> (num &gt; addend.value)  {
-           <b>let</b> result = num - addend.value;
-           <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: (result <b>as</b> u64), is_negative: <b>false</b> }
-       }<b>else</b> {
-           <b>let</b> result = addend.value - num;
-           <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: (result <b>as</b> u64), is_negative: <b>true</b> }
-       }
+        <b>if</b> (num &gt;= addend.value) {
+            <b>let</b> result = num - addend.value;
+            <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: (result <b>as</b> u64), is_negative: <b>false</b> }
+        }<b>else</b> {
+            <b>let</b> result = addend.value - num;
+            <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: (result <b>as</b> u64), is_negative: <b>true</b> }
+        }
     } <b>else</b> {
-         <b>let</b> result = num + addend.value;
-         <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: (result <b>as</b> u64), is_negative: <b>false</b> }
+        <b>let</b> result = num + addend.value;
+        <a href="SignedInteger64.md#0x1_SignedInteger64">SignedInteger64</a> { value: (result <b>as</b> u64), is_negative: <b>false</b> }
     }
 }
 </code></pre>
