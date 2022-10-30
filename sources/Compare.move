@@ -81,22 +81,10 @@ module Compare {
 
     spec cmp_bytes {
         pragma verify = false;
-        //cmp_u8(*Vector::borrow(v1, i1), *Vector::borrow(v2, i2)) is not covered
     }
 
     spec cmp_bcs_bytes {
         pragma verify = false;
-        //cmp_u8(*Vector::borrow(v1, i1), *Vector::borrow(v2, i2)) is not covered
-    }
-    // Compare two `u8`'s
-    fun cmp_u8(i1: u8, i2: u8): u8 {
-        if (i1 == i2) EQUAL
-        else if (i1 < i2) LESS_THAN
-        else GREATER_THAN
-    }
-
-    spec cmp_u8 {
-        aborts_if false;
     }
 
     // Compare two `u64`'s

@@ -8,7 +8,6 @@
 -  [Constants](#@Constants_0)
 -  [Function `cmp_bcs_bytes`](#0x1_Compare_cmp_bcs_bytes)
 -  [Function `cmp_bytes`](#0x1_Compare_cmp_bytes)
--  [Function `cmp_u8`](#0x1_Compare_cmp_u8)
 -  [Function `cmp_u64`](#0x1_Compare_cmp_u64)
 -  [Function `is_equal`](#0x1_Compare_is_equal)
 -  [Function `is_less_than`](#0x1_Compare_is_less_than)
@@ -179,44 +178,6 @@ Keep this in mind when using this function to compare addresses.
 
 
 <pre><code><b>pragma</b> verify = <b>false</b>;
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Compare_cmp_u8"></a>
-
-## Function `cmp_u8`
-
-
-
-<pre><code><b>fun</b> <a href="Compare.md#0x1_Compare_cmp_u8">cmp_u8</a>(i1: u8, i2: u8): u8
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>fun</b> <a href="Compare.md#0x1_Compare_cmp_u8">cmp_u8</a>(i1: u8, i2: u8): u8 {
-    <b>if</b> (i1 == i2) <a href="Compare.md#0x1_Compare_EQUAL">EQUAL</a>
-    <b>else</b> <b>if</b> (i1 &lt; i2) <a href="Compare.md#0x1_Compare_LESS_THAN">LESS_THAN</a>
-    <b>else</b> <a href="Compare.md#0x1_Compare_GREATER_THAN">GREATER_THAN</a>
-}
-</code></pre>
-
-
-
-</details>
-
-<details>
-<summary>Specification</summary>
-
-
-
-<pre><code><b>aborts_if</b> <b>false</b>;
 </code></pre>
 
 
