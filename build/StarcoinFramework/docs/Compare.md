@@ -8,7 +8,6 @@
 -  [Constants](#@Constants_0)
 -  [Function `cmp_bcs_bytes`](#0x1_Compare_cmp_bcs_bytes)
 -  [Function `cmp_bytes`](#0x1_Compare_cmp_bytes)
--  [Function `cmp_u8`](#0x1_Compare_cmp_u8)
 -  [Function `cmp_u64`](#0x1_Compare_cmp_u64)
 -  [Function `is_equal`](#0x1_Compare_is_equal)
 -  [Function `is_less_than`](#0x1_Compare_is_less_than)
@@ -103,7 +102,11 @@ Keep this in mind when using this function to compare addresses.
     <b>while</b> (i1 &gt; 0 && i2 &gt; 0) {
         i1 = i1 - 1;
         i2 = i2 - 1;
-        <b>let</b> elem_cmp = <a href="Compare.md#0x1_Compare_cmp_u8">cmp_u8</a>(*<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v1, i1), *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v2, i2));
+        <b>let</b> v1 = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v1, i1);
+        <b>let</b> v2 = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v2, i2);
+        <b>let</b> elem_cmp = <b>if</b> (v1 == v2) <a href="Compare.md#0x1_Compare_EQUAL">EQUAL</a>
+            <b>else</b> <b>if</b> (v1 &lt; v2) <a href="Compare.md#0x1_Compare_LESS_THAN">LESS_THAN</a>
+            <b>else</b> <a href="Compare.md#0x1_Compare_GREATER_THAN">GREATER_THAN</a>;
         <b>if</b> (elem_cmp != 0) <b>return</b> elem_cmp
         // <b>else</b>, compare next element
     };
@@ -147,16 +150,18 @@ Keep this in mind when using this function to compare addresses.
     <b>let</b> l1 = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(v1);
     <b>let</b> l2 = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(v2);
     <b>let</b> len_cmp = <a href="Compare.md#0x1_Compare_cmp_u64">cmp_u64</a>(l1, l2);
-    <b>let</b> i1 = 0;
-    <b>let</b> i2 = 0;
-    <b>while</b> (i1 &lt; l1 && i2 &lt; l2) {
-        <b>let</b> elem_cmp = <a href="Compare.md#0x1_Compare_cmp_u8">cmp_u8</a>(*<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v1, i1), *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v2, i2));
+    <b>let</b> i = 0;
+    <b>while</b> (i &lt; l1 && i &lt; l2) {
+        <b>let</b> v1 = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v1, i);
+        <b>let</b> v2 = *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(v2, i);
+        <b>let</b> elem_cmp = <b>if</b> (v1 == v2) <a href="Compare.md#0x1_Compare_EQUAL">EQUAL</a>
+            <b>else</b> <b>if</b> (v1 &lt; v2) <a href="Compare.md#0x1_Compare_LESS_THAN">LESS_THAN</a>
+            <b>else</b> <a href="Compare.md#0x1_Compare_GREATER_THAN">GREATER_THAN</a>;
         <b>if</b> (elem_cmp != 0) {
             <b>return</b> elem_cmp
         };
         // <b>else</b>, compare next element
-        i1 = i1 + 1;
-        i2 = i2 + 1;
+        i = i + 1;
     };
     // all compared elements equal; <b>use</b> length comparison <b>to</b> <b>break</b> the tie
     len_cmp
@@ -173,44 +178,6 @@ Keep this in mind when using this function to compare addresses.
 
 
 <pre><code><b>pragma</b> verify = <b>false</b>;
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Compare_cmp_u8"></a>
-
-## Function `cmp_u8`
-
-
-
-<pre><code><b>fun</b> <a href="Compare.md#0x1_Compare_cmp_u8">cmp_u8</a>(i1: u8, i2: u8): u8
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>fun</b> <a href="Compare.md#0x1_Compare_cmp_u8">cmp_u8</a>(i1: u8, i2: u8): u8 {
-    <b>if</b> (i1 == i2) <a href="Compare.md#0x1_Compare_EQUAL">EQUAL</a>
-    <b>else</b> <b>if</b> (i1 &lt; i2) <a href="Compare.md#0x1_Compare_LESS_THAN">LESS_THAN</a>
-    <b>else</b> <a href="Compare.md#0x1_Compare_GREATER_THAN">GREATER_THAN</a>
-}
-</code></pre>
-
-
-
-</details>
-
-<details>
-<summary>Specification</summary>
-
-
-
-<pre><code><b>aborts_if</b> <b>false</b>;
 </code></pre>
 
 
