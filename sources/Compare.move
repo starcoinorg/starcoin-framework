@@ -46,7 +46,11 @@ module Compare {
         while (i1 > 0 && i2 > 0) {
             i1 = i1 - 1;
             i2 = i2 - 1;
-            let elem_cmp = cmp_u8(*Vector::borrow(v1, i1), *Vector::borrow(v2, i2));
+            let v1 = *Vector::borrow(v1, i1);
+            let v2 = *Vector::borrow(v2, i2);
+            let elem_cmp = if (v1 == v2) EQUAL
+                else if (v1 < v2) LESS_THAN
+                else GREATER_THAN;
             if (elem_cmp != 0) return elem_cmp
             // else, compare next element
         };
@@ -58,16 +62,18 @@ module Compare {
         let l1 = Vector::length(v1);
         let l2 = Vector::length(v2);
         let len_cmp = cmp_u64(l1, l2);
-        let i1 = 0;
-        let i2 = 0;
-        while (i1 < l1 && i2 < l2) {
-            let elem_cmp = cmp_u8(*Vector::borrow(v1, i1), *Vector::borrow(v2, i2));
+        let i = 0;
+        while (i < l1 && i < l2) {
+            let v1 = *Vector::borrow(v1, i);
+            let v2 = *Vector::borrow(v2, i);
+            let elem_cmp = if (v1 == v2) EQUAL
+                else if (v1 < v2) LESS_THAN
+                else GREATER_THAN;
             if (elem_cmp != 0) {
                 return elem_cmp
             };
             // else, compare next element
-            i1 = i1 + 1;
-            i2 = i2 + 1;
+            i = i + 1;
         };
         // all compared elements equal; use length comparison to break the tie
         len_cmp
@@ -75,22 +81,10 @@ module Compare {
 
     spec cmp_bytes {
         pragma verify = false;
-        //cmp_u8(*Vector::borrow(v1, i1), *Vector::borrow(v2, i2)) is not covered
     }
 
     spec cmp_bcs_bytes {
         pragma verify = false;
-        //cmp_u8(*Vector::borrow(v1, i1), *Vector::borrow(v2, i2)) is not covered
-    }
-    // Compare two `u8`'s
-    fun cmp_u8(i1: u8, i2: u8): u8 {
-        if (i1 == i2) EQUAL
-        else if (i1 < i2) LESS_THAN
-        else GREATER_THAN
-    }
-
-    spec cmp_u8 {
-        aborts_if false;
     }
 
     // Compare two `u64`'s
