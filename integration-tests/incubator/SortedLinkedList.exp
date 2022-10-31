@@ -28,26 +28,41 @@ task 10 'run'. lines 293-303:
 
 task 11 'run'. lines 305-317:
 {
+<<<<<<< HEAD
   "gas_used": 359425,
   "status": {
     "Keep": "Executed"
   }
+=======
+  "gas_used": 295841,
+  "status": "Executed"
+>>>>>>> fce8707 (fix cmp (#190))
 }
 
 task 12 'run'. lines 319-331:
 {
+<<<<<<< HEAD
   "gas_used": 495218,
   "status": {
     "Keep": "Executed"
   }
+=======
+  "gas_used": 399842,
+  "status": "Executed"
+>>>>>>> fce8707 (fix cmp (#190))
 }
 
 task 13 'run'. lines 333-343:
 {
+<<<<<<< HEAD
   "gas_used": 595306,
   "status": {
     "Keep": "Executed"
   }
+=======
+  "gas_used": 468138,
+  "status": "Executed"
+>>>>>>> fce8707 (fix cmp (#190))
 }
 
 task 14 'run'. lines 345-365:
@@ -92,26 +107,41 @@ task 19 'run'. lines 504-512:
 
 task 20 'run'. lines 514-523:
 {
+<<<<<<< HEAD
   "gas_used": 221094,
   "status": {
     "Keep": "Executed"
   }
+=======
+  "gas_used": 213146,
+  "status": "Executed"
+>>>>>>> fce8707 (fix cmp (#190))
 }
 
 task 21 'run'. lines 525-534:
 {
+<<<<<<< HEAD
   "gas_used": 259964,
   "status": {
     "Keep": "Executed"
   }
+=======
+  "gas_used": 248042,
+  "status": "Executed"
+>>>>>>> fce8707 (fix cmp (#190))
 }
 
 task 22 'run'. lines 536-545:
 {
+<<<<<<< HEAD
   "gas_used": 315232,
   "status": {
     "Keep": "Executed"
   }
+=======
+  "gas_used": 299336,
+  "status": "Executed"
+>>>>>>> fce8707 (fix cmp (#190))
 }
 
 task 23 'run'. lines 547-557:

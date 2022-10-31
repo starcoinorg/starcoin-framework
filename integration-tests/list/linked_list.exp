@@ -10,10 +10,15 @@ task 9 'run'. lines 386-395:
 
 task 10 'run'. lines 397-410:
 {
+<<<<<<< HEAD
   "gas_used": 144048,
   "status": {
     "Keep": "Executed"
   }
+=======
+  "gas_used": 136100,
+  "status": "Executed"
+>>>>>>> fce8707 (fix cmp (#190))
 }
 
 task 11 'run'. lines 412-420:
