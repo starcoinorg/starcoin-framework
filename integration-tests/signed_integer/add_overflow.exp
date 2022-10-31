@@ -12,7 +12,7 @@ task 2 'run'. lines 5-16:
         }
       },
       "function": 0,
-      "code_offset": 42
+      "code_offset": 40
     }
   }
 }
