@@ -1,9 +1,14 @@
 processed 3 tasks
 
-task 2 'run'. lines 5-26:
+task 2 'run'. lines 5-36:
 {
+<<<<<<< HEAD
   "gas_used": 54451,
   "status": {
     "Keep": "Executed"
   }
+=======
+  "gas_used": 84861,
+  "status": "Executed"
+>>>>>>> 722a298 (Fix sign flag for SignedInteger64 zero (#191))
 }
