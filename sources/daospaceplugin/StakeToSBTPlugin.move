@@ -9,7 +9,6 @@ module StarcoinFramework::StakeToSBTPlugin {
     use StarcoinFramework::Signer;
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::InstallPluginProposalPlugin;
-    use StarcoinFramework::IdentifierNFT;
 
     const ERR_PLUGIN_USER_IS_MEMBER: u64 = 1001;
     const ERR_PLUGIN_HAS_STAKED: u64 = 1002;
@@ -187,7 +186,6 @@ module StarcoinFramework::StakeToSBTPlugin {
             DAOSpace::acquire_member_cap<DAOT, StakeToSBTPlugin>(&witness);
 
         if (!DAOSpace::is_member<DAOT>(sender_addr) ) {
-            IdentifierNFT::accept<DAOSpace::DAOMember<DAOT>, DAOSpace::DAOMemberBody<DAOT>>(sender);
             DAOSpace::member_offer<DAOT, StakeToSBTPlugin>(
                 &member_cap,
                 sender_addr,
