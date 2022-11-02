@@ -80,7 +80,7 @@ module StarcoinFramework::MemberProposalPlugin{
         }else{
             Option::some(image_url)
         };
-        DAOSpace::member_offer(&member_cap, member,op_image_data , op_image_url , init_sbt);
+        DAOSpace::issue_member_offer(&member_cap, member,op_image_data , op_image_url , init_sbt);
     }
 
     public (script) fun execute_proposal_entry<DAOT: store>(sender: signer, proposal_id: u64){
