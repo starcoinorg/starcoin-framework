@@ -39,7 +39,7 @@ module StarcoinFramework::AnyMemberPlugin{
     public fun join<DAOT: store>(sender: &signer, image_data:vector<u8>, image_url:vector<u8>){
         let witness = AnyMemberPlugin{};
         let sender_addr = Signer::address_of(sender);
-        if (!DAOSpace::is_member<DAOT>(sender_addr) ) {
+        if (DAOSpace::is_member<DAOT>(sender_addr) ) {
             return
         };
         let member_cap = DAOSpace::acquire_member_cap<DAOT, AnyMemberPlugin>(&witness);
