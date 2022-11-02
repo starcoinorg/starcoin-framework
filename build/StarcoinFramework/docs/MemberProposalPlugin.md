@@ -279,7 +279,7 @@
     }<b>else</b>{
         <a href="Option.md#0x1_Option_some">Option::some</a>(image_url)
     };
-    <a href="DAOSpace.md#0x1_DAOSpace_member_offer">DAOSpace::member_offer</a>(&member_cap, member,op_image_data , op_image_url , init_sbt);
+    <a href="DAOSpace.md#0x1_DAOSpace_issue_member_offer">DAOSpace::issue_member_offer</a>(&member_cap, member,op_image_data , op_image_url , init_sbt);
 }
 </code></pre>
 

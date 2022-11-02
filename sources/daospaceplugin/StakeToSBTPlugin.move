@@ -186,14 +186,14 @@ module StarcoinFramework::StakeToSBTPlugin {
             DAOSpace::acquire_member_cap<DAOT, StakeToSBTPlugin>(&witness);
 
         if (!DAOSpace::is_member<DAOT>(sender_addr) ) {
-            DAOSpace::member_offer<DAOT, StakeToSBTPlugin>(
+            DAOSpace::issue_member_offer<DAOT, StakeToSBTPlugin>(
                 &member_cap,
                 sender_addr,
                 Option::none<vector<u8>>(),
                 Option::none<vector<u8>>(),
                 0
             );
-            DAOSpace::join_member<DAOT>(sender);
+            DAOSpace::accept_member_offer<DAOT>(sender);
         };
 
         if (!exists<StakeList<DAOT, TokenT>>(sender_addr)) {
