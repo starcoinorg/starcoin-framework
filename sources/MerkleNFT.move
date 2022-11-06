@@ -47,7 +47,17 @@ module StarcoinFramework::MerkleNFTDistributor {
         claimed_bitmap: vector<u128>,
     }
 
-    public fun register<NFTMeta: copy + store + drop, Info: copy + store + drop>(signer: &signer, merkle_root: vector<u8>, leafs: u64, info: Info, meta: Metadata): MintCapability<NFTMeta> {
+    public fun register<NFTMeta: copy + store + drop, Info: copy + store + drop>(
+        _signer: &signer,
+        _merkle_root: vector<u8>,
+        _leafs: u64,
+        _info: Info,
+        _meta: Metadata
+    ): MintCapability<NFTMeta> {
+        abort Errors::deprecated(1)
+    }
+
+    public fun register_v2<NFTMeta: copy + store + drop>(signer: &signer, merkle_root: vector<u8>, leafs: u64, meta: Metadata): MintCapability<NFTMeta> {
         let bitmap_count = leafs / 128;
         if (bitmap_count * 128 < leafs) {
             bitmap_count = bitmap_count + 1;
@@ -62,7 +72,7 @@ module StarcoinFramework::MerkleNFTDistributor {
             merkle_root,
             claimed_bitmap
         };
-        NFT::register<NFTMeta, Info>(signer, info, meta);
+        NFT::register_v2<NFTMeta>(signer, meta);
         move_to(signer, distribution);
         NFT::remove_mint_capability<NFTMeta>(signer)
     }

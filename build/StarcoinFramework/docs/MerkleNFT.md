@@ -8,6 +8,7 @@
 -  [Resource `MerkleNFTDistribution`](#0x1_MerkleNFTDistributor_MerkleNFTDistribution)
 -  [Constants](#@Constants_0)
 -  [Function `register`](#0x1_MerkleNFTDistributor_register)
+-  [Function `register_v2`](#0x1_MerkleNFTDistributor_register_v2)
 -  [Function `mint_with_cap`](#0x1_MerkleNFTDistributor_mint_with_cap)
 -  [Function `encode_leaf`](#0x1_MerkleNFTDistributor_encode_leaf)
 -  [Function `set_minted_`](#0x1_MerkleNFTDistributor_set_minted_)
@@ -98,7 +99,7 @@
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="MerkleNFT.md#0x1_MerkleNFTDistributor_register">register</a>&lt;NFTMeta: <b>copy</b>, drop, store, Info: <b>copy</b>, drop, store&gt;(signer: &signer, merkle_root: vector&lt;u8&gt;, leafs: u64, info: Info, meta: <a href="NFT.md#0x1_NFT_Metadata">NFT::Metadata</a>): <a href="NFT.md#0x1_NFT_MintCapability">NFT::MintCapability</a>&lt;NFTMeta&gt;
+<pre><code><b>public</b> <b>fun</b> <a href="MerkleNFT.md#0x1_MerkleNFTDistributor_register">register</a>&lt;NFTMeta: <b>copy</b>, drop, store, Info: <b>copy</b>, drop, store&gt;(_signer: &signer, _merkle_root: vector&lt;u8&gt;, _leafs: u64, _info: Info, _meta: <a href="NFT.md#0x1_NFT_Metadata">NFT::Metadata</a>): <a href="NFT.md#0x1_NFT_MintCapability">NFT::MintCapability</a>&lt;NFTMeta&gt;
 </code></pre>
 
 
@@ -107,7 +108,37 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="MerkleNFT.md#0x1_MerkleNFTDistributor_register">register</a>&lt;NFTMeta: <b>copy</b> + store + drop, Info: <b>copy</b> + store + drop&gt;(signer: &signer, merkle_root: vector&lt;u8&gt;, leafs: u64, info: Info, meta: Metadata): MintCapability&lt;NFTMeta&gt; {
+<pre><code><b>public</b> <b>fun</b> <a href="MerkleNFT.md#0x1_MerkleNFTDistributor_register">register</a>&lt;NFTMeta: <b>copy</b> + store + drop, Info: <b>copy</b> + store + drop&gt;(
+    _signer: &signer,
+    _merkle_root: vector&lt;u8&gt;,
+    _leafs: u64,
+    _info: Info,
+    _meta: Metadata
+): MintCapability&lt;NFTMeta&gt; {
+    <b>abort</b> <a href="Errors.md#0x1_Errors_deprecated">Errors::deprecated</a>(1)
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_MerkleNFTDistributor_register_v2"></a>
+
+## Function `register_v2`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="MerkleNFT.md#0x1_MerkleNFTDistributor_register_v2">register_v2</a>&lt;NFTMeta: <b>copy</b>, drop, store&gt;(signer: &signer, merkle_root: vector&lt;u8&gt;, leafs: u64, meta: <a href="NFT.md#0x1_NFT_Metadata">NFT::Metadata</a>): <a href="NFT.md#0x1_NFT_MintCapability">NFT::MintCapability</a>&lt;NFTMeta&gt;
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="MerkleNFT.md#0x1_MerkleNFTDistributor_register_v2">register_v2</a>&lt;NFTMeta: <b>copy</b> + store + drop&gt;(signer: &signer, merkle_root: vector&lt;u8&gt;, leafs: u64, meta: Metadata): MintCapability&lt;NFTMeta&gt; {
     <b>let</b> bitmap_count = leafs / 128;
     <b>if</b> (bitmap_count * 128 &lt; leafs) {
         bitmap_count = bitmap_count + 1;
@@ -122,7 +153,7 @@
         merkle_root,
         claimed_bitmap
     };
-    <a href="NFT.md#0x1_NFT_register">NFT::register</a>&lt;NFTMeta, Info&gt;(signer, info, meta);
+    <a href="NFT.md#0x1_NFT_register_v2">NFT::register_v2</a>&lt;NFTMeta&gt;(signer, meta);
     <b>move_to</b>(signer, distribution);
     <a href="NFT.md#0x1_NFT_remove_mint_capability">NFT::remove_mint_capability</a>&lt;NFTMeta&gt;(signer)
 }
