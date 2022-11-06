@@ -286,20 +286,11 @@ module NFT {
     /// Register a NFT type to genesis
     /// Note: this function is deprecated, please use `register_v2`
     public fun register<NFTMeta: copy + store + drop, NFTTypeInfoExt: copy + store + drop>(
-        sender: &signer, 
-        info: NFTTypeInfoExt,
-        meta: Metadata
-    ) acquires NFTTypeInfo {
-        let genesis_account = GenesisSignerCapability::get_genesis_signer();
-        let type_info = new_nft_type_info(sender, info, meta);
-        move_to<NFTTypeInfo<NFTMeta, NFTTypeInfoExt>>(&genesis_account, type_info);
-        let mint_cap = MintCapability<NFTMeta> {};
-
-        Self::upgrade_nft_type_info_from_v1_to_v2<NFTMeta, NFTTypeInfoExt>(sender, &mut mint_cap);
-
-        move_to<MintCapability<NFTMeta>>(sender, mint_cap);
-        move_to<BurnCapability<NFTMeta>>(sender, BurnCapability {});
-        move_to<UpdateCapability<NFTMeta>>(sender, UpdateCapability {});
+        _sender: &signer,
+        _info: NFTTypeInfoExt,
+        _meta: Metadata
+    ) {
+        abort Errors::deprecated(1)
     }
 
     /// Register a NFT type to genesis
