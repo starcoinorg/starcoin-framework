@@ -349,8 +349,6 @@ module StarcoinFramework::Genesis {
             GenesisNFT::initialize(&genesis_account, merkle_root, 1639u64, image);
         };
         Config::publish_new_config(&genesis_account, LanguageVersion::new(4));
-        // upgrade genesis NFT
-        GenesisNFT::upgrade_to_nft_type_info_v2(&genesis_account);
 
         //v11 -> v12
         Block::checkpoints_init();
