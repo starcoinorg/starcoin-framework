@@ -60,9 +60,11 @@ module creator::XDAO {
 
         let install_cap = DAOSpace::acquire_install_plugin_cap<X, X>(&X{});
         DAOSpace::install_plugin<X, X, StakeToSBTPlugin>(&install_cap, StakeToSBTPlugin::required_caps());
-        StakeToSBTPlugin::accept_token_with_root_cap<X, STC::STC>(&dao_root_cap);
 
-        StakeToSBTPlugin::set_sbt_weight_with_root_cap<X, STC::STC>(&dao_root_cap, 10, 2000);
+        let witness = X {};
+        StakeToSBTPlugin::accept_token_by_dao<X, STC::STC>(&witness);
+
+        StakeToSBTPlugin::set_sbt_weight_by_dao<X, STC::STC>(&witness, 10, 2000);
 
         DAOSpace::burn_root_cap(dao_root_cap);
     }

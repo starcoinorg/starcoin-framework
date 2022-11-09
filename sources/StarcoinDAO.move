@@ -52,8 +52,8 @@ module StarcoinFramework::StarcoinDAO {
         DAOSpace::install_plugin<StarcoinDAO, StarcoinDAO, GasOracleProposalPlugin>(&install_cap, GasOracleProposalPlugin::required_caps());
         DAOSpace::install_plugin<StarcoinDAO, StarcoinDAO, TreasuryPlugin>(&install_cap, TreasuryPlugin::required_caps());
 
-        StakeToSBTPlugin::accept_token_with_root_cap<StarcoinDAO, STC>(&dao_root_cap);
-        StakeToSBTPlugin::set_sbt_weight_with_root_cap<StarcoinDAO, STC>(&dao_root_cap, 60000, 1000);
+        StakeToSBTPlugin::accept_token_by_dao<StarcoinDAO, STC>(&witness);
+        StakeToSBTPlugin::set_sbt_weight_by_dao<StarcoinDAO, STC>(&witness, 60000, 1000);
 
         DAOSpace::burn_root_cap(dao_root_cap);
     }
