@@ -220,9 +220,6 @@ module StarcoinFramework::DAOSpace {
         caps
     }
 
-    /// RootCap only have one instance, and can not been `drop` and `store`
-    struct DAORootCap<phantom DAOT> {}
-
     struct DAOInstallPluginCap<phantom DAOT, phantom PluginT> has drop {}
 
     struct DAOUpgradeModuleCap<phantom DAOT, phantom PluginT> has drop {}
@@ -406,11 +403,6 @@ module StarcoinFramework::DAOSpace {
         move_to(&dao_signer, DAOExt{
             ext
         });
-    }
-
-    /// Burn the root cap after init the DAO
-    public fun burn_root_cap<DAOT>(cap: DAORootCap<DAOT>) {
-        let DAORootCap{} = cap;
     }
 
     /// dao event
