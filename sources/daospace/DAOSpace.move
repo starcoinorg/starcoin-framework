@@ -272,7 +272,15 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// Create a dao with a exists DAO account
-    public fun create_dao<DAOT: store>(cap: DAOAccountCap, name: vector<u8>, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, description: vector<u8>, ext: DAOT, config: DAOConfig): DAORootCap<DAOT> acquires DAOEvent {
+    public fun create_dao<DAOT: store>(
+        cap: DAOAccountCap,
+        name: vector<u8>,
+        image_data:Option::Option<vector<u8>>,
+        image_url:Option::Option<vector<u8>>,
+        description: vector<u8>,
+        ext: DAOT,
+        config: DAOConfig
+    ) acquires DAOEvent {
         let dao_signer = DAOAccount::dao_signer(&cap);
 
         let dao_address = Signer::address_of(&dao_signer);
@@ -365,12 +373,18 @@ module StarcoinFramework::DAOSpace {
                 dao_address,
             },
         );
-
-        DAORootCap<DAOT>{}
     }
 
     /// Upgrade account to DAO account and create DAO
-    public fun upgrade_to_dao<DAOT: store>(sender: signer, name: vector<u8>, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, description:vector<u8>, ext: DAOT, config: DAOConfig): DAORootCap<DAOT> acquires DAOEvent{
+    public fun upgrade_to_dao<DAOT: store>(
+        sender: signer,
+        name: vector<u8>,
+        image_data:Option::Option<vector<u8>>,
+        image_url:Option::Option<vector<u8>>,
+        description:vector<u8>,
+        ext: DAOT,
+        config: DAOConfig
+    ) acquires DAOEvent{
         let cap = DAOAccount::upgrade_to_dao(sender);
         create_dao<DAOT>(cap, name, image_data, image_url, description, ext, config)
     }

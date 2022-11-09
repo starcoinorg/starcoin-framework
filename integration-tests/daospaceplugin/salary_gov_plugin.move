@@ -225,7 +225,7 @@ module creator::XDAO {
             min_action_delay,
             min_proposal_deposit,
         );
-        let dao_root_cap = DAOSpace::create_dao<XDAO>(dao_account_cap, *&NAME, Option::none<vector<u8>>(),
+        DAOSpace::create_dao<XDAO>(dao_account_cap, *&NAME, Option::none<vector<u8>>(),
             Option::none<vector<u8>>(), b"ipfs://description", XDAO { acting_boss }, config);
 
         let witness = XDAO { acting_boss };
@@ -233,8 +233,6 @@ module creator::XDAO {
         DAOSpace::install_plugin<XDAO, XDAO, InstallPluginProposalPlugin>(&install_cap, InstallPluginProposalPlugin::required_caps());
         DAOSpace::install_plugin<XDAO, XDAO, AnyMemberPlugin>(&install_cap, AnyMemberPlugin::required_caps());
         DAOSpace::install_plugin<XDAO, XDAO, SalaryGovPlugin>(&install_cap, SalaryGovPlugin::required_caps());
-
-        DAOSpace::burn_root_cap(dao_root_cap);
     }
 
     /// acting boss claim boss cap

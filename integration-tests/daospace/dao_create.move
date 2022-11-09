@@ -45,12 +45,11 @@ module 0xbf3a917cf4fb6425b95cc12763e6038b::XDAO {
         );
 
         let cap = DAOAccount::extract_dao_account_cap(&sender);
-        let dao_root_cap = DAOSpace::create_dao<X>(cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", X{}, config);
+        DAOSpace::create_dao<X>(cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", X{}, config);
         
         let witness = X {};
         let member_cap = DAOSpace::acquire_member_cap<X, X>(&witness);
         DAOSpace::join_member_with_member_cap(&member_cap, Signer::address_of(&sender), Option::none<vector<u8>>(), Option::none<vector<u8>>(), 1);
-        DAOSpace::burn_root_cap(dao_root_cap);
     }
 }
 

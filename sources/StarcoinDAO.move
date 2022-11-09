@@ -41,7 +41,7 @@ module StarcoinFramework::StarcoinDAO {
         );
 
 
-        let dao_root_cap = DAOSpace::create_dao<StarcoinDAO>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", StarcoinDAO {}, config);
+        DAOSpace::create_dao<StarcoinDAO>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", StarcoinDAO {}, config);
 
         let witness = StarcoinDAO {};
         let install_cap = DAOSpace::acquire_install_plugin_cap<StarcoinDAO, StarcoinDAO>(&witness);
@@ -54,8 +54,6 @@ module StarcoinFramework::StarcoinDAO {
 
         StakeToSBTPlugin::accept_token_by_dao<StarcoinDAO, STC>(&witness);
         StakeToSBTPlugin::set_sbt_weight_by_dao<StarcoinDAO, STC>(&witness, 60000, 1000);
-
-        DAOSpace::burn_root_cap(dao_root_cap);
     }
 
     public(friend) fun delegate_config_capability<TokenT: store, ConfigT: copy + drop + store>(cap: Config::ModifyConfigCapability<ConfigT>) {

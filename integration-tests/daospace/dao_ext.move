@@ -38,9 +38,7 @@ module creator::DAOHelper {
             min_proposal_deposit,
         );
         let dao_ext = X { value: 0};
-        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", dao_ext, config);
-
-        DAOSpace::burn_root_cap(dao_root_cap);
+        DAOSpace::create_dao<X>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", dao_ext, config);
     }
 
     public fun modify_ext(value: u64): u64 {

@@ -34,14 +34,13 @@ module creator::XDAO {
             min_action_delay,
             min_proposal_deposit,
         );
-        let dao_root_cap = DAOSpace::create_dao<XDAO>(dao_account_cap, *&NAME, Option::none<vector<u8>>(),
+        DAOSpace::create_dao<XDAO>(dao_account_cap, *&NAME, Option::none<vector<u8>>(),
             Option::none<vector<u8>>(), b"ipfs://description", XDAO{}, config);
 
         let install_cap = DAOSpace::acquire_install_plugin_cap<XDAO, XDAO>(&XDAO{});
         DAOSpace::install_plugin<XDAO, XDAO, InstallPluginProposalPlugin>(&install_cap, InstallPluginProposalPlugin::required_caps());
         DAOSpace::install_plugin<XDAO, XDAO, AnyMemberPlugin>(&install_cap, AnyMemberPlugin::required_caps());
         DAOSpace::install_plugin<XDAO, XDAO, GasOracleProposalPlugin>(&install_cap, GasOracleProposalPlugin::required_caps());
-        DAOSpace::burn_root_cap(dao_root_cap);
     }
 }
 // check: EXECUTED
