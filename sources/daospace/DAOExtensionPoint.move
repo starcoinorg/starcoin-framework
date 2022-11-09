@@ -350,6 +350,11 @@ module StarcoinFramework::DAOExtensionPoint {
         );
     }
 
+    public fun has_star_plugin<ExtPointT>(sender: &signer): bool {
+        let sender_addr = Signer::address_of(sender);
+        return exists<Star<ExtPointT>>(sender_addr)
+    }
+
     public fun star<ExtPointT>(sender: &signer) acquires Entry, ExtensionPointEventHandlers {
         let sender_addr = Signer::address_of(sender);
         assert!(!exists<Star<ExtPointT>>(sender_addr), Errors::invalid_state(ERR_STAR_ALREADY_STARED));
@@ -389,5 +394,44 @@ module StarcoinFramework::DAOExtensionPoint {
                 sender: sender_addr,
             },
         );
+    }
+
+    // public entrys
+    public(script) fun register_entry<ExtPointT: store>(sender: signer, name: vector<u8>, description: vector<u8>, types_d_ts:vector<u8>, dts_doc:vector<u8>, 
+        labels: vector<vector<u8>>) acquires Registry, NFTMintCapHolder, RegistryEventHandlers {
+        let option_labels = if(Vector::length(&labels) == 0){
+            Option::none<vector<vector<u8>>>()
+        } else {
+            Option::some(labels)
+        };
+
+        register<ExtPointT>(&sender, name, description, types_d_ts, dts_doc, option_labels);
+    }
+
+    public(script) fun publish_version_entry<ExtPointT: store>(
+        sender: signer, 
+        tag: vector<u8>,
+        types_d_ts:vector<u8>,
+        dts_doc: vector<u8>, 
+    ) acquires Entry, ExtensionPointEventHandlers {
+        publish_version<ExtPointT>(&sender, tag, types_d_ts, dts_doc);
+    }
+
+    public(script) fun update_entry<ExtPointT>(sender: signer, name: vector<u8>, description: vector<u8>, labels: vector<vector<u8>>) acquires Entry, ExtensionPointEventHandlers {
+        let option_labels = if(Vector::length(&labels) == 0){
+            Option::none<vector<vector<u8>>>()
+        } else {
+            Option::some(labels)
+        };
+
+        update<ExtPointT>(&sender, name, description, option_labels);
+    }
+
+    public(script) fun star_entry<ExtPointT:store>(sender: signer) acquires Entry, ExtensionPointEventHandlers {
+        star<ExtPointT>(&sender);
+    }
+
+    public(script) fun unstar_entry<ExtPointT:store>(sender: signer) acquires Star, Entry, ExtensionPointEventHandlers {
+        unstar<ExtPointT>(&sender);
     }
 }

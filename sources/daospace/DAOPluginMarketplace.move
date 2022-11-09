@@ -346,5 +346,14 @@ module StarcoinFramework::DAOPluginMarketplace {
             },
         );
     }
+
+    // public entrys
+    public(script) fun star_plugin_entry<PluginT>(sender: signer) acquires PluginEntry, PluginEventHandlers {
+        star_plugin<PluginT>(&sender);
+    }
+
+    public(script) fun unstar_plugin_entry<PluginT>(sender: signer) acquires PluginEntry, Star, PluginEventHandlers {
+        unstar_plugin<PluginT>(&sender);
+    }
 }
 
