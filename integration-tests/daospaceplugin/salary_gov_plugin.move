@@ -228,7 +228,8 @@ module creator::XDAO {
         let dao_root_cap = DAOSpace::create_dao<XDAO>(dao_account_cap, *&NAME, Option::none<vector<u8>>(),
             Option::none<vector<u8>>(), b"ipfs://description", XDAO { acting_boss }, config);
 
-        let install_cap = DAOSpace::acquire_install_plugin_cap<XDAO, XDAO>(&XDAO{});
+        let witness = XDAO { acting_boss };
+        let install_cap = DAOSpace::acquire_install_plugin_cap<XDAO, XDAO>(&witness);
         DAOSpace::install_plugin<XDAO, XDAO, InstallPluginProposalPlugin>(&install_cap, InstallPluginProposalPlugin::required_caps());
         DAOSpace::install_plugin<XDAO, XDAO, AnyMemberPlugin>(&install_cap, AnyMemberPlugin::required_caps());
         DAOSpace::install_plugin<XDAO, XDAO, SalaryGovPlugin>(&install_cap, SalaryGovPlugin::required_caps());

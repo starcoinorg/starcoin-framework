@@ -35,7 +35,7 @@ module creator::XDAO {
     use StarcoinFramework::STC;
     use StarcoinFramework::Option;
 
-    struct X has store {}
+    struct X has store, drop {}
 
     const NAME: vector<u8> = b"X";
 

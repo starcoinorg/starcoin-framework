@@ -21,7 +21,7 @@ module creator::XDAO {
     use StarcoinFramework::MemberProposalPlugin::{Self, MemberProposalPlugin};
     use StarcoinFramework::InstallPluginProposalPlugin::{Self, InstallPluginProposalPlugin};
 
-    struct X has store{}
+    struct X has store, drop {}
     
     const NAME: vector<u8> = b"X";
 
