@@ -44,8 +44,9 @@ module creator::XDAO {
         );
         let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(),b"ipfs://description", X{}, config);
         
-        DAOSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
-        DAOSpace::install_plugin_with_root_cap<X, MemberProposalPlugin>(&dao_root_cap, MemberProposalPlugin::required_caps());
+        let install_cap = DAOSpace::acquire_install_plugin_cap<X, X>(&X{});
+        DAOSpace::install_plugin<X, X, InstallPluginProposalPlugin>(&install_cap, InstallPluginProposalPlugin::required_caps()); 
+        DAOSpace::install_plugin<X, X, MemberProposalPlugin>(&install_cap, MemberProposalPlugin::required_caps());
         
         DAOSpace::burn_root_cap(dao_root_cap);
     }

@@ -503,12 +503,6 @@ module StarcoinFramework::DAOSpace {
 
     // Capability support function
 
-
-    /// Install ToInstallPluginT to DAO and grant the capabilites
-    public fun install_plugin_with_root_cap<DAOT: store, ToInstallPluginT:store>(_cap: &DAORootCap<DAOT>, granted_caps: vector<CapType>) acquires DAOAccountCapHolder {
-        do_install_plugin<DAOT, ToInstallPluginT>(granted_caps);
-    }
-
     /// Install plugin with DAOInstallPluginCap
     public fun install_plugin<DAOT: store, PluginT:store, ToInstallPluginT:store>(_cap: &DAOInstallPluginCap<DAOT, PluginT>, granted_caps: vector<CapType>) acquires DAOAccountCapHolder {
         do_install_plugin<DAOT, ToInstallPluginT>(granted_caps);
@@ -525,11 +519,6 @@ module StarcoinFramework::DAOSpace {
             plugin_id: plugin_id,
             granted_caps,
         });
-    }
-
-    /// Uninstall plugin with DAORootCap
-    public fun uninstall_plugin_with_root_cap<DAOT: store, ToInstallPluginT:store>(_cap: &DAORootCap<DAOT>) acquires DAOAccountCapHolder, InstalledPluginInfo {
-        do_uninstall_plugin<DAOT, ToInstallPluginT>();
     }
 
     /// Uninstall plugin with DAOInstallPluginCap
@@ -1355,11 +1344,15 @@ module StarcoinFramework::DAOSpace {
     /// Acquiring Capabilities
     fun validate_cap<DAOT: store, PluginT>(cap: CapType) acquires InstalledPluginInfo {
         let addr = dao_address<DAOT>();
-        if (exists<InstalledPluginInfo<PluginT>>(addr)) {
-            let plugin_info = borrow_global<InstalledPluginInfo<PluginT>>(addr);
-            assert!(Vector::contains(&plugin_info.granted_caps, &cap), Errors::requires_capability(ERR_NO_GRANTED));
-        } else {
-            abort (Errors::requires_capability(ERR_NO_GRANTED))
+        // When create a new DAO, one can pass a `DAOT` type as the `PluginT` type,
+        // in this case, the signer is equal to have the root cap.
+        if (TypeInfo::type_of<DAOT>() != TypeInfo::type_of<PluginT>()) {
+            if (exists<InstalledPluginInfo<PluginT>>(addr)) {
+                let plugin_info = borrow_global<InstalledPluginInfo<PluginT>>(addr);
+                assert!(Vector::contains(&plugin_info.granted_caps, &cap), Errors::requires_capability(ERR_NO_GRANTED));
+            } else {
+                abort (Errors::requires_capability(ERR_NO_GRANTED))
+            }
         }
     }
 
