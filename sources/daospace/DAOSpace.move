@@ -830,21 +830,7 @@ module StarcoinFramework::DAOSpace {
         (member_id, sbt_amount)
     }
 
-    // TODO refactor the cap and remove this function
-    public fun join_member_with_root_cap<DAOT: store>(_cap: &DAORootCap<DAOT>, to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
-        let dao_address = dao_address<DAOT>();
-        let memeber_event = borrow_global_mut<MemberEvent>(dao_address);
-        do_join_member<DAOT>(to_address, image_data, image_url, init_sbt);
-        Event::emit_event(&mut memeber_event.member_join_event_handler, MemberJoinEvent {
-            dao_id: dao_id(dao_address),
-            type:MEMBERJOIN_DIRECT,
-            member_id:Option::destroy_some(query_member_id<DAOT>(to_address)),
-            addr:to_address,
-            sbt: init_sbt,
-        });
-    }
-
-    // TODO refactor the cap and remove this function
+    // join member
     public fun join_member_with_member_cap<DAOT: store, Plugin>(_cap: &DAOMemberCap<DAOT, Plugin>, to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
         let dao_address = dao_address<DAOT>();
         let memeber_event = borrow_global_mut<MemberEvent>(dao_address);
