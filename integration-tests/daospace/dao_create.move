@@ -23,7 +23,6 @@ module 0xbf3a917cf4fb6425b95cc12763e6038b::XDAO {
     use StarcoinFramework::Option;
     use StarcoinFramework::DAOSpace;
     use StarcoinFramework::DAOAccount;
-    use StarcoinFramework::Signer;
     struct X has store, drop {}
     
     const NAME: vector<u8> = b"X";
@@ -49,7 +48,7 @@ module 0xbf3a917cf4fb6425b95cc12763e6038b::XDAO {
         
         let witness = X {};
         let member_cap = DAOSpace::acquire_member_cap<X, X>(&witness);
-        DAOSpace::join_member_with_member_cap(&member_cap, Signer::address_of(&sender), Option::none<vector<u8>>(), Option::none<vector<u8>>(), 1);
+        DAOSpace::join_member_with_member_cap(&member_cap, &sender, Option::none<vector<u8>>(), Option::none<vector<u8>>(), 1);
     }
 }
 
@@ -69,12 +68,9 @@ script{
 
 //# run --signers alice
 script{
-    use StarcoinFramework::DAOSpace;
-    use StarcoinFramework::IdentifierNFT;
-    use 0xbf3a917cf4fb6425b95cc12763e6038b::XDAO::{Self, X};
+    use 0xbf3a917cf4fb6425b95cc12763e6038b::XDAO;
 
     fun main(sender: signer){
-        IdentifierNFT::accept<DAOSpace::DAOMember<X>, DAOSpace::DAOMemberBody<X>>(&sender);
         XDAO::create_new_proposal_dao(sender, 1000, 1000, 1, 1000, 1000);
     }
 }

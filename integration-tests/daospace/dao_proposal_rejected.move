@@ -88,10 +88,10 @@ module creator::DAOHelper {
         DAOSpace::reject_proposal<DAOT, XAction<TokenT>>(sender, proposal_id);
     }
 
-    public fun member_join<DAOT:store>(to_address: address, init_sbt: u128){
+    public fun member_join<DAOT:store>(sender: &signer, init_sbt: u128){
         let witness = XPlugin{};
         let member_cap = DAOSpace::acquire_member_cap<DAOT, XPlugin>(&witness);
-        DAOSpace::join_member_with_member_cap<DAOT, XPlugin>(&member_cap, to_address, Option::none<vector<u8>>(), Option::none<vector<u8>>(), init_sbt);
+        DAOSpace::join_member_with_member_cap<DAOT, XPlugin>(&member_cap, sender, Option::none<vector<u8>>(), Option::none<vector<u8>>(), init_sbt);
     }
 
     struct Checkpoint<phantom DAOt:store> has key{
@@ -182,17 +182,10 @@ script{
 //# run --signers alice
 script{
     use creator::DAOHelper::{Self, X};
-    use StarcoinFramework::IdentifierNFT;
-    use StarcoinFramework::DAOSpace::{DAOMember, DAOMemberBody};
-    use StarcoinFramework::Signer;
 
     //alice join dao
     fun member_join(sender: signer){
-        //nft must be accept before grant
-        IdentifierNFT::accept<DAOMember<X>, DAOMemberBody<X>>(&sender);
-
-        let user_add = Signer::address_of(&sender);
-        DAOHelper::member_join<X>(user_add, 10000u128);
+        DAOHelper::member_join<X>(&sender, 10000u128);
     }
 }
 // check: EXECUTED
@@ -200,17 +193,11 @@ script{
 //# run --signers bob
 script{
     use creator::DAOHelper::{Self, X};
-    use StarcoinFramework::IdentifierNFT;
-    use StarcoinFramework::DAOSpace::{DAOMember, DAOMemberBody};
-    use StarcoinFramework::Signer;
 
     //bob join dao
     fun member_join(sender: signer){
         //nft must be accept before grant
-        IdentifierNFT::accept<DAOMember<X>, DAOMemberBody<X>>(&sender);
-
-        let user_add = Signer::address_of(&sender);
-        DAOHelper::member_join<X>(user_add, 30000u128);
+        DAOHelper::member_join<X>(&sender, 30000u128);
     }
 }
 // check: EXECUTED

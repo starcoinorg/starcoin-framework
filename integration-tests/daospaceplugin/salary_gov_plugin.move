@@ -81,7 +81,7 @@ module creator::SalaryGovPlugin {
 
         let witness = SalaryGovPlugin {};
         let cap = DAOSpace::acquire_member_cap<DAOT, SalaryGovPlugin>(&witness);
-        DAOSpace::join_member_with_member_cap<DAOT, SalaryGovPlugin>(&cap, member, Option::some(image_data), Option::some(image_url), 0);
+        DAOSpace::join_member_with_member_cap<DAOT, SalaryGovPlugin>(&cap, &sender, Option::some(image_data), Option::some(image_url), 0);
         move_to(&sender, SalaryReceive<DAOT, TokenT> {
             last_receive_time: Timestamp::now_seconds(),
         });
@@ -281,11 +281,8 @@ script {
     use creator::XDAO::XDAO;
     use creator::SalaryGovPlugin;
     use StarcoinFramework::STC::STC;
-    use StarcoinFramework::IdentifierNFT;
-    use StarcoinFramework::DAOSpace::{DAOMember, DAOMemberBody};
 
     fun main(sender: signer) {
-        IdentifierNFT::accept<DAOMember<XDAO>, DAOMemberBody<XDAO>>(&sender);
         let image_data = b"image";
         let image_url = b"";
         SalaryGovPlugin::join<XDAO, STC>(sender, image_data, image_url);

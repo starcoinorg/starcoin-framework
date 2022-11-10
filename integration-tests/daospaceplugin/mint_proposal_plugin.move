@@ -124,11 +124,8 @@ script {
 script {
     use creator::XDAO::XDAO;
     use StarcoinFramework::AnyMemberPlugin;
-    use StarcoinFramework::IdentifierNFT;
-    use StarcoinFramework::DAOSpace::{DAOMember, DAOMemberBody};
 
     fun main(sender: signer) {
-        IdentifierNFT::accept<DAOMember<XDAO>, DAOMemberBody<XDAO>>(&sender);
         let image_data = b"image";
         let image_url = b"";
         AnyMemberPlugin::join<XDAO>(&sender, image_data, image_url);

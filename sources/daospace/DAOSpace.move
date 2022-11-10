@@ -81,6 +81,7 @@ module StarcoinFramework::DAOSpace {
 
     /// grant
     const ERR_OFFER_NOT_EXIST: u64 = 800;
+    const ERR_OFFER_NOT_RECEIPTOR: u64 = 801;
 
     /// DAO resource, every DAO has this resource at it's DAO account
     struct DAO has key {
@@ -702,7 +703,6 @@ module StarcoinFramework::DAOSpace {
         let dao_address = dao_address<DAOT>();
         let op_index = Offer::find_offer<MemeberOffer<DAOT>>(dao_address, Signer::address_of(sender));
         assert!(Option::is_some(&op_index),1003);
-        IdentifierNFT::accept<DAOMember<DAOT>, DAOMemberBody<DAOT>>(sender);
         let memeber_event = borrow_global_mut<MemberEvent>(dao_address);
         let MemeberOffer<DAOT> {
             to_address,
@@ -710,6 +710,7 @@ module StarcoinFramework::DAOSpace {
             image_url,
             init_sbt
         }= Offer::redeem_v2<MemeberOffer<DAOT>>(sender, dao_address, Option::destroy_some(op_index));
+        assert!(to_address == Signer::address_of(sender), Errors::invalid_argument(ERR_OFFER_NOT_RECEIPTOR));
         Event::emit_event(&mut memeber_event.member_offer_event_handler, MemberOfferEvent {
             dao_id: dao_id(dao_address),
             addr:to_address,
@@ -721,7 +722,7 @@ module StarcoinFramework::DAOSpace {
         if(is_member<DAOT>(to_address)){
             increase_member_sbt<DAOT, DAOT>(&DAOMemberCap<DAOT, DAOT>{}, to_address, init_sbt);
         }else{
-            do_join_member<DAOT>(to_address, image_data, image_url, init_sbt);
+            do_join_member<DAOT>(sender, image_data, image_url, init_sbt);
             Event::emit_event(&mut memeber_event.member_join_event_handler, MemberJoinEvent {
                 dao_id: dao_id(dao_address),
                 type:MEMBERJOIN_OFFER,
@@ -736,8 +737,10 @@ module StarcoinFramework::DAOSpace {
         accept_member_offer<DAOT>(&sender)
     }
 
-    fun do_join_member<DAOT: store>(to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO {
+    fun do_join_member<DAOT: store>(sender: &signer, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO {
+        let to_address = Signer::address_of(sender);
         ensure_not_member<DAOT>(to_address);
+        IdentifierNFT::accept<DAOMember<DAOT>, DAOMemberBody<DAOT>>(sender);
         let member_id = next_member_id<DAOT>();
 
         let meta = DAOMember<DAOT>{
@@ -837,10 +840,17 @@ module StarcoinFramework::DAOSpace {
     }
 
     // join member
-    public fun join_member_with_member_cap<DAOT: store, Plugin>(_cap: &DAOMemberCap<DAOT, Plugin>, to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
+    public fun join_member_with_member_cap<DAOT: store, Plugin>(
+        _cap: &DAOMemberCap<DAOT, Plugin>,
+        sender: &signer,
+        image_data:Option::Option<vector<u8>>,
+        image_url:Option::Option<vector<u8>>,
+        init_sbt: u128
+    ) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
         let dao_address = dao_address<DAOT>();
         let memeber_event = borrow_global_mut<MemberEvent>(dao_address);
-        do_join_member<DAOT>(to_address, image_data, image_url, init_sbt);
+        do_join_member<DAOT>(sender, image_data, image_url, init_sbt);
+        let to_address = Signer::address_of(sender);
         Event::emit_event(&mut memeber_event.member_join_event_handler, MemberJoinEvent {
             dao_id: dao_id(dao_address),
             type:MEMBERJOIN_DIRECT,
