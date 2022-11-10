@@ -44,7 +44,7 @@ module 0xbf3a917cf4fb6425b95cc12763e6038b::XDAO {
         );
 
         let cap = DAOAccount::extract_dao_account_cap(&sender);
-        DAOSpace::create_dao<X>(cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", X{}, config);
+        DAOSpace::create_dao<X>(cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", config);
         
         let witness = X {};
         let member_cap = DAOSpace::acquire_member_cap<X, X>(&witness);

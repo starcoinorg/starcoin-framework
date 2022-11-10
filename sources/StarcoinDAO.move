@@ -41,7 +41,7 @@ module StarcoinFramework::StarcoinDAO {
         );
 
 
-        DAOSpace::create_dao<StarcoinDAO>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", StarcoinDAO {}, config);
+        DAOSpace::create_dao<StarcoinDAO>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", config);
 
         let witness = StarcoinDAO {};
         let install_cap = DAOSpace::acquire_install_plugin_cap<StarcoinDAO, StarcoinDAO>(&witness);

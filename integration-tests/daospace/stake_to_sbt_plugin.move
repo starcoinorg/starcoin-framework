@@ -56,7 +56,7 @@ module creator::XDAO {
             min_action_delay,
             min_proposal_deposit,
         );
-        DAOSpace::create_dao<X>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(),b"ipfs://description", X {}, config);
+        DAOSpace::create_dao<X>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(),b"ipfs://description", config);
 
         let install_cap = DAOSpace::acquire_install_plugin_cap<X, X>(&X{});
         DAOSpace::install_plugin<X, X, StakeToSBTPlugin>(&install_cap, StakeToSBTPlugin::required_caps());

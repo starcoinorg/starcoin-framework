@@ -200,7 +200,10 @@ module creator::XDAO {
     const ERR_NOT_ACTING_BOSS: u64 = 1001;
 
     struct XDAO has store, copy, drop {
-        acting_boss: address,
+    }
+
+    struct Storage has store {
+        acting_boss: address
     }
 
     const NAME: vector<u8> = b"X";
@@ -226,21 +229,23 @@ module creator::XDAO {
             min_proposal_deposit,
         );
         DAOSpace::create_dao<XDAO>(dao_account_cap, *&NAME, Option::none<vector<u8>>(),
-            Option::none<vector<u8>>(), b"ipfs://description", XDAO { acting_boss }, config);
+            Option::none<vector<u8>>(), b"ipfs://description", config);
 
-        let witness = XDAO { acting_boss };
+        let witness = XDAO {};
         let install_cap = DAOSpace::acquire_install_plugin_cap<XDAO, XDAO>(&witness);
         DAOSpace::install_plugin<XDAO, XDAO, InstallPluginProposalPlugin>(&install_cap, InstallPluginProposalPlugin::required_caps());
         DAOSpace::install_plugin<XDAO, XDAO, AnyMemberPlugin>(&install_cap, AnyMemberPlugin::required_caps());
         DAOSpace::install_plugin<XDAO, XDAO, SalaryGovPlugin>(&install_cap, SalaryGovPlugin::required_caps());
+
+        let store_cap = DAOSpace::acquire_storage_cap<XDAO, XDAO>(&witness);
+        DAOSpace::save_to_storage(&store_cap, Storage { acting_boss });
     }
 
     /// acting boss claim boss cap
     public(script) fun acting_boss_claim_cap(sender: signer) {
-        let witness = XDAO {
-            acting_boss: Signer::address_of(&sender),
-        };
-        let XDAO { acting_boss } = DAOSpace::take_ext(&witness);
+        let witness = XDAO {};
+        let store_cap = DAOSpace::acquire_storage_cap<XDAO, XDAO>(&witness);
+        let Storage { acting_boss } = DAOSpace::take_from_storage(&store_cap);
         assert!(acting_boss == Signer::address_of(&sender), Errors::invalid_state(ERR_NOT_ACTING_BOSS));
         SalaryGovPlugin::acting_boss_claim_cap(sender, &witness);
     }

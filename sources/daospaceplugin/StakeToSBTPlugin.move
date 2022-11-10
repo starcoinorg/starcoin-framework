@@ -115,7 +115,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         caps
     }
 
-    /// Accept token with token type by given DAO root capability
+    /// Accept token with token type by given DAO
     public fun accept_token_by_dao<DAOT: store, TokenT: store>(_witness: &DAOT) {
         install_event<DAOT>();
         accept_token(AcceptTokenCap<DAOT, TokenT> {});
@@ -132,7 +132,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         DAOSpace::init_plugin_event<DAOT, StakeToSBTPlugin, SBTUnstakeEvent>(&plugin_event_cap);
     }
 
-    /// Set sbt weight by given DAO root capability
+    /// Set sbt weight by given DAO
     public fun set_sbt_weight_by_dao<DAOT: store, TokenT: store>(
         _witness: &DAOT,
         lock_time: u64,

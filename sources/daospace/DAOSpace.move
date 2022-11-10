@@ -94,11 +94,6 @@ module StarcoinFramework::DAOSpace {
         next_proposal_id: u64,
     }
 
-    /// A custom extension field of the DAO resources
-    struct DAOExt<DAOT: store> has key {
-        ext: DAOT,
-    }
-
     /// Configuration of the DAO.
     struct DAOConfig has copy, drop, store {
         /// after proposal created, how long use should wait before he can vote (in milliseconds)
@@ -276,7 +271,6 @@ module StarcoinFramework::DAOSpace {
         image_data:Option::Option<vector<u8>>,
         image_url:Option::Option<vector<u8>>,
         description: vector<u8>,
-        ext: DAOT,
         config: DAOConfig
     ) acquires DAOEvent {
         let dao_signer = DAOAccount::dao_signer(&cap);
@@ -294,9 +288,6 @@ module StarcoinFramework::DAOSpace {
         };
 
         move_to(&dao_signer, dao);
-        move_to(&dao_signer, DAOExt{
-            ext
-        });
         move_to(&dao_signer, DAOAccountCapHolder{
             cap
         });
@@ -380,30 +371,10 @@ module StarcoinFramework::DAOSpace {
         image_data:Option::Option<vector<u8>>,
         image_url:Option::Option<vector<u8>>,
         description:vector<u8>,
-        ext: DAOT,
         config: DAOConfig
     ) acquires DAOEvent{
         let cap = DAOAccount::upgrade_to_dao(sender);
-        create_dao<DAOT>(cap, name, image_data, image_url, description, ext, config)
-    }
-
-    /// Take ext from DAOExt
-    public fun take_ext<DAOT: store>(_witness: &DAOT): DAOT
-    acquires DAOExt {
-        let dao_addr = dao_address<DAOT>();
-        assert!(exists<DAOExt<DAOT>>(dao_addr), Errors::not_published(ERR_DAO_EXT));
-        let DAOExt<DAOT> { ext } = move_from<DAOExt<DAOT>>(dao_addr);
-        ext
-    }
-
-    /// Save ext to DAOExt
-    public fun save_ext<DAOT: store>(ext: DAOT) acquires DAOAccountCapHolder {
-        let dao_addr = dao_address<DAOT>();
-        assert!(!exists<DAOExt<DAOT>>(dao_addr), Errors::already_published(ERR_DAO_EXT));
-        let dao_signer = dao_signer<DAOT>();
-        move_to(&dao_signer, DAOExt{
-            ext
-        });
+        create_dao<DAOT>(cap, name, image_data, image_url, description, config)
     }
 
     /// dao event
