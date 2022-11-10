@@ -81,6 +81,7 @@ module StarcoinFramework::DAOSpace {
 
     /// grant
     const ERR_OFFER_NOT_EXIST: u64 = 800;
+    const ERR_OFFER_NOT_RECEIPTOR: u64 = 801;
 
     /// DAO resource, every DAO has this resource at it's DAO account
     struct DAO has key {
@@ -91,11 +92,6 @@ module StarcoinFramework::DAOSpace {
         dao_address: address,
         next_member_id: u64,
         next_proposal_id: u64,
-    }
-
-    /// A custom extension field of the DAO resources
-    struct DAOExt<DAOT: store> has key {
-        ext: DAOT,
     }
 
     /// Configuration of the DAO.
@@ -220,9 +216,6 @@ module StarcoinFramework::DAOSpace {
         caps
     }
 
-    /// RootCap only have one instance, and can not been `drop` and `store`
-    struct DAORootCap<phantom DAOT> {}
-
     struct DAOInstallPluginCap<phantom DAOT, phantom PluginT> has drop {}
 
     struct DAOUpgradeModuleCap<phantom DAOT, phantom PluginT> has drop {}
@@ -272,7 +265,14 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// Create a dao with a exists DAO account
-    public fun create_dao<DAOT: store>(cap: DAOAccountCap, name: vector<u8>, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, description: vector<u8>, ext: DAOT, config: DAOConfig): DAORootCap<DAOT> acquires DAOEvent {
+    public fun create_dao<DAOT: store>(
+        cap: DAOAccountCap,
+        name: vector<u8>,
+        image_data:Option::Option<vector<u8>>,
+        image_url:Option::Option<vector<u8>>,
+        description: vector<u8>,
+        config: DAOConfig
+    ) acquires DAOEvent {
         let dao_signer = DAOAccount::dao_signer(&cap);
 
         let dao_address = Signer::address_of(&dao_signer);
@@ -288,9 +288,6 @@ module StarcoinFramework::DAOSpace {
         };
 
         move_to(&dao_signer, dao);
-        move_to(&dao_signer, DAOExt{
-            ext
-        });
         move_to(&dao_signer, DAOAccountCapHolder{
             cap
         });
@@ -365,38 +362,19 @@ module StarcoinFramework::DAOSpace {
                 dao_address,
             },
         );
-
-        DAORootCap<DAOT>{}
     }
 
     /// Upgrade account to DAO account and create DAO
-    public fun upgrade_to_dao<DAOT: store>(sender: signer, name: vector<u8>, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, description:vector<u8>, ext: DAOT, config: DAOConfig): DAORootCap<DAOT> acquires DAOEvent{
+    public fun upgrade_to_dao<DAOT: store>(
+        sender: signer,
+        name: vector<u8>,
+        image_data:Option::Option<vector<u8>>,
+        image_url:Option::Option<vector<u8>>,
+        description:vector<u8>,
+        config: DAOConfig
+    ) acquires DAOEvent{
         let cap = DAOAccount::upgrade_to_dao(sender);
-        create_dao<DAOT>(cap, name, image_data, image_url, description, ext, config)
-    }
-
-    /// Take ext from DAOExt
-    public fun take_ext<DAOT: store>(_witness: &DAOT): DAOT
-    acquires DAOExt {
-        let dao_addr = dao_address<DAOT>();
-        assert!(exists<DAOExt<DAOT>>(dao_addr), Errors::not_published(ERR_DAO_EXT));
-        let DAOExt<DAOT> { ext } = move_from<DAOExt<DAOT>>(dao_addr);
-        ext
-    }
-
-    /// Save ext to DAOExt
-    public fun save_ext<DAOT: store>(ext: DAOT) acquires DAOAccountCapHolder {
-        let dao_addr = dao_address<DAOT>();
-        assert!(!exists<DAOExt<DAOT>>(dao_addr), Errors::already_published(ERR_DAO_EXT));
-        let dao_signer = dao_signer<DAOT>();
-        move_to(&dao_signer, DAOExt{
-            ext
-        });
-    }
-
-    /// Burn the root cap after init the DAO
-    public fun burn_root_cap<DAOT>(cap: DAORootCap<DAOT>) {
-        let DAORootCap{} = cap;
+        create_dao<DAOT>(cap, name, image_data, image_url, description, config)
     }
 
     /// dao event
@@ -503,12 +481,6 @@ module StarcoinFramework::DAOSpace {
 
     // Capability support function
 
-
-    /// Install ToInstallPluginT to DAO and grant the capabilites
-    public fun install_plugin_with_root_cap<DAOT: store, ToInstallPluginT:store>(_cap: &DAORootCap<DAOT>, granted_caps: vector<CapType>) acquires DAOAccountCapHolder {
-        do_install_plugin<DAOT, ToInstallPluginT>(granted_caps);
-    }
-
     /// Install plugin with DAOInstallPluginCap
     public fun install_plugin<DAOT: store, PluginT:store, ToInstallPluginT:store>(_cap: &DAOInstallPluginCap<DAOT, PluginT>, granted_caps: vector<CapType>) acquires DAOAccountCapHolder {
         do_install_plugin<DAOT, ToInstallPluginT>(granted_caps);
@@ -525,11 +497,6 @@ module StarcoinFramework::DAOSpace {
             plugin_id: plugin_id,
             granted_caps,
         });
-    }
-
-    /// Uninstall plugin with DAORootCap
-    public fun uninstall_plugin_with_root_cap<DAOT: store, ToInstallPluginT:store>(_cap: &DAORootCap<DAOT>) acquires DAOAccountCapHolder, InstalledPluginInfo {
-        do_uninstall_plugin<DAOT, ToInstallPluginT>();
     }
 
     /// Uninstall plugin with DAOInstallPluginCap
@@ -707,7 +674,6 @@ module StarcoinFramework::DAOSpace {
         let dao_address = dao_address<DAOT>();
         let op_index = Offer::find_offer<MemeberOffer<DAOT>>(dao_address, Signer::address_of(sender));
         assert!(Option::is_some(&op_index),1003);
-        IdentifierNFT::accept<DAOMember<DAOT>, DAOMemberBody<DAOT>>(sender);
         let memeber_event = borrow_global_mut<MemberEvent>(dao_address);
         let MemeberOffer<DAOT> {
             to_address,
@@ -715,6 +681,7 @@ module StarcoinFramework::DAOSpace {
             image_url,
             init_sbt
         }= Offer::redeem_v2<MemeberOffer<DAOT>>(sender, dao_address, Option::destroy_some(op_index));
+        assert!(to_address == Signer::address_of(sender), Errors::invalid_argument(ERR_OFFER_NOT_RECEIPTOR));
         Event::emit_event(&mut memeber_event.member_offer_event_handler, MemberOfferEvent {
             dao_id: dao_id(dao_address),
             addr:to_address,
@@ -726,7 +693,7 @@ module StarcoinFramework::DAOSpace {
         if(is_member<DAOT>(to_address)){
             increase_member_sbt<DAOT, DAOT>(&DAOMemberCap<DAOT, DAOT>{}, to_address, init_sbt);
         }else{
-            do_join_member<DAOT>(to_address, image_data, image_url, init_sbt);
+            do_join_member<DAOT>(sender, image_data, image_url, init_sbt);
             Event::emit_event(&mut memeber_event.member_join_event_handler, MemberJoinEvent {
                 dao_id: dao_id(dao_address),
                 type:MEMBERJOIN_OFFER,
@@ -741,8 +708,10 @@ module StarcoinFramework::DAOSpace {
         accept_member_offer<DAOT>(&sender)
     }
 
-    fun do_join_member<DAOT: store>(to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO {
+    fun do_join_member<DAOT: store>(sender: &signer, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO {
+        let to_address = Signer::address_of(sender);
         ensure_not_member<DAOT>(to_address);
+        IdentifierNFT::accept<DAOMember<DAOT>, DAOMemberBody<DAOT>>(sender);
         let member_id = next_member_id<DAOT>();
 
         let meta = DAOMember<DAOT>{
@@ -841,25 +810,18 @@ module StarcoinFramework::DAOSpace {
         (member_id, sbt_amount)
     }
 
-    // TODO refactor the cap and remove this function
-    public fun join_member_with_root_cap<DAOT: store>(_cap: &DAORootCap<DAOT>, to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
+    // join member
+    public fun join_member_with_member_cap<DAOT: store, Plugin>(
+        _cap: &DAOMemberCap<DAOT, Plugin>,
+        sender: &signer,
+        image_data:Option::Option<vector<u8>>,
+        image_url:Option::Option<vector<u8>>,
+        init_sbt: u128
+    ) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
         let dao_address = dao_address<DAOT>();
         let memeber_event = borrow_global_mut<MemberEvent>(dao_address);
-        do_join_member<DAOT>(to_address, image_data, image_url, init_sbt);
-        Event::emit_event(&mut memeber_event.member_join_event_handler, MemberJoinEvent {
-            dao_id: dao_id(dao_address),
-            type:MEMBERJOIN_DIRECT,
-            member_id:Option::destroy_some(query_member_id<DAOT>(to_address)),
-            addr:to_address,
-            sbt: init_sbt,
-        });
-    }
-
-    // TODO refactor the cap and remove this function
-    public fun join_member_with_member_cap<DAOT: store, Plugin>(_cap: &DAOMemberCap<DAOT, Plugin>, to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
-        let dao_address = dao_address<DAOT>();
-        let memeber_event = borrow_global_mut<MemberEvent>(dao_address);
-        do_join_member<DAOT>(to_address, image_data, image_url, init_sbt);
+        do_join_member<DAOT>(sender, image_data, image_url, init_sbt);
+        let to_address = Signer::address_of(sender);
         Event::emit_event(&mut memeber_event.member_join_event_handler, MemberJoinEvent {
             dao_id: dao_id(dao_address),
             type:MEMBERJOIN_DIRECT,
@@ -1355,11 +1317,15 @@ module StarcoinFramework::DAOSpace {
     /// Acquiring Capabilities
     fun validate_cap<DAOT: store, PluginT>(cap: CapType) acquires InstalledPluginInfo {
         let addr = dao_address<DAOT>();
-        if (exists<InstalledPluginInfo<PluginT>>(addr)) {
-            let plugin_info = borrow_global<InstalledPluginInfo<PluginT>>(addr);
-            assert!(Vector::contains(&plugin_info.granted_caps, &cap), Errors::requires_capability(ERR_NO_GRANTED));
-        } else {
-            abort (Errors::requires_capability(ERR_NO_GRANTED))
+        // When create a new DAO, one can pass a `DAOT` type as the `PluginT` type,
+        // in this case, the signer is equal to have the root cap.
+        if (TypeInfo::type_of<DAOT>() != TypeInfo::type_of<PluginT>()) {
+            if (exists<InstalledPluginInfo<PluginT>>(addr)) {
+                let plugin_info = borrow_global<InstalledPluginInfo<PluginT>>(addr);
+                assert!(Vector::contains(&plugin_info.granted_caps, &cap), Errors::requires_capability(ERR_NO_GRANTED));
+            } else {
+                abort (Errors::requires_capability(ERR_NO_GRANTED))
+            }
         }
     }
 

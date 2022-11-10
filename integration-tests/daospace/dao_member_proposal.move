@@ -43,14 +43,12 @@ module creator::DAOHelper {
             min_action_delay,
             min_proposal_deposit,
         );
-        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", X{}, config);
+        DAOSpace::create_dao<X>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", config);
 
-        DAOSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps());
-        DAOSpace::install_plugin_with_root_cap<X, AnyMemberPlugin>(&dao_root_cap, AnyMemberPlugin::required_caps());
-        DAOSpace::install_plugin_with_root_cap<X, MemberProposalPlugin>(&dao_root_cap, MemberProposalPlugin::required_caps());
-
-        DAOSpace::burn_root_cap(dao_root_cap);
-
+        let install_cap = DAOSpace::acquire_install_plugin_cap<X, X>(&X{});
+        DAOSpace::install_plugin<X, X, InstallPluginProposalPlugin>(&install_cap, InstallPluginProposalPlugin::required_caps());
+        DAOSpace::install_plugin<X, X, AnyMemberPlugin>(&install_cap, AnyMemberPlugin::required_caps());
+        DAOSpace::install_plugin<X, X, MemberProposalPlugin>(&install_cap, MemberProposalPlugin::required_caps());
     }
 
     public fun create_offer_proposal(sender: &signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, member: address, image_data:vector<u8>, image_url:vector<u8>, init_sbt: u128, action_delay: u64){

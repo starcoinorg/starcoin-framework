@@ -11,14 +11,14 @@ store key 0x00000000000000000000000000000001::DAOAccount::DAOAccountCap {
     dao_address: bf3a917cf4fb6425b95cc12763e6038b
 }
 
-task 7 'run'. lines 59-67:
+task 7 'run'. lines 55-63:
 {
   "gas_used": 79013,
   "status": "Executed"
 }
 
-task 10 'run'. lines 73-84:
+task 10 'run'. lines 69-77:
 {
-  "gas_used": 1184587,
+  "gas_used": 1058109,
   "status": "Executed"
 }
