@@ -342,7 +342,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         };
     }
 
-    public fun unstake_all_entry<DAOT: store, TokenT: store>(sender: signer) acquires StakeList {
+    public(script) fun unstake_all_entry<DAOT: store, TokenT: store>(sender: signer) acquires StakeList {
         unstake_all<DAOT, TokenT>(&sender);
     }
 
