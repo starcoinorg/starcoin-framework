@@ -10,6 +10,8 @@ module StarcoinFramework::StakeToSBTPlugin {
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::InstallPluginProposalPlugin;
 
+    const EDEPRECATED_FUNCTION: u64 = 19;
+
     const ERR_PLUGIN_USER_IS_MEMBER: u64 = 1001;
     const ERR_PLUGIN_HAS_STAKED: u64 = 1002;
     const ERR_PLUGIN_NOT_STAKE: u64 = 1003;
@@ -270,8 +272,9 @@ module StarcoinFramework::StakeToSBTPlugin {
         Vector::length(&stake_list.items)
     }
 
+
     /// Unstake from staking
-    public fun unstake_by_id<DAOT: store, TokenT: store>(member: address, id: u64) acquires StakeList {
+    fun unstake_item_by_id<DAOT: store, TokenT: store>(member: address, id: u64) acquires StakeList {
         assert!(exists<StakeList<DAOT, TokenT>>(member), Errors::not_published(ERR_PLUGIN_NOT_STAKE));
         let stake_list = borrow_global_mut<StakeList<DAOT, TokenT>>(member);
         let item_index = find_item(id, &stake_list.items);
@@ -307,21 +310,6 @@ module StarcoinFramework::StakeToSBTPlugin {
         );
     }
 
-    /// Unstake all staking items from member address,
-    /// No care whether the user is member or not
-    public fun unstake_all<DAOT: store, TokenT: store>(member: address) acquires StakeList {
-        assert!(exists<StakeList<DAOT, TokenT>>(member), Errors::not_published(ERR_PLUGIN_NOT_STAKE));
-        let stake_list = borrow_global_mut<StakeList<DAOT, TokenT>>(member);
-        let len = Vector::length(&mut stake_list.items);
-
-        let idx = 0;
-        while (idx < len) {
-            let item = Vector::remove(&mut stake_list.items, idx);
-            Account::deposit(member, unstake_item<DAOT, TokenT>(member, item));
-            idx = idx + 1;
-        };
-    }
-
     /// Unstake a item from a item object
     fun unstake_item<DAOT: store, TokenT: store>(
         member: address,
@@ -351,6 +339,22 @@ module StarcoinFramework::StakeToSBTPlugin {
         };
 
         token
+    }
+
+    /// Unstake all staking items from member address,
+    /// No care whether the user is member or not
+    public fun unstake_all_items<DAOT: store, TokenT: store>(sender: &signer) acquires StakeList {
+        let member = Signer::address_of(sender);
+        assert!(exists<StakeList<DAOT, TokenT>>(member), Errors::not_published(ERR_PLUGIN_NOT_STAKE));
+        let stake_list = borrow_global_mut<StakeList<DAOT, TokenT>>(member);
+        let len = Vector::length(&mut stake_list.items);
+
+        let idx = 0;
+        while (idx < len) {
+            let item = Vector::remove(&mut stake_list.items, idx);
+            Account::deposit(member, unstake_item<DAOT, TokenT>(member, item));
+            idx = idx + 1;
+        };
     }
 
     fun get_sbt_weight<DAOT: store, TokenT: store>(lock_time: u64): Option::Option<u64> {
@@ -590,10 +594,30 @@ module StarcoinFramework::StakeToSBTPlugin {
     }
 
     /// Called by script
-    public(script) fun unstake_item_entry<DAOT: store, TokenT: store>(
-        member: address,
+    public(script) fun unstake_item_by_id_entry<DAOT: store, TokenT: store>(
+        sender: signer,
         id: u64
     ) acquires StakeList {
-        unstake_by_id<DAOT, TokenT>(member, id);
+        unstake_item_by_id<DAOT, TokenT>(Signer::address_of(&sender), id);
+    }
+
+    /// ---------------------
+    /// Deprecated functions
+    ///
+    /// Unstake from staking
+    public fun unstake_by_id<DAOT: store, TokenT: store>(_member: address, _id: u64) {
+        abort Errors::deprecated(EDEPRECATED_FUNCTION)
+    }
+
+    /// Unstake all staking items from member address,
+    /// No care whether the user is member or not
+    public fun unstake_all<DAOT: store, TokenT: store>(_member: address) {
+        abort Errors::deprecated(EDEPRECATED_FUNCTION)
+    }
+
+    /// Called by script
+    public(script) fun unstake_item_entry<DAOT: store, TokenT: store>(_member: address, _id: u64) {
+        //unstake_by_id<DAOT, TokenT>(member, id);
+        abort Errors::deprecated(EDEPRECATED_FUNCTION)
     }
 }
