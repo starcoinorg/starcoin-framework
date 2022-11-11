@@ -1641,6 +1641,9 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// propose a proposal.
+    /// `title`: title of the proposal
+    /// `introduction`: short introduction of the proposal
+    /// `extend`: extend of proposal , ipfs:// | { "title":"xxxxx",........ }
     /// `action`: the actual action to execute.
     /// `action_delay`: the delay to execute after the proposal is agreed
     /// `quorum_scale_factor`: used to scale up the base quorum_votes_rate.

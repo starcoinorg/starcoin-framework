@@ -62,12 +62,12 @@ module StarcoinFramework::AnyMemberPlugin{
         join<DAOT>(&sender, image_data, image_url);
     }
 
-    public fun install_plugin_proposal<DAOT:store>(sender:&signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, AnyMemberPlugin>(sender, required_caps(), title, introduction, description, action_delay);
+    public fun install_plugin_proposal<DAOT:store>(sender:&signer, title:vector<u8>, introduction:vector<u8>, extend: vector<u8>, action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, AnyMemberPlugin>(sender, required_caps(), title, introduction, extend, action_delay);
     }
 
-    public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay:u64){
-        install_plugin_proposal<DAOT>(&sender, title, introduction, description, action_delay);
+    public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, title:vector<u8>, introduction:vector<u8>, extend: vector<u8>, action_delay:u64){
+        install_plugin_proposal<DAOT>(&sender, title, introduction, extend, action_delay);
     }
 
 }

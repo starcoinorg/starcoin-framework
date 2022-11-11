@@ -458,7 +458,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         sender: &signer,
         title:vector<u8>,
         introduction:vector<u8>,
-        description: vector<u8>,
+        extend: vector<u8>,
         lock_time: u64,
         weight: u64,
         action_delay: u64
@@ -473,7 +473,7 @@ module StarcoinFramework::StakeToSBTPlugin {
             },
             title,
             introduction,
-            description,
+            extend,
             action_delay,
             Option::none<u8>());
     }
@@ -482,12 +482,12 @@ module StarcoinFramework::StakeToSBTPlugin {
         sender: signer,
         title:vector<u8>,
         introduction:vector<u8>,
-        description: vector<u8>,
+        extend: vector<u8>,
         lock_time: u64,
         weight: u64,
         action_delay: u64
     ) {
-        create_weight_proposal<DAOT, TokenT>(&sender,title, introduction, description, lock_time, weight, action_delay);
+        create_weight_proposal<DAOT, TokenT>(&sender,title, introduction, extend, lock_time, weight, action_delay);
     }
 
     public fun execute_weight_proposal<DAOT: store, TokenT: store>(
@@ -522,7 +522,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         sender: &signer,
         title:vector<u8>,
         introduction:vector<u8>,
-        description: vector<u8>,
+        extend: vector<u8>,
         action_delay: u64
     ) {
         let witness = StakeToSBTPlugin {};
@@ -535,7 +535,7 @@ module StarcoinFramework::StakeToSBTPlugin {
             AcceptTokenCap<DAOT, TokenT> {},
             title,
             introduction,
-            description,
+            extend,
             action_delay,
             Option::none<u8>()
         );
@@ -545,10 +545,10 @@ module StarcoinFramework::StakeToSBTPlugin {
         sender: signer,
         title:vector<u8>,
         introduction:vector<u8>,
-        description: vector<u8>,
+        extend: vector<u8>,
         action_delay: u64
     ) {
-        create_token_accept_proposal<DAOT, TokenT>(&sender, title, introduction, description, action_delay);
+        create_token_accept_proposal<DAOT, TokenT>(&sender, title, introduction, extend, action_delay);
     }
 
     public fun execute_token_accept_proposal<DAOT: store, TokenT: store>(
@@ -580,7 +580,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         sender: &signer,
         title:vector<u8>,
         introduction:vector<u8>,
-        description: vector<u8>,
+        extend: vector<u8>,
         action_delay: u64
     ) {
         InstallPluginProposalPlugin::create_proposal<DAOT, StakeToSBTPlugin>(
@@ -588,7 +588,7 @@ module StarcoinFramework::StakeToSBTPlugin {
             required_caps(),
             title,
             introduction,
-            description,
+            extend,
             action_delay
         );
     }
@@ -597,9 +597,9 @@ module StarcoinFramework::StakeToSBTPlugin {
         sender: signer,
         title:vector<u8>,
         introduction:vector<u8>,
-        description: vector<u8>,
+        extend: vector<u8>,
         action_delay: u64
     ) {
-        install_plugin_proposal<DAOT>(&sender, title, introduction, description, action_delay);
+        install_plugin_proposal<DAOT>(&sender, title, introduction, extend, action_delay);
     }
 }
