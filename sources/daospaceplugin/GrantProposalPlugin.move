@@ -1,4 +1,3 @@
-//TODO find more good name
 module StarcoinFramework::GrantProposalPlugin{
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option;

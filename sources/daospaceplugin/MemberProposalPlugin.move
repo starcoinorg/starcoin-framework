@@ -1,4 +1,3 @@
-//TODO find more good name
 module StarcoinFramework::MemberProposalPlugin{
     use StarcoinFramework::Option;
     use StarcoinFramework::DAOPluginMarketplace;

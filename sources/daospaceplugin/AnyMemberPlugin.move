@@ -1,4 +1,4 @@
-//TODO find more good name
+/// This plugin let every can join the DAO, and auto get 1 sbt.
 module StarcoinFramework::AnyMemberPlugin{
     use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
