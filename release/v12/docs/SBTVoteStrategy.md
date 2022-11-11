@@ -48,8 +48,6 @@ deserialize snapshot vote value from state
 
 <pre><code><b>public</b> <b>fun</b> <a href="SBTVoteStrategy.md#0x1_SBTVoteStrategy_get_voting_power">get_voting_power</a>(state: &vector&lt;u8&gt;) : u128 {
     <b>let</b> sbt_value = <a href="SBTVoteStrategy.md#0x1_SBTVoteStrategy_deserialize_sbt_value_from_bcs_state">deserialize_sbt_value_from_bcs_state</a>(state);
-
-    //TODO support calculate weight_factor
     sbt_value
 }
 </code></pre>

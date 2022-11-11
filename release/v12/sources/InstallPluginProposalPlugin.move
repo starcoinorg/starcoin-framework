@@ -1,4 +1,3 @@
-//TODO find more good name
 module StarcoinFramework::InstallPluginProposalPlugin{
     use StarcoinFramework::Option;
     use StarcoinFramework::DAOPluginMarketplace;
@@ -39,8 +38,10 @@ module StarcoinFramework::InstallPluginProposalPlugin{
         caps
     }
 
-    //TODO how to unify arguments.
-    public fun create_proposal<DAOT: store, ToInstallPluginT: store>(sender: &signer, required_caps: vector<CapType>, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay: u64){
+    /// Create a proposal to install a plugin.
+    /// We do not provide a entry function for create_proposal, because we can not use CapType as an entry function parameter, 
+    /// every plugin should provide a entry function to create proposal to install self. 
+    public fun create_proposal<DAOT: store, ToInstallPluginT: store>(sender: &signer, required_caps: vector<CapType>, title:vector<u8>, introduction:vector<u8>, extend: vector<u8>, action_delay: u64){
         let witness = InstallPluginProposalPlugin{};
 
         let cap = DAOSpace::acquire_proposal_cap<DAOT, InstallPluginProposalPlugin>(&witness);
@@ -48,7 +49,7 @@ module StarcoinFramework::InstallPluginProposalPlugin{
             required_caps,
         };
 
-        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay, Option::none<u8>());
+        DAOSpace::create_proposal(&cap, sender, action, title, introduction, extend, action_delay, Option::none<u8>());
     }
 
     public fun execute_proposal<DAOT: store, ToInstallPluginT: store>(sender: &signer, proposal_id: u64){

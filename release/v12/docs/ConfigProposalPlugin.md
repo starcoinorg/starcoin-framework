@@ -154,7 +154,7 @@ Called by other contract which need proposal config
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store, ConfigT: drop, store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64, config: ConfigT)
+<pre><code><b>public</b> <b>fun</b> <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store, ConfigT: drop, store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64, config: ConfigT)
 </code></pre>
 
 
@@ -163,7 +163,7 @@ Called by other contract which need proposal config
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store, ConfigT: store+drop&gt;(sender: &signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;,action_delay: u64, config: ConfigT) {
+<pre><code><b>public</b> <b>fun</b> <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store, ConfigT: store+drop&gt;(sender: &signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;,action_delay: u64, config: ConfigT) {
     <b>let</b> witness = <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin">ConfigProposalPlugin</a>{};
     <b>let</b> cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_proposal_cap">DAOSpace::acquire_proposal_cap</a>&lt;DAOT, <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin">ConfigProposalPlugin</a>&gt;(&witness);
     <b>let</b> action = <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_ConfigProposalAction">ConfigProposalAction</a>&lt;ConfigT&gt;{
@@ -172,7 +172,7 @@ Called by other contract which need proposal config
     <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>&lt;
         DAOT,
         <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin">ConfigProposalPlugin</a>,
-        <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_ConfigProposalAction">ConfigProposalAction</a>&lt;ConfigT&gt;&gt;(&cap, sender, action, title, introduction, description, action_delay, <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u8&gt;());
+        <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_ConfigProposalAction">ConfigProposalAction</a>&lt;ConfigT&gt;&gt;(&cap, sender, action, title, introduction, extend, action_delay, <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u8&gt;());
 }
 </code></pre>
 
@@ -244,7 +244,7 @@ Called by other contract which need proposal config
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64)
 </code></pre>
 
 
@@ -253,8 +253,8 @@ Called by other contract which need proposal config
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT:store&gt;(sender:&signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay:u64){
-    <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">InstallPluginProposalPlugin::create_proposal</a>&lt;DAOT, <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin">ConfigProposalPlugin</a>&gt;(sender, <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_required_caps">required_caps</a>(), title, introduction, description, action_delay);
+<pre><code><b>public</b> <b>fun</b> <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT:store&gt;(sender:&signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay:u64){
+    <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">InstallPluginProposalPlugin::create_proposal</a>&lt;DAOT, <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin">ConfigProposalPlugin</a>&gt;(sender, <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_required_caps">required_caps</a>(), title, introduction, extend, action_delay);
 }
 </code></pre>
 
@@ -268,7 +268,7 @@ Called by other contract which need proposal config
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64)
 </code></pre>
 
 
@@ -277,8 +277,8 @@ Called by other contract which need proposal config
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT:store&gt;(sender:signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay:u64){
-    <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT&gt;(&sender, title, introduction, description, action_delay);
+<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT:store&gt;(sender:signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay:u64){
+    <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT&gt;(&sender, title, introduction, extend, action_delay);
 }
 </code></pre>
 
