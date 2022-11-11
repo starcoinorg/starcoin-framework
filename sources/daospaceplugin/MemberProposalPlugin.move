@@ -88,7 +88,7 @@ module StarcoinFramework::MemberProposalPlugin{
     }
 
     public fun install_plugin_proposal<DAOT:store>(sender:&signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>,action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, MemberJoinAction>(sender, required_caps(), title, introduction, description, action_delay);
+        InstallPluginProposalPlugin::create_proposal<DAOT, MemberProposalPlugin>(sender, required_caps(), title, introduction, description, action_delay);
     }
 
     public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay:u64){

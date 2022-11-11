@@ -148,6 +148,9 @@
 
 ## Function `create_proposal`
 
+Create a proposal to install a plugin.
+We do not provide a entry function for create_proposal, because we can not use CapType as an entry function parameter,
+every plugin should provide a entry function to create proposal to install self.
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store, ToInstallPluginT: store&gt;(sender: &signer, required_caps: vector&lt;<a href="DAOSpace.md#0x1_DAOSpace_CapType">DAOSpace::CapType</a>&gt;, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64)
