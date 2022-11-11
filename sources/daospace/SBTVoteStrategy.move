@@ -9,8 +9,6 @@ module StarcoinFramework::SBTVoteStrategy{
     /// deserialize snapshot vote value from state
     public fun get_voting_power(state: &vector<u8>) : u128 {
         let sbt_value = deserialize_sbt_value_from_bcs_state(state);
-
-        //TODO support calculate weight_factor
         sbt_value
     }
 

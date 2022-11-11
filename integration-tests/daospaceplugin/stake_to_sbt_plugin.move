@@ -6,26 +6,6 @@
 
 //# block --author 0x1 --timestamp 86400000
 
-// //# run --signers creator
-// script {
-//     use StarcoinFramework::StdlibUpgradeScripts;
-//
-//     fun upgrade_from_v11_to_v12() {
-//         StdlibUpgradeScripts::upgrade_from_v11_to_v12();
-//     }
-// }
-// // check: EXECUTED
-
-// //# run --signers creator
-// script {
-//     use StarcoinFramework::StdlibUpgradeScripts;
-
-//     fun upgrade_from_v11_to_v12() {
-//         StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
-//     }
-// }
-// // check: EXECUTED
-
 //# publish
 module creator::XDAO {
     use StarcoinFramework::DAOAccount;
@@ -122,10 +102,9 @@ script {
     use creator::XDAO;
     use StarcoinFramework::StakeToSBTPlugin;
     use StarcoinFramework::STC;
-    use StarcoinFramework::Signer;
 
     fun unstake_all_failed(sender: signer) {
-        StakeToSBTPlugin::unstake_all<XDAO::X, STC::STC>(Signer::address_of(&sender));
+        StakeToSBTPlugin::unstake_all<XDAO::X, STC::STC>(&sender);
     }
 }
 // check: ABORTED, 257025
@@ -140,9 +119,9 @@ script {
     use StarcoinFramework::Signer;
 
     fun stake(sender: signer) {
-        let user = Signer::address_of(&sender);
-        StakeToSBTPlugin::unstake_all<XDAO::X, STC::STC>(user);
-        assert!(StakeToSBTPlugin::query_stake_count<XDAO::X, STC::STC>(user) <= 0, 10001);
+        let sender_addr = Signer::address_of(&sender);
+        StakeToSBTPlugin::unstake_all<XDAO::X, STC::STC>(&sender);
+        assert!(StakeToSBTPlugin::query_stake_count<XDAO::X, STC::STC>(sender_addr) <= 0, 10001);
     }
 }
 // check: CHECKED
@@ -176,7 +155,7 @@ script {
 
     fun stake_again(sender: signer) {
         let sender_addr = Signer::address_of(&sender);
-        StakeToSBTPlugin::unstake_by_id<XDAO::X, STC::STC>(sender_addr, 2);
+        StakeToSBTPlugin::unstake_by_id<XDAO::X, STC::STC>(&sender, 2);
         assert!(StakeToSBTPlugin::query_stake_count<XDAO::X, STC::STC>(sender_addr) <= 0, 10003);
     }
 }
@@ -213,7 +192,7 @@ script {
     fun quit_and_unstake(sender: signer) {
         let sender_addr = Signer::address_of(&sender);
         assert!(!DAOSpace::is_member<XDAO::X>(sender_addr), 10005);
-        StakeToSBTPlugin::unstake_by_id<XDAO::X, STC::STC>(sender_addr, 3);
+        StakeToSBTPlugin::unstake_by_id<XDAO::X, STC::STC>(&sender, 3);
         assert!(StakeToSBTPlugin::query_stake_count<XDAO::X, STC::STC>(sender_addr) <= 0, 10006);
     }
 }

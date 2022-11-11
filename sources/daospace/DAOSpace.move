@@ -1641,6 +1641,9 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// propose a proposal.
+    /// `title`: title of the proposal
+    /// `introduction`: short introduction of the proposal
+    /// `extend`: extend of proposal , ipfs:// | { "title":"xxxxx",........ }
     /// `action`: the actual action to execute.
     /// `action_delay`: the delay to execute after the proposal is agreed
     /// `quorum_scale_factor`: used to scale up the base quorum_votes_rate.
@@ -2098,7 +2101,7 @@ module StarcoinFramework::DAOSpace {
         let dao_address = dao_address<DAOT>();
         assert!(exists<ProposalActions<ActionT>>(dao_address), Errors::invalid_state(ERR_PROPOSAL_ACTIONS_NOT_EXIST));
         let (_, token) = take_proposal_action<ActionT>(dao_address, proposal_id);
-        // Part of the token is awarded to whoever executes this method , TODO: 10 %
+        // Part of the token is awarded to whoever executes this method , current: 10 %
         let award_amount = Token::value(&token) / 10;
         let (burn_token , award_token) = Token::split(token, award_amount);
         Account::deposit(Signer::address_of(sender), award_token);
