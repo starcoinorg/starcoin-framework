@@ -6022,6 +6022,9 @@ no_with_veto counts as no but also adds a veto vote
 ## Function `create_proposal`
 
 propose a proposal.
+<code>title</code>: title of the proposal
+<code>introduction</code>: short introduction of the proposal
+<code>extend</code>: extend of proposal , ipfs:// | { "title":"xxxxx",........ }
 <code>action</code>: the actual action to execute.
 <code>action_delay</code>: the delay to execute after the proposal is agreed
 <code>quorum_scale_factor</code>: used to scale up the base quorum_votes_rate.
@@ -6760,7 +6763,7 @@ A portion of the pledged tokens will be rewarded to the executor who executes th
     <b>let</b> dao_address = <a href="DAOSpace.md#0x1_DAOSpace_dao_address">dao_address</a>&lt;DAOT&gt;();
     <b>assert</b>!(<b>exists</b>&lt;<a href="DAOSpace.md#0x1_DAOSpace_ProposalActions">ProposalActions</a>&lt;ActionT&gt;&gt;(dao_address), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="DAOSpace.md#0x1_DAOSpace_ERR_PROPOSAL_ACTIONS_NOT_EXIST">ERR_PROPOSAL_ACTIONS_NOT_EXIST</a>));
     <b>let</b> (_, token) = <a href="DAOSpace.md#0x1_DAOSpace_take_proposal_action">take_proposal_action</a>&lt;ActionT&gt;(dao_address, proposal_id);
-    // Part of the token is awarded <b>to</b> whoever executes this method , TODO: 10 %
+    // Part of the token is awarded <b>to</b> whoever executes this method , current: 10 %
     <b>let</b> award_amount = <a href="Token.md#0x1_Token_value">Token::value</a>(&token) / 10;
     <b>let</b> (burn_token , award_token) = <a href="Token.md#0x1_Token_split">Token::split</a>(token, award_amount);
     <a href="Account.md#0x1_Account_deposit">Account::deposit</a>(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender), award_token);

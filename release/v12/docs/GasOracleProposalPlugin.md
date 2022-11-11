@@ -277,7 +277,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_create_oracle_add_proposal">create_oracle_add_proposal</a>&lt;DAOT: store, TokenType: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64, source_address: <b>address</b>)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_create_oracle_add_proposal">create_oracle_add_proposal</a>&lt;DAOT: store, TokenType: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64, source_address: <b>address</b>)
 </code></pre>
 
 
@@ -286,13 +286,13 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_create_oracle_add_proposal">create_oracle_add_proposal</a>&lt;DAOT: store, TokenType: store&gt;(sender: signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64, source_address: <b>address</b>) {
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_create_oracle_add_proposal">create_oracle_add_proposal</a>&lt;DAOT: store, TokenType: store&gt;(sender: signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64, source_address: <b>address</b>) {
     <b>let</b> witness = <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin">GasOracleProposalPlugin</a>{};
     <b>let</b> cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_proposal_cap">DAOSpace::acquire_proposal_cap</a>&lt;DAOT, <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin">GasOracleProposalPlugin</a>&gt;(&witness);
     <b>let</b> action = <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_OracleSourceAddAction">OracleSourceAddAction</a>&lt;TokenType&gt;{
         source_address
     };
-    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, &sender, action, title, introduction, description, action_delay, <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u8&gt;());
+    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, &sender, action, title, introduction, extend, action_delay, <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u8&gt;());
 }
 </code></pre>
 
@@ -345,7 +345,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_create_oracle_remove_proposal">create_oracle_remove_proposal</a>&lt;DAOT: store, TokenType: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64, source_address: <b>address</b>)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_create_oracle_remove_proposal">create_oracle_remove_proposal</a>&lt;DAOT: store, TokenType: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64, source_address: <b>address</b>)
 </code></pre>
 
 
@@ -354,13 +354,13 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_create_oracle_remove_proposal">create_oracle_remove_proposal</a>&lt;DAOT: store, TokenType: store&gt;(sender: signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64, source_address: <b>address</b>) {
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_create_oracle_remove_proposal">create_oracle_remove_proposal</a>&lt;DAOT: store, TokenType: store&gt;(sender: signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64, source_address: <b>address</b>) {
     <b>let</b> witness = <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin">GasOracleProposalPlugin</a>{};
     <b>let</b> cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_proposal_cap">DAOSpace::acquire_proposal_cap</a>&lt;DAOT, <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin">GasOracleProposalPlugin</a>&gt;(&witness);
     <b>let</b> action = <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_OracleSourceRemoveAction">OracleSourceRemoveAction</a>&lt;TokenType&gt;{
         source_address
     };
-    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, &sender, action, title, introduction, description, action_delay, <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u8&gt;());
+    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, &sender, action, title, introduction, extend, action_delay, <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u8&gt;());
 }
 </code></pre>
 
@@ -434,7 +434,7 @@
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64)
 </code></pre>
 
 
@@ -443,8 +443,8 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT: store&gt;(sender: &signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64) {
-    <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">InstallPluginProposalPlugin::create_proposal</a>&lt;DAOT, <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin">GasOracleProposalPlugin</a>&gt;(sender, <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_required_caps">required_caps</a>(), title, introduction, description, action_delay);
+<pre><code><b>public</b> <b>fun</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT: store&gt;(sender: &signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64) {
+    <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">InstallPluginProposalPlugin::create_proposal</a>&lt;DAOT, <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin">GasOracleProposalPlugin</a>&gt;(sender, <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_required_caps">required_caps</a>(), title, introduction, extend, action_delay);
 }
 </code></pre>
 
@@ -458,7 +458,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64)
 </code></pre>
 
 
@@ -467,8 +467,8 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT: store&gt;(sender: signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64) {
-    <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT&gt;(&sender, title, introduction, description, action_delay);
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT: store&gt;(sender: signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64) {
+    <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT&gt;(&sender, title, introduction, extend, action_delay);
 }
 </code></pre>
 
