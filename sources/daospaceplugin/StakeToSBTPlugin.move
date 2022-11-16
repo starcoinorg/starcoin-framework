@@ -336,9 +336,14 @@ module StarcoinFramework::StakeToSBTPlugin {
 
         let idx = 0;
         while (idx < len) {
-            let item = Vector::remove(&mut stake_list.items, idx);
-            Account::deposit(sender_addr, unstake_item<DAOT, TokenT>(sender_addr, item));
-            idx = idx + 1;
+            let item = Vector::borrow(&stake_list.items, idx);
+            if (can_item_unstake(item)) {
+                let item = Vector::remove(&mut stake_list.items, idx);
+                Account::deposit(sender_addr, unstake_item<DAOT, TokenT>(sender_addr, item));
+                len = len - 1;
+            } else {
+                idx = idx + 1;
+            };
         };
     }
 
@@ -346,7 +351,12 @@ module StarcoinFramework::StakeToSBTPlugin {
         unstake_all<DAOT, TokenT>(&sender);
     }
 
-    /// Unstake a item from a item object
+    /// Check if an item is available to unstake.
+    fun can_item_unstake<DAOT, TokenT>(item: &Stake<DAOT, TokenT>): bool {
+        Timestamp::now_seconds() - item.stake_time >= item.lock_time
+    }
+
+    /// Unstake an item from an item object
     fun unstake_item<DAOT: store, TokenT: store>(
         member: address,
         item: Stake<DAOT, TokenT>
@@ -360,7 +370,7 @@ module StarcoinFramework::StakeToSBTPlugin {
             sbt_amount,
         } = item;
 
-        assert!((Timestamp::now_seconds() - stake_time) > lock_time, Errors::invalid_state(ERR_PLUGIN_STILL_LOCKED));
+        assert!((Timestamp::now_seconds() - stake_time) >= lock_time, Errors::invalid_state(ERR_PLUGIN_STILL_LOCKED));
 
         // Deduct the corresponding SBT amount if the signer account is a DAO member while unstake
         if (DAOSpace::is_member<DAOT>(member)) {
