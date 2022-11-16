@@ -214,7 +214,7 @@ every plugin should provide a entry function to create proposal to install self.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_execute_proposal_entry">execute_proposal_entry</a>&lt;DAOT: store, ToInstallPluginT: <b>copy</b>, drop, store&gt;(sender: signer, proposal_id: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_execute_proposal_entry">execute_proposal_entry</a>&lt;DAOT: store, ToInstallPluginT: store&gt;(sender: signer, proposal_id: u64)
 </code></pre>
 
 
@@ -223,7 +223,7 @@ every plugin should provide a entry function to create proposal to install self.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_execute_proposal_entry">execute_proposal_entry</a>&lt;DAOT: store, ToInstallPluginT: <b>copy</b> + drop + store&gt;(sender: signer, proposal_id: u64) {
+<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_execute_proposal_entry">execute_proposal_entry</a>&lt;DAOT: store, ToInstallPluginT: store&gt;(sender: signer, proposal_id: u64) {
     <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_execute_proposal">execute_proposal</a>&lt;DAOT, ToInstallPluginT&gt;(&sender, proposal_id);
 }
 </code></pre>

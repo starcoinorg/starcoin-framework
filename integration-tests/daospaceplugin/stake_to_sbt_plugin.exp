@@ -12,53 +12,43 @@ task 6 'run'. lines 62-98:
   "status": "Executed"
 }
 
-task 7 'run'. lines 100-110:
+task 7 'run'. lines 100-117:
 {
-  "gas_used": 38600,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "StakeToSBTPlugin"
-        }
-      },
-      "abort_code": "257025"
-    }
-  }
-}
-
-task 9 'run'. lines 114-127:
-{
-  "gas_used": 273200,
+  "gas_used": 62324,
   "status": "Executed"
 }
 
-task 10 'run'. lines 129-145:
+task 9 'run'. lines 121-139:
+{
+  "gas_used": 313635,
+  "status": "Executed"
+}
+
+task 10 'run'. lines 141-157:
 {
   "gas_used": 458467,
   "status": "Executed"
 }
 
-task 12 'run'. lines 149-162:
+task 12 'run'. lines 161-174:
 {
   "gas_used": 417670,
   "status": "Executed"
 }
 
-task 13 'run'. lines 164-180:
+task 13 'run'. lines 176-192:
 {
   "gas_used": 592341,
   "status": "Executed"
 }
 
-task 15 'run'. lines 184-199:
+task 15 'run'. lines 196-211:
 {
   "gas_used": 261857,
   "status": "Executed"
 }
 
-task 16 'run'. lines 201-212:
+task 16 'run'. lines 213-224:
 {
   "gas_used": 656139,
   "status": {

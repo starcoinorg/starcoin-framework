@@ -62,7 +62,7 @@ module StarcoinFramework::InstallPluginProposalPlugin{
         DAOSpace::install_plugin<DAOT, InstallPluginProposalPlugin, ToInstallPluginT>(&install_plugin_cap, required_caps);
     }
 
-    public (script) fun execute_proposal_entry<DAOT: store, ToInstallPluginT: copy + drop + store>(sender: signer, proposal_id: u64) {
+    public (script) fun execute_proposal_entry<DAOT: store, ToInstallPluginT: store>(sender: signer, proposal_id: u64) {
         execute_proposal<DAOT, ToInstallPluginT>(&sender, proposal_id);
     }
 }
