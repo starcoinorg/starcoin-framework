@@ -17,6 +17,8 @@ The module for StdlibUpgrade init scripts
 -  [Function `do_upgrade_from_v7_to_v8`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v7_to_v8)
 -  [Function `upgrade_from_v11_to_v12`](#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12)
 -  [Function `do_upgrade_from_v11_to_v12`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12)
+-  [Function `upgrade_from_v12_to_v13`](#0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v13)
+-  [Function `do_upgrade_from_v12_to_v13`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v13)
 -  [Module Specification](#@Module_Specification_0)
 
 
@@ -61,6 +63,7 @@ The module for StdlibUpgrade init scripts
 <b>use</b> <a href="UpgradeModuleDaoProposal.md#0x1_UpgradeModuleDaoProposal">0x1::UpgradeModuleDaoProposal</a>;
 <b>use</b> <a href="UpgradeModulePlugin.md#0x1_UpgradeModulePlugin">0x1::UpgradeModulePlugin</a>;
 <b>use</b> <a href="VMConfig.md#0x1_VMConfig">0x1::VMConfig</a>;
+<b>use</b> <a href="WithdrawPlugin.md#0x1_WithdrawPlugin">0x1::WithdrawPlugin</a>;
 </code></pre>
 
 
@@ -408,6 +411,55 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 
     // clean <b>old</b> DAO resources
     <a href="ModifyDaoConfigProposal.md#0x1_ModifyDaoConfigProposal_destroy_modify_config_capability">ModifyDaoConfigProposal::destroy_modify_config_capability</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(&genessis_signer);
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v13"></a>
+
+## Function `upgrade_from_v12_to_v13`
+
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v13">upgrade_from_v12_to_v13</a>()
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v13">upgrade_from_v12_to_v13</a>() {
+    <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v13">do_upgrade_from_v12_to_v13</a>();
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v13"></a>
+
+## Function `do_upgrade_from_v12_to_v13`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v13">do_upgrade_from_v12_to_v13</a>()
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v13">do_upgrade_from_v12_to_v13</a>() {
+    <b>let</b> genessis_signer = <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability_get_genesis_signer">GenesisSignerCapability::get_genesis_signer</a>();
+    <a href="WithdrawPlugin.md#0x1_WithdrawPlugin_initialize">WithdrawPlugin::initialize</a>(&genessis_signer);
 }
 </code></pre>
 

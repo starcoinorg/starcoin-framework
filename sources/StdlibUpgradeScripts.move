@@ -42,6 +42,7 @@ module StdlibUpgradeScripts {
     use StarcoinFramework::TransactionTimeoutConfig;
     use StarcoinFramework::UpgradeModuleDaoProposal;
     use StarcoinFramework::ModifyDaoConfigProposal;
+    use StarcoinFramework::WithdrawPlugin;
 
     spec module {
         pragma verify = false;
@@ -176,6 +177,15 @@ module StdlibUpgradeScripts {
 
         // clean old DAO resources
         ModifyDaoConfigProposal::destroy_modify_config_capability<STC>(&genessis_signer);
+    }
+
+    public(script) fun upgrade_from_v12_to_v13() {
+        do_upgrade_from_v12_to_v13();
+    }
+
+    public fun do_upgrade_from_v12_to_v13() {
+        let genessis_signer = GenesisSignerCapability::get_genesis_signer();
+        WithdrawPlugin::initialize(&genessis_signer);
     }
 }
 }

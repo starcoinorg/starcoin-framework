@@ -43,6 +43,7 @@ module StarcoinFramework::Genesis {
     use StarcoinFramework::RewardConfig;
     use StarcoinFramework::LanguageVersion;
     use StarcoinFramework::Errors;
+    use StarcoinFramework::WithdrawPlugin;
 
     spec module {
         pragma verify = false; // break after enabling v2 compilation scheme
@@ -385,6 +386,9 @@ module StarcoinFramework::Genesis {
         StarcoinDAO::delegate_config_capability<STC, LanguageVersion::LanguageVersion>(
             Config::extract_modify_config_capability<LanguageVersion::LanguageVersion>(&genesis_account));
         StarcoinDAO::set_treasury_withdraw_proposal_scale(100);
+
+        // v12 -> v13
+        WithdrawPlugin::initialize(&genesis_account);
 
         //Start time, Timestamp::is_genesis() will return false. this call should at the end of genesis init.
         Timestamp::set_time_has_started(&genesis_account);
