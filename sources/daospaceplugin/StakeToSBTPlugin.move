@@ -326,7 +326,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         unstake_by_id<DAOT, TokenT>(&sender, id);
     }
 
-    /// Unstake all staking items from sender,
+    /// Unstake all expired items.
     /// No care whether the sender is member or not
     public fun unstake_all<DAOT: store, TokenT: store>(sender: &signer) acquires StakeList {
         let sender_addr = Signer::address_of(sender);
@@ -347,6 +347,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         };
     }
 
+    /// Unstake all expired items.
     public(script) fun unstake_all_entry<DAOT: store, TokenT: store>(sender: signer) acquires StakeList {
         unstake_all<DAOT, TokenT>(&sender);
     }
