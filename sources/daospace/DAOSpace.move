@@ -967,6 +967,10 @@ module StarcoinFramework::DAOSpace {
         EventUtil::init_event<EventT>(&dao_signer);
     }
 
+    public fun exist_plugin_event<DAOT: store, PluginT: store, EventT: store+drop>(): bool {
+        EventUtil::exist_event<EventT>(dao_address<DAOT>())
+    }
+
     public fun emit_plugin_event<
         DAOT: store,
         PluginT: store,
