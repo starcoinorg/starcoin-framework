@@ -6,8 +6,6 @@ module StarcoinFramework::WithdrawPlugin {
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Signer;
     use StarcoinFramework::Vector;
-    use StarcoinFramework::Token;
-    use StarcoinFramework::Treasury;
     use StarcoinFramework::Account;
     use StarcoinFramework::InstallPluginProposalPlugin;
 
@@ -59,15 +57,6 @@ module StarcoinFramework::WithdrawPlugin {
         Vector::push_back(&mut caps, DAOSpace::modify_config_cap_type());
         Vector::push_back(&mut caps, DAOSpace::withdraw_token_cap_type());
         caps
-    }
-
-    fun withdraw_limitation<DAOT: store, TokenT: store>(): u128 {
-        let market_cap = Token::market_cap<TokenT>();
-        let balance_in_treasury = Treasury::balance<TokenT>();
-        let supply = market_cap - balance_in_treasury;
-        let rate = DAOSpace::voting_quorum_rate<DAOT>();
-        let rate = (rate as u128);
-        supply * rate / 100
     }
 
     public fun create_withdraw_proposal<DAOT: store, TokenT: store>(
