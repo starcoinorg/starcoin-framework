@@ -460,6 +460,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 <pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v13">do_upgrade_from_v12_to_v13</a>() {
     <b>let</b> genessis_signer = <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability_get_genesis_signer">GenesisSignerCapability::get_genesis_signer</a>();
     <a href="WithdrawPlugin.md#0x1_WithdrawPlugin_initialize">WithdrawPlugin::initialize</a>(&genessis_signer);
+    <a href="StarcoinDAO.md#0x1_StarcoinDAO_upgrade_dao">StarcoinDAO::upgrade_dao</a>();
 }
 </code></pre>
 

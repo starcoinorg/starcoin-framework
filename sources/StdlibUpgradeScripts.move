@@ -186,6 +186,7 @@ module StdlibUpgradeScripts {
     public fun do_upgrade_from_v12_to_v13() {
         let genessis_signer = GenesisSignerCapability::get_genesis_signer();
         WithdrawPlugin::initialize(&genessis_signer);
+        StarcoinDAO::upgrade_dao();
     }
 }
 }
