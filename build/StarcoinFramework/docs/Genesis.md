@@ -56,6 +56,7 @@ The module for init Genesis
 <b>use</b> <a href="VMConfig.md#0x1_VMConfig">0x1::VMConfig</a>;
 <b>use</b> <a href="Vector.md#0x1_Vector">0x1::Vector</a>;
 <b>use</b> <a href="Version.md#0x1_Version">0x1::Version</a>;
+<b>use</b> <a href="WithdrawPlugin.md#0x1_WithdrawPlugin">0x1::WithdrawPlugin</a>;
 </code></pre>
 
 
@@ -450,6 +451,10 @@ The module for init Genesis
     <a href="StarcoinDAO.md#0x1_StarcoinDAO_delegate_config_capability">StarcoinDAO::delegate_config_capability</a>&lt;<a href="STC.md#0x1_STC">STC</a>, <a href="LanguageVersion.md#0x1_LanguageVersion_LanguageVersion">LanguageVersion::LanguageVersion</a>&gt;(
         <a href="Config.md#0x1_Config_extract_modify_config_capability">Config::extract_modify_config_capability</a>&lt;<a href="LanguageVersion.md#0x1_LanguageVersion_LanguageVersion">LanguageVersion::LanguageVersion</a>&gt;(&genesis_account));
     <a href="StarcoinDAO.md#0x1_StarcoinDAO_set_treasury_withdraw_proposal_scale">StarcoinDAO::set_treasury_withdraw_proposal_scale</a>(100);
+
+    // v12 -&gt; v13
+    <a href="WithdrawPlugin.md#0x1_WithdrawPlugin_initialize">WithdrawPlugin::initialize</a>(&genesis_account);
+    <a href="StarcoinDAO.md#0x1_StarcoinDAO_upgrade_dao">StarcoinDAO::upgrade_dao</a>();
 
     //Start time, <a href="Timestamp.md#0x1_Timestamp_is_genesis">Timestamp::is_genesis</a>() will <b>return</b> <b>false</b>. this call should at the end of genesis init.
     <a href="Timestamp.md#0x1_Timestamp_set_time_has_started">Timestamp::set_time_has_started</a>(&genesis_account);
