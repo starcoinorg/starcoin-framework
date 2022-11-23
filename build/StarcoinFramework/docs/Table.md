@@ -52,7 +52,7 @@ Type of tables
 
 <dl>
 <dt>
-<code>handle: u128</code>
+<code>handle: <b>address</b></code>
 </dt>
 <dd>
 
@@ -401,7 +401,7 @@ Returns true iff <code>table</code> contains an entry for <code>key</code>.
 
 
 
-<pre><code><b>fun</b> <a href="Table.md#0x1_Table_new_table_handle">new_table_handle</a>&lt;K, V&gt;(): u128
+<pre><code><b>fun</b> <a href="Table.md#0x1_Table_new_table_handle">new_table_handle</a>&lt;K, V&gt;(): <b>address</b>
 </code></pre>
 
 
@@ -410,7 +410,7 @@ Returns true iff <code>table</code> contains an entry for <code>key</code>.
 <summary>Implementation</summary>
 
 
-<pre><code><b>native</b> <b>fun</b> <a href="Table.md#0x1_Table_new_table_handle">new_table_handle</a>&lt;K, V&gt;(): u128;
+<pre><code><b>native</b> <b>fun</b> <a href="Table.md#0x1_Table_new_table_handle">new_table_handle</a>&lt;K, V&gt;(): <b>address</b>;
 </code></pre>
 
 

@@ -296,17 +296,22 @@ module VMConfig {
         Vector::push_back(&mut table, new_gas_cost(4, 1));
         // Table::borrow_box 35
         Vector::push_back(&mut table, new_gas_cost(10, 1));
-        // Table::borrow_box_mut 36
-        Vector::push_back(&mut table, new_gas_cost(10, 1));
-        // Table::remove_box 37
+        // Table::remove_box 36
         Vector::push_back(&mut table, new_gas_cost(8, 1));
-        // Table::contains_box 38
+        // Table::contains_box 37
         Vector::push_back(&mut table, new_gas_cost(40, 1));
-        // Table::destroy_empty_box 39
+        // Table::destroy_empty_box 38
         Vector::push_back(&mut table, new_gas_cost(20, 1));
-        // Table::drop_unchecked_box 40
-        Vector::push_back(&mut table, new_gas_cost(0, 1));
-
+        // Table::drop_unchecked_box 39
+        Vector::push_back(&mut table, new_gas_cost(73, 1));
+        // string.internal_check_utf8 40
+        Vector::push_back(&mut table, new_gas_cost(4, 1));
+        // string.internal_sub_string 41
+        Vector::push_back(&mut table, new_gas_cost(4, 1));
+        // string.internal_is_char_boundary 42
+        Vector::push_back(&mut table, new_gas_cost(4, 1));
+        // Table::string.internal_index_of 43
+        Vector::push_back(&mut table, new_gas_cost(4, 1));
         table
     }
 
