@@ -13,7 +13,7 @@ module BlockReward {
     use StarcoinFramework::Config;
     use StarcoinFramework::Event;
     use StarcoinFramework::Treasury;
-    use StarcoinFramework::TreasuryPlugin;
+    use StarcoinFramework::TreasuryWithdrawDaoProposal;
 
     spec module {
         pragma verify = false;
@@ -122,7 +122,7 @@ module BlockReward {
                         block_reward = treasury_balance;
                     };
                     if (block_reward > 0) {
-                        let reward = TreasuryPlugin::withdraw_for_block_reward<STC>(account, block_reward);
+                        let reward = TreasuryWithdrawDaoProposal::withdraw_for_block_reward<STC>(account, block_reward);
                         Token::deposit(&mut total_reward, reward);
                     };
                 };

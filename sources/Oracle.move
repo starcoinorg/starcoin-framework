@@ -56,7 +56,7 @@ module Oracle {
     const ERR_NO_UPDATE_CAPABILITY: u64 = 102;
     const ERR_NO_DATA_SOURCE: u64 = 103;
     const ERR_CAPABILITY_ACCOUNT_MISS_MATCH: u64 = 104;
-    const ERR_NO_ORACLE_FEED:u64 =105;
+
     /// deprecated.
     public fun initialize(_sender: &signer) {
     }
@@ -143,14 +143,12 @@ module Oracle {
 
     /// Read the Oracle's value from `ds_addr`
     public fun read<OracleT:copy+store+drop, ValueT: copy+store+drop>(ds_addr: address): ValueT acquires OracleFeed{
-        assert!(exists<OracleFeed<OracleT,ValueT>>(ds_addr), Errors::invalid_state(ERR_NO_ORACLE_FEED));
         let oracle_feed = borrow_global<OracleFeed<OracleT, ValueT>>(ds_addr);
         *&oracle_feed.record.value
     }
 
     /// Read the Oracle's DataRecord from `ds_addr`
     public fun read_record<OracleT:copy+store+drop, ValueT: copy+store+drop>(ds_addr: address): DataRecord<ValueT> acquires OracleFeed{
-        assert!(exists<OracleFeed<OracleT,ValueT>>(ds_addr), Errors::invalid_state(ERR_NO_ORACLE_FEED));
         let oracle_feed = borrow_global<OracleFeed<OracleT, ValueT>>(ds_addr);
         *&oracle_feed.record
     }
@@ -187,16 +185,12 @@ module Oracle {
         (record.version,*&record.value,record.updated_at)
     }
 }
-module PriceOracle {
+module PriceOracle{
     use StarcoinFramework::Math;
     use StarcoinFramework::Oracle::{Self, DataRecord, UpdateCapability};
 
-    struct PriceOracleInfo has copy, store, drop {
+    struct PriceOracleInfo has copy,store,drop{
         scaling_factor: u128,
-    }
-
-    public(script) fun register_oracle_entry<OracleT: copy+store+drop>(sender: signer, precision: u8){
-        register_oracle<OracleT>(&sender, precision);
     }
 
     public fun register_oracle<OracleT: copy+store+drop>(sender: &signer, precision: u8){
@@ -205,87 +199,40 @@ module PriceOracle {
             scaling_factor,
         });
     }
-    public(script) fun init_data_source_entry<OracleT: copy+store+drop>(sender: signer, init_value: u128){
-        init_data_source<OracleT>(&sender, init_value);
-    }
 
     public fun init_data_source<OracleT: copy+store+drop>(sender: &signer, init_value: u128){
         Oracle::init_data_source<OracleT, PriceOracleInfo, u128>(sender, init_value);
     }
 
-    public fun is_data_source_initialized<OracleT: copy + store + drop>(ds_addr: address): bool {
+    public fun is_data_source_initialized<OracleT:  copy+store+drop>(ds_addr: address): bool{
         Oracle::is_data_source_initialized<OracleT, u128>(ds_addr)
     }
 
-    public fun get_scaling_factor<OracleT: copy + store + drop>(): u128 {
+    public fun get_scaling_factor<OracleT: copy + store + drop>() : u128 {
         let info = Oracle::get_oracle_info<OracleT, PriceOracleInfo>();
         info.scaling_factor
-    }
-    public(script) fun update_entry<OracleT: copy+store+drop>(sender: signer, value: u128){
-        update<OracleT>(&sender, value);
     }
 
     public fun update<OracleT: copy+store+drop>(sender: &signer, value: u128){
         Oracle::update<OracleT, u128>(sender, value);
     }
 
-    public fun update_with_cap<OracleT: copy + store + drop>(cap: &mut UpdateCapability<OracleT>, value: u128) {
+    public fun update_with_cap<OracleT: copy+store+drop>(cap: &mut UpdateCapability<OracleT>, value: u128) {
         Oracle::update_with_cap<OracleT, u128>(cap, value);
     }
 
-    public fun read<OracleT: copy + store + drop>(addr: address): u128 {
+    public fun read<OracleT: copy+store+drop>(addr: address) : u128{
         Oracle::read<OracleT, u128>(addr)
     }
 
-    public fun read_record<OracleT: copy + store + drop>(addr: address): DataRecord<u128> {
+    public fun read_record<OracleT:copy+store+drop>(addr: address): DataRecord<u128>{
         Oracle::read_record<OracleT, u128>(addr)
     }
 
-    public fun read_records<OracleT: copy + store + drop>(addrs: &vector<address>): vector<DataRecord<u128>> {
+    public fun read_records<OracleT:copy+store+drop>(addrs: &vector<address>): vector<DataRecord<u128>>{
         Oracle::read_records<OracleT, u128>(addrs)
     }
 
-    public fun remove_update_capability<OracleT: copy + store + drop>(sender: &signer): UpdateCapability<OracleT> {
-        Oracle::remove_update_capability<OracleT>(sender)
-    }
-
-    public fun add_update_capability<OracleT: copy + store + drop>(sender: &signer, update_cap: UpdateCapability<OracleT>) {
-        Oracle::add_update_capability<OracleT>(sender, update_cap)
-    }
-}
-
-module GasOracle {
-    use StarcoinFramework::PriceOracle;
-
-    struct STCToken<phantom TokenType:store> has copy, store, drop {
-    }
-
-    public fun register<TokenType:store>(sender: &signer, precision: u8){
-        PriceOracle::register_oracle<STCToken<TokenType>>(sender, precision);
-    }
-    public(script) fun register_entry<TokenType:store>(sender: signer, precision: u8){
-        register<TokenType>(&sender, precision);
-    }
-
-    public fun init_data_source<TokenType: store>(sender: &signer, init_value: u128){
-        PriceOracle::init_data_source<STCToken<TokenType>>(sender, init_value);
-    }
-
-    public(script) fun init_data_source_entry<TokenType: store>(sender: signer, init_value: u128){
-        init_data_source<TokenType>(&sender, init_value);
-    }
-    
-    public fun update<TokenType:store>(sender: &signer, value: u128){
-        PriceOracle::update<STCToken<TokenType>>(sender, value);
-    }
-
-    public(script) fun update_entry<TokenType:store>(sender: signer, value: u128){
-        update<TokenType>(&sender, value);
-    }
-
-    public fun get_scaling_factor<TokenType: store>(): u128 {
-        PriceOracle::get_scaling_factor<STCToken<TokenType>>()
-    }
 }
 
 module STCUSDOracle{
@@ -316,15 +263,15 @@ module PriceOracleScripts{
     use StarcoinFramework::PriceOracle;
 
     public(script) fun register_oracle<OracleT: copy+store+drop>(sender: signer, precision: u8){
-        PriceOracle::register_oracle_entry<OracleT>(sender, precision);
+        PriceOracle::register_oracle<OracleT>(&sender, precision)
     }
 
     public(script) fun init_data_source<OracleT: copy+store+drop>(sender: signer, init_value: u128){
-        PriceOracle::init_data_source_entry<OracleT>(sender, init_value);
+        PriceOracle::init_data_source<OracleT>(&sender, init_value);
     }
 
     public(script) fun update<OracleT: copy+store+drop>(sender: signer, value: u128){
-        PriceOracle::update_entry<OracleT>(sender, value);
+        PriceOracle::update<OracleT>(&sender, value);
     }
 }
 

@@ -34,7 +34,7 @@ module Ring {
     }
 
     spec create_with_capacity{
-        pragma verify = false;
+        pragma intrinsic = true;
     }
 
     ///is Ring full
@@ -43,7 +43,7 @@ module Ring {
     }
 
     spec is_full{
-        pragma verify = false;
+        pragma intrinsic = true;
     }
 
     ///Return the capacity of the Ring.
@@ -52,7 +52,7 @@ module Ring {
     }
 
     spec capacity{
-        pragma verify = false;
+        pragma intrinsic = true;
     }
     
     /// Add element `e` to the insertion_index of the Ring `r`.
@@ -70,7 +70,7 @@ module Ring {
     }
 
     spec push{
-        pragma verify = false;
+        pragma intrinsic = true;
     }
     
     /// Return a reference to the `i`th element in the Ring `r`.
@@ -86,7 +86,7 @@ module Ring {
     }
 
     spec borrow{
-        pragma verify = false;
+        pragma intrinsic = true;
     }
 
     /// Return a mutable reference to the `i`th element in the Ring `r`.
@@ -103,7 +103,7 @@ module Ring {
     }
 
     spec borrow_mut{
-        pragma verify = false;
+        pragma intrinsic = true;
     }
 
 
@@ -120,7 +120,7 @@ module Ring {
     }
 
     spec index_of{
-        pragma verify = false;
+        pragma intrinsic = true;
     }    
 
     /// Destroy the Ring `r`.
@@ -148,7 +148,7 @@ module Ring {
     }
 
     spec destroy{
-        pragma verify = false;
+        pragma intrinsic = true;
     }  
 }
 }

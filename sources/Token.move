@@ -6,7 +6,6 @@ module Token {
     use StarcoinFramework::Errors;
     use StarcoinFramework::Math;
 
-    friend StarcoinFramework::TypeInfo;
     spec module {
         pragma verify;
         pragma aborts_if_is_strict;
@@ -505,12 +504,8 @@ module Token {
     /// does not matter for the verification of callers.
     spec fun spec_token_code<TokenType>(): TokenCode;
 
-    public (friend) fun type_of<T>(): (address, vector<u8>, vector<u8>){
-        name_of<T>()
-    }
-
     /// Return Token's module address, module name, and type name of `TokenType`.
-    native fun name_of<TokenType>(): (address, vector<u8>, vector<u8>);
+    native fun name_of<TokenType: store>(): (address, vector<u8>, vector<u8>);
 
     spec name_of {
         pragma opaque = true;

@@ -1,13 +1,13 @@
 address StarcoinFramework {
 /// A proposal module which is used to modify Token's DAO configuration.
 module ModifyDaoConfigProposal {
+    // use StarcoinFramework::Config;
     use StarcoinFramework::Token;
     use StarcoinFramework::Signer;
     use StarcoinFramework::Config;
     use StarcoinFramework::Dao;
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option;
-    use StarcoinFramework::Dao::DaoConfig;
 
     spec module {
         pragma verify = false; // break after enabling v2 compilation scheme
@@ -59,20 +59,6 @@ module ModifyDaoConfigProposal {
         aborts_if Option::borrow(config_cap).account_address != sender;
         aborts_if exists<DaoConfigModifyCapability<TokenT>>(sender);
         ensures exists<DaoConfigModifyCapability<TokenT>>(sender);
-    }
-
-    /// Destroy ModifyConfigCapability
-    public fun destroy_modify_config_capability<TokenT: copy + drop + store>(sender: &signer)
-    acquires DaoConfigModifyCapability {
-        let token_issuer = Token::token_address<TokenT>();
-        assert!(Signer::address_of(sender) == token_issuer, Errors::requires_address(ERR_NOT_AUTHORIZED));
-
-        let DaoConfigModifyCapability {cap} = move_from<DaoConfigModifyCapability<TokenT>>(token_issuer);
-        Config::destroy_modify_config_capability<DaoConfig<TokenT>>(cap);
-    }
-
-    spec destroy_modify_config_capability {
-        pragma verify = false;
     }
 
     /// Entrypoint for the proposal.
