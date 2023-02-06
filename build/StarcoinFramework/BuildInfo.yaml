@@ -205,6 +205,9 @@ compiled_package_info:
       name: StarcoinVerifier
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: SimpleMap
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: StdlibUpgradeScripts
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -267,10 +270,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-    ? address: "0x00000000000000000000000000000001"
-      name: simple_map
-    : StarcoinFramework
-  source_digest: 241A6580154F7786F435A440D2CC1B040821078292DAD817F835CC042357A3C8
+  source_digest: 29B205BF782AD2A48A7EA87664B485F98FE8F1BFFA8F01B5609FD243CFAF2384
   build_flags:
     dev_mode: false
     test_mode: false
