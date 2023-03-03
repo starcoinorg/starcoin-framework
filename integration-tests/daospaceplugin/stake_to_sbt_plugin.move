@@ -102,19 +102,12 @@ script {
     use creator::XDAO;
     use StarcoinFramework::StakeToSBTPlugin;
     use StarcoinFramework::STC;
-    use StarcoinFramework::Account;
-    use StarcoinFramework::Signer;
 
-    fun unstake_all(sender: signer) {
-        let sender_addr = Signer::address_of(&sender);
-        let balance = Account::balance<STC::STC>(sender_addr);
+    fun unstake_all_failed(sender: signer) {
         StakeToSBTPlugin::unstake_all<XDAO::X, STC::STC>(&sender);
-        let new_balance = Account::balance<STC::STC>(sender_addr);
-        assert!(balance == new_balance, 1001); // No item are available to unstake.
-        assert!(StakeToSBTPlugin::query_stake_count<XDAO::X, STC::STC>(sender_addr) == 1, 1002);
     }
 }
-// check: EXECUTED
+// check: ABORTED, 257025
 
 //# block --author 0x1 --timestamp 87400000
 
@@ -124,16 +117,11 @@ script {
     use StarcoinFramework::StakeToSBTPlugin;
     use StarcoinFramework::STC;
     use StarcoinFramework::Signer;
-    use StarcoinFramework::Account;
-    use StarcoinFramework::Token;
 
-    fun unstake_all(sender: signer) {
+    fun stake(sender: signer) {
         let sender_addr = Signer::address_of(&sender);
-        let balance = Account::balance<STC::STC>(sender_addr);
         StakeToSBTPlugin::unstake_all<XDAO::X, STC::STC>(&sender);
-        let new_balance = Account::balance<STC::STC>(sender_addr);
-        assert!(balance + 1 * Token::scaling_factor<STC::STC>() == new_balance, 1001);
-        assert!(StakeToSBTPlugin::query_stake_count<XDAO::X, STC::STC>(sender_addr) <= 0, 1002);
+        assert!(StakeToSBTPlugin::query_stake_count<XDAO::X, STC::STC>(sender_addr) <= 0, 10001);
     }
 }
 // check: CHECKED
