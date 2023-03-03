@@ -9,7 +9,6 @@ module StarcoinFramework::TreasuryPlugin {
     use StarcoinFramework::Treasury;
     use StarcoinFramework::Token::Token;
     use StarcoinFramework::CoreAddresses;
-    use StarcoinFramework::InstallPluginProposalPlugin;
 
     const ERR_NOT_AUTHORIZED: u64 = 101;
     /// Only receiver can execute treasury withdraw proposal
@@ -167,32 +166,5 @@ module StarcoinFramework::TreasuryPlugin {
         let plugin = TreasuryPlugin {};
         let cap = DAOSpace::acquire_modify_config_cap<DAOT, TreasuryPlugin>(&plugin);
         DAOSpace::set_custom_config<DAOT, TreasuryPlugin, QuorumScale>(&mut cap, QuorumScale { scale });
-    }
-
-    public fun install_plugin_proposal<DAOT: store>(
-        sender: &signer,
-        title:vector<u8>,
-        introduction:vector<u8>,
-        extend: vector<u8>,
-        action_delay: u64
-    ) {
-        InstallPluginProposalPlugin::create_proposal<DAOT, TreasuryPlugin>(
-            sender,
-            required_caps(),
-            title,
-            introduction,
-            extend,
-            action_delay
-        );
-    }
-
-    public(script) fun install_plugin_proposal_entry<DAOT: store>(
-        sender: signer,
-        title:vector<u8>,
-        introduction:vector<u8>,
-        extend: vector<u8>,
-        action_delay: u64
-    ) {
-        install_plugin_proposal<DAOT>(&sender, title, introduction, extend, action_delay);
     }
 }
