@@ -120,22 +120,21 @@ module StdlibUpgradeScripts {
         }
 
         public fun do_upgrade_from_v11_to_v12() {
-            let genessis_signer = GenesisSignerCapability::get_genesis_signer();
             Block::checkpoints_init();
             DAORegistry::initialize();
 
             DAOExtensionPoint::initialize();
             DAOPluginMarketplace::initialize();
 
-            AnyMemberPlugin::initialize(&genessis_signer);
-            ConfigProposalPlugin::initialize(&genessis_signer);
-            GrantProposalPlugin::initialize(&genessis_signer);
-            InstallPluginProposalPlugin::initialize(&genessis_signer);
-            MemberProposalPlugin::initialize(&genessis_signer);
-            MintProposalPlugin::initialize(&genessis_signer);
-            StakeToSBTPlugin::initialize(&genessis_signer);
-            UpgradeModulePlugin::initialize(&genessis_signer);
-            GasOracleProposalPlugin::initialize(&genessis_signer);
+            AnyMemberPlugin::initialize();
+            ConfigProposalPlugin::initialize();
+            GrantProposalPlugin::initialize();
+            InstallPluginProposalPlugin::initialize();
+            MemberProposalPlugin::initialize();
+            MintProposalPlugin::initialize();
+            StakeToSBTPlugin::initialize();
+            UpgradeModulePlugin::initialize();
+            GasOracleProposalPlugin::initialize();
 
             //TODO : config rate need mind
             // voting_delay: 60000 ms

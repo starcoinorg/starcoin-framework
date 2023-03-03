@@ -19,6 +19,7 @@
 
 <pre><code><b>use</b> <a href="DAOPluginMarketplace.md#0x1_DAOPluginMarketplace">0x1::DAOPluginMarketplace</a>;
 <b>use</b> <a href="DAOSpace.md#0x1_DAOSpace">0x1::DAOSpace</a>;
+<b>use</b> <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability">0x1::GenesisSignerCapability</a>;
 <b>use</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">0x1::InstallPluginProposalPlugin</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
 <b>use</b> <a href="Vector.md#0x1_Vector">0x1::Vector</a>;
@@ -104,7 +105,7 @@
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_initialize">initialize</a>(sender: &signer)
+<pre><code><b>public</b> <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_initialize">initialize</a>()
 </code></pre>
 
 
@@ -113,9 +114,11 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_initialize">initialize</a>(sender: &signer) {
+<pre><code><b>public</b> <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_initialize">initialize</a>() {
+    <b>let</b> signer = <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability_get_genesis_signer">GenesisSignerCapability::get_genesis_signer</a>();
+
     <a href="DAOPluginMarketplace.md#0x1_DAOPluginMarketplace_register_plugin">DAOPluginMarketplace::register_plugin</a>&lt;<a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>&gt;(
-        sender,
+        &signer,
         b"<a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">0x1::MemberProposalPlugin</a>",
         b"The plugin for member proposal",
         <a href="Option.md#0x1_Option_none">Option::none</a>(),
@@ -126,7 +129,7 @@
 
     <b>let</b> witness = <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>{};
     <a href="DAOPluginMarketplace.md#0x1_DAOPluginMarketplace_publish_plugin_version">DAOPluginMarketplace::publish_plugin_version</a>&lt;<a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>&gt;(
-        sender,
+        &signer,
         &witness,
         b"v0.1.0",
         *&implement_extpoints,

@@ -1,5 +1,6 @@
 //TODO find more good name
 module StarcoinFramework::AnyMemberPlugin{
+    use StarcoinFramework::GenesisSignerCapability;
     use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Vector;
@@ -15,9 +16,11 @@ module StarcoinFramework::AnyMemberPlugin{
         caps 
     }
 
-    public fun initialize(sender: &signer) {
+    public fun initialize() {
+        let signer = GenesisSignerCapability::get_genesis_signer();
+        
         DAOPluginMarketplace::register_plugin<AnyMemberPlugin>(
-            sender,
+            &signer,
             b"0x1::AnyMemberPlugin",
             b"The member plugin that allow all member to do join.",
             Option::none(),
@@ -28,7 +31,7 @@ module StarcoinFramework::AnyMemberPlugin{
 
         let witness = AnyMemberPlugin{};
         DAOPluginMarketplace::publish_plugin_version<AnyMemberPlugin>(
-            sender,
+            &signer, 
             &witness,
             b"v0.1.0", 
             *&implement_extpoints,

@@ -1,5 +1,6 @@
 //TODO find more good name
 module StarcoinFramework::InstallPluginProposalPlugin{
+    use StarcoinFramework::GenesisSignerCapability;
     use StarcoinFramework::Option;
     use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
@@ -11,9 +12,11 @@ module StarcoinFramework::InstallPluginProposalPlugin{
         required_caps: vector<CapType>,
     }
 
-    public fun initialize(sender: &signer) {
+    public fun initialize() {
+        let signer = GenesisSignerCapability::get_genesis_signer();
+        
         DAOPluginMarketplace::register_plugin<InstallPluginProposalPlugin>(
-            sender,
+            &signer,
             b"0x1::InstallPluginProposalPlugin",
             b"The plugin for install plugin proposal",
             Option::none(),
@@ -24,7 +27,7 @@ module StarcoinFramework::InstallPluginProposalPlugin{
 
         let witness = InstallPluginProposalPlugin{};
         DAOPluginMarketplace::publish_plugin_version<InstallPluginProposalPlugin>(
-            sender,
+            &signer,
             &witness,
             b"v0.1.0", 
             *&implement_extpoints,

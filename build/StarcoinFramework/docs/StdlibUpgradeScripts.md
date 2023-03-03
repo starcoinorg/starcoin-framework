@@ -352,22 +352,21 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>() {
-    <b>let</b> genessis_signer = <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability_get_genesis_signer">GenesisSignerCapability::get_genesis_signer</a>();
     <a href="Block.md#0x1_Block_checkpoints_init">Block::checkpoints_init</a>();
     <a href="DAORegistry.md#0x1_DAORegistry_initialize">DAORegistry::initialize</a>();
 
     <a href="DAOExtensionPoint.md#0x1_DAOExtensionPoint_initialize">DAOExtensionPoint::initialize</a>();
     <a href="DAOPluginMarketplace.md#0x1_DAOPluginMarketplace_initialize">DAOPluginMarketplace::initialize</a>();
 
-    <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin_initialize">AnyMemberPlugin::initialize</a>(&genessis_signer);
-    <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_initialize">ConfigProposalPlugin::initialize</a>(&genessis_signer);
-    <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_initialize">GrantProposalPlugin::initialize</a>(&genessis_signer);
-    <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_initialize">InstallPluginProposalPlugin::initialize</a>(&genessis_signer);
-    <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_initialize">MemberProposalPlugin::initialize</a>(&genessis_signer);
-    <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_initialize">MintProposalPlugin::initialize</a>(&genessis_signer);
-    <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_initialize">StakeToSBTPlugin::initialize</a>(&genessis_signer);
-    <a href="UpgradeModulePlugin.md#0x1_UpgradeModulePlugin_initialize">UpgradeModulePlugin::initialize</a>(&genessis_signer);
-    <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_initialize">GasOracleProposalPlugin::initialize</a>(&genessis_signer);
+    <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin_initialize">AnyMemberPlugin::initialize</a>();
+    <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_initialize">ConfigProposalPlugin::initialize</a>();
+    <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_initialize">GrantProposalPlugin::initialize</a>();
+    <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_initialize">InstallPluginProposalPlugin::initialize</a>();
+    <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_initialize">MemberProposalPlugin::initialize</a>();
+    <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_initialize">MintProposalPlugin::initialize</a>();
+    <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_initialize">StakeToSBTPlugin::initialize</a>();
+    <a href="UpgradeModulePlugin.md#0x1_UpgradeModulePlugin_initialize">UpgradeModulePlugin::initialize</a>();
+    <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_initialize">GasOracleProposalPlugin::initialize</a>();
 
     //TODO : config rate need mind
     // voting_delay: 60000 ms
