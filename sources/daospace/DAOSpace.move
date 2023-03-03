@@ -577,10 +577,6 @@ module StarcoinFramework::DAOSpace {
 
     /// Join DAO and get a membership
     public fun join_member<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
-        do_join_member<DAOT, PluginT>(to_address, image_data, image_url, init_sbt);
-    }
-
-    fun do_join_member<DAOT: store, PluginT>(to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
         ensure_not_member<DAOT>(to_address);
         let member_id = next_member_id<DAOT>();
 
@@ -675,10 +671,6 @@ module StarcoinFramework::DAOSpace {
         let token_burn_cap = &mut borrow_global_mut<DAOSBTBurnCapHolder<DAOT>>(dao_address).cap;
         Token::burn_with_capability(token_burn_cap, sbt);
         (member_id, sbt_amount)
-    }
-
-    public fun join_member_with_root_cap<DAOT: store>(_cap: &DAORootCap<DAOT>, to_address: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>, init_sbt: u128) acquires DAONFTMintCapHolder, DAOSBTMintCapHolder, DAO, MemberEvent {
-        do_join_member<DAOT, DAOT>(to_address, image_data, image_url, init_sbt);
     }
 
     /// Increment the member SBT
