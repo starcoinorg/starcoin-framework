@@ -17,7 +17,6 @@ module StarcoinFramework::StarcoinDAO{
     use StarcoinFramework::TransactionTimeoutConfig;
     use StarcoinFramework::GasOracleProposalPlugin::GasOracleProposalPlugin;
     use StarcoinFramework::GasOracleProposalPlugin;
-    use StarcoinFramework::TreasuryPlugin::{Self, TreasuryPlugin};
 
     friend StarcoinFramework::Genesis;
     friend StarcoinFramework::StdlibUpgradeScripts;
@@ -60,7 +59,6 @@ module StarcoinFramework::StarcoinDAO{
         DAOSpace::install_plugin_with_root_cap<StarcoinDAO, ConfigProposalPlugin>(&dao_root_cap, ConfigProposalPlugin::required_caps());
         DAOSpace::install_plugin_with_root_cap<StarcoinDAO, StakeToSBTPlugin>(&dao_root_cap, StakeToSBTPlugin::required_caps());
         DAOSpace::install_plugin_with_root_cap<StarcoinDAO, GasOracleProposalPlugin>(&dao_root_cap, GasOracleProposalPlugin::required_caps());
-        DAOSpace::install_plugin_with_root_cap<StarcoinDAO, TreasuryPlugin>(&dao_root_cap, TreasuryPlugin::required_caps());
 
         StakeToSBTPlugin::accept_token_with_root_cap<StarcoinDAO, STC>(&dao_root_cap);
         StakeToSBTPlugin::set_sbt_weight_with_root_cap<StarcoinDAO, STC>(&dao_root_cap, 60000, 1000);
