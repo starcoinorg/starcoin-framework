@@ -69,7 +69,7 @@ script {
     use StarcoinFramework::GasOracle;
     use alice::Token::AliceToken;
     fun main(account: signer) {
-        GasOracle::register_entry<AliceToken>(account,9);
+        GasOracle::register<AliceToken>(account,9);
     }
 }
 // check: EXECUTED
@@ -79,7 +79,7 @@ script {
     use StarcoinFramework::GasOracle;
     use alice::Token::AliceToken;
     fun main(account: signer) {
-        GasOracle::init_data_source_entry<AliceToken>(account,0);
+        GasOracle::init_data_source<AliceToken>(account,0);
     }
 }
 // check: EXECUTED
@@ -222,7 +222,7 @@ script {
     use StarcoinFramework::GasOracle;
 
     fun main(account: signer) {
-        GasOracle::update_entry<AliceToken>(account, 100);
+        GasOracle::update<AliceToken>(account, 100);
     }
 }
 
