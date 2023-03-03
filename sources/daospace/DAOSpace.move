@@ -736,7 +736,7 @@ module StarcoinFramework::DAOSpace {
         IdentifierNFT::owns<DAOMember<DAOT>, DAOMemberBody<DAOT>>(member_addr)
     }
 
-    struct PluginEvent<phantom DAOT : store, phantom PluginT: store, phantom EventT: store + drop> has key, store {
+    struct PluginEvent<phantom DAOT, phantom PluginT, phantom EventT> has key, store {
         event_handle: Event::EventHandle<EventT>,
     }
 
@@ -1115,7 +1115,6 @@ module StarcoinFramework::DAOSpace {
     public fun acquire_plugin_event_cap<DAOT: store, PluginT>(_witness: &PluginT): DAOPluginEventCap<DAOT, PluginT> acquires InstalledPluginInfo {
         validate_cap<DAOT, PluginT>(plugin_event_cap_type());
         DAOPluginEventCap<DAOT, PluginT> {}
-    }
 
     /// Delegate the token mint capability to DAO
     /// _witness parameter ensures that the caller is the module which define PluginT
