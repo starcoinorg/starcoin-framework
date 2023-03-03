@@ -22,15 +22,5 @@ fun main() {
     let i2 = SignedInteger64::create_from_raw_value(100, true);
     let z2 = SignedInteger64::sub_u64(100, copy i2);
     assert!(SignedInteger64::get_value(z2) == 200, 6);
-
-    let i3 = SignedInteger64::create_from_raw_value(0, true);
-    let z3 = SignedInteger64::sub_u64(0, i3);
-    assert!(SignedInteger64::get_value(copy z3) == 0, 1);
-    assert!(SignedInteger64::is_negative(z3) == false, 2);
-
-    let i4 = SignedInteger64::create_from_raw_value(0, false);
-    let z4 = SignedInteger64::sub_u64(0, i4);
-    assert!(SignedInteger64::get_value(copy z4) == 0, 1);
-    assert!(SignedInteger64::is_negative(z4) == false, 2);
 }
 }

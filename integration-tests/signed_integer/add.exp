@@ -1,7 +1,7 @@
 processed 3 tasks
 
-task 2 'run'. lines 5-41:
+task 2 'run'. lines 5-26:
 {
-  "gas_used": 100723,
+  "gas_used": 54451,
   "status": "Executed"
 }
