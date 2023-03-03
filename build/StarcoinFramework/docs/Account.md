@@ -35,7 +35,6 @@ The module for the account resource that governs every account
 -  [Function `create_signer`](#0x1_Account_create_signer)
 -  [Function `create_account_with_initial_amount`](#0x1_Account_create_account_with_initial_amount)
 -  [Function `create_account_with_initial_amount_v2`](#0x1_Account_create_account_with_initial_amount_v2)
--  [Function `create_account_with_initial_amount_entry`](#0x1_Account_create_account_with_initial_amount_entry)
 -  [Function `create_delegate_account`](#0x1_Account_create_delegate_account)
 -  [Function `generate_fresh_address`](#0x1_Account_generate_fresh_address)
 -  [Function `deposit_to_self`](#0x1_Account_deposit_to_self)
@@ -59,17 +58,13 @@ The module for the account resource that governs every account
 -  [Function `restore_key_rotation_capability`](#0x1_Account_restore_key_rotation_capability)
 -  [Function `destroy_key_rotation_capability`](#0x1_Account_destroy_key_rotation_capability)
 -  [Function `rotate_authentication_key`](#0x1_Account_rotate_authentication_key)
--  [Function `rotate_authentication_key_entry`](#0x1_Account_rotate_authentication_key_entry)
--  [Function `do_rotate_authentication_key`](#0x1_Account_do_rotate_authentication_key)
 -  [Function `balance_for`](#0x1_Account_balance_for)
 -  [Function `balance`](#0x1_Account_balance)
 -  [Function `do_accept_token`](#0x1_Account_do_accept_token)
 -  [Function `accept_token`](#0x1_Account_accept_token)
--  [Function `accept_token_entry`](#0x1_Account_accept_token_entry)
 -  [Function `is_accepts_token`](#0x1_Account_is_accepts_token)
 -  [Function `is_accept_token`](#0x1_Account_is_accept_token)
 -  [Function `can_auto_accept_token`](#0x1_Account_can_auto_accept_token)
--  [Function `set_auto_accept_token_entry`](#0x1_Account_set_auto_accept_token_entry)
 -  [Function `set_auto_accept_token`](#0x1_Account_set_auto_accept_token)
 -  [Function `try_accept_token`](#0x1_Account_try_accept_token)
 -  [Function `sequence_number_for_account`](#0x1_Account_sequence_number_for_account)
@@ -84,7 +79,6 @@ The module for the account resource that governs every account
 -  [Function `txn_prologue`](#0x1_Account_txn_prologue)
 -  [Function `txn_epilogue`](#0x1_Account_txn_epilogue)
 -  [Function `txn_epilogue_v2`](#0x1_Account_txn_epilogue_v2)
--  [Function `remove_zero_balance_entry`](#0x1_Account_remove_zero_balance_entry)
 -  [Function `remove_zero_balance`](#0x1_Account_remove_zero_balance)
 -  [Function `make_event_store_if_not_exist`](#0x1_Account_make_event_store_if_not_exist)
 -  [Module Specification](#@Module_Specification_1)
@@ -1232,7 +1226,7 @@ reserved address for the MoveVM.
 
 <pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount">create_account_with_initial_amount</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, _auth_key: vector&lt;u8&gt;, initial_amount: u128)
 <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a> {
-    <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType&gt;(account, fresh_address, initial_amount);
+     <a href="Account.md#0x1_Account_create_account_with_initial_amount_v2">create_account_with_initial_amount_v2</a>&lt;TokenType&gt;(account, fresh_address, initial_amount)
 }
 </code></pre>
 
@@ -1269,7 +1263,10 @@ reserved address for the MoveVM.
 
 <pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_v2">create_account_with_initial_amount_v2</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
 <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a> {
-    <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType&gt;(account, fresh_address, initial_amount);
+    <a href="Account.md#0x1_Account_create_account_with_address">create_account_with_address</a>&lt;TokenType&gt;(fresh_address);
+    <b>if</b> (initial_amount &gt; 0) {
+        <a href="Account.md#0x1_Account_pay_from">pay_from</a>&lt;TokenType&gt;(&account, fresh_address, initial_amount);
+    };
 }
 </code></pre>
 
@@ -1283,34 +1280,6 @@ reserved address for the MoveVM.
 
 
 <pre><code><b>pragma</b> verify = <b>false</b>;
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Account_create_account_with_initial_amount_entry"></a>
-
-## Function `create_account_with_initial_amount_entry`
-
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
-<b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a> {
-    <a href="Account.md#0x1_Account_create_account_with_address">create_account_with_address</a>&lt;TokenType&gt;(fresh_address);
-    <b>if</b> (initial_amount &gt; 0) {
-        <a href="Account.md#0x1_Account_pay_from">pay_from</a>&lt;TokenType&gt;(&account, fresh_address, initial_amount);
-    };
-}
 </code></pre>
 
 
@@ -2372,7 +2341,20 @@ Return the key rotation capability to the account it originally came from
 
 
 <pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_rotate_authentication_key">rotate_authentication_key</a>(account: signer, new_key: vector&lt;u8&gt;) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_EventStore">EventStore</a> {
-    <a href="Account.md#0x1_Account_rotate_authentication_key_entry">rotate_authentication_key_entry</a>(account, new_key);
+    <b>let</b> key_rotation_capability = <a href="Account.md#0x1_Account_extract_key_rotation_capability">extract_key_rotation_capability</a>(&account);
+    <a href="Account.md#0x1_Account_rotate_authentication_key_with_capability">rotate_authentication_key_with_capability</a>(&key_rotation_capability, <b>copy</b> new_key);
+    <a href="Account.md#0x1_Account_restore_key_rotation_capability">restore_key_rotation_capability</a>(key_rotation_capability);
+
+    <a href="Account.md#0x1_Account_make_event_store_if_not_exist">make_event_store_if_not_exist</a>(&account);
+    <b>let</b> signer_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&account);
+    <b>let</b> event_store = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_EventStore">EventStore</a>&gt;(signer_addr);
+    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>&lt;<a href="Account.md#0x1_Account_RotateAuthKeyEvent">RotateAuthKeyEvent</a>&gt;(
+        &<b>mut</b> event_store.rotate_auth_key_events,
+        <a href="Account.md#0x1_Account_RotateAuthKeyEvent">RotateAuthKeyEvent</a> {
+            account_address: signer_addr,
+            new_auth_key: new_key,
+        }
+    );
 }
 </code></pre>
 
@@ -2386,67 +2368,6 @@ Return the key rotation capability to the account it originally came from
 
 
 <pre><code><b>pragma</b> verify = <b>false</b>;
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Account_rotate_authentication_key_entry"></a>
-
-## Function `rotate_authentication_key_entry`
-
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_rotate_authentication_key_entry">rotate_authentication_key_entry</a>(account: signer, new_key: vector&lt;u8&gt;)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_rotate_authentication_key_entry">rotate_authentication_key_entry</a>(account: signer, new_key: vector&lt;u8&gt;) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_EventStore">EventStore</a> {
-    <a href="Account.md#0x1_Account_do_rotate_authentication_key">do_rotate_authentication_key</a>(&account, new_key);
-}
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Account_do_rotate_authentication_key"></a>
-
-## Function `do_rotate_authentication_key`
-
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_do_rotate_authentication_key">do_rotate_authentication_key</a>(account: &signer, new_key: vector&lt;u8&gt;)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_do_rotate_authentication_key">do_rotate_authentication_key</a>(account: &signer, new_key: vector&lt;u8&gt;) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_EventStore">EventStore</a> {
-    <b>let</b> key_rotation_capability = <a href="Account.md#0x1_Account_extract_key_rotation_capability">extract_key_rotation_capability</a>(account);
-    <a href="Account.md#0x1_Account_rotate_authentication_key_with_capability">rotate_authentication_key_with_capability</a>(&key_rotation_capability, <b>copy</b> new_key);
-    <a href="Account.md#0x1_Account_restore_key_rotation_capability">restore_key_rotation_capability</a>(key_rotation_capability);
-
-    <a href="Account.md#0x1_Account_make_event_store_if_not_exist">make_event_store_if_not_exist</a>(account);
-    <b>let</b> signer_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account);
-    <b>let</b> event_store = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_EventStore">EventStore</a>&gt;(signer_addr);
-    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>&lt;<a href="Account.md#0x1_Account_RotateAuthKeyEvent">RotateAuthKeyEvent</a>&gt;(
-        &<b>mut</b> event_store.rotate_auth_key_events,
-        <a href="Account.md#0x1_Account_RotateAuthKeyEvent">RotateAuthKeyEvent</a> {
-            account_address: signer_addr,
-            new_auth_key: new_key,
-        }
-    );
-}
 </code></pre>
 
 
@@ -2583,7 +2504,7 @@ Add a balance of <code><a href="Token.md#0x1_Token">Token</a></code> type to the
 
 
 <pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_accept_token">accept_token</a>&lt;TokenType: store&gt;(account: signer) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a> {
-    <a href="Account.md#0x1_Account_accept_token_entry">accept_token_entry</a>&lt;TokenType&gt;(account);
+    <a href="Account.md#0x1_Account_do_accept_token">do_accept_token</a>&lt;TokenType&gt;(&account);
 }
 </code></pre>
 
@@ -2597,30 +2518,6 @@ Add a balance of <code><a href="Token.md#0x1_Token">Token</a></code> type to the
 
 
 <pre><code><b>pragma</b> verify = <b>false</b>;
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Account_accept_token_entry"></a>
-
-## Function `accept_token_entry`
-
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_accept_token_entry">accept_token_entry</a>&lt;TokenType: store&gt;(account: signer)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_accept_token_entry">accept_token_entry</a>&lt;TokenType: store&gt;(account: signer) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a> {
-    <a href="Account.md#0x1_Account_do_accept_token">do_accept_token</a>&lt;TokenType&gt;(&account);
-}
 </code></pre>
 
 
@@ -2733,30 +2630,6 @@ Check whether the address can auto accept token.
     } <b>else</b> {
         <b>false</b>
     }
-}
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Account_set_auto_accept_token_entry"></a>
-
-## Function `set_auto_accept_token_entry`
-
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_set_auto_accept_token_entry">set_auto_accept_token_entry</a>(account: signer, enable: bool)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_set_auto_accept_token_entry">set_auto_accept_token_entry</a>(account: signer, enable: bool) <b>acquires</b> <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a> {
-    <a href="Account.md#0x1_Account_set_auto_accept_token">set_auto_accept_token</a>(&account, enable);
 }
 </code></pre>
 
@@ -3390,30 +3263,6 @@ It collects gas and bumps the sequence number
         !<b>exists</b>&lt;<a href="TransactionFee.md#0x1_TransactionFee_TransactionFee">TransactionFee::TransactionFee</a>&lt;TokenType&gt;&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 <b>aborts_if</b> txn_gas_price * (txn_max_gas_units - gas_units_remaining) &gt; 0 &&
         <b>global</b>&lt;<a href="TransactionFee.md#0x1_TransactionFee_TransactionFee">TransactionFee::TransactionFee</a>&lt;TokenType&gt;&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).fee.value + txn_gas_price * (txn_max_gas_units - gas_units_remaining) &gt; max_u128();
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Account_remove_zero_balance_entry"></a>
-
-## Function `remove_zero_balance_entry`
-
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_remove_zero_balance_entry">remove_zero_balance_entry</a>&lt;TokenType: store&gt;(account: signer)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_remove_zero_balance_entry">remove_zero_balance_entry</a>&lt;TokenType: store&gt;(account: signer) <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a> {
-    <a href="Account.md#0x1_Account_remove_zero_balance">remove_zero_balance</a>&lt;TokenType&gt;(&account);
-}
 </code></pre>
 
 

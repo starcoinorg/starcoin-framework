@@ -585,10 +585,6 @@ module IdentifierNFT {
     }
 
     /// Accept NFT<NFTMet, NFTBody>, prepare an empty IdentifierNFT for `sender`
-    public(script) fun accept_entry<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer) {
-        accept<NFTMeta, NFTBody>(&sender);
-    }
-
     public fun accept<NFTMeta: copy + store + drop, NFTBody: store>(sender: &signer) {
         let addr = Signer::address_of(sender);
         if (!is_accept<NFTMeta, NFTBody>(addr)) {
@@ -599,10 +595,6 @@ module IdentifierNFT {
     }
 
     /// Destroy the empty IdentifierNFT
-    public(script) fun destroy_empty_entry<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer) acquires IdentifierNFT {
-        destroy_empty<NFTMeta, NFTBody>(&sender);
-    }
-
     public fun destroy_empty<NFTMeta: copy + store + drop, NFTBody: store>(sender: &signer) acquires IdentifierNFT {
         let addr = Signer::address_of(sender);
         if (exists<IdentifierNFT<NFTMeta, NFTBody>>(addr)) {
@@ -730,12 +722,11 @@ module IdentifierNFTScripts {
 
     /// Init IdentifierNFT for accept NFT<NFTMeta, NFTBody> as Identifier.
     public(script) fun accept<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer) {
-        IdentifierNFT::accept_entry<NFTMeta, NFTBody>(sender);
+        IdentifierNFT::accept<NFTMeta, NFTBody>(&sender);
     }
-    
     /// Destroy empty IdentifierNFT
     public(script) fun destroy_empty<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer) {
-        IdentifierNFT::destroy_empty_entry<NFTMeta, NFTBody>(sender);
+        IdentifierNFT::destroy_empty<NFTMeta, NFTBody>(&sender);
     }
 }
 
@@ -778,10 +769,6 @@ module NFTGallery {
     }
 
     /// Init a NFTGallery to accept NFT<NFTMeta, NFTBody> for `sender`
-    public(script) fun accept_entry<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer) {
-        accept<NFTMeta, NFTBody>(&sender);
-    }
-
     public fun accept<NFTMeta: copy + store + drop, NFTBody: store>(sender: &signer) {
         let sender_addr = Signer::address_of(sender);
         if (!is_accept<NFTMeta, NFTBody>(sender_addr)) {
@@ -795,13 +782,6 @@ module NFTGallery {
     }
 
     /// Transfer NFT from `sender` to `receiver`
-    public(script) fun transfer_entry<NFTMeta: copy + store + drop, NFTBody: store>(
-        sender: signer,
-        id: u64, receiver: address
-    ) acquires NFTGallery {
-        transfer<NFTMeta, NFTBody>(&sender, id, receiver);
-    }
-
     public fun transfer<NFTMeta: copy + store + drop, NFTBody: store>(
         sender: &signer,
         id: u64,
@@ -970,10 +950,6 @@ module NFTGallery {
     }
 
     /// Remove empty NFTGallery<Meta,Body>.
-    public(script) fun remove_empty_gallery_entry<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer) acquires NFTGallery {
-        remove_empty_gallery<NFTMeta, NFTBody>(&sender);
-    }
-
     public fun remove_empty_gallery<NFTMeta: copy + store + drop, NFTBody: store>(sender: &signer) acquires NFTGallery{
         let sender_addr = Signer::address_of(sender);
         assert!(exists<NFTGallery<NFTMeta, NFTBody>>(sender_addr), Errors::not_published(ERR_NFTGALLERY_NOT_EXISTS));
@@ -1005,19 +981,20 @@ module NFTGalleryScripts {
 
     /// Init a  NFTGallery for accept NFT<NFTMeta, NFTBody>
     public(script) fun accept<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer) {
-        NFTGallery::accept_entry<NFTMeta, NFTBody>(sender);
+        NFTGallery::accept<NFTMeta, NFTBody>(&sender);
     }
+
     /// Transfer NFT<NFTMeta, NFTBody> with `id` from `sender` to `receiver`
     public(script) fun transfer<NFTMeta: copy + store + drop, NFTBody: store>(
         sender: signer,
         id: u64, receiver: address
     ) {
-        NFTGallery::transfer_entry<NFTMeta, NFTBody>(sender, id, receiver);
+        NFTGallery::transfer<NFTMeta, NFTBody>(&sender, id, receiver);
     }
 
     /// Remove empty NFTGallery<Meta,Body>.
     public(script) fun remove_empty_gallery<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer) {
-        NFTGallery::remove_empty_gallery_entry<NFTMeta, NFTBody>(sender);
+        NFTGallery::remove_empty_gallery<NFTMeta, NFTBody>(&sender);
     }
 }
 }
