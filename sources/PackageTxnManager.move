@@ -510,13 +510,5 @@ address StarcoinFramework {
                 && success && Option::is_some(global<TwoPhaseUpgrade>(package_address).plan)
                 && !exists<Config::Config<Version::Version>>(global<TwoPhaseUpgrade>(package_address).version_cap.account_address);
         }
-
-        public fun exists_upgrade_plan_cap(addr :address):bool{
-            exists<UpgradePlanCapability>(addr)
-        }
-
-        spec exists_upgrade_plan_cap {
-            aborts_if false;
-        }
     }
 }
