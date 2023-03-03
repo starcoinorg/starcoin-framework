@@ -136,6 +136,10 @@ module creator::DAOHelper {
         DAOSpace::proposal_state<DAOT>(proposal_id)
     }
 
+    public fun proposal_info<DAOT:store>(proposal_id: u64): (u64, address, u64, u64, u128, u128, u128, u128, u64, vector<u8>) {
+        DAOSpace::proposal_info<DAOT>(proposal_id)
+    }
+
     public fun proposal<DAOT:store>(proposal_id: u64): Proposal {
         DAOSpace::proposal<DAOT>(proposal_id)
     }
@@ -309,12 +313,7 @@ script{
     //alice create proposal
     fun create_proposal(sender: signer){
         let proposal_id = DAOHelper::create_x_proposal<X, STC>(&sender, 100u128, @alice, 10000);
-        let proposal = DAOSpace::proposal<X>(proposal_id);
-        
-        let proposer = DAOSpace::proposal_proposer(&proposal);
-        let (start_time,end_time) = DAOSpace::proposal_time(&proposal);
-        let block_number = DAOSpace::proposal_block_number(&proposal);
-        let state_root = DAOSpace::proposal_state_root(&proposal);
+        let (_id, proposer, start_time, end_time, _yes_votes, _no_votes, _no_with_veto_votes, _abstain_votes, block_number, state_root) = DAOSpace::proposal_info<X>(proposal_id);
 
         Debug::print(&proposer);
         Debug::print(&start_time);
@@ -416,6 +415,12 @@ script{
         let proposal_state = DAOHelper::proposal_state<X>(proposal_id);
         Debug::print(&120100);
         Debug::print(&proposal_state);
+
+        let (_id, _proposer, _start_time, _end_time, _yes_votes, _no_votes, _abstain_votes, _veto_votes, _block_number, _state_root) = DAOHelper::proposal_info<X>(proposal_id);
+        Debug::print(&_yes_votes);
+        Debug::print(&_no_votes);
+        Debug::print(&_abstain_votes);
+        Debug::print(&_veto_votes);
 
         let proposal = DAOHelper::proposal<X>(proposal_id);
         Debug::print(&proposal);

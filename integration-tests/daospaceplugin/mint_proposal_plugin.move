@@ -187,13 +187,7 @@ script {
         let action_delay = 0;
         MintProposalPlugin::create_mint_proposal<XDAO, AliceToken>(
             &sender, description, @bob, amount, action_delay);
-
-        let proposal = DAOSpace::proposal<XDAO>(1);
-        
-        let proposer = DAOSpace::proposal_proposer(&proposal);
-        let (start_time,end_time) = DAOSpace::proposal_time(&proposal);
-        let block_number = DAOSpace::proposal_block_number(&proposal);
-        let state_root = DAOSpace::proposal_state_root(&proposal);
+        let (_id, proposer, start_time, end_time, _yes_votes, _no_votes, _no_with_veto_votes, _abstain_votes, block_number, state_root) = DAOSpace::proposal_info<XDAO>(1);
 
         Debug::print(&proposer);
         Debug::print(&start_time);
