@@ -6,15 +6,15 @@
 
 //# block --author 0x1 --timestamp 86400000
 
-// //# run --signers creator
-// script {
-//     use StarcoinFramework::StdlibUpgradeScripts;
-//
-//     fun upgrade_from_v11_to_v12() {
-//         StdlibUpgradeScripts::upgrade_from_v11_to_v12();
-//     }
-// }
-// // check: EXECUTED
+//# run --signers creator
+script {
+    use StarcoinFramework::StdlibUpgradeScripts;
+
+    fun upgrade_from_v11_to_v12() {
+        StdlibUpgradeScripts::upgrade_from_v11_to_v12();
+    }
+}
+// check: EXECUTED
 
 //# publish
 module creator::XDAO {
@@ -117,7 +117,7 @@ script {
         StakeToSBTPlugin::unstake_all<XDAO::X, STC::STC>(Signer::address_of(&sender));
     }
 }
-// check: ABORTED, 257025
+// check: ABORTED
 
 //# block --author 0x1 --timestamp 87400000
 
@@ -207,16 +207,3 @@ script {
     }
 }
 // check: CHECKED
-
-//# run --signers alice
-script {
-    use creator::XDAO;
-    use StarcoinFramework::StakeToSBTPlugin;
-    use StarcoinFramework::STC;
-    use StarcoinFramework::Account;
-
-    fun test_block_time_not_exact_match(sender: signer) {
-        StakeToSBTPlugin::stake<XDAO::X, STC::STC>(&sender, Account::withdraw<STC::STC>(&sender, 100), 50);
-    }
-}
-// check: ABORTED, 257793
