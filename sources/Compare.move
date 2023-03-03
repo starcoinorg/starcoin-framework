@@ -104,29 +104,6 @@ module Compare {
         aborts_if false;
     }
 
-    public fun is_equal(result: u8): bool {
-        result == EQUAL
-    }
-
-    spec is_equal {
-        aborts_if false;
-    }
-
-    public fun is_less_than(result: u8): bool {
-        result == LESS_THAN
-    }
-
-    spec is_less_than {
-        aborts_if false;
-    }
-
-    public fun is_greater_than(result: u8): bool {
-        result == GREATER_THAN
-    }
-
-    spec is_greater_than {
-        aborts_if false;
-    }
 }
 
 }
