@@ -181,9 +181,6 @@ compiled_package_info:
       name: OnChainConfigScripts
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
-      name: OnChainStarcoinDAOConfig
-    : StarcoinFramework
-    ? address: "0x00000000000000000000000000000001"
       name: Option
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -312,7 +309,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: 25ECF2754312EBC49B1DBE3DB09DC2A65003124E9C7037B9377DACB300395E8E
+  source_digest: D7009E25679D370668CC815C5CF9F50E1CFFB3A9E058F2C9020F9C03179EF15A
   build_flags:
     dev_mode: false
     test_mode: false
