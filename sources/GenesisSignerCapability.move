@@ -8,19 +8,8 @@ module StarcoinFramework::GenesisSignerCapability {
     friend StarcoinFramework::Genesis;
     friend StarcoinFramework::StdlibUpgradeScripts;
     friend StarcoinFramework::DAORegistry;
-    friend StarcoinFramework::DAOExtensionPoint;
-    friend StarcoinFramework::DAOPluginMarketplace;
     friend StarcoinFramework::Block;
     friend StarcoinFramework::DAOAccount;
-
-    friend StarcoinFramework::AnyMemberPlugin;
-    friend StarcoinFramework::ConfigProposalPlugin;
-    friend StarcoinFramework::GrantProposalPlugin;
-    friend StarcoinFramework::InstallPluginProposalPlugin;
-    friend StarcoinFramework::MemberProposalPlugin;
-    friend StarcoinFramework::MintProposalPlugin;
-    friend StarcoinFramework::StakeToSBTPlugin;
-    friend StarcoinFramework::UpgradeModulePlugin;
 
     const ENOT_GENESIS_ACCOUNT: u64 = 11;
 

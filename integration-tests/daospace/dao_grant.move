@@ -22,7 +22,6 @@ script{
 
 //# publish
 module creator::DAOHelper {
-    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOAccount;
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::AnyMemberPlugin::{Self, AnyMemberPlugin};
@@ -30,7 +29,7 @@ module creator::DAOHelper {
     use StarcoinFramework::Vector;
     use StarcoinFramework::STC;
     use StarcoinFramework::Option;
-
+    
     struct X has store, copy, drop{}
     
     const NAME: vector<u8> = b"X";
@@ -67,28 +66,6 @@ module creator::DAOHelper {
 
     struct XPlugin has store, drop{}
 
-    public fun initialize_x_plugin(sender: &signer) {
-        DAOPluginMarketplace::register_plugin<XPlugin>(
-            sender,
-            b"0x1::XPlugin",
-            b"The X plugin.",
-            Option::none(),
-        );
-
-        let implement_extpoints = Vector::empty<vector<u8>>();
-        let depend_extpoints = Vector::empty<vector<u8>>();
-
-        let witness = XPlugin{};
-        DAOPluginMarketplace::publish_plugin_version<XPlugin>(
-            sender,
-            &witness,
-            b"v0.1.0", 
-            *&implement_extpoints,
-            *&depend_extpoints,
-            b"inner-plugin://x-plugin",
-        );
-    }
-
     public fun required_caps():vector<CapType>{
         let caps = Vector::singleton(DAOSpace::proposal_cap_type());
         Vector::push_back(&mut caps, DAOSpace::install_plugin_cap_type());
@@ -122,13 +99,9 @@ module creator::DAOHelper {
 
 //# run --signers creator
 script{
-    use StarcoinFramework::StdlibUpgradeScripts;
     use creator::DAOHelper;
 
     fun main(sender: signer){
-        StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
-        DAOHelper::initialize_x_plugin(&sender);
-
         // time unit is millsecond
         DAOHelper::create_dao(sender, 10000, 3600000, 2, 10000, 10);
     }

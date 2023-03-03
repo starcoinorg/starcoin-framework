@@ -23,35 +23,25 @@ The module for StdlibUpgrade init scripts
 
 
 <pre><code><b>use</b> <a href="Account.md#0x1_Account">0x1::Account</a>;
-<b>use</b> <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin">0x1::AnyMemberPlugin</a>;
 <b>use</b> <a href="Block.md#0x1_Block">0x1::Block</a>;
 <b>use</b> <a href="Collection.md#0x1_Collection">0x1::Collection</a>;
 <b>use</b> <a href="Config.md#0x1_Config">0x1::Config</a>;
-<b>use</b> <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin">0x1::ConfigProposalPlugin</a>;
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
-<b>use</b> <a href="DAOExtensionPoint.md#0x1_DAOExtensionPoint">0x1::DAOExtensionPoint</a>;
-<b>use</b> <a href="DAOPluginMarketplace.md#0x1_DAOPluginMarketplace">0x1::DAOPluginMarketplace</a>;
 <b>use</b> <a href="DAORegistry.md#0x1_DAORegistry">0x1::DAORegistry</a>;
 <b>use</b> <a href="GenesisNFT.md#0x1_GenesisNFT">0x1::GenesisNFT</a>;
 <b>use</b> <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability">0x1::GenesisSignerCapability</a>;
-<b>use</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin">0x1::GrantProposalPlugin</a>;
-<b>use</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">0x1::InstallPluginProposalPlugin</a>;
 <b>use</b> <a href="LanguageVersion.md#0x1_LanguageVersion">0x1::LanguageVersion</a>;
-<b>use</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">0x1::MemberProposalPlugin</a>;
-<b>use</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin">0x1::MintProposalPlugin</a>;
 <b>use</b> <a href="NFT.md#0x1_NFT">0x1::NFT</a>;
 <b>use</b> <a href="Offer.md#0x1_Offer">0x1::Offer</a>;
 <b>use</b> <a href="OnChainConfigDao.md#0x1_OnChainConfigDao">0x1::OnChainConfigDao</a>;
 <b>use</b> <a href="Oracle.md#0x1_Oracle">0x1::Oracle</a>;
 <b>use</b> <a href="STC.md#0x1_STC">0x1::STC</a>;
 <b>use</b> <a href="Oracle.md#0x1_STCUSDOracle">0x1::STCUSDOracle</a>;
-<b>use</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin">0x1::StakeToSBTPlugin</a>;
 <b>use</b> <a href="StarcoinDAO.md#0x1_StarcoinDAO">0x1::StarcoinDAO</a>;
 <b>use</b> <a href="Timestamp.md#0x1_Timestamp">0x1::Timestamp</a>;
 <b>use</b> <a href="Token.md#0x1_Token">0x1::Token</a>;
 <b>use</b> <a href="Treasury.md#0x1_Treasury">0x1::Treasury</a>;
 <b>use</b> <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal">0x1::TreasuryWithdrawDaoProposal</a>;
-<b>use</b> <a href="UpgradeModulePlugin.md#0x1_UpgradeModulePlugin">0x1::UpgradeModulePlugin</a>;
 </code></pre>
 
 
@@ -401,18 +391,6 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v12_1">do_upgrade_from_v12_to_v12_1</a>() {
-    <a href="DAOExtensionPoint.md#0x1_DAOExtensionPoint_initialize">DAOExtensionPoint::initialize</a>();
-    <a href="DAOPluginMarketplace.md#0x1_DAOPluginMarketplace_initialize">DAOPluginMarketplace::initialize</a>();
-
-    <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin_initialize">AnyMemberPlugin::initialize</a>();
-    <a href="ConfigProposalPlugin.md#0x1_ConfigProposalPlugin_initialize">ConfigProposalPlugin::initialize</a>();
-    <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_initialize">GrantProposalPlugin::initialize</a>();
-    <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_initialize">InstallPluginProposalPlugin::initialize</a>();
-    <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_initialize">MemberProposalPlugin::initialize</a>();
-    <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_initialize">MintProposalPlugin::initialize</a>();
-    <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_initialize">StakeToSBTPlugin::initialize</a>();
-    <a href="UpgradeModulePlugin.md#0x1_UpgradeModulePlugin_initialize">UpgradeModulePlugin::initialize</a>();
-
     //TODO : config rate need mind
     <a href="StarcoinDAO.md#0x1_StarcoinDAO_create_dao">StarcoinDAO::create_dao</a>( 60000, 120000, 10, 10000, 1000 * 1000 * 1000 * 1000);
 }

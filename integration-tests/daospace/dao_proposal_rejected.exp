@@ -2,35 +2,14 @@ processed 40 tasks
 
 task 7 'run'. lines 126-135:
 {
-  "gas_used": 969953,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAOSpace"
-        }
-      },
-      "abort_code": "179201"
-    }
-  }
+  "gas_used": 1192902,
+  "status": "Executed"
 }
 
 task 8 'run'. lines 139-153:
 {
-  "gas_used": 5286,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 109239,
+  "status": "Executed"
 }
 
 task 9 'run'. lines 155-180:
@@ -41,36 +20,14 @@ task 9 'run'. lines 155-180:
 
 task 11 'run'. lines 185-201:
 {
-  "gas_used": 42286,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 235032,
+  "status": "Executed"
 }
 
 task 12 'run'. lines 203-219:
 {
-  "gas_used": 42286,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 235032,
+  "status": "Executed"
 }
 
 task 16 'run'. lines 227-241:
@@ -103,19 +60,8 @@ task 22 'run'. lines 268-279:
 
 task 23 'run'. lines 282-306:
 {
-  "gas_used": 18867,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 476235,
+  "status": "Executed"
 }
 
 task 25 'run'. lines 310-319:
@@ -129,19 +75,8 @@ task 26 'call'. lines 321-321:
 
 task 28 'run'. lines 325-344:
 {
-  "gas_used": 3733,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x662ba5a1a1da0f1c70a9762c7eeb7aaf",
-          "name": "DAOHelper"
-        }
-      },
-      "function": 3,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 6529557,
+  "status": "Executed"
 }
 
 task 29 'call'. lines 347-347:
@@ -149,19 +84,8 @@ task 29 'call'. lines 347-347:
 
 task 31 'run'. lines 351-364:
 {
-  "gas_used": 3205,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x662ba5a1a1da0f1c70a9762c7eeb7aaf",
-          "name": "DAOHelper"
-        }
-      },
-      "function": 3,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 6192786,
+  "status": "Executed"
 }
 
 task 32 'call'. lines 367-367:
@@ -169,51 +93,28 @@ task 32 'call'. lines 367-367:
 
 task 34 'run'. lines 371-384:
 {
-  "gas_used": 3469,
+  "gas_used": 35207,
   "status": {
-    "ExecutionFailure": {
+    "MoveAbort": {
       "location": {
         "Module": {
-          "address": "0x662ba5a1a1da0f1c70a9762c7eeb7aaf",
-          "name": "DAOHelper"
+          "address": "0x00000000000000000000000000000001",
+          "name": "DAOSpace"
         }
       },
-      "function": 3,
-      "code_offset": 1
+      "abort_code": "51201"
     }
   }
 }
 
 task 36 'run'. lines 389-404:
 {
-  "gas_used": 2381,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x662ba5a1a1da0f1c70a9762c7eeb7aaf",
-          "name": "DAOHelper"
-        }
-      },
-      "function": 3,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 105721,
+  "status": "Executed"
 }
 
 task 39 'run'. lines 412-428:
 {
-  "gas_used": 17640,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DAORegistry"
-        }
-      },
-      "function": 0,
-      "code_offset": 1
-    }
-  }
+  "gas_used": 321723,
+  "status": "Executed"
 }

@@ -1,10 +1,8 @@
 //TODO find more good name
 module StarcoinFramework::MemberProposalPlugin{
-    use StarcoinFramework::GenesisSignerCapability;
-    use StarcoinFramework::Option;
-    use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Vector;
+    use StarcoinFramework::Option;
     use StarcoinFramework::InstallPluginProposalPlugin;
 
     struct MemberProposalPlugin has store, drop{}
@@ -14,30 +12,6 @@ module StarcoinFramework::MemberProposalPlugin{
         init_sbt: u128,
         image_url: vector<u8> ,
         image_data: vector<u8>
-    }
-
-    public fun initialize() {
-        let signer = GenesisSignerCapability::get_genesis_signer();
-        
-        DAOPluginMarketplace::register_plugin<MemberProposalPlugin>(
-            &signer,
-            b"0x1::MemberProposalPlugin",
-            b"The plugin for member proposal",
-            Option::none(),
-        );
-
-        let implement_extpoints = Vector::empty<vector<u8>>();
-        let depend_extpoints = Vector::empty<vector<u8>>();
-
-        let witness = MemberProposalPlugin{};
-        DAOPluginMarketplace::publish_plugin_version<MemberProposalPlugin>(
-            &signer, 
-            &witness,
-            b"v0.1.0", 
-            *&implement_extpoints,
-            *&depend_extpoints,
-            b"inner-plugin://member-proposal-plugin",
-        );
     }
 
     public fun required_caps():vector<CapType>{
@@ -81,5 +55,4 @@ module StarcoinFramework::MemberProposalPlugin{
     public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, description: vector<u8>, action_delay:u64){
         install_plugin_proposal<DAOT>(&sender, description, action_delay);
     }
-
 }
