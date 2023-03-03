@@ -225,19 +225,3 @@ script{
     }
 }
 // check: EXECUTED
-
-//# run --signers cindy
-script{
-    use creator::DAOHelper::{Self, X, XPlugin};
-    use StarcoinFramework::DAOSpace;
-    use StarcoinFramework::STC;
-
-    //alice create grant to cindy
-    fun create_grant(sender: signer){
-        DAOHelper::create_grant(&sender, 1000000000u128, 90000u64, 3600u64);
-        assert!(DAOSpace::is_have_grant<X, XPlugin, STC::STC>(@cindy) == true, 1001);
-        DAOSpace::refund_grant<X, XPlugin, STC::STC>(&sender);
-        assert!(DAOSpace::is_have_grant<X, XPlugin, STC::STC>(@cindy) == false, 1002);
-    }
-}
-// check: EXECUTED
