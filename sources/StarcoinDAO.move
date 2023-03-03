@@ -41,19 +41,19 @@ module StarcoinFramework::StarcoinDAO {
         );
 
 
-        DAOSpace::create_dao<StarcoinDAO>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", config);
+        let dao_root_cap = DAOSpace::create_dao<StarcoinDAO>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", StarcoinDAO {}, config);
 
-        let witness = StarcoinDAO {};
-        let install_cap = DAOSpace::acquire_install_plugin_cap<StarcoinDAO, StarcoinDAO>(&witness);
-        DAOSpace::install_plugin<StarcoinDAO, StarcoinDAO, InstallPluginProposalPlugin>(&install_cap, InstallPluginProposalPlugin::required_caps());
-        DAOSpace::install_plugin<StarcoinDAO, StarcoinDAO, UpgradeModulePlugin>(&install_cap, UpgradeModulePlugin::required_caps());
-        DAOSpace::install_plugin<StarcoinDAO, StarcoinDAO, ConfigProposalPlugin>(&install_cap, ConfigProposalPlugin::required_caps());
-        DAOSpace::install_plugin<StarcoinDAO, StarcoinDAO, StakeToSBTPlugin>(&install_cap, StakeToSBTPlugin::required_caps());
-        DAOSpace::install_plugin<StarcoinDAO, StarcoinDAO, GasOracleProposalPlugin>(&install_cap, GasOracleProposalPlugin::required_caps());
-        DAOSpace::install_plugin<StarcoinDAO, StarcoinDAO, TreasuryPlugin>(&install_cap, TreasuryPlugin::required_caps());
+        DAOSpace::install_plugin_with_root_cap<StarcoinDAO, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps());
+        DAOSpace::install_plugin_with_root_cap<StarcoinDAO, UpgradeModulePlugin>(&dao_root_cap, UpgradeModulePlugin::required_caps());
+        DAOSpace::install_plugin_with_root_cap<StarcoinDAO, ConfigProposalPlugin>(&dao_root_cap, ConfigProposalPlugin::required_caps());
+        DAOSpace::install_plugin_with_root_cap<StarcoinDAO, StakeToSBTPlugin>(&dao_root_cap, StakeToSBTPlugin::required_caps());
+        DAOSpace::install_plugin_with_root_cap<StarcoinDAO, GasOracleProposalPlugin>(&dao_root_cap, GasOracleProposalPlugin::required_caps());
+        DAOSpace::install_plugin_with_root_cap<StarcoinDAO, TreasuryPlugin>(&dao_root_cap, TreasuryPlugin::required_caps());
 
-        StakeToSBTPlugin::accept_token_by_dao<StarcoinDAO, STC>(&witness);
-        StakeToSBTPlugin::set_sbt_weight_by_dao<StarcoinDAO, STC>(&witness, 60000, 1000);
+        StakeToSBTPlugin::accept_token_with_root_cap<StarcoinDAO, STC>(&dao_root_cap);
+        StakeToSBTPlugin::set_sbt_weight_with_root_cap<StarcoinDAO, STC>(&dao_root_cap, 60000, 1000);
+
+        DAOSpace::burn_root_cap(dao_root_cap);
     }
 
     public(friend) fun delegate_config_capability<TokenT: store, ConfigT: copy + drop + store>(cap: Config::ModifyConfigCapability<ConfigT>) {

@@ -1,24 +1,24 @@
 processed 29 tasks
 
-task 8 'run'. lines 69-83:
+task 8 'run'. lines 71-85:
 {
   "gas_used": 125914,
   "status": "Executed"
 }
 
-task 9 'run'. lines 85-94:
+task 9 'run'. lines 87-96:
 {
-  "gas_used": 1292050,
+  "gas_used": 1259689,
   "status": "Executed"
 }
 
-task 10 'run'. lines 96-106:
+task 10 'run'. lines 98-108:
 {
   "gas_used": 53739,
   "status": "Executed"
 }
 
-task 11 'run'. lines 108-121:
+task 11 'run'. lines 110-123:
 {
   "gas_used": 8525,
   "status": {
@@ -35,47 +35,47 @@ task 11 'run'. lines 108-121:
   }
 }
 
-task 12 'run'. lines 123-134:
+task 12 'run'. lines 125-139:
 {
-  "gas_used": 616761,
+  "gas_used": 614488,
   "status": "Executed"
 }
 
-task 16 'run'. lines 142-153:
+task 16 'run'. lines 147-158:
 {
   "gas_used": 101440,
   "status": "Executed"
 }
 
-task 19 'run'. lines 159-168:
+task 19 'run'. lines 164-173:
 {
   "gas_used": 575872,
   "status": "Executed"
 }
 
-task 20 'run'. lines 170-201:
+task 20 'run'. lines 175-206:
 {
-  "gas_used": 486136,
+  "gas_used": 468368,
   "status": "Executed"
 }
 
-task 22 'call'. lines 205-205:
+task 22 'call'. lines 210-210:
 "0xa7dcef9aef26202fce82a7c7d6672afb/1/0x00000000000000000000000000000001::IdentifierNFT::IdentifierNFT<0x00000000000000000000000000000001::DAOSpace::DAOMember<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::XDAO::XDAO>,0x00000000000000000000000000000001::DAOSpace::DAOMemberBody<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::XDAO::XDAO>>"
 
-task 24 'run'. lines 209-223:
+task 24 'run'. lines 214-228:
 {
   "gas_used": 8799122,
   "status": "Executed"
 }
 
-task 26 'run'. lines 227-241:
+task 26 'run'. lines 232-246:
 {
   "gas_used": 173636,
   "status": "Executed"
 }
 
-task 28 'run'. lines 245-266:
+task 28 'run'. lines 250-271:
 {
-  "gas_used": 550893,
+  "gas_used": 515357,
   "status": "Executed"
 }

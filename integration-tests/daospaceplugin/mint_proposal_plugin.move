@@ -40,13 +40,15 @@ module creator::XDAO {
             min_action_delay,
             min_proposal_deposit,
         );
-        DAOSpace::create_dao<XDAO>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), 
-            Option::none<vector<u8>>(), b"ipfs://description", config);
+        let dao_root_cap = DAOSpace::create_dao<XDAO>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), 
+            Option::none<vector<u8>>(), b"ipfs://description", XDAO{}, config);
         
-        let install_cap = DAOSpace::acquire_install_plugin_cap<XDAO, XDAO>(&XDAO{});
-        DAOSpace::install_plugin<XDAO, XDAO, InstallPluginProposalPlugin>(&install_cap, InstallPluginProposalPlugin::required_caps()); 
-        DAOSpace::install_plugin<XDAO, XDAO, AnyMemberPlugin>(&install_cap, AnyMemberPlugin::required_caps());
-        DAOSpace::install_plugin<XDAO, XDAO, MintProposalPlugin>(&install_cap, MintProposalPlugin::required_caps());
+        DAOSpace::install_plugin_with_root_cap<XDAO, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
+        DAOSpace::install_plugin_with_root_cap<XDAO, AnyMemberPlugin>(&dao_root_cap, AnyMemberPlugin::required_caps());
+        DAOSpace::install_plugin_with_root_cap<XDAO, MintProposalPlugin>(&dao_root_cap, MintProposalPlugin::required_caps());
+
+        DAOSpace::burn_root_cap(dao_root_cap);
+
     }
 }
 
@@ -124,8 +126,11 @@ script {
 script {
     use creator::XDAO::XDAO;
     use StarcoinFramework::AnyMemberPlugin;
+    use StarcoinFramework::IdentifierNFT;
+    use StarcoinFramework::DAOSpace::{DAOMember, DAOMemberBody};
 
     fun main(sender: signer) {
+        IdentifierNFT::accept<DAOMember<XDAO>, DAOMemberBody<XDAO>>(&sender);
         let image_data = b"image";
         let image_url = b"";
         AnyMemberPlugin::join<XDAO>(&sender, image_data, image_url);
