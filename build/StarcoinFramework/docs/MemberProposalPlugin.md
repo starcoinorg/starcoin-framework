@@ -217,7 +217,7 @@
     };
     <b>assert</b>!(!<a href="DAOSpace.md#0x1_DAOSpace_is_exist_member_offer">DAOSpace::is_exist_member_offer</a>&lt;DAOT&gt;(member), <a href="Errors.md#0x1_Errors_already_published">Errors::already_published</a>(<a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_ERR_MEMBER_OFFER_EXIST">ERR_MEMBER_OFFER_EXIST</a>));
     <b>assert</b>!(!<a href="DAOSpace.md#0x1_DAOSpace_is_member">DAOSpace::is_member</a>&lt;DAOT&gt;(member), <a href="Errors.md#0x1_Errors_already_published">Errors::already_published</a>(<a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_ERR_MEMBER_EXIST">ERR_MEMBER_EXIST</a>));
-    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, sender, action, title, introduction, description, action_delay, <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u8&gt;());
+    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, sender, action, title, introduction, description, action_delay);
 }
 </code></pre>
 

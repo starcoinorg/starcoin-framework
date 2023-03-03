@@ -172,7 +172,6 @@ module StdlibUpgradeScripts {
         let signer = GenesisSignerCapability::get_genesis_signer();
         let cap = TreasuryWithdrawDaoProposal::takeout_withdraw_capability<STC>(&signer);
         TreasuryPlugin::delegate_capability<STC>(&signer, cap);
-        StarcoinDAO::set_treasury_withdraw_proposal_scale(100);
 
         // clean old DAO resources
         ModifyDaoConfigProposal::destroy_modify_config_capability<STC>(&genessis_signer);

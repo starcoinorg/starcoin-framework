@@ -386,7 +386,6 @@ module StarcoinFramework::Genesis {
             Config::extract_modify_config_capability<TransactionTimeoutConfig::TransactionTimeoutConfig>(&genesis_account));
         StarcoinDAO::delegate_config_capability<STC, LanguageVersion::LanguageVersion>(
             Config::extract_modify_config_capability<LanguageVersion::LanguageVersion>(&genesis_account));
-        StarcoinDAO::set_treasury_withdraw_proposal_scale(100);
 
         //Start time, Timestamp::is_genesis() will return false. this call should at the end of genesis init.
         Timestamp::set_time_has_started(&genesis_account);

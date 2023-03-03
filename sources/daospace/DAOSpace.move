@@ -1672,8 +1672,6 @@ module StarcoinFramework::DAOSpace {
     /// propose a proposal.
     /// `action`: the actual action to execute.
     /// `action_delay`: the delay to execute after the proposal is agreed
-    /// `quorum_scale_factor`: used to scale up the base quorum_votes_rate.
-    ///     The final quorum_votes_rate = (1.0 + scale / 100) * quorum_votes_rate
     public fun create_proposal<DAOT: store, PluginT, ActionT: store+drop>(
         _cap: &DAOProposalCap<DAOT, PluginT>,
         sender: &signer,
@@ -1682,7 +1680,6 @@ module StarcoinFramework::DAOSpace {
         introduction: vector<u8>,
         extend: vector<u8>,
         action_delay: u64,
-        quorum_scale_factor: Option::Option<u8>,
     ): u64 acquires DAO, GlobalProposals, DAOAccountCapHolder, ProposalActions, ProposalEvent, GlobalProposalActions {
         // check DAO member
         let sender_addr = Signer::address_of(sender);
@@ -1700,7 +1697,7 @@ module StarcoinFramework::DAOSpace {
         let proposal_id = next_proposal_id<DAOT>();
         let proposer = Signer::address_of(sender);
         let start_time = Timestamp::now_milliseconds() + voting_delay<DAOT>();
-        let quorum_votes = quorum_votes<DAOT>(quorum_scale_factor);
+        let quorum_votes = quorum_votes<DAOT>();
         let voting_period = voting_period<DAOT>();
 
         let (block_number,state_root) = block_number_and_state_root();
@@ -2431,24 +2428,10 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// Quorum votes to make proposal valid.
-    public fun quorum_votes<DAOT: store>(scale_factor: Option::Option<u8>): u128 {
-        let scale_factor = if (Option::is_none(&scale_factor)) {
-            0u8
-        } else {
-            Option::extract(&mut scale_factor)
-        };
-        assert!(
-            scale_factor >= 0 && scale_factor <= 100,
-            Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID),
-        );
-
+    public fun quorum_votes<DAOT: store>(): u128 {
         let market_cap = Token::market_cap<DAOT>();
-        let rate = (voting_quorum_rate<DAOT>() as u128);
-        let rate = rate + rate * (scale_factor as u128) / 100;
-        assert!(
-            rate > 0 && rate <= 100,
-            Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID),
-        );
+        let rate = voting_quorum_rate<DAOT>();
+        let rate = (rate as u128);
         market_cap * rate / 100
     }
 
