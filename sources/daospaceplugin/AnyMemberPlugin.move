@@ -21,7 +21,7 @@ module StarcoinFramework::AnyMemberPlugin{
         DAOSpace::join_member(&member_cap, Signer::address_of(&sender), 1);
     }
 
-    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, description: vector<u8>, action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, AnyMemberPlugin>(&sender, required_caps(), description, action_delay);
+    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, AnyMemberPlugin>(&sender, required_caps(), action_delay);
     } 
 }

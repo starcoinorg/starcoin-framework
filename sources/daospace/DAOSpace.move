@@ -68,8 +68,6 @@ module StarcoinFramework::DAOSpace {
         id: u64,
         // TODO migrate ASIIC String and use ASSIC String
         name: vector<u8>,
-        // description ipfs://xxxxx
-        description:vector<u8>,
         dao_address: address,
         next_member_id: u64,
         next_proposal_id: u64,
@@ -226,15 +224,14 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// Create a dao with a exists DAO account
-    public fun create_dao<DAOT: store>(cap: DAOAccountCap, name: vector<u8>, description: vector<u8>, ext: DAOT, config: DAOConfig): DAORootCap<DAOT> acquires DAOEvent {
+    public fun create_dao<DAOT: store>(cap: DAOAccountCap, name: vector<u8>, ext: DAOT, config: DAOConfig): DAORootCap<DAOT> acquires DAOEvent {
         let dao_signer = DAOAccount::dao_signer(&cap);
 
         let dao_address = Signer::address_of(&dao_signer);
         let id = DAORegistry::register<DAOT>(dao_address);
         let dao = DAO{
             id,
-            name: copy name,
-            description: copy description,
+            name: *&name,
             dao_address,
             next_member_id: 1,
             next_proposal_id: 1,
@@ -308,7 +305,6 @@ module StarcoinFramework::DAOSpace {
             DAOCreatedEvent {
                 id,
                 name: copy name,
-                description:copy description,
                 dao_address,
             },
         );
@@ -317,9 +313,9 @@ module StarcoinFramework::DAOSpace {
     }
 
     // Upgrade account to DAO account and create DAO
-    public fun upgrade_to_dao<DAOT: store>(sender: signer, name: vector<u8>, description:vector<u8>, ext: DAOT, config: DAOConfig): DAORootCap<DAOT> acquires DAOEvent{
+    public fun upgrade_to_dao<DAOT: store>(sender: signer, name: vector<u8>, ext: DAOT, config: DAOConfig): DAORootCap<DAOT> acquires DAOEvent{
         let cap = DAOAccount::upgrade_to_dao(sender);
-        create_dao<DAOT>(cap, name, description, ext, config)
+        create_dao<DAOT>(cap, name, ext, config)
     }
 
     /// Burn the root cap after init the DAO
@@ -335,7 +331,6 @@ module StarcoinFramework::DAOSpace {
     struct DAOCreatedEvent has drop, store{
         id: u64,
         name: vector<u8>,
-        description:vector<u8>,
         dao_address: address,
     }
 
@@ -1040,8 +1035,6 @@ module StarcoinFramework::DAOSpace {
         id: u64,
         /// creator of the proposal
         proposer: address,
-        /// description of proposal , ipfs://
-        description:vector<u8>,
         /// when voting begins.
         start_time: u64,
         /// when voting ends.
@@ -1158,8 +1151,6 @@ module StarcoinFramework::DAOSpace {
         dao_id: u64,
         /// the proposal id.
         proposal_id: u64,
-        /// description of proposal , ipfs://
-        description: vector<u8>,
         /// proposer is the user who create the proposal.
         proposer: address,
     }
@@ -1196,7 +1187,6 @@ module StarcoinFramework::DAOSpace {
         _cap: &DAOProposalCap<DAOT, PluginT>,
         sender: &signer,
         action: ActionT,
-        description: vector<u8>,
         action_delay: u64,
     ): u64 acquires DAO, GlobalProposals, DAOAccountCapHolder, ProposalActions, ProposalEvent, GlobalProposalActions {
         // check DAO member
@@ -1223,7 +1213,6 @@ module StarcoinFramework::DAOSpace {
         let proposal = Proposal {
             id: proposal_id,
             proposer,
-            description: copy description,
             start_time,
             end_time: start_time + voting_period,
             yes_votes: 0,
@@ -1288,7 +1277,7 @@ module StarcoinFramework::DAOSpace {
         let dao_id = dao_id(dao_address);
         let proposal_event = borrow_global_mut<ProposalEvent<DAOT>>(dao_address);
         Event::emit_event(&mut proposal_event.proposal_create_event,
-            ProposalCreatedEvent { dao_id, proposal_id, description: copy description, proposer },
+            ProposalCreatedEvent { dao_id, proposal_id, proposer },
         );
 
         proposal_id
@@ -1776,19 +1765,6 @@ module StarcoinFramework::DAOSpace {
             });
         }
     }
-
-    /// Update DAO description
-    public fun set_dao_description<DAOT: store,
-                                 PluginT: drop,
-                                 ConfigT: copy + store + drop>(
-        _cap: &mut DAOModifyConfigCap<DAOT, PluginT>,
-        description: vector<u8>) 
-    acquires DAO{
-        let dao_address = dao_address<DAOT>();
-        let dao = borrow_global_mut<DAO>(dao_address);
-        dao.description = description;
-    }
-
 
     /// get default voting delay of the DAO.
     public fun voting_delay<DAOT: store>(): u64 {

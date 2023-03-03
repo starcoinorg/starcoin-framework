@@ -104,7 +104,7 @@
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store, ToInstallPluginT: store&gt;(sender: &signer, required_caps: vector&lt;<a href="DAOSpace.md#0x1_DAOSpace_CapType">DAOSpace::CapType</a>&gt;, description: vector&lt;u8&gt;, action_delay: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store, ToInstallPluginT: store&gt;(sender: &signer, required_caps: vector&lt;<a href="DAOSpace.md#0x1_DAOSpace_CapType">DAOSpace::CapType</a>&gt;, action_delay: u64)
 </code></pre>
 
 
@@ -113,14 +113,14 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store, ToInstallPluginT: store&gt;(sender: &signer, required_caps: vector&lt;CapType&gt;, description: vector&lt;u8&gt;, action_delay: u64){
+<pre><code><b>public</b> <b>fun</b> <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store, ToInstallPluginT: store&gt;(sender: &signer, required_caps: vector&lt;CapType&gt;, action_delay: u64){
     <b>let</b> witness = <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">InstallPluginProposalPlugin</a>{};
 
     <b>let</b> cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_proposal_cap">DAOSpace::acquire_proposal_cap</a>&lt;DAOT, <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin">InstallPluginProposalPlugin</a>&gt;(&witness);
     <b>let</b> action = <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_InstallPluginAction">InstallPluginAction</a>&lt;ToInstallPluginT&gt;{
         required_caps,
     };
-    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, sender, action, description, action_delay);
+    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, sender, action, action_delay);
 }
 </code></pre>
 

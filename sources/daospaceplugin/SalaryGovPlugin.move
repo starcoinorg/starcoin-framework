@@ -147,14 +147,14 @@ module SalaryGovPlugin {
     }
 
     /// Create proposal for specific admin account
-    public(script) fun create_boss_elect_proposal<DAOT: store>(sender: signer, description: vector<u8>, action_delay: u64) {
+    public(script) fun create_boss_elect_proposal<DAOT: store>(sender: signer, action_delay: u64) {
         let witness = SalaryGovPlugin{};
 
         let cap = DAOSpace::acquire_proposal_cap<DAOT, SalaryGovPlugin>(&witness);
         let action = BossProposalAction<DAOT>{
             boss: Signer::address_of(&sender)
         };
-        DAOSpace::create_proposal(&cap, &sender, action, description, action_delay);
+        DAOSpace::create_proposal(&cap, &sender, action, action_delay);
     }
 
     public(script) fun execute_proposal<DAOT: store>(sender: signer, proposal_id: u64) {

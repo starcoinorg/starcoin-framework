@@ -18,14 +18,14 @@ module StarcoinFramework::MemberProposalPlugin{
     }
 
     //TODO how to unify arguments.
-    public (script) fun create_proposal<DAOT: store>(sender: signer, description: vector<u8>, member: address, init_sbt: u128, action_delay: u64){
+    public (script) fun create_proposal<DAOT: store>(sender: signer, member: address, init_sbt: u128, action_delay: u64){
         let witness = MemberProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, MemberProposalPlugin>(&witness);
         let action = MemberJoinAction{
             member,
             init_sbt,
         };
-        DAOSpace::create_proposal(&cap, &sender, action, description, action_delay);
+        DAOSpace::create_proposal(&cap, &sender, action, action_delay);
     }
 
     public (script) fun execute_proposal<DAOT: store>(sender: signer, proposal_id: u64){
@@ -36,7 +36,7 @@ module StarcoinFramework::MemberProposalPlugin{
         DAOSpace::join_member(&member_cap, member, init_sbt);
     }
 
-    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, description: vector<u8>,action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, MemberJoinAction>(&sender, required_caps(), description, action_delay);
+    public (script) fun install_plugin_proposal<DAOT:store>(sender:signer, action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, MemberJoinAction>(&sender, required_caps(), action_delay);
     } 
 }

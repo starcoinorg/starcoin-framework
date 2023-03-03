@@ -112,7 +112,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store&gt;(sender: signer, description: vector&lt;u8&gt;, member: <b>address</b>, init_sbt: u128, action_delay: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store&gt;(sender: signer, member: <b>address</b>, init_sbt: u128, action_delay: u64)
 </code></pre>
 
 
@@ -121,14 +121,14 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store&gt;(sender: signer, description: vector&lt;u8&gt;, member: <b>address</b>, init_sbt: u128, action_delay: u64){
+<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_create_proposal">create_proposal</a>&lt;DAOT: store&gt;(sender: signer, member: <b>address</b>, init_sbt: u128, action_delay: u64){
     <b>let</b> witness = <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>{};
     <b>let</b> cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_proposal_cap">DAOSpace::acquire_proposal_cap</a>&lt;DAOT, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>&gt;(&witness);
     <b>let</b> action = <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_MemberJoinAction">MemberJoinAction</a>{
         member,
         init_sbt,
     };
-    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, &sender, action, description, action_delay);
+    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, &sender, action, action_delay);
 }
 </code></pre>
 
@@ -170,7 +170,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT: store&gt;(sender: signer, description: vector&lt;u8&gt;, action_delay: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT: store&gt;(sender: signer, action_delay: u64)
 </code></pre>
 
 
@@ -179,8 +179,8 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT:store&gt;(sender:signer, description: vector&lt;u8&gt;,action_delay:u64){
-    <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">InstallPluginProposalPlugin::create_proposal</a>&lt;DAOT, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_MemberJoinAction">MemberJoinAction</a>&gt;(&sender, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_required_caps">required_caps</a>(), description, action_delay);
+<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT:store&gt;(sender:signer, action_delay:u64){
+    <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">InstallPluginProposalPlugin::create_proposal</a>&lt;DAOT, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_MemberJoinAction">MemberJoinAction</a>&gt;(&sender, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_required_caps">required_caps</a>(), action_delay);
 }
 </code></pre>
 
