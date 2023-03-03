@@ -17,7 +17,6 @@ module StarcoinFramework::StakeToSBTPlugin {
     const ERR_PLUGIN_CONFIG_INIT_REPEATE: u64 = 1005;
     const ERR_PLUGIN_ITEM_CANT_FOUND: u64 = 1006;
     const ERR_PLUGIN_NO_MATCH_LOCKTIME: u64 = 1007;
-    const ERR_DEPRECATED_METHOD: u64 = 1008;
 
     struct StakeToSBTPlugin has store, drop {}
 
@@ -121,12 +120,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         accept_token(AcceptTokenCap<DAOT, TokenT> {});
     }
 
-    /// Deprecated
-    public fun install_event<DAOT: store>() {
-        abort Errors::deprecated(ERR_DEPRECATED_METHOD)
-    }
-
-    fun install_event_inner<DAOT: store, EventT: store+drop>() {
+    fun install_event<DAOT: store, EventT: store+drop>() {
         if (!DAOSpace::exist_plugin_event<DAOT, StakeToSBTPlugin, EventT>()) {
             let witness = StakeToSBTPlugin {};
             let plugin_event_cap =
@@ -164,7 +158,7 @@ module StarcoinFramework::StakeToSBTPlugin {
             weight_vec: Vector::empty<LockWeight<DAOT, TokenT>>()
         });
 
-        install_event_inner<DAOT, SBTTokenAcceptedEvent>();
+        install_event<DAOT, SBTTokenAcceptedEvent>();
         let witness = StakeToSBTPlugin {};
         let plugin_event_cap =
             DAOSpace::acquire_plugin_event_cap<DAOT, StakeToSBTPlugin>(&witness);
@@ -228,7 +222,7 @@ module StarcoinFramework::StakeToSBTPlugin {
             });
         stake_list.next_id = id;
 
-        install_event_inner<DAOT, SBTStakeEvent>();
+        install_event<DAOT, SBTStakeEvent>();
         let witness = StakeToSBTPlugin {};
         let plugin_event_cap =
             DAOSpace::acquire_plugin_event_cap<DAOT, StakeToSBTPlugin>(&witness);
@@ -306,7 +300,7 @@ module StarcoinFramework::StakeToSBTPlugin {
 
         Account::deposit<TokenT>(member, unstake_item(member, poped_item));
 
-        install_event_inner<DAOT, SBTUnstakeEvent>();
+        install_event<DAOT, SBTUnstakeEvent>();
         let witness = StakeToSBTPlugin {};
         let plugin_event_cap =
             DAOSpace::acquire_plugin_event_cap<DAOT, StakeToSBTPlugin>(&witness);
@@ -437,7 +431,7 @@ module StarcoinFramework::StakeToSBTPlugin {
             });
         };
 
-        install_event_inner<DAOT, SBTWeightChangedEvent>();
+        install_event<DAOT, SBTWeightChangedEvent>();
         let witness = StakeToSBTPlugin {};
         let plugin_event_cap =
             DAOSpace::acquire_plugin_event_cap<DAOT, StakeToSBTPlugin>(&witness);
