@@ -161,26 +161,17 @@ function install_mpm {
     if [[ $(uname -s) == "Darwin" ]]; then
       mpm_file="mpm-macos-latest";
     else
-      if [ "$(. /etc/os-release; echo $NAME)" = "Ubuntu" ]; then
-        if [[ $(lsb_release -r | cut -f 2) == '18.04' ]]; then
-          mpm_file="mpm-ubuntu-18.04";
-        else
-          mpm_file="mpm-ubuntu-latest";
-        fi
+      if [[ $(lsb_release -r | cut -f 2) == '18.04' ]]; then
+        mpm_file="mpm-ubuntu-18.04";
       else
-        mpm_file="";
+        mpm_file="mpm-ubuntu-latest";
       fi
     fi
-    if [[ $mpm_file != "" ]]; then
-      curl -sL -o "${INSTALL_DIR}${mpm_file}.zip" "https://github.com/starcoinorg/starcoin/releases/download/${MPM_VERSION}/${mpm_file}.zip"
-      unzip -q "${INSTALL_DIR}${mpm_file}.zip" -d "${INSTALL_DIR}"
-      mv "${INSTALL_DIR}${mpm_file}/mpm" "${INSTALL_DIR}mpm"
-      chmod +x "${INSTALL_DIR}mpm"
-      rmdir "${INSTALL_DIR}${mpm_file}"
-    else
-      echo "Install mpm from source"
-      cargo install --git https://github.com/starcoinorg/starcoin move-package-manager --tag $MPM_VERSION --bin mpm --root $HOME
-    fi
+    curl -sL -o "${INSTALL_DIR}${mpm_file}.zip" "https://github.com/starcoinorg/starcoin/releases/download/${MPM_VERSION}/${mpm_file}.zip"
+    unzip -q "${INSTALL_DIR}${mpm_file}.zip" -d "${INSTALL_DIR}"
+    mv "${INSTALL_DIR}${mpm_file}/mpm" "${INSTALL_DIR}mpm"
+    chmod +x "${INSTALL_DIR}mpm"
+    rmdir "${INSTALL_DIR}${mpm_file}"
   fi
 }
 
