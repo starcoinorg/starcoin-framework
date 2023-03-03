@@ -4,14 +4,16 @@ task 3 'run'. lines 7-19:
 {
   "gas_used": 25350,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "CoreAddresses"
-        }
-      },
-      "abort_code": "2818"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "CoreAddresses"
+          }
+        },
+        2818
+      ]
     }
   }
 }
@@ -19,21 +21,25 @@ task 3 'run'. lines 7-19:
 task 4 'run'. lines 22-34:
 {
   "gas_used": 42340,
-  "status": "Executed"
+  "status": {
+    "Keep": "Executed"
+  }
 }
 
 task 5 'run'. lines 37-51:
 {
   "gas_used": 41727,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "Epoch"
-        }
-      },
-      "abort_code": "25863"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "Epoch"
+          }
+        },
+        25863
+      ]
     }
   }
 }
@@ -42,14 +48,16 @@ task 6 'run'. lines 54-67:
 {
   "gas_used": 37998,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "Epoch"
-        }
-      },
-      "abort_code": "19"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "Epoch"
+          }
+        },
+        19
+      ]
     }
   }
 }
@@ -58,14 +66,16 @@ task 7 'run'. lines 70-83:
 {
   "gas_used": 45142,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "Epoch"
-        }
-      },
-      "abort_code": "25863"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "Epoch"
+          }
+        },
+        25863
+      ]
     }
   }
 }
@@ -73,5 +83,7 @@ task 7 'run'. lines 70-83:
 task 8 'run'. lines 86-99:
 {
   "gas_used": 172340,
-  "status": "Executed"
+  "status": {
+    "Keep": "Executed"
+  }
 }

@@ -10,7 +10,6 @@ A proposal module which is used to modify Token's DAO configuration.
 -  [Struct `DaoConfigUpdate`](#0x1_ModifyDaoConfigProposal_DaoConfigUpdate)
 -  [Constants](#@Constants_0)
 -  [Function `plugin`](#0x1_ModifyDaoConfigProposal_plugin)
--  [Function `destroy_modify_config_capability`](#0x1_ModifyDaoConfigProposal_destroy_modify_config_capability)
 -  [Function `propose`](#0x1_ModifyDaoConfigProposal_propose)
 -  [Function `execute`](#0x1_ModifyDaoConfigProposal_execute)
 -  [Module Specification](#@Module_Specification_1)
@@ -170,48 +169,6 @@ Should be called by token issuer.
 <b>aborts_if</b> <a href="Option.md#0x1_Option_borrow">Option::borrow</a>(config_cap).account_address != sender;
 <b>aborts_if</b> <b>exists</b>&lt;<a href="ModifyDaoConfigProposal.md#0x1_ModifyDaoConfigProposal_DaoConfigModifyCapability">DaoConfigModifyCapability</a>&lt;TokenT&gt;&gt;(sender);
 <b>ensures</b> <b>exists</b>&lt;<a href="ModifyDaoConfigProposal.md#0x1_ModifyDaoConfigProposal_DaoConfigModifyCapability">DaoConfigModifyCapability</a>&lt;TokenT&gt;&gt;(sender);
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_ModifyDaoConfigProposal_destroy_modify_config_capability"></a>
-
-## Function `destroy_modify_config_capability`
-
-Destroy ModifyConfigCapability
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="ModifyDaoConfigProposal.md#0x1_ModifyDaoConfigProposal_destroy_modify_config_capability">destroy_modify_config_capability</a>&lt;TokenT: <b>copy</b>, drop, store&gt;(sender: &signer)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="ModifyDaoConfigProposal.md#0x1_ModifyDaoConfigProposal_destroy_modify_config_capability">destroy_modify_config_capability</a>&lt;TokenT: <b>copy</b> + drop + store&gt;(sender: &signer)
-<b>acquires</b> <a href="ModifyDaoConfigProposal.md#0x1_ModifyDaoConfigProposal_DaoConfigModifyCapability">DaoConfigModifyCapability</a> {
-    <b>let</b> token_issuer = <a href="Token.md#0x1_Token_token_address">Token::token_address</a>&lt;TokenT&gt;();
-    <b>assert</b>!(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender) == token_issuer, <a href="Errors.md#0x1_Errors_requires_address">Errors::requires_address</a>(<a href="ModifyDaoConfigProposal.md#0x1_ModifyDaoConfigProposal_ERR_NOT_AUTHORIZED">ERR_NOT_AUTHORIZED</a>));
-
-    <b>let</b> <a href="ModifyDaoConfigProposal.md#0x1_ModifyDaoConfigProposal_DaoConfigModifyCapability">DaoConfigModifyCapability</a> {cap} = <b>move_from</b>&lt;<a href="ModifyDaoConfigProposal.md#0x1_ModifyDaoConfigProposal_DaoConfigModifyCapability">DaoConfigModifyCapability</a>&lt;TokenT&gt;&gt;(token_issuer);
-    <a href="Config.md#0x1_Config_destroy_modify_config_capability">Config::destroy_modify_config_capability</a>&lt;DaoConfig&lt;TokenT&gt;&gt;(cap);
-}
-</code></pre>
-
-
-
-</details>
-
-<details>
-<summary>Specification</summary>
-
-
-
-<pre><code><b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 

@@ -34,7 +34,6 @@ module TreasuryWithdrawDaoProposal {
     const ERR_NEED_RECEIVER_TO_EXECUTE: u64 = 102;
     /// The withdraw amount of propose is too many.
     const ERR_TOO_MANY_WITHDRAW_AMOUNT: u64 = 103;
-    const ERR_CAPABILITY_NOT_EXIST: u64 = 104;
 
     /// Plugin method of the module.
     /// Should be called by token issuer.
@@ -42,17 +41,6 @@ module TreasuryWithdrawDaoProposal {
         let token_issuer = Token::token_address<TokenT>();
         assert!(Signer::address_of(signer) == token_issuer, Errors::requires_address(ERR_NOT_AUTHORIZED));
         move_to(signer, WrappedWithdrawCapability<TokenT> { cap: cap });
-    }
-
-    /// withdraw Treasury::WithdrawCapability
-    public fun takeout_withdraw_capability<TokenT: store>(sender: &signer): Treasury::WithdrawCapability<TokenT>
-    acquires WrappedWithdrawCapability {
-        let token_issuer = Token::token_address<TokenT>();
-        assert!(Signer::address_of(sender) == token_issuer, Errors::requires_address(ERR_NOT_AUTHORIZED));
-
-        assert!(exists<WrappedWithdrawCapability<TokenT>>(Signer::address_of(sender)), Errors::not_published(ERR_CAPABILITY_NOT_EXIST));
-        let WrappedWithdrawCapability<TokenT> { cap } = move_from<WrappedWithdrawCapability<TokenT>>(Signer::address_of(sender));
-        cap
     }
 
     spec plugin {

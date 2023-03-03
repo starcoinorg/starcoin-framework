@@ -3,17 +3,16 @@ processed 7 tasks
 task 2 'run'. lines 6-38:
 {
   "gas_used": 132522,
-  "status": "Executed"
+  "status": {
+    "Keep": "Executed"
+  }
 }
 
 task 3 'run'. lines 40-52:
 {
   "gas_used": 0,
   "status": {
-    "Discard": {
-      "status_code": "2",
-      "status_code_name": "INVALID_AUTH_KEY"
-    }
+    "Discard": 2
   }
 }
 
@@ -21,10 +20,7 @@ task 4 'run'. lines 54-69:
 {
   "gas_used": 0,
   "status": {
-    "Discard": {
-      "status_code": "2",
-      "status_code_name": "INVALID_AUTH_KEY"
-    }
+    "Discard": 2
   }
 }
 
@@ -32,10 +28,7 @@ task 5 'run'. lines 70-87:
 {
   "gas_used": 0,
   "status": {
-    "Discard": {
-      "status_code": "2",
-      "status_code_name": "INVALID_AUTH_KEY"
-    }
+    "Discard": 2
   }
 }
 
@@ -43,9 +36,6 @@ task 6 'run'. lines 88-102:
 {
   "gas_used": 0,
   "status": {
-    "Discard": {
-      "status_code": "2",
-      "status_code_name": "INVALID_AUTH_KEY"
-    }
+    "Discard": 2
   }
 }
