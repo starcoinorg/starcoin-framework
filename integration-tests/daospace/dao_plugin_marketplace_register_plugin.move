@@ -18,10 +18,9 @@ module creator::TestPlugin {
     const NAME: vector<u8> = b"TestPlugin";
 
     /// directly upgrade the sender account to DAOAccount and create DAO
-    public(script) fun register(_sender: signer) {
-        let witness = TestPlugin{};
+    public(script) fun register(sender: signer) {
         DAOPluginMarketplace::register_plugin<TestPlugin>(
-            &witness,
+            &sender,
             NAME, 
             b"ipfs://description",
             Option::none(),
@@ -71,15 +70,13 @@ module creator::TestPlugin2 {
     const NAME: vector<u8> = b"TestPlugin2";
 
     /// directly upgrade the sender account to DAOAccount and create DAO
-    public(script) fun register(_sender: signer) {
-        let witness = TestPlugin2{};
-
+    public(script) fun register(sender: signer) {
         let labels = Vector::empty<vector<u8>>();
         Vector::push_back<vector<u8>>(&mut labels, b"OS=Starcoin");
         Vector::push_back<vector<u8>>(&mut labels, b"Store=IPFS");
 
         DAOPluginMarketplace::register_plugin<TestPlugin2>(
-            &witness,
+            &sender,
             NAME, 
             b"ipfs://description",
             Option::some(labels),

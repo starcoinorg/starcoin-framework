@@ -67,10 +67,9 @@ module creator::DAOHelper {
         receiver: address,
     }
 
-    public fun initialize_x_plugin(_sender: &signer) {
-        let witness = XPlugin{};
+    public fun initialize_x_plugin(sender: &signer) {
         DAOPluginMarketplace::register_plugin<XPlugin>(
-            &witness,
+            sender,
             b"0x1::XPlugin",
             b"The X plugin.",
             Option::none(),
@@ -79,7 +78,9 @@ module creator::DAOHelper {
         let implement_extpoints = Vector::empty<vector<u8>>();
         let depend_extpoints = Vector::empty<vector<u8>>();
 
+        let witness = XPlugin{};
         DAOPluginMarketplace::publish_plugin_version<XPlugin>(
+            sender,
             &witness,
             b"v0.1.0", 
             *&implement_extpoints,

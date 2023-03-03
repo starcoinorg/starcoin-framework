@@ -18,22 +18,22 @@ module creator::TestPlugin {
 
     const NAME: vector<u8> = b"TestPlugin";
 
-    public(script) fun register(_sender: signer) {
-        let witness = TestPlugin{};
+    public(script) fun register(sender: signer) {
         DAOPluginMarketplace::register_plugin<TestPlugin>(
-            &witness,
+            &sender,
             NAME, 
             b"ipfs://description",
             Option::none(),
         );
     }
 
-    public fun publish_version(_sender: &signer, tag: vector<u8>) {
+    public fun publish_version(sender: &signer, tag: vector<u8>) {
         let vec = Vector::empty<vector<u8>>();
         Vector::push_back<vector<u8>>(&mut vec, b"test_plugin");
 
         let witness = TestPlugin{};
         DAOPluginMarketplace::publish_plugin_version<TestPlugin>(
+            sender,
             &witness,
             tag, 
             *&vec, 

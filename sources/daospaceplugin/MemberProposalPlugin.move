@@ -19,11 +19,9 @@ module StarcoinFramework::MemberProposalPlugin{
         image_data: vector<u8>
     }
 
-    public fun initialize(_sender: &signer) {
-        let witness = MemberProposalPlugin{};
-
+    public fun initialize(sender: &signer) {
         DAOPluginMarketplace::register_plugin<MemberProposalPlugin>(
-            &witness,
+            sender,
             b"0x1::MemberProposalPlugin",
             b"The plugin for member proposal",
             Option::none(),
@@ -32,7 +30,9 @@ module StarcoinFramework::MemberProposalPlugin{
         let implement_extpoints = Vector::empty<vector<u8>>();
         let depend_extpoints = Vector::empty<vector<u8>>();
 
+        let witness = MemberProposalPlugin{};
         DAOPluginMarketplace::publish_plugin_version<MemberProposalPlugin>(
+            sender,
             &witness,
             b"v0.1.0", 
             *&implement_extpoints,

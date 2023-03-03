@@ -13,11 +13,9 @@ module StarcoinFramework::UpgradeModulePlugin {
         enforced: bool
     }
 
-    public fun initialize(_sender: &signer) {
-        let witness = UpgradeModulePlugin{};
-
+    public fun initialize(sender: &signer) {
         DAOPluginMarketplace::register_plugin<UpgradeModulePlugin>(
-            &witness,
+            sender,
             b"0x1::UpgradeModulePlugin",
             b"The plugin for upgrade module.",
             Option::none(),
@@ -26,7 +24,9 @@ module StarcoinFramework::UpgradeModulePlugin {
         let implement_extpoints = Vector::empty<vector<u8>>();
         let depend_extpoints = Vector::empty<vector<u8>>();
 
+        let witness = UpgradeModulePlugin{};
         DAOPluginMarketplace::publish_plugin_version<UpgradeModulePlugin>(
+            sender,
             &witness,
             b"v0.1.0",
             *&implement_extpoints,

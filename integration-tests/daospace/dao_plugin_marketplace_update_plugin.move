@@ -18,10 +18,9 @@ module creator::TestPlugin {
 
     const NAME: vector<u8> = b"TestPlugin";
 
-    public(script) fun register(_sender: signer) {
-        let witness = TestPlugin{};
+    public(script) fun register(sender: signer) {
         DAOPluginMarketplace::register_plugin<TestPlugin>(
-            &witness,
+            &sender,
             NAME, 
             b"ipfs://description",
             Option::none(),
@@ -33,10 +32,10 @@ module creator::TestPlugin {
         Vector::push_back<vector<u8>>(&mut labels, b"OS=Starcoin");
         Vector::push_back<vector<u8>>(&mut labels, b"Store=IPFS");
 
-        let witness = TestPlugin{};
+        let cap = TestPlugin{};
         DAOPluginMarketplace::update_plugin<TestPlugin>(
             &sender,
-            &witness,
+            &cap,
             NAME,
             b"ipfs://description2",
             Option::some(labels),
@@ -55,6 +54,16 @@ script {
 // check: EXECUTED
 
 //# view --address Genesis --resource 0x1::DAOPluginMarketplace::PluginEntry<{{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}::TestPlugin::TestPlugin>
+
+//# run --signers alice
+script {
+    use creator::TestPlugin;
+    
+    fun main(sender: signer) {
+        TestPlugin::update_plugin(sender);
+    }
+}
+// check: MoveAbort
 
 //# run --signers bob
 script {
