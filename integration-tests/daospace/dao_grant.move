@@ -28,8 +28,7 @@ module creator::DAOHelper {
     use StarcoinFramework::InstallPluginProposalPlugin::{Self, InstallPluginProposalPlugin};
     use StarcoinFramework::Vector;
     use StarcoinFramework::STC;
-    use StarcoinFramework::Option;
-    
+
     struct X has store, copy, drop{}
     
     const NAME: vector<u8> = b"X";
@@ -53,7 +52,7 @@ module creator::DAOHelper {
             min_action_delay,
             min_proposal_deposit,
         );
-        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, Option::none<vector<u8>>(), Option::none<vector<u8>>(), b"ipfs://description", X{}, config);
+        let dao_root_cap = DAOSpace::create_dao<X>(dao_account_cap, *&NAME, b"ipfs://description", X{}, config);
         
         DAOSpace::install_plugin_with_root_cap<X, InstallPluginProposalPlugin>(&dao_root_cap, InstallPluginProposalPlugin::required_caps()); 
         DAOSpace::install_plugin_with_root_cap<X, AnyMemberPlugin>(&dao_root_cap, AnyMemberPlugin::required_caps());

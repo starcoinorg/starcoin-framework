@@ -98,7 +98,7 @@ module StarcoinFramework::StakeToSBTPlugin {
 
         if (!DAOSpace::is_member<DAOT>(sender_addr)) {
             IdentifierNFT::accept<DAOSpace::DAOMember<DAOT>, DAOSpace::DAOMemberBody<DAOT>>(sender);
-            DAOSpace::join_member<DAOT, StakeToSBTPlugin>(&member_cap, sender_addr, Option::none<vector<u8>>(), Option::none<vector<u8>>(), 0);
+            DAOSpace::join_member<DAOT, StakeToSBTPlugin>(&member_cap, sender_addr, 0);
         };
 
         if (!exists<StakeList<DAOT, TokenT>>(sender_addr)) {
