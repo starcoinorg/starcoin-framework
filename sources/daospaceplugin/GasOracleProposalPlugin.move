@@ -75,18 +75,18 @@ module StarcoinFramework::GasOracleProposalPlugin {
         let proposal_cap = DAOSpace::acquire_proposal_cap<DAOT, GasOracleProposalPlugin>(&witness);
         let OracleSourceAddAction<TokenType>{ source_address } = DAOSpace::execute_proposal<DAOT, GasOracleProposalPlugin, OracleSourceAddAction<TokenType>>(&proposal_cap, &sender, proposal_id);
         let storage_cap = DAOSpace::acquire_storage_cap<DAOT, GasOracleProposalPlugin>(&witness);
-        let source_addresses = if (!DAOSpace::exists_in_storage<DAOT, GasOracleProposalPlugin, OracleSources<TokenType>>()) {
+        let source_addresses = if (!DAOSpace::exists_storage<DAOT, GasOracleProposalPlugin, OracleSources<TokenType>>()) {
             let genesis_singer= GenesisSignerCapability::get_genesis_signer();
             Account::accept_token<TokenType>(genesis_singer);
             Vector::singleton(source_address)
         }else {
-            let OracleSources<TokenType>{ source_addresses } = DAOSpace::take_from_storage<DAOT, GasOracleProposalPlugin, OracleSources<TokenType>>(&storage_cap);
+            let OracleSources<TokenType>{ source_addresses } = DAOSpace::take<DAOT, GasOracleProposalPlugin, OracleSources<TokenType>>(&storage_cap);
             assert!(Vector::contains(&source_addresses, &source_address) == false, Errors::invalid_state(ERR_PLUGIN_ORACLE_EXIST));
             Vector::push_back(&mut source_addresses, source_address);
             source_addresses
         };
 
-        DAOSpace::save_to_storage(&storage_cap, OracleSources<TokenType>{ source_addresses });
+        DAOSpace::save(&storage_cap, OracleSources<TokenType>{ source_addresses });
     }
 
     public(script) fun create_oracle_remove_proposal<DAOT: store, TokenType: store>(sender: signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay: u64, source_address: address) {
@@ -103,18 +103,18 @@ module StarcoinFramework::GasOracleProposalPlugin {
         let proposal_cap = DAOSpace::acquire_proposal_cap<DAOT, GasOracleProposalPlugin>(&witness);
         let OracleSourceRemoveAction<TokenType>{ source_address } = DAOSpace::execute_proposal<DAOT, GasOracleProposalPlugin, OracleSourceRemoveAction<TokenType>>(&proposal_cap, &sender, proposal_id);
         let storage_cap = DAOSpace::acquire_storage_cap<DAOT, GasOracleProposalPlugin>(&witness);
-        assert!(DAOSpace::exists_in_storage<DAOT, GasOracleProposalPlugin, OracleSources<TokenType>>(), ERR_PLUGIN_ORACLE_NOT_EXIST);
-        let OracleSources<TokenType>{ source_addresses } = DAOSpace::take_from_storage<DAOT, GasOracleProposalPlugin, OracleSources<TokenType>>(&storage_cap);
+        assert!(DAOSpace::exists_storage<DAOT, GasOracleProposalPlugin, OracleSources<TokenType>>(), ERR_PLUGIN_ORACLE_NOT_EXIST);
+        let OracleSources<TokenType>{ source_addresses } = DAOSpace::take<DAOT, GasOracleProposalPlugin, OracleSources<TokenType>>(&storage_cap);
         let (exist,index)= Vector::index_of(&source_addresses, &source_address);
         assert!(exist, Errors::invalid_state(ERR_PLUGIN_ORACLE_NOT_EXIST));
         Vector::remove(&mut source_addresses,index);
-        DAOSpace::save_to_storage(&storage_cap, OracleSources<TokenType>{ source_addresses });
+        DAOSpace::save(&storage_cap, OracleSources<TokenType>{ source_addresses });
     }
 
     public fun gas_oracle_read<DAOT: store, TokenType: store>(): u128 {
         let witness = GasOracleProposalPlugin{};
         let storage_cap = DAOSpace::acquire_storage_cap<DAOT, GasOracleProposalPlugin>(&witness);
-        let OracleSources{ source_addresses } = DAOSpace::copy_from_storage<DAOT, GasOracleProposalPlugin, OracleSources<TokenType>>(&storage_cap);
+        let OracleSources{ source_addresses } = DAOSpace::borrow_storage<DAOT, GasOracleProposalPlugin, OracleSources<TokenType>>(&storage_cap);
         PriceOracleAggregator::latest_price_average_aggregator<STCToken<TokenType>>(&source_addresses, ORACLE_UPDATED_IN)
     }
 

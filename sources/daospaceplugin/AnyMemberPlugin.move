@@ -6,6 +6,7 @@ module StarcoinFramework::AnyMemberPlugin{
     use StarcoinFramework::Signer;
     use StarcoinFramework::Option;
     use StarcoinFramework::InstallPluginProposalPlugin;
+    use StarcoinFramework::IdentifierNFT;
 
     struct AnyMemberPlugin has store, drop{}
 
@@ -36,13 +37,11 @@ module StarcoinFramework::AnyMemberPlugin{
         );
     }
 
+    //TODO how to unify arguments.
     public fun join<DAOT: store>(sender: &signer, image_data:vector<u8>, image_url:vector<u8>){
         let witness = AnyMemberPlugin{};
-        let sender_addr = Signer::address_of(sender);
-        if (DAOSpace::is_member<DAOT>(sender_addr) ) {
-            return
-        };
         let member_cap = DAOSpace::acquire_member_cap<DAOT, AnyMemberPlugin>(&witness);
+        IdentifierNFT::accept<DAOSpace::DAOMember<DAOT>,DAOSpace::DAOMemberBody<DAOT>>(sender);
         let op_image_data = if(Vector::is_empty(&image_data)){
             Option::none<vector<u8>>()
         }else{
@@ -53,9 +52,7 @@ module StarcoinFramework::AnyMemberPlugin{
         }else{
             Option::some(image_url)
         };
-         
-        DAOSpace::issue_member_offer<DAOT, AnyMemberPlugin>(&member_cap, sender_addr,  op_image_data, op_image_url, 1);
-        DAOSpace::accept_member_offer<DAOT>(sender);
+        DAOSpace::join_member_with_member_cap(&member_cap, Signer::address_of(sender), op_image_data, op_image_url, 1);
     }
 
     public (script) fun join_entry<DAOT: store>(sender: signer, image_data:vector<u8>, image_url:vector<u8>){

@@ -198,7 +198,7 @@ script{
 
     // execute action
     fun join(sender: signer){
-        DAOSpace::accept_member_offer_entry<X>(sender);
+        DAOSpace::join_member_entry<X>(sender);
     }
 }
 // check: EXECUTED
