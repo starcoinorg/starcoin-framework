@@ -26,7 +26,7 @@
 
 
 
-<pre><code><b>struct</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a> <b>has</b> drop, store
+<pre><code><b>struct</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a> <b>has</b> drop
 </code></pre>
 
 

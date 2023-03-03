@@ -3,7 +3,7 @@ module StarcoinFramework::InstallPluginProposalPlugin{
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Vector;
 
-    struct InstallPluginProposalPlugin has store, drop{}
+    struct InstallPluginProposalPlugin has drop{}
 
     struct InstallPluginAction<phantom ToInstallPluginT> has store {
         required_caps: vector<CapType>,
@@ -16,7 +16,7 @@ module StarcoinFramework::InstallPluginProposalPlugin{
     }
 
     //TODO how to unify arguments.
-    public fun create_proposal<DAOT: store, ToInstallPluginT: store>(sender: &signer, required_caps: vector<CapType>, action_delay: u64){
+    public fun create_proposal<DAOT: store, ToInstallPluginT>(sender: &signer, required_caps: vector<CapType>, action_delay: u64){
         let witness = InstallPluginProposalPlugin{};
 
         let cap = DAOSpace::acquire_proposal_cap<DAOT, InstallPluginProposalPlugin>(&witness);
@@ -26,7 +26,7 @@ module StarcoinFramework::InstallPluginProposalPlugin{
         DAOSpace::create_proposal(&cap, sender, action, action_delay);
     }
 
-    public (script) fun execute_proposal<DAOT: store, ToInstallPluginT: store>(sender: signer, proposal_id: u64){
+    public (script) fun execute_proposal<DAOT: store, ToInstallPluginT>(sender: signer, proposal_id: u64){
         let witness = InstallPluginProposalPlugin{};
         let proposal_cap = DAOSpace::acquire_proposal_cap<DAOT, InstallPluginProposalPlugin>(&witness);
         let InstallPluginAction{required_caps} = DAOSpace::execute_proposal<DAOT, InstallPluginProposalPlugin, InstallPluginAction<ToInstallPluginT>>(&proposal_cap, &sender, proposal_id);

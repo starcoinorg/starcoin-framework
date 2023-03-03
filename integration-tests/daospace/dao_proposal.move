@@ -68,7 +68,7 @@ module creator::DAOHelper {
 
     }
 
-    struct XPlugin has store, drop{}
+    struct XPlugin has drop{}
 
     struct XAction<phantom TokenT> has store {
         total: u128,
