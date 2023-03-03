@@ -241,7 +241,7 @@ MintToken request.
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_create_mint_proposal">create_mint_proposal</a>&lt;DAOT: store, TokenT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, receiver: <b>address</b>, amount: u128, action_delay: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_create_mint_proposal">create_mint_proposal</a>&lt;DAOT: store, TokenT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, receiver: <b>address</b>, amount: u128, action_delay: u64)
 </code></pre>
 
 
@@ -250,14 +250,14 @@ MintToken request.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_create_mint_proposal">create_mint_proposal</a>&lt;DAOT: store, TokenT:store&gt;(sender: &signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;, receiver: <b>address</b>, amount: u128, action_delay: u64){
+<pre><code><b>public</b> <b>fun</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_create_mint_proposal">create_mint_proposal</a>&lt;DAOT: store, TokenT:store&gt;(sender: &signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;, receiver: <b>address</b>, amount: u128, action_delay: u64){
     <b>let</b> witness = <a href="MintProposalPlugin.md#0x1_MintProposalPlugin">MintProposalPlugin</a>{};
     <b>let</b> cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_proposal_cap">DAOSpace::acquire_proposal_cap</a>&lt;DAOT, <a href="MintProposalPlugin.md#0x1_MintProposalPlugin">MintProposalPlugin</a>&gt;(&witness);
     <b>let</b> action = <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_MintTokenAction">MintTokenAction</a>&lt;TokenT&gt;{
         receiver,
         amount,
     };
-    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, sender, action, title, introduction, extend, action_delay, <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u8&gt;());
+    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, sender, action, title, introduction, description, action_delay, <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u8&gt;());
 }
 </code></pre>
 
@@ -271,7 +271,7 @@ MintToken request.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_create_mint_proposal_entry">create_mint_proposal_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, receiver: <b>address</b>, amount: u128, action_delay: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_create_mint_proposal_entry">create_mint_proposal_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, receiver: <b>address</b>, amount: u128, action_delay: u64)
 </code></pre>
 
 
@@ -280,8 +280,8 @@ MintToken request.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_create_mint_proposal_entry">create_mint_proposal_entry</a>&lt;DAOT: store, TokenT:store&gt;(sender: signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;, receiver: <b>address</b>, amount: u128, action_delay: u64){
-    <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_create_mint_proposal">create_mint_proposal</a>&lt;DAOT, TokenT&gt;(&sender, extend, title, introduction, receiver, amount, action_delay);
+<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_create_mint_proposal_entry">create_mint_proposal_entry</a>&lt;DAOT: store, TokenT:store&gt;(sender: signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;, receiver: <b>address</b>, amount: u128, action_delay: u64){
+    <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_create_mint_proposal">create_mint_proposal</a>&lt;DAOT, TokenT&gt;(&sender, description, title, introduction, receiver, amount, action_delay);
 }
 </code></pre>
 
@@ -348,7 +348,7 @@ MintToken request.
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64)
 </code></pre>
 
 
@@ -357,8 +357,8 @@ MintToken request.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT:store&gt;(sender:&signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay:u64){
-    <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">InstallPluginProposalPlugin::create_proposal</a>&lt;DAOT, <a href="MintProposalPlugin.md#0x1_MintProposalPlugin">MintProposalPlugin</a>&gt;(sender,<a href="MintProposalPlugin.md#0x1_MintProposalPlugin_required_caps">required_caps</a>(), title, introduction,  extend, action_delay);
+<pre><code><b>public</b> <b>fun</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT:store&gt;(sender:&signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay:u64){
+    <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">InstallPluginProposalPlugin::create_proposal</a>&lt;DAOT, <a href="MintProposalPlugin.md#0x1_MintProposalPlugin">MintProposalPlugin</a>&gt;(sender,<a href="MintProposalPlugin.md#0x1_MintProposalPlugin_required_caps">required_caps</a>(), title, introduction,  description, action_delay);
 }
 </code></pre>
 
@@ -372,7 +372,7 @@ MintToken request.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64)
 </code></pre>
 
 
@@ -381,8 +381,8 @@ MintToken request.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT:store&gt;(sender:signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay:u64){
-    <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT&gt;(&sender, title, introduction, extend, action_delay);
+<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT:store&gt;(sender:signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay:u64){
+    <a href="MintProposalPlugin.md#0x1_MintProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT&gt;(&sender, title, introduction, description, action_delay);
 }
 </code></pre>
 

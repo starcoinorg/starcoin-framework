@@ -1,3 +1,4 @@
+//TODO find more good name
 module StarcoinFramework::GrantProposalPlugin{
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option;
@@ -60,7 +61,7 @@ module StarcoinFramework::GrantProposalPlugin{
     const ERR_GRANTTREASURY_WITHDRAW_TOO_MORE :u64 = 102;
     const ERR_SENDER_NOT_SAME :u64 = 103;
 
-    public fun create_grant_proposal<DAOT: store, TokenT:store>(sender: &signer, title:vector<u8>, introduction:vector<u8>, extend: vector<u8>,grantee: address, total: u128, start_time:u64, period: u64, action_delay:u64){
+    public fun create_grant_proposal<DAOT: store, TokenT:store>(sender: &signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>,grantee: address, total: u128, start_time:u64, period: u64, action_delay:u64){
         let witness = GrantProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, GrantProposalPlugin>(&witness);
         let action = GrantCreateAction<TokenT>{
@@ -69,11 +70,11 @@ module StarcoinFramework::GrantProposalPlugin{
             start_time:start_time,
             period:period
         };
-        DAOSpace::create_proposal(&cap, sender, action, title, introduction, extend, action_delay, Option::none<u8>());
+        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay, Option::none<u8>());
     }
 
-    public (script) fun create_grant_proposal_entry<DAOT: store, TokenT:store>(sender: signer, title:vector<u8>, introduction:vector<u8>, extend: vector<u8>,grantee: address, total: u128, start_time:u64, period: u64, action_delay:u64){
-        create_grant_proposal<DAOT, TokenT>(&sender, title, introduction, extend, grantee, total, start_time, period, action_delay);
+    public (script) fun create_grant_proposal_entry<DAOT: store, TokenT:store>(sender: signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>,grantee: address, total: u128, start_time:u64, period: u64, action_delay:u64){
+        create_grant_proposal<DAOT, TokenT>(&sender, title, introduction, description, grantee, total, start_time, period, action_delay);
     }
 
     public fun execute_grant_proposal<DAOT: store, TokenT:store>(sender: &signer, proposal_id: u64){
@@ -89,15 +90,15 @@ module StarcoinFramework::GrantProposalPlugin{
         execute_grant_proposal<DAOT, TokenT>(&sender, proposal_id);
     }
 
-    public fun create_grant_revoke_proposal<DAOT: store, TokenT:store>(sender: &signer, title:vector<u8>, introduction:vector<u8>, extend: vector<u8>, grantee:address, action_delay:u64){
+    public fun create_grant_revoke_proposal<DAOT: store, TokenT:store>(sender: &signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, grantee:address, action_delay:u64){
         let witness = GrantProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, GrantProposalPlugin>(&witness);
         let action = GrantRevokeAction<TokenT>{ grantee };
-        DAOSpace::create_proposal(&cap, sender, action, title, introduction, extend, action_delay, Option::none<u8>());
+        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay, Option::none<u8>());
     }
 
-    public (script) fun create_grant_revoke_proposal_entry<DAOT: store, TokenT:store>(sender: signer, title:vector<u8>, introduction:vector<u8>, extend: vector<u8>, grantee:address, action_delay:u64){
-        create_grant_revoke_proposal<DAOT, TokenT>(&sender, title, introduction, extend, grantee, action_delay);
+    public (script) fun create_grant_revoke_proposal_entry<DAOT: store, TokenT:store>(sender: signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, grantee:address, action_delay:u64){
+        create_grant_revoke_proposal<DAOT, TokenT>(&sender, title, introduction, description, grantee, action_delay);
     }
 
     public fun execute_grant_revoke_proposal<DAOT: store, TokenT:store>(sender: &signer, proposal_id: u64){
@@ -112,12 +113,12 @@ module StarcoinFramework::GrantProposalPlugin{
         execute_grant_revoke_proposal<DAOT, TokenT>(&sender, proposal_id);
     }
 
-    public fun install_plugin_proposal<DAOT:store>(sender: &signer, title:vector<u8>, introduction:vector<u8>, extend: vector<u8>, action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, GrantProposalPlugin>(sender, required_caps(), title, introduction, extend, action_delay);
+    public fun install_plugin_proposal<DAOT:store>(sender: &signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, GrantProposalPlugin>(sender, required_caps(), title, introduction, description, action_delay);
     }
 
-    public (script) fun install_plugin_proposal_entry<DAOT: store>(sender:signer, title:vector<u8>, introduction:vector<u8>, extend: vector<u8>, action_delay:u64){
-        install_plugin_proposal<DAOT>(&sender, title, introduction, extend, action_delay);
+    public (script) fun install_plugin_proposal_entry<DAOT: store>(sender:signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay:u64){
+        install_plugin_proposal<DAOT>(&sender, title, introduction, description, action_delay);
     }
 
 }

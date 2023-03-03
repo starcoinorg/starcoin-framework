@@ -344,7 +344,7 @@ Should be called by token issuer.
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="TreasuryPlugin.md#0x1_TreasuryPlugin_create_withdraw_proposal">create_withdraw_proposal</a>&lt;DAOT: store, TokenT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, receiver: <b>address</b>, amount: u128, period: u64, action_delay: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="TreasuryPlugin.md#0x1_TreasuryPlugin_create_withdraw_proposal">create_withdraw_proposal</a>&lt;DAOT: store, TokenT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, receiver: <b>address</b>, amount: u128, period: u64, action_delay: u64)
 </code></pre>
 
 
@@ -357,7 +357,7 @@ Should be called by token issuer.
     sender: &signer,
     title:vector&lt;u8&gt;,
     introduction:vector&lt;u8&gt;,
-    extend: vector&lt;u8&gt;,
+    description: vector&lt;u8&gt;,
     receiver: <b>address</b>,
     amount: u128,
     period: u64,
@@ -377,7 +377,7 @@ Should be called by token issuer.
         <a href="TreasuryPlugin.md#0x1_TreasuryPlugin_set_scale_factor_inner">set_scale_factor_inner</a>&lt;DAOT&gt;(0u8);
     };
     <b>let</b> scale = <a href="DAOSpace.md#0x1_DAOSpace_get_custom_config">DAOSpace::get_custom_config</a>&lt;DAOT, <a href="TreasuryPlugin.md#0x1_TreasuryPlugin_QuorumScale">QuorumScale</a>&gt;().scale;
-    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, sender, action, title, introduction, extend, action_delay, <a href="Option.md#0x1_Option_some">Option::some</a>(scale));
+    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, sender, action, title, introduction, description, action_delay, <a href="Option.md#0x1_Option_some">Option::some</a>(scale));
 }
 </code></pre>
 
@@ -391,7 +391,7 @@ Should be called by token issuer.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TreasuryPlugin.md#0x1_TreasuryPlugin_create_withdraw_proposal_entry">create_withdraw_proposal_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, receiver: <b>address</b>, amount: u128, period: u64, action_delay: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TreasuryPlugin.md#0x1_TreasuryPlugin_create_withdraw_proposal_entry">create_withdraw_proposal_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, receiver: <b>address</b>, amount: u128, period: u64, action_delay: u64)
 </code></pre>
 
 
@@ -404,13 +404,13 @@ Should be called by token issuer.
     sender: signer,
     title:vector&lt;u8&gt;,
     introduction:vector&lt;u8&gt;,
-    extend: vector&lt;u8&gt;,
+    description: vector&lt;u8&gt;,
     receiver: <b>address</b>,
     amount: u128,
     period: u64,
     action_delay: u64)
 {
-    <a href="TreasuryPlugin.md#0x1_TreasuryPlugin_create_withdraw_proposal">create_withdraw_proposal</a>&lt;DAOT, TokenT&gt;(&sender, title, introduction, extend, receiver, amount, period, action_delay);
+    <a href="TreasuryPlugin.md#0x1_TreasuryPlugin_create_withdraw_proposal">create_withdraw_proposal</a>&lt;DAOT, TokenT&gt;(&sender, title, introduction, description, receiver, amount, period, action_delay);
 }
 </code></pre>
 

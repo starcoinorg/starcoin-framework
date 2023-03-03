@@ -3,7 +3,6 @@
 
 # Module `0x1::AnyMemberPlugin`
 
-This plugin let every can join the DAO, and auto get 1 sbt.
 
 
 -  [Struct `AnyMemberPlugin`](#0x1_AnyMemberPlugin_AnyMemberPlugin)
@@ -191,7 +190,7 @@ This plugin let every can join the DAO, and auto get 1 sbt.
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64)
 </code></pre>
 
 
@@ -200,8 +199,8 @@ This plugin let every can join the DAO, and auto get 1 sbt.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT:store&gt;(sender:&signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay:u64){
-    <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">InstallPluginProposalPlugin::create_proposal</a>&lt;DAOT, <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin">AnyMemberPlugin</a>&gt;(sender, <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin_required_caps">required_caps</a>(), title, introduction, extend, action_delay);
+<pre><code><b>public</b> <b>fun</b> <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT:store&gt;(sender:&signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay:u64){
+    <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">InstallPluginProposalPlugin::create_proposal</a>&lt;DAOT, <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin">AnyMemberPlugin</a>&gt;(sender, <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin_required_caps">required_caps</a>(), title, introduction, description, action_delay);
 }
 </code></pre>
 
@@ -215,7 +214,7 @@ This plugin let every can join the DAO, and auto get 1 sbt.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64)
 </code></pre>
 
 
@@ -224,8 +223,8 @@ This plugin let every can join the DAO, and auto get 1 sbt.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT:store&gt;(sender:signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay:u64){
-    <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT&gt;(&sender, title, introduction, extend, action_delay);
+<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT:store&gt;(sender:signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay:u64){
+    <a href="AnyMemberPlugin.md#0x1_AnyMemberPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT&gt;(&sender, title, introduction, description, action_delay);
 }
 </code></pre>
 

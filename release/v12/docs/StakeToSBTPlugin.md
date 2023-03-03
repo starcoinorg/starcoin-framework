@@ -23,13 +23,10 @@
 -  [Function `set_sbt_weight_by_dao`](#0x1_StakeToSBTPlugin_set_sbt_weight_by_dao)
 -  [Function `accept_token`](#0x1_StakeToSBTPlugin_accept_token)
 -  [Function `stake`](#0x1_StakeToSBTPlugin_stake)
--  [Function `stake_entry`](#0x1_StakeToSBTPlugin_stake_entry)
 -  [Function `query_stake`](#0x1_StakeToSBTPlugin_query_stake)
 -  [Function `query_stake_count`](#0x1_StakeToSBTPlugin_query_stake_count)
 -  [Function `unstake_by_id`](#0x1_StakeToSBTPlugin_unstake_by_id)
--  [Function `unstake_by_id_entry`](#0x1_StakeToSBTPlugin_unstake_by_id_entry)
 -  [Function `unstake_all`](#0x1_StakeToSBTPlugin_unstake_all)
--  [Function `unstake_all_entry`](#0x1_StakeToSBTPlugin_unstake_all_entry)
 -  [Function `unstake_item`](#0x1_StakeToSBTPlugin_unstake_item)
 -  [Function `get_sbt_weight`](#0x1_StakeToSBTPlugin_get_sbt_weight)
 -  [Function `set_sbt_weight`](#0x1_StakeToSBTPlugin_set_sbt_weight)
@@ -45,6 +42,8 @@
 -  [Function `execute_token_accept_proposal_entry`](#0x1_StakeToSBTPlugin_execute_token_accept_proposal_entry)
 -  [Function `install_plugin_proposal`](#0x1_StakeToSBTPlugin_install_plugin_proposal)
 -  [Function `install_plugin_proposal_entry`](#0x1_StakeToSBTPlugin_install_plugin_proposal_entry)
+-  [Function `stake_entry`](#0x1_StakeToSBTPlugin_stake_entry)
+-  [Function `unstake_item_entry`](#0x1_StakeToSBTPlugin_unstake_item_entry)
 
 
 <pre><code><b>use</b> <a href="Account.md#0x1_Account">0x1::Account</a>;
@@ -848,35 +847,6 @@ Accept token with token type
 
 </details>
 
-<a name="0x1_StakeToSBTPlugin_stake_entry"></a>
-
-## Function `stake_entry`
-
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_stake_entry">stake_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer, amount: u128, lock_time: u64)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_stake_entry">stake_entry</a>&lt;DAOT: store, TokenT: store&gt;(
-    sender: signer,
-    amount: u128,
-    lock_time: u64
-) <b>acquires</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a> {
-    <b>let</b> token = <a href="Account.md#0x1_Account_withdraw">Account::withdraw</a>&lt;TokenT&gt;(&sender, amount);
-    <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_stake">stake</a>&lt;DAOT, TokenT&gt;(&sender, token, lock_time);
-}
-</code></pre>
-
-
-
-</details>
-
 <a name="0x1_StakeToSBTPlugin_query_stake"></a>
 
 ## Function `query_stake`
@@ -892,10 +862,8 @@ Accept token with token type
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_query_stake">query_stake</a>&lt;DAOT: store, TokenT: store&gt;(
-    member: <b>address</b>,
-    id: u64
-): (u64, u64, u64, u128, u128) <b>acquires</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_query_stake">query_stake</a>&lt;DAOT: store, TokenT: store&gt;(member: <b>address</b>, id: u64)
+: (u64, u64, u64, u128, u128) <b>acquires</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a> {
     <b>assert</b>!(<b>exists</b>&lt;<a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a>&lt;DAOT, TokenT&gt;&gt;(member), <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_ERR_PLUGIN_NOT_STAKE">ERR_PLUGIN_NOT_STAKE</a>));
     <b>let</b> stake_list = <b>borrow_global_mut</b>&lt;<a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a>&lt;DAOT, TokenT&gt;&gt;(member);
     <b>let</b> item_index = <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_find_item">find_item</a>(id, &stake_list.items);
@@ -953,7 +921,7 @@ Query stake count from stake list
 Unstake from staking
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_by_id">unstake_by_id</a>&lt;DAOT: store, TokenT: store&gt;(sender: &signer, id: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_by_id">unstake_by_id</a>&lt;DAOT: store, TokenT: store&gt;(member: <b>address</b>, id: u64)
 </code></pre>
 
 
@@ -962,8 +930,7 @@ Unstake from staking
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_by_id">unstake_by_id</a>&lt;DAOT: store, TokenT: store&gt;(sender: &signer, id: u64) <b>acquires</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a> {
-    <b>let</b> member = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
+<pre><code><b>public</b> <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_by_id">unstake_by_id</a>&lt;DAOT: store, TokenT: store&gt;(member: <b>address</b>, id: u64) <b>acquires</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a> {
     <b>assert</b>!(<b>exists</b>&lt;<a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a>&lt;DAOT, TokenT&gt;&gt;(member), <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_ERR_PLUGIN_NOT_STAKE">ERR_PLUGIN_NOT_STAKE</a>));
     <b>let</b> stake_list = <b>borrow_global_mut</b>&lt;<a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a>&lt;DAOT, TokenT&gt;&gt;(member);
     <b>let</b> item_index = <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_find_item">find_item</a>(id, &stake_list.items);
@@ -1004,42 +971,15 @@ Unstake from staking
 
 </details>
 
-<a name="0x1_StakeToSBTPlugin_unstake_by_id_entry"></a>
-
-## Function `unstake_by_id_entry`
-
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_by_id_entry">unstake_by_id_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer, id: u64)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_by_id_entry">unstake_by_id_entry</a>&lt;DAOT: store, TokenT: store&gt;(
-    sender: signer,
-    id: u64
-) <b>acquires</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a> {
-    <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_by_id">unstake_by_id</a>&lt;DAOT, TokenT&gt;(&sender, id);
-}
-</code></pre>
-
-
-
-</details>
-
 <a name="0x1_StakeToSBTPlugin_unstake_all"></a>
 
 ## Function `unstake_all`
 
-Unstake all staking items from sender,
-No care whether the sender is member or not
+Unstake all staking items from member address,
+No care whether the user is member or not
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_all">unstake_all</a>&lt;DAOT: store, TokenT: store&gt;(sender: &signer)
+<pre><code><b>public</b> <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_all">unstake_all</a>&lt;DAOT: store, TokenT: store&gt;(member: <b>address</b>)
 </code></pre>
 
 
@@ -1048,42 +988,17 @@ No care whether the sender is member or not
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_all">unstake_all</a>&lt;DAOT: store, TokenT: store&gt;(sender: &signer) <b>acquires</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a> {
-    <b>let</b> sender_addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
-    <b>assert</b>!(<b>exists</b>&lt;<a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a>&lt;DAOT, TokenT&gt;&gt;(sender_addr), <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_ERR_PLUGIN_NOT_STAKE">ERR_PLUGIN_NOT_STAKE</a>));
-    <b>let</b> stake_list = <b>borrow_global_mut</b>&lt;<a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a>&lt;DAOT, TokenT&gt;&gt;(sender_addr);
+<pre><code><b>public</b> <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_all">unstake_all</a>&lt;DAOT: store, TokenT: store&gt;(member: <b>address</b>) <b>acquires</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a> {
+    <b>assert</b>!(<b>exists</b>&lt;<a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a>&lt;DAOT, TokenT&gt;&gt;(member), <a href="Errors.md#0x1_Errors_not_published">Errors::not_published</a>(<a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_ERR_PLUGIN_NOT_STAKE">ERR_PLUGIN_NOT_STAKE</a>));
+    <b>let</b> stake_list = <b>borrow_global_mut</b>&lt;<a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a>&lt;DAOT, TokenT&gt;&gt;(member);
     <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&<b>mut</b> stake_list.items);
 
     <b>let</b> idx = 0;
     <b>while</b> (idx &lt; len) {
         <b>let</b> item = <a href="Vector.md#0x1_Vector_remove">Vector::remove</a>(&<b>mut</b> stake_list.items, idx);
-        <a href="Account.md#0x1_Account_deposit">Account::deposit</a>(sender_addr, <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_item">unstake_item</a>&lt;DAOT, TokenT&gt;(sender_addr, item));
+        <a href="Account.md#0x1_Account_deposit">Account::deposit</a>(member, <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_item">unstake_item</a>&lt;DAOT, TokenT&gt;(member, item));
         idx = idx + 1;
     };
-}
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_StakeToSBTPlugin_unstake_all_entry"></a>
-
-## Function `unstake_all_entry`
-
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_all_entry">unstake_all_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_all_entry">unstake_all_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer) <b>acquires</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a> {
-    <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_all">unstake_all</a>&lt;DAOT, TokenT&gt;(&sender);
 }
 </code></pre>
 
@@ -1305,7 +1220,7 @@ Unstake a item from a item object
 Create proposal that to specific a weight for a locktime
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_create_weight_proposal">create_weight_proposal</a>&lt;DAOT: store, TokenT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, lock_time: u64, weight: u64, action_delay: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_create_weight_proposal">create_weight_proposal</a>&lt;DAOT: store, TokenT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, lock_time: u64, weight: u64, action_delay: u64)
 </code></pre>
 
 
@@ -1318,7 +1233,7 @@ Create proposal that to specific a weight for a locktime
     sender: &signer,
     title:vector&lt;u8&gt;,
     introduction:vector&lt;u8&gt;,
-    extend: vector&lt;u8&gt;,
+    description: vector&lt;u8&gt;,
     lock_time: u64,
     weight: u64,
     action_delay: u64
@@ -1333,7 +1248,7 @@ Create proposal that to specific a weight for a locktime
         },
         title,
         introduction,
-        extend,
+        description,
         action_delay,
         <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u8&gt;());
 }
@@ -1349,7 +1264,7 @@ Create proposal that to specific a weight for a locktime
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_create_weight_proposal_entry">create_weight_proposal_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, lock_time: u64, weight: u64, action_delay: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_create_weight_proposal_entry">create_weight_proposal_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, lock_time: u64, weight: u64, action_delay: u64)
 </code></pre>
 
 
@@ -1362,12 +1277,12 @@ Create proposal that to specific a weight for a locktime
     sender: signer,
     title:vector&lt;u8&gt;,
     introduction:vector&lt;u8&gt;,
-    extend: vector&lt;u8&gt;,
+    description: vector&lt;u8&gt;,
     lock_time: u64,
     weight: u64,
     action_delay: u64
 ) {
-    <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_create_weight_proposal">create_weight_proposal</a>&lt;DAOT, TokenT&gt;(&sender,title, introduction, extend, lock_time, weight, action_delay);
+    <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_create_weight_proposal">create_weight_proposal</a>&lt;DAOT, TokenT&gt;(&sender,title, introduction, description, lock_time, weight, action_delay);
 }
 </code></pre>
 
@@ -1449,7 +1364,7 @@ Create proposal that to specific a weight for a locktime
 Create proposal that to accept a token type, which allow user to convert amount of token to SBT
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_create_token_accept_proposal">create_token_accept_proposal</a>&lt;DAOT: store, TokenT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_create_token_accept_proposal">create_token_accept_proposal</a>&lt;DAOT: store, TokenT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64)
 </code></pre>
 
 
@@ -1462,7 +1377,7 @@ Create proposal that to accept a token type, which allow user to convert amount 
     sender: &signer,
     title:vector&lt;u8&gt;,
     introduction:vector&lt;u8&gt;,
-    extend: vector&lt;u8&gt;,
+    description: vector&lt;u8&gt;,
     action_delay: u64
 ) {
     <b>let</b> witness = <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin">StakeToSBTPlugin</a> {};
@@ -1475,7 +1390,7 @@ Create proposal that to accept a token type, which allow user to convert amount 
         <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_AcceptTokenCap">AcceptTokenCap</a>&lt;DAOT, TokenT&gt; {},
         title,
         introduction,
-        extend,
+        description,
         action_delay,
         <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u8&gt;()
     );
@@ -1492,7 +1407,7 @@ Create proposal that to accept a token type, which allow user to convert amount 
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_create_token_accept_proposal_entry">create_token_accept_proposal_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_create_token_accept_proposal_entry">create_token_accept_proposal_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64)
 </code></pre>
 
 
@@ -1505,10 +1420,10 @@ Create proposal that to accept a token type, which allow user to convert amount 
     sender: signer,
     title:vector&lt;u8&gt;,
     introduction:vector&lt;u8&gt;,
-    extend: vector&lt;u8&gt;,
+    description: vector&lt;u8&gt;,
     action_delay: u64
 ) {
-    <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_create_token_accept_proposal">create_token_accept_proposal</a>&lt;DAOT, TokenT&gt;(&sender, title, introduction, extend, action_delay);
+    <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_create_token_accept_proposal">create_token_accept_proposal</a>&lt;DAOT, TokenT&gt;(&sender, title, introduction, description, action_delay);
 }
 </code></pre>
 
@@ -1586,7 +1501,7 @@ Create proposal that to accept a token type, which allow user to convert amount 
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64)
 </code></pre>
 
 
@@ -1599,7 +1514,7 @@ Create proposal that to accept a token type, which allow user to convert amount 
     sender: &signer,
     title:vector&lt;u8&gt;,
     introduction:vector&lt;u8&gt;,
-    extend: vector&lt;u8&gt;,
+    description: vector&lt;u8&gt;,
     action_delay: u64
 ) {
     <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">InstallPluginProposalPlugin::create_proposal</a>&lt;DAOT, <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin">StakeToSBTPlugin</a>&gt;(
@@ -1607,7 +1522,7 @@ Create proposal that to accept a token type, which allow user to convert amount 
         <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_required_caps">required_caps</a>(),
         title,
         introduction,
-        extend,
+        description,
         action_delay
     );
 }
@@ -1623,7 +1538,7 @@ Create proposal that to accept a token type, which allow user to convert amount 
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64)
 </code></pre>
 
 
@@ -1636,10 +1551,68 @@ Create proposal that to accept a token type, which allow user to convert amount 
     sender: signer,
     title:vector&lt;u8&gt;,
     introduction:vector&lt;u8&gt;,
-    extend: vector&lt;u8&gt;,
+    description: vector&lt;u8&gt;,
     action_delay: u64
 ) {
-    <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT&gt;(&sender, title, introduction, extend, action_delay);
+    <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT&gt;(&sender, title, introduction, description, action_delay);
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_StakeToSBTPlugin_stake_entry"></a>
+
+## Function `stake_entry`
+
+Called by script
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_stake_entry">stake_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer, amount: u128, lock_time: u64)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_stake_entry">stake_entry</a>&lt;DAOT: store, TokenT: store&gt;(
+    sender: signer,
+    amount: u128,
+    lock_time: u64
+) <b>acquires</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a> {
+    <b>let</b> token = <a href="Account.md#0x1_Account_withdraw">Account::withdraw</a>&lt;TokenT&gt;(&sender, amount);
+    <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_stake">stake</a>&lt;DAOT, TokenT&gt;(&sender, token, lock_time);
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_StakeToSBTPlugin_unstake_item_entry"></a>
+
+## Function `unstake_item_entry`
+
+Called by script
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_item_entry">unstake_item_entry</a>&lt;DAOT: store, TokenT: store&gt;(member: <b>address</b>, id: u64)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_item_entry">unstake_item_entry</a>&lt;DAOT: store, TokenT: store&gt;(
+    member: <b>address</b>,
+    id: u64
+) <b>acquires</b> <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_StakeList">StakeList</a> {
+    <a href="StakeToSBTPlugin.md#0x1_StakeToSBTPlugin_unstake_by_id">unstake_by_id</a>&lt;DAOT, TokenT&gt;(member, id);
 }
 </code></pre>
 

@@ -243,19 +243,8 @@ module StarcoinFramework::StakeToSBTPlugin {
         id
     }
 
-    public(script) fun stake_entry<DAOT: store, TokenT: store>(
-        sender: signer,
-        amount: u128,
-        lock_time: u64
-    ) acquires StakeList {
-        let token = Account::withdraw<TokenT>(&sender, amount);
-        stake<DAOT, TokenT>(&sender, token, lock_time);
-    }
-
-    public fun query_stake<DAOT: store, TokenT: store>(
-        member: address, 
-        id: u64
-    ): (u64, u64, u64, u128, u128) acquires StakeList {
+    public fun query_stake<DAOT: store, TokenT: store>(member: address, id: u64)
+    : (u64, u64, u64, u128, u128) acquires StakeList {
         assert!(exists<StakeList<DAOT, TokenT>>(member), Errors::not_published(ERR_PLUGIN_NOT_STAKE));
         let stake_list = borrow_global_mut<StakeList<DAOT, TokenT>>(member);
         let item_index = find_item(id, &stake_list.items);
@@ -282,8 +271,7 @@ module StarcoinFramework::StakeToSBTPlugin {
     }
 
     /// Unstake from staking
-    public fun unstake_by_id<DAOT: store, TokenT: store>(sender: &signer, id: u64) acquires StakeList {
-        let member = Signer::address_of(sender);
+    public fun unstake_by_id<DAOT: store, TokenT: store>(member: address, id: u64) acquires StakeList {
         assert!(exists<StakeList<DAOT, TokenT>>(member), Errors::not_published(ERR_PLUGIN_NOT_STAKE));
         let stake_list = borrow_global_mut<StakeList<DAOT, TokenT>>(member);
         let item_index = find_item(id, &stake_list.items);
@@ -319,31 +307,19 @@ module StarcoinFramework::StakeToSBTPlugin {
         );
     }
 
-    public(script) fun unstake_by_id_entry<DAOT: store, TokenT: store>(
-        sender: signer,
-        id: u64
-    ) acquires StakeList {
-        unstake_by_id<DAOT, TokenT>(&sender, id);
-    }
-
-    /// Unstake all staking items from sender,
-    /// No care whether the sender is member or not
-    public fun unstake_all<DAOT: store, TokenT: store>(sender: &signer) acquires StakeList {
-        let sender_addr = Signer::address_of(sender);
-        assert!(exists<StakeList<DAOT, TokenT>>(sender_addr), Errors::not_published(ERR_PLUGIN_NOT_STAKE));
-        let stake_list = borrow_global_mut<StakeList<DAOT, TokenT>>(sender_addr);
+    /// Unstake all staking items from member address,
+    /// No care whether the user is member or not
+    public fun unstake_all<DAOT: store, TokenT: store>(member: address) acquires StakeList {
+        assert!(exists<StakeList<DAOT, TokenT>>(member), Errors::not_published(ERR_PLUGIN_NOT_STAKE));
+        let stake_list = borrow_global_mut<StakeList<DAOT, TokenT>>(member);
         let len = Vector::length(&mut stake_list.items);
 
         let idx = 0;
         while (idx < len) {
             let item = Vector::remove(&mut stake_list.items, idx);
-            Account::deposit(sender_addr, unstake_item<DAOT, TokenT>(sender_addr, item));
+            Account::deposit(member, unstake_item<DAOT, TokenT>(member, item));
             idx = idx + 1;
         };
-    }
-
-    public(script) fun unstake_all_entry<DAOT: store, TokenT: store>(sender: signer) acquires StakeList {
-        unstake_all<DAOT, TokenT>(&sender);
     }
 
     /// Unstake a item from a item object
@@ -458,7 +434,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         sender: &signer,
         title:vector<u8>,
         introduction:vector<u8>,
-        extend: vector<u8>,
+        description: vector<u8>,
         lock_time: u64,
         weight: u64,
         action_delay: u64
@@ -473,7 +449,7 @@ module StarcoinFramework::StakeToSBTPlugin {
             },
             title,
             introduction,
-            extend,
+            description,
             action_delay,
             Option::none<u8>());
     }
@@ -482,12 +458,12 @@ module StarcoinFramework::StakeToSBTPlugin {
         sender: signer,
         title:vector<u8>,
         introduction:vector<u8>,
-        extend: vector<u8>,
+        description: vector<u8>,
         lock_time: u64,
         weight: u64,
         action_delay: u64
     ) {
-        create_weight_proposal<DAOT, TokenT>(&sender,title, introduction, extend, lock_time, weight, action_delay);
+        create_weight_proposal<DAOT, TokenT>(&sender,title, introduction, description, lock_time, weight, action_delay);
     }
 
     public fun execute_weight_proposal<DAOT: store, TokenT: store>(
@@ -522,7 +498,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         sender: &signer,
         title:vector<u8>,
         introduction:vector<u8>,
-        extend: vector<u8>,
+        description: vector<u8>,
         action_delay: u64
     ) {
         let witness = StakeToSBTPlugin {};
@@ -535,7 +511,7 @@ module StarcoinFramework::StakeToSBTPlugin {
             AcceptTokenCap<DAOT, TokenT> {},
             title,
             introduction,
-            extend,
+            description,
             action_delay,
             Option::none<u8>()
         );
@@ -545,10 +521,10 @@ module StarcoinFramework::StakeToSBTPlugin {
         sender: signer,
         title:vector<u8>,
         introduction:vector<u8>,
-        extend: vector<u8>,
+        description: vector<u8>,
         action_delay: u64
     ) {
-        create_token_accept_proposal<DAOT, TokenT>(&sender, title, introduction, extend, action_delay);
+        create_token_accept_proposal<DAOT, TokenT>(&sender, title, introduction, description, action_delay);
     }
 
     public fun execute_token_accept_proposal<DAOT: store, TokenT: store>(
@@ -580,7 +556,7 @@ module StarcoinFramework::StakeToSBTPlugin {
         sender: &signer,
         title:vector<u8>,
         introduction:vector<u8>,
-        extend: vector<u8>,
+        description: vector<u8>,
         action_delay: u64
     ) {
         InstallPluginProposalPlugin::create_proposal<DAOT, StakeToSBTPlugin>(
@@ -588,7 +564,7 @@ module StarcoinFramework::StakeToSBTPlugin {
             required_caps(),
             title,
             introduction,
-            extend,
+            description,
             action_delay
         );
     }
@@ -597,9 +573,27 @@ module StarcoinFramework::StakeToSBTPlugin {
         sender: signer,
         title:vector<u8>,
         introduction:vector<u8>,
-        extend: vector<u8>,
+        description: vector<u8>,
         action_delay: u64
     ) {
-        install_plugin_proposal<DAOT>(&sender, title, introduction, extend, action_delay);
+        install_plugin_proposal<DAOT>(&sender, title, introduction, description, action_delay);
+    }
+
+    /// Called by script
+    public(script) fun stake_entry<DAOT: store, TokenT: store>(
+        sender: signer,
+        amount: u128,
+        lock_time: u64
+    ) acquires StakeList {
+        let token = Account::withdraw<TokenT>(&sender, amount);
+        stake<DAOT, TokenT>(&sender, token, lock_time);
+    }
+
+    /// Called by script
+    public(script) fun unstake_item_entry<DAOT: store, TokenT: store>(
+        member: address,
+        id: u64
+    ) acquires StakeList {
+        unstake_by_id<DAOT, TokenT>(member, id);
     }
 }

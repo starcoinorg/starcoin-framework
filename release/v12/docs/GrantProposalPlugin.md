@@ -291,7 +291,7 @@
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_proposal">create_grant_proposal</a>&lt;DAOT: store, TokenT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, grantee: <b>address</b>, total: u128, start_time: u64, period: u64, action_delay: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_proposal">create_grant_proposal</a>&lt;DAOT: store, TokenT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, grantee: <b>address</b>, total: u128, start_time: u64, period: u64, action_delay: u64)
 </code></pre>
 
 
@@ -300,7 +300,7 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_proposal">create_grant_proposal</a>&lt;DAOT: store, TokenT:store&gt;(sender: &signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;,grantee: <b>address</b>, total: u128, start_time:u64, period: u64, action_delay:u64){
+<pre><code><b>public</b> <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_proposal">create_grant_proposal</a>&lt;DAOT: store, TokenT:store&gt;(sender: &signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;,grantee: <b>address</b>, total: u128, start_time:u64, period: u64, action_delay:u64){
     <b>let</b> witness = <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin">GrantProposalPlugin</a>{};
     <b>let</b> cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_proposal_cap">DAOSpace::acquire_proposal_cap</a>&lt;DAOT, <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin">GrantProposalPlugin</a>&gt;(&witness);
     <b>let</b> action = <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_GrantCreateAction">GrantCreateAction</a>&lt;TokenT&gt;{
@@ -309,7 +309,7 @@
         start_time:start_time,
         period:period
     };
-    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, sender, action, title, introduction, extend, action_delay, <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u8&gt;());
+    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, sender, action, title, introduction, description, action_delay, <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u8&gt;());
 }
 </code></pre>
 
@@ -323,7 +323,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_proposal_entry">create_grant_proposal_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, grantee: <b>address</b>, total: u128, start_time: u64, period: u64, action_delay: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_proposal_entry">create_grant_proposal_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, grantee: <b>address</b>, total: u128, start_time: u64, period: u64, action_delay: u64)
 </code></pre>
 
 
@@ -332,8 +332,8 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_proposal_entry">create_grant_proposal_entry</a>&lt;DAOT: store, TokenT:store&gt;(sender: signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;,grantee: <b>address</b>, total: u128, start_time:u64, period: u64, action_delay:u64){
-    <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_proposal">create_grant_proposal</a>&lt;DAOT, TokenT&gt;(&sender, title, introduction, extend, grantee, total, start_time, period, action_delay);
+<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_proposal_entry">create_grant_proposal_entry</a>&lt;DAOT: store, TokenT:store&gt;(sender: signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;,grantee: <b>address</b>, total: u128, start_time:u64, period: u64, action_delay:u64){
+    <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_proposal">create_grant_proposal</a>&lt;DAOT, TokenT&gt;(&sender, title, introduction, description, grantee, total, start_time, period, action_delay);
 }
 </code></pre>
 
@@ -400,7 +400,7 @@
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_revoke_proposal">create_grant_revoke_proposal</a>&lt;DAOT: store, TokenT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, grantee: <b>address</b>, action_delay: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_revoke_proposal">create_grant_revoke_proposal</a>&lt;DAOT: store, TokenT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, grantee: <b>address</b>, action_delay: u64)
 </code></pre>
 
 
@@ -409,11 +409,11 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_revoke_proposal">create_grant_revoke_proposal</a>&lt;DAOT: store, TokenT:store&gt;(sender: &signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;, grantee:<b>address</b>, action_delay:u64){
+<pre><code><b>public</b> <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_revoke_proposal">create_grant_revoke_proposal</a>&lt;DAOT: store, TokenT:store&gt;(sender: &signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;, grantee:<b>address</b>, action_delay:u64){
     <b>let</b> witness = <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin">GrantProposalPlugin</a>{};
     <b>let</b> cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_proposal_cap">DAOSpace::acquire_proposal_cap</a>&lt;DAOT, <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin">GrantProposalPlugin</a>&gt;(&witness);
     <b>let</b> action = <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_GrantRevokeAction">GrantRevokeAction</a>&lt;TokenT&gt;{ grantee };
-    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, sender, action, title, introduction, extend, action_delay, <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u8&gt;());
+    <a href="DAOSpace.md#0x1_DAOSpace_create_proposal">DAOSpace::create_proposal</a>(&cap, sender, action, title, introduction, description, action_delay, <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u8&gt;());
 }
 </code></pre>
 
@@ -427,7 +427,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_revoke_proposal_entry">create_grant_revoke_proposal_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, grantee: <b>address</b>, action_delay: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_revoke_proposal_entry">create_grant_revoke_proposal_entry</a>&lt;DAOT: store, TokenT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, grantee: <b>address</b>, action_delay: u64)
 </code></pre>
 
 
@@ -436,8 +436,8 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_revoke_proposal_entry">create_grant_revoke_proposal_entry</a>&lt;DAOT: store, TokenT:store&gt;(sender: signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;, grantee:<b>address</b>, action_delay:u64){
-    <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_revoke_proposal">create_grant_revoke_proposal</a>&lt;DAOT, TokenT&gt;(&sender, title, introduction, extend, grantee, action_delay);
+<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_revoke_proposal_entry">create_grant_revoke_proposal_entry</a>&lt;DAOT: store, TokenT:store&gt;(sender: signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;, grantee:<b>address</b>, action_delay:u64){
+    <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_create_grant_revoke_proposal">create_grant_revoke_proposal</a>&lt;DAOT, TokenT&gt;(&sender, title, introduction, description, grantee, action_delay);
 }
 </code></pre>
 
@@ -503,7 +503,7 @@
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT: store&gt;(sender: &signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64)
 </code></pre>
 
 
@@ -512,8 +512,8 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT:store&gt;(sender: &signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay:u64){
-    <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">InstallPluginProposalPlugin::create_proposal</a>&lt;DAOT, <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin">GrantProposalPlugin</a>&gt;(sender, <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_required_caps">required_caps</a>(), title, introduction, extend, action_delay);
+<pre><code><b>public</b> <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT:store&gt;(sender: &signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay:u64){
+    <a href="InstallPluginProposalPlugin.md#0x1_InstallPluginProposalPlugin_create_proposal">InstallPluginProposalPlugin::create_proposal</a>&lt;DAOT, <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin">GrantProposalPlugin</a>&gt;(sender, <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_required_caps">required_caps</a>(), title, introduction, description, action_delay);
 }
 </code></pre>
 
@@ -527,7 +527,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay: u64)
+<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT: store&gt;(sender: signer, title: vector&lt;u8&gt;, introduction: vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay: u64)
 </code></pre>
 
 
@@ -536,8 +536,8 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT: store&gt;(sender:signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, extend: vector&lt;u8&gt;, action_delay:u64){
-    <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT&gt;(&sender, title, introduction, extend, action_delay);
+<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_install_plugin_proposal_entry">install_plugin_proposal_entry</a>&lt;DAOT: store&gt;(sender:signer, title:vector&lt;u8&gt;, introduction:vector&lt;u8&gt;, description: vector&lt;u8&gt;, action_delay:u64){
+    <a href="GrantProposalPlugin.md#0x1_GrantProposalPlugin_install_plugin_proposal">install_plugin_proposal</a>&lt;DAOT&gt;(&sender, title, introduction, description, action_delay);
 }
 </code></pre>
 
