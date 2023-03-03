@@ -3,27 +3,33 @@ processed 11 tasks
 task 2 'run'. lines 5-41:
 {
   "gas_used": 67107,
-  "status": "Executed"
+  "status": {
+    "Keep": "Executed"
+  }
 }
 
 task 3 'run'. lines 43-54:
 {
   "gas_used": 30437,
-  "status": "Executed"
+  "status": {
+    "Keep": "Executed"
+  }
 }
 
 task 4 'run'. lines 56-87:
 {
   "gas_used": 21324,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "ConsensusConfig"
-        }
-      },
-      "abort_code": "4615"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "ConsensusConfig"
+          }
+        },
+        4615
+      ]
     }
   }
 }
@@ -32,14 +38,16 @@ task 5 'run'. lines 89-120:
 {
   "gas_used": 21400,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "ConsensusConfig"
-        }
-      },
-      "abort_code": "4615"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "ConsensusConfig"
+          }
+        },
+        4615
+      ]
     }
   }
 }
@@ -48,14 +56,16 @@ task 6 'run'. lines 122-153:
 {
   "gas_used": 21362,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "ConsensusConfig"
-        }
-      },
-      "abort_code": "4615"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "ConsensusConfig"
+          }
+        },
+        4615
+      ]
     }
   }
 }
@@ -64,14 +74,16 @@ task 7 'run'. lines 155-187:
 {
   "gas_used": 21438,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "ConsensusConfig"
-        }
-      },
-      "abort_code": "4615"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "ConsensusConfig"
+          }
+        },
+        4615
+      ]
     }
   }
 }
@@ -80,14 +92,16 @@ task 8 'run'. lines 189-221:
 {
   "gas_used": 21476,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "ConsensusConfig"
-        }
-      },
-      "abort_code": "4615"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "ConsensusConfig"
+          }
+        },
+        4615
+      ]
     }
   }
 }
@@ -96,14 +110,16 @@ task 9 'run'. lines 223-255:
 {
   "gas_used": 21514,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "ConsensusConfig"
-        }
-      },
-      "abort_code": "4615"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "ConsensusConfig"
+          }
+        },
+        4615
+      ]
     }
   }
 }
@@ -112,14 +128,16 @@ task 10 'run'. lines 257-289:
 {
   "gas_used": 21582,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "ConsensusConfig"
-        }
-      },
-      "abort_code": "4615"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "ConsensusConfig"
+          }
+        },
+        4615
+      ]
     }
   }
 }

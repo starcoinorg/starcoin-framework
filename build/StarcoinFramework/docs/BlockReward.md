@@ -24,7 +24,7 @@ The module provide block rewarding calculation logic.
 <b>use</b> <a href="Timestamp.md#0x1_Timestamp">0x1::Timestamp</a>;
 <b>use</b> <a href="Token.md#0x1_Token">0x1::Token</a>;
 <b>use</b> <a href="Treasury.md#0x1_Treasury">0x1::Treasury</a>;
-<b>use</b> <a href="TreasuryPlugin.md#0x1_TreasuryPlugin">0x1::TreasuryPlugin</a>;
+<b>use</b> <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal">0x1::TreasuryWithdrawDaoProposal</a>;
 <b>use</b> <a href="Vector.md#0x1_Vector">0x1::Vector</a>;
 </code></pre>
 
@@ -317,7 +317,7 @@ Process the given block rewards.
                     block_reward = treasury_balance;
                 };
                 <b>if</b> (block_reward &gt; 0) {
-                    <b>let</b> reward = <a href="TreasuryPlugin.md#0x1_TreasuryPlugin_withdraw_for_block_reward">TreasuryPlugin::withdraw_for_block_reward</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(account, block_reward);
+                    <b>let</b> reward = <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_withdraw_for_block_reward">TreasuryWithdrawDaoProposal::withdraw_for_block_reward</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(account, block_reward);
                     <a href="Token.md#0x1_Token_deposit">Token::deposit</a>(&<b>mut</b> total_reward, reward);
                 };
             };

@@ -86,7 +86,7 @@ address StarcoinFramework {
             config: TwoPhaseUpgradeConfig,
             plan: Option<UpgradePlanV2>,
             version_cap: Config::ModifyConfigCapability<Version::Version>,
-            upgrade_event: Event::EventHandle<UpgradeEvent>,
+            upgrade_event: Event::EventHandle<Self::UpgradeEvent>,
         }
 
         /// module upgrade event.
@@ -96,19 +96,8 @@ address StarcoinFramework {
             version: u64,
         }
 
-        struct UpgradePlanEventHolder has key {
-            upgrade_plan_event: Event::EventHandle<UpgradePlanEvent>
-        }
-
-        /// module upgrade plan event when submitting a module upgrade plan
-        struct UpgradePlanEvent has drop, store {
-            package_address: address,
-            plan: UpgradePlanV2,
-        }
-
         /// Update account's ModuleUpgradeStrategy
-        public fun update_module_upgrade_strategy(account: &signer, strategy: u8, min_time: Option<u64>)
-        acquires ModuleUpgradeStrategy, TwoPhaseUpgrade, TwoPhaseUpgradeV2, UpgradePlanCapability, UpgradePlanEventHolder{
+        public fun update_module_upgrade_strategy(account: &signer, strategy: u8, min_time: Option<u64>) acquires ModuleUpgradeStrategy, TwoPhaseUpgrade, TwoPhaseUpgradeV2, UpgradePlanCapability{
             assert!(strategy == STRATEGY_ARBITRARY || strategy == STRATEGY_TWO_PHASE || strategy == STRATEGY_NEW_MODULE || strategy == STRATEGY_FREEZE, Errors::invalid_argument(EUNKNOWN_STRATEGY));
             let account_address = Signer::address_of(account);
             let previous_strategy = get_module_upgrade_strategy(account_address);
@@ -121,16 +110,13 @@ address StarcoinFramework {
             if (strategy == STRATEGY_TWO_PHASE){
                 let version_cap = Config::extract_modify_config_capability<Version::Version>(account);
                 let min_time_limit = Option::get_with_default(&min_time, DEFAULT_MIN_TIME_LIMIT);
-                move_to(account, UpgradePlanCapability{ account_address});
-                move_to(account, TwoPhaseUpgradeV2 {
-                    config: TwoPhaseUpgradeConfig { min_time_limit },
+                move_to(account, UpgradePlanCapability{ account_address: account_address});
+                move_to(account, TwoPhaseUpgradeV2{
+                    config: TwoPhaseUpgradeConfig{min_time_limit: min_time_limit},
                     plan: Option::none<UpgradePlanV2>(),
-                    version_cap,
-                    upgrade_event: Event::new_event_handle<UpgradeEvent>(account)
-                });
-                move_to(account, UpgradePlanEventHolder {
-                    upgrade_plan_event: Event::new_event_handle<UpgradePlanEvent>(account)
-                });
+                    version_cap: version_cap,
+                    upgrade_event: Event::new_event_handle<Self::UpgradeEvent>(account)}
+                );
             };
             //clean two phase upgrade resource
             if (previous_strategy == STRATEGY_TWO_PHASE){
@@ -142,12 +128,8 @@ address StarcoinFramework {
                 };
                 if (exists<TwoPhaseUpgradeV2>(account_address)) {
                     let tpu = move_from<TwoPhaseUpgradeV2>(account_address);
-                    let TwoPhaseUpgradeV2{config: _, plan: _, version_cap, upgrade_event } = tpu;
-                    Event::destroy_handle<UpgradeEvent>(upgrade_event);
-                    if (exists<UpgradePlanEventHolder>(account_address)) {
-                        let UpgradePlanEventHolder{ upgrade_plan_event } = move_from<UpgradePlanEventHolder>(account_address);
-                        Event::destroy_handle<UpgradePlanEvent>(upgrade_plan_event);
-                    };
+                    let TwoPhaseUpgradeV2{plan:_, version_cap, upgrade_event, config: _} = tpu;
+                    Event::destroy_handle<Self::UpgradeEvent>(upgrade_event);
                     Config::destroy_modify_config_capability<Version::Version>(version_cap);
                 };
                 // UpgradePlanCapability may be extracted
@@ -210,27 +192,21 @@ address StarcoinFramework {
             if (Option::is_some(&plan)) {
                 let old_plan = Option::borrow(&plan);
                 move_to(&account, TwoPhaseUpgradeV2{
-                    config,
+                    config: config,
                     plan: Option::some(UpgradePlanV2 {
                         package_hash: *&old_plan.package_hash,
                         active_after_time: old_plan.active_after_time,
                         version: old_plan.version,
                         enforced: false }),
-                    version_cap,
-                    upgrade_event
-                });
-                move_to(&account, UpgradePlanEventHolder {
-                    upgrade_plan_event: Event::new_event_handle<UpgradePlanEvent>(&account)
+                    version_cap: version_cap,
+                    upgrade_event: upgrade_event
                 });
             } else {
-                move_to(&account, TwoPhaseUpgradeV2 {
-                    config,
+                move_to(&account, TwoPhaseUpgradeV2{
+                    config: config,
                     plan: Option::none<UpgradePlanV2>(),
-                    version_cap,
-                    upgrade_event
-                });
-                move_to(&account, UpgradePlanEventHolder {
-                    upgrade_plan_event: Event::new_event_handle<UpgradePlanEvent>(&account)
+                    version_cap: version_cap,
+                    upgrade_event: upgrade_event
                 });
             };
         }
@@ -239,16 +215,9 @@ address StarcoinFramework {
             pragma verify = false;
         }
 
-        public fun submit_upgrade_plan_v2(account: &signer, package_hash: vector<u8>, version:u64, enforced: bool)
-        acquires TwoPhaseUpgradeV2,UpgradePlanCapability,ModuleUpgradeStrategy,UpgradePlanEventHolder{
+        public fun submit_upgrade_plan_v2(account: &signer, package_hash: vector<u8>, version:u64, enforced: bool) acquires TwoPhaseUpgradeV2,UpgradePlanCapability,ModuleUpgradeStrategy{
             let account_address = Signer::address_of(account);
             let cap = borrow_global<UpgradePlanCapability>(account_address);
-            assert!(get_module_upgrade_strategy(cap.account_address) == STRATEGY_TWO_PHASE, Errors::invalid_argument(ESTRATEGY_NOT_TWO_PHASE));
-            if (!exists<UpgradePlanEventHolder>(account_address)) {
-                move_to(account, UpgradePlanEventHolder {
-                    upgrade_plan_event: Event::new_event_handle<UpgradePlanEvent>(account)
-                })
-            };
             submit_upgrade_plan_with_cap_v2(cap, package_hash, version, enforced);
         }
 
@@ -258,27 +227,12 @@ address StarcoinFramework {
             include SubmitUpgradePlanWithCapAbortsIf{account: global<UpgradePlanCapability>(Signer::address_of(account)).account_address};
             ensures Option::is_some(global<TwoPhaseUpgrade>(global<UpgradePlanCapability>(Signer::address_of(account)).account_address).plan);
         }
-        public fun submit_upgrade_plan_with_cap_v2(cap: &UpgradePlanCapability, package_hash: vector<u8>, version: u64, enforced: bool)
-        acquires TwoPhaseUpgradeV2, ModuleUpgradeStrategy, UpgradePlanEventHolder{
+        public fun submit_upgrade_plan_with_cap_v2(cap: &UpgradePlanCapability, package_hash: vector<u8>, version: u64, enforced: bool) acquires TwoPhaseUpgradeV2,ModuleUpgradeStrategy{
             let package_address = cap.account_address;
             assert!(get_module_upgrade_strategy(package_address) == STRATEGY_TWO_PHASE, Errors::invalid_argument(ESTRATEGY_NOT_TWO_PHASE));
-
             let tpu = borrow_global_mut<TwoPhaseUpgradeV2>(package_address);
             let active_after_time = Timestamp::now_milliseconds() + tpu.config.min_time_limit;
-            let plan = UpgradePlanV2 { package_hash, active_after_time, version, enforced };
-            tpu.plan = Option::some(copy plan);
-
-            // TODO
-            // if UpgradePlanCapability was delegated to DAO or contract,
-            // it's hard to upgrade the address to claim an UpgradePlanEventHolder.
-            // Try to fix this!
-            if (exists<UpgradePlanEventHolder>(package_address)) {
-                let event_holder = borrow_global_mut<UpgradePlanEventHolder>(package_address);
-                Event::emit_event<UpgradePlanEvent>(&mut event_holder.upgrade_plan_event, UpgradePlanEvent {
-                    package_address,
-                    plan
-                });
-            }
+            tpu.plan = Option::some(UpgradePlanV2 { package_hash, active_after_time, version, enforced });
         }
         spec submit_upgrade_plan_with_cap_v2 {
             pragma verify = false;
@@ -451,7 +405,7 @@ address StarcoinFramework {
                 let plan = Option::borrow(&tpu.plan);
                 Config::set_with_capability<Version::Version>(&mut tpu.version_cap, Version::new_version(plan.version));
                 Event::emit_event<Self::UpgradeEvent>(&mut tpu.upgrade_event, UpgradeEvent {
-                    package_address,
+                    package_address: package_address,
                     package_hash: *&plan.package_hash,
                     version: plan.version});
             };
@@ -511,12 +465,5 @@ address StarcoinFramework {
                 && !exists<Config::Config<Version::Version>>(global<TwoPhaseUpgrade>(package_address).version_cap.account_address);
         }
 
-        public fun exists_upgrade_plan_cap(addr :address):bool{
-            exists<UpgradePlanCapability>(addr)
-        }
-
-        spec exists_upgrade_plan_cap {
-            aborts_if false;
-        }
     }
 }

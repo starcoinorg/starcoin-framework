@@ -31,7 +31,7 @@ Mint a GenesisNFT
 
 
 <pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="GenesisNFT.md#0x1_GenesisNFTScripts_mint">mint</a>(sender: signer, index: u64, merkle_proof:vector&lt;vector&lt;u8&gt;&gt;) {
-    <a href="GenesisNFT.md#0x1_GenesisNFT_mint_entry">GenesisNFT::mint_entry</a>(sender, index, merkle_proof);
+    <a href="GenesisNFT.md#0x1_GenesisNFT_mint">GenesisNFT::mint</a>(&sender, index, merkle_proof);
 }
 </code></pre>
 

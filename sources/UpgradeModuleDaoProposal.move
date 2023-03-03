@@ -8,8 +8,6 @@ module UpgradeModuleDaoProposal {
     use StarcoinFramework::Dao;
     use StarcoinFramework::Errors;
 
-    friend StarcoinFramework::StdlibUpgradeScripts;
-
     spec module {
         pragma verify = false; // break after enabling v2 compilation scheme
         pragma aborts_if_is_strict;
@@ -55,13 +53,6 @@ module UpgradeModuleDaoProposal {
         let sender = Signer::address_of(signer);
         aborts_if sender != Token::SPEC_TOKEN_TEST_ADDRESS();
         aborts_if exists<UpgradeModuleCapability<TokenT>>(sender);
-    }
-
-    public (friend) fun get_genesis_upgrade_cap<TokenT:store>():PackageTxnManager::UpgradePlanCapability acquires UpgradeModuleCapability{
-        let UpgradeModuleCapability<TokenT>{
-            cap
-        } = move_from(Token::token_address<TokenT>());
-        cap
     }
 
     spec schema AbortIfUnableUpgrade<TokenT> {

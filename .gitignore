@@ -42,7 +42,6 @@ packages-microsoft-prod.deb
 
 # Move Build Output sources
 build/StarcoinFramework/sources/*.move
-StarcoinFramework
 build/UnitTest
 
 # Remove Cargo.lock from gitignore if creating an executable, leave it for libraries
