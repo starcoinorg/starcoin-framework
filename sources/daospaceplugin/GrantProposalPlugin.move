@@ -11,14 +11,14 @@ module StarcoinFramework::GrantProposalPlugin{
 
     struct GrantProposalPlugin has store, drop{}
 
-    struct GrantCreateAction<phantom TokenT:store> has store, drop {
+    struct GrantCreateAction<phantom TokenT:store> has store {
         grantee: address,
         total: u128,
         start_time:u64,
         period:u64
     }
 
-    struct GrantConfigAction<phantom TokenT:store> has store, drop {
+    struct GrantConfigAction<phantom TokenT:store> has store {
         old_grantee: address,
         new_grantee:address,
         total: u128,
@@ -26,7 +26,7 @@ module StarcoinFramework::GrantProposalPlugin{
         period:u64
     }
 
-    struct GrantRevokeAction<phantom TokenT:store> has store, drop {
+    struct GrantRevokeAction<phantom TokenT:store> has store {
         grantee:address
     }
 

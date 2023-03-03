@@ -8,7 +8,7 @@ module StarcoinFramework::InstallPluginProposalPlugin{
 
     struct InstallPluginProposalPlugin has store, drop{}
 
-    struct InstallPluginAction<phantom ToInstallPluginT> has store, drop {
+    struct InstallPluginAction<phantom ToInstallPluginT> has store {
         required_caps: vector<CapType>,
     }
 
