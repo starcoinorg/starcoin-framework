@@ -201,11 +201,6 @@ module Account {
         signer_cap
     }
 
-    #[test_only]
-    public fun get_genesis_capability_for_test(): SignerCapability {
-        get_genesis_capability()
-    }
-
     public fun create_signer_with_cap(cap: &SignerCapability): signer {
         create_signer(cap.addr)
     }
