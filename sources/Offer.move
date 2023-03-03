@@ -324,7 +324,6 @@ module Offer {
         pragma verify = false;
     }
 
-
     /// Take Offer and put to signer's Collection<Offered>.
     public(script) fun take_offer<Offered: store>(_signer: signer, _offer_address: address){
         abort Errors::invalid_state(ERR_DEPRECATED)

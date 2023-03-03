@@ -5,10 +5,6 @@ module StarcoinFramework::MemberProposalPlugin{
     use StarcoinFramework::DAOSpace::{Self, CapType};
     use StarcoinFramework::Vector;
     use StarcoinFramework::InstallPluginProposalPlugin;
-    use StarcoinFramework::Errors;
-
-    const ERR_MEMBER_EXIST:u64 = 101;
-    const ERR_MEMBER_OFFER_EXIST:u64 = 102;
 
     struct MemberProposalPlugin has store, drop{}
 
@@ -56,8 +52,6 @@ module StarcoinFramework::MemberProposalPlugin{
             image_data,
             image_url
         };
-        assert!(!DAOSpace::is_exist_member_offer<DAOT>(member), Errors::already_published(ERR_MEMBER_OFFER_EXIST));
-        assert!(!DAOSpace::is_member<DAOT>(member), Errors::already_published(ERR_MEMBER_EXIST));
         DAOSpace::create_proposal(&cap, sender, action, description, action_delay);
     }
 
@@ -70,7 +64,7 @@ module StarcoinFramework::MemberProposalPlugin{
         let proposal_cap = DAOSpace::acquire_proposal_cap<DAOT, MemberProposalPlugin>(&witness);
         let MemberJoinAction{member, init_sbt, image_data, image_url} = DAOSpace::execute_proposal<DAOT, MemberProposalPlugin, MemberJoinAction>(&proposal_cap, sender, proposal_id);
         let member_cap = DAOSpace::acquire_member_cap<DAOT, MemberProposalPlugin>(&witness);
-        DAOSpace::member_offer(&member_cap, member, Option::some(image_data), Option::some(image_url) , init_sbt);
+        DAOSpace::join_member(&member_cap, member, Option::some(image_data), Option::some(image_url) , init_sbt);
     }
 
     public (script) fun execute_proposal_entry<DAOT: store>(sender: signer, proposal_id: u64){

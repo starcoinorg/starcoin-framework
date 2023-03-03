@@ -126,7 +126,7 @@ module creator::DAOHelper {
     public fun member_join<DAOT:store>(to_address: address, init_sbt: u128){
         let witness = XPlugin{};
         let member_cap = DAOSpace::acquire_member_cap<DAOT, XPlugin>(&witness);
-        DAOSpace::join_member_with_member_cap<DAOT, XPlugin>(&member_cap, to_address, Option::none<vector<u8>>(), Option::none<vector<u8>>(), init_sbt);
+        DAOSpace::join_member<DAOT, XPlugin>(&member_cap, to_address, Option::none<vector<u8>>(), Option::none<vector<u8>>(), init_sbt);
     }
 
     struct Checkpoint<phantom DAOt:store> has key{
