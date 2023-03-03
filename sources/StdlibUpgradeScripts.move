@@ -20,7 +20,6 @@ module StdlibUpgradeScripts {
         use StarcoinFramework::GenesisSignerCapability;
         use StarcoinFramework::Account;
         use StarcoinFramework::Block;
-        use StarcoinFramework::DAORegistry;
 
         spec module {
             pragma verify = false;
@@ -102,12 +101,13 @@ module StdlibUpgradeScripts {
             };
         }
 
-        public(script) fun upgrade_from_v11_to_v12() {
-            do_upgrade_from_v11_to_v12();
+        public(script) fun upgrade_from_v11_to_v12(sender: signer) {
+            do_upgrade_from_v11_to_v12(&sender);
         }
-        public fun do_upgrade_from_v11_to_v12() {
-            Block::checkpoints_init();
-            DAORegistry::initialize();
+        public fun do_upgrade_from_v11_to_v12(sender: &signer) {
+            {
+                Block::checkpoints_init(sender);
+            };
         }
 }
 }
