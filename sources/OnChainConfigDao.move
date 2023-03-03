@@ -8,8 +8,7 @@ module OnChainConfigDao {
     use StarcoinFramework::Errors;
     use StarcoinFramework::CoreAddresses;
 
-    friend StarcoinFramework::StdlibUpgradeScripts;
-
+    friend StarcoinFramework::StarcoinDAO;
     spec module {
         pragma verify = false; // break after enabling v2 compilation scheme
         pragma aborts_if_is_strict;

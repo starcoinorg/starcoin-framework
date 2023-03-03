@@ -615,6 +615,15 @@ Message for SignerDelegate events
 
 
 
+<a name="0x1_Account_EPROLOGUE_ACCOUNT_DOES_NOT_EXIST"></a>
+
+
+
+<pre><code><b>const</b> <a href="Account.md#0x1_Account_EPROLOGUE_ACCOUNT_DOES_NOT_EXIST">EPROLOGUE_ACCOUNT_DOES_NOT_EXIST</a>: u64 = 0;
+</code></pre>
+
+
+
 <a name="0x1_Account_ADDRESS_LENGTH"></a>
 
 The address bytes length
@@ -702,15 +711,6 @@ The address bytes length
 
 
 <pre><code><b>const</b> <a href="Account.md#0x1_Account_EMALFORMED_AUTHENTICATION_KEY">EMALFORMED_AUTHENTICATION_KEY</a>: u64 = 102;
-</code></pre>
-
-
-
-<a name="0x1_Account_EPROLOGUE_ACCOUNT_DOES_NOT_EXIST"></a>
-
-
-
-<pre><code><b>const</b> <a href="Account.md#0x1_Account_EPROLOGUE_ACCOUNT_DOES_NOT_EXIST">EPROLOGUE_ACCOUNT_DOES_NOT_EXIST</a>: u64 = 0;
 </code></pre>
 
 

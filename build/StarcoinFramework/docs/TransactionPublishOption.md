@@ -77,15 +77,6 @@ We represent these as the following resource.
 
 
 
-<a name="0x1_TransactionPublishOption_EPROLOGUE_ACCOUNT_DOES_NOT_EXIST"></a>
-
-
-
-<pre><code><b>const</b> <a href="TransactionPublishOption.md#0x1_TransactionPublishOption_EPROLOGUE_ACCOUNT_DOES_NOT_EXIST">EPROLOGUE_ACCOUNT_DOES_NOT_EXIST</a>: u64 = 0;
-</code></pre>
-
-
-
 <a name="0x1_TransactionPublishOption_EALLOWLIST_ALREADY_CONTAINS_SCRIPT"></a>
 
 The script hash already exists in the allowlist
@@ -102,6 +93,15 @@ The script hash has an invalid length
 
 
 <pre><code><b>const</b> <a href="TransactionPublishOption.md#0x1_TransactionPublishOption_EINVALID_SCRIPT_HASH">EINVALID_SCRIPT_HASH</a>: u64 = 1001;
+</code></pre>
+
+
+
+<a name="0x1_TransactionPublishOption_EPROLOGUE_ACCOUNT_DOES_NOT_EXIST"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionPublishOption.md#0x1_TransactionPublishOption_EPROLOGUE_ACCOUNT_DOES_NOT_EXIST">EPROLOGUE_ACCOUNT_DOES_NOT_EXIST</a>: u64 = 0;
 </code></pre>
 
 
