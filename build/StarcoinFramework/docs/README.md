@@ -67,7 +67,6 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::PriceOracleAggregator`](Oracle.md#0x1_PriceOracleAggregator)
 -  [`0x1::PriceOracleScripts`](Oracle.md#0x1_PriceOracleScripts)
 -  [`0x1::RewardConfig`](RewardConfig.md#0x1_RewardConfig)
--  [`0x1::Ring`](Ring.md#0x1_Ring)
 -  [`0x1::SIP_2`](SIPs.md#0x1_SIP_2)
 -  [`0x1::SIP_3`](SIPs.md#0x1_SIP_3)
 -  [`0x1::STC`](STC.md#0x1_STC)
