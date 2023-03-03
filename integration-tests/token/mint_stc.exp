@@ -2,7 +2,7 @@ processed 5 tasks
 
 task 3 'run'. lines 7-27:
 {
-  "gas_used": 17379,
+  "gas_used": 17251,
   "status": {
     "ExecutionFailure": {
       "location": {
@@ -19,6 +19,6 @@ task 3 'run'. lines 7-27:
 
 task 4 'run'. lines 31-49:
 {
-  "gas_used": 114188,
+  "gas_used": 113530,
   "status": "Executed"
 }

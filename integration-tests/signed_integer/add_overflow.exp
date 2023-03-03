@@ -2,7 +2,7 @@ processed 3 tasks
 
 task 2 'run'. lines 5-16:
 {
-  "gas_used": 8455,
+  "gas_used": 8453,
   "status": {
     "ExecutionFailure": {
       "location": {
@@ -12,7 +12,7 @@ task 2 'run'. lines 5-16:
         }
       },
       "function": 0,
-      "code_offset": 40
+      "code_offset": 36
     }
   }
 }
