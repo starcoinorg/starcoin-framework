@@ -269,17 +269,7 @@
     <b>let</b> proposal_cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_proposal_cap">DAOSpace::acquire_proposal_cap</a>&lt;DAOT, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>&gt;(&witness);
     <b>let</b> <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_MemberJoinAction">MemberJoinAction</a>{member, init_sbt, image_data, image_url} = <a href="DAOSpace.md#0x1_DAOSpace_execute_proposal">DAOSpace::execute_proposal</a>&lt;DAOT, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin_MemberJoinAction">MemberJoinAction</a>&gt;(&proposal_cap, sender, proposal_id);
     <b>let</b> member_cap = <a href="DAOSpace.md#0x1_DAOSpace_acquire_member_cap">DAOSpace::acquire_member_cap</a>&lt;DAOT, <a href="MemberProposalPlugin.md#0x1_MemberProposalPlugin">MemberProposalPlugin</a>&gt;(&witness);
-    <b>let</b> op_image_data = <b>if</b>(<a href="Vector.md#0x1_Vector_length">Vector::length</a>(&image_data) == 0){
-        <a href="Option.md#0x1_Option_none">Option::none</a>&lt;vector&lt;u8&gt;&gt;()
-    }<b>else</b>{
-        <a href="Option.md#0x1_Option_some">Option::some</a>(image_data)
-    };
-    <b>let</b> op_image_url = <b>if</b>(<a href="Vector.md#0x1_Vector_length">Vector::length</a>(&image_url) == 0){
-        <a href="Option.md#0x1_Option_none">Option::none</a>&lt;vector&lt;u8&gt;&gt;()
-    }<b>else</b>{
-        <a href="Option.md#0x1_Option_some">Option::some</a>(image_url)
-    };
-    <a href="DAOSpace.md#0x1_DAOSpace_member_offer">DAOSpace::member_offer</a>(&member_cap, member,op_image_data , op_image_url , init_sbt);
+    <a href="DAOSpace.md#0x1_DAOSpace_member_offer">DAOSpace::member_offer</a>(&member_cap, member, <a href="Option.md#0x1_Option_some">Option::some</a>(image_data), <a href="Option.md#0x1_Option_some">Option::some</a>(image_url) , init_sbt);
 }
 </code></pre>
 

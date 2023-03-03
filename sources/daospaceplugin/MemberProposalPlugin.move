@@ -70,17 +70,7 @@ module StarcoinFramework::MemberProposalPlugin{
         let proposal_cap = DAOSpace::acquire_proposal_cap<DAOT, MemberProposalPlugin>(&witness);
         let MemberJoinAction{member, init_sbt, image_data, image_url} = DAOSpace::execute_proposal<DAOT, MemberProposalPlugin, MemberJoinAction>(&proposal_cap, sender, proposal_id);
         let member_cap = DAOSpace::acquire_member_cap<DAOT, MemberProposalPlugin>(&witness);
-        let op_image_data = if(Vector::length(&image_data) == 0){
-            Option::none<vector<u8>>()
-        }else{
-            Option::some(image_data)
-        };
-        let op_image_url = if(Vector::length(&image_url) == 0){
-            Option::none<vector<u8>>()
-        }else{
-            Option::some(image_url)
-        };
-        DAOSpace::member_offer(&member_cap, member,op_image_data , op_image_url , init_sbt);
+        DAOSpace::member_offer(&member_cap, member, Option::some(image_data), Option::some(image_url) , init_sbt);
     }
 
     public (script) fun execute_proposal_entry<DAOT: store>(sender: signer, proposal_id: u64){
