@@ -28,13 +28,14 @@ module creator::TestPlugin {
         );
     }
 
-    public(script) fun update_plugin(_sender: signer) {
+    public(script) fun update_plugin(sender: signer) {
         let labels = Vector::empty<vector<u8>>();
         Vector::push_back<vector<u8>>(&mut labels, b"OS=Starcoin");
         Vector::push_back<vector<u8>>(&mut labels, b"Store=IPFS");
 
         let witness = TestPlugin{};
         DAOPluginMarketplace::update_plugin<TestPlugin>(
+            &sender,
             &witness,
             NAME,
             b"ipfs://description2",

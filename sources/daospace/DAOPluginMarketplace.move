@@ -131,8 +131,8 @@ module StarcoinFramework::DAOPluginMarketplace {
     }
 
     struct UpdatePluginInfoEvent<phantom PluginT> has drop, store{
+        sender: address,
         id: u64,
-        type: TypeInfo,
         name: vector<u8>,
         description:vector<u8>,
         labels: vector<vector<u8>>
@@ -317,10 +317,11 @@ module StarcoinFramework::DAOPluginMarketplace {
         return exists<Star<PluginT>>(sender_addr)
     }
 
-    public fun update_plugin<PluginT>(_witness: &PluginT, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>) acquires PluginEntry, PluginEventHandlers {
+    public fun update_plugin<PluginT>(sender: &signer, _witness: &PluginT, name: vector<u8>, description: vector<u8>, option_labels: Option<vector<vector<u8>>>) acquires PluginEntry, PluginEventHandlers {
         assert_string_length(&name, MAX_INPUT_LEN);
         assert_string_length(&description, MAX_TEXT_LEN);
 
+        let sender_addr = Signer::address_of(sender);
         let plugin = borrow_global_mut<PluginEntry<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
 
         plugin.name = name;
@@ -338,8 +339,8 @@ module StarcoinFramework::DAOPluginMarketplace {
         let plugin_event_handlers = borrow_global_mut<PluginEventHandlers<PluginT>>(CoreAddresses::GENESIS_ADDRESS());
         Event::emit_event(&mut plugin_event_handlers.update_plugin,
             UpdatePluginInfoEvent {
+                sender: sender_addr,
                 id: *&plugin.id,
-                type: TypeInfo::type_of<PluginT>(),
                 name: *&plugin.name,
                 description: *&plugin.description,
                 labels: *&plugin.labels,
@@ -347,4 +348,3 @@ module StarcoinFramework::DAOPluginMarketplace {
         );
     }
 }
-
