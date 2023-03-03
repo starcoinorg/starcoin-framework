@@ -45,7 +45,6 @@ Token implementation of Starcoin.
 -  [Function `is_same_token`](#0x1_Token_is_same_token)
 -  [Function `token_address`](#0x1_Token_token_address)
 -  [Function `token_code`](#0x1_Token_token_code)
--  [Function `type_of`](#0x1_Token_type_of)
 -  [Function `name_of`](#0x1_Token_name_of)
 -  [Function `name_of_token`](#0x1_Token_name_of_token)
 -  [Module Specification](#@Module_Specification_1)
@@ -1712,30 +1711,6 @@ does not matter for the verification of callers.
 
 </details>
 
-<a name="0x1_Token_type_of"></a>
-
-## Function `type_of`
-
-
-
-<pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="Token.md#0x1_Token_type_of">type_of</a>&lt;T&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> (<b>friend</b>) <b>fun</b> <a href="Token.md#0x1_Token_type_of">type_of</a>&lt;T&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;){
-    <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;T&gt;()
-}
-</code></pre>
-
-
-
-</details>
-
 <a name="0x1_Token_name_of"></a>
 
 ## Function `name_of`
@@ -1743,7 +1718,7 @@ does not matter for the verification of callers.
 Return Token's module address, module name, and type name of <code>TokenType</code>.
 
 
-<pre><code><b>fun</b> <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;TokenType&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;)
+<pre><code><b>fun</b> <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;TokenType: store&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;)
 </code></pre>
 
 
@@ -1752,7 +1727,7 @@ Return Token's module address, module name, and type name of <code>TokenType</co
 <summary>Implementation</summary>
 
 
-<pre><code><b>native</b> <b>fun</b> <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;TokenType&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;);
+<pre><code><b>native</b> <b>fun</b> <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;TokenType: store&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;);
 </code></pre>
 
 

@@ -104,7 +104,6 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::Treasury`](Treasury.md#0x1_Treasury)
 -  [`0x1::TreasuryScripts`](TreasuryScripts.md#0x1_TreasuryScripts)
 -  [`0x1::TreasuryWithdrawDaoProposal`](TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal)
--  [`0x1::TypeInfo`](TypeInfo.md#0x1_TypeInfo)
 -  [`0x1::U256`](U256.md#0x1_U256)
 -  [`0x1::UpgradeModuleDaoProposal`](UpgradeModuleDaoProposal.md#0x1_UpgradeModuleDaoProposal)
 -  [`0x1::VMConfig`](VMConfig.md#0x1_VMConfig)
