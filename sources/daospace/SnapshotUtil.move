@@ -18,19 +18,19 @@ module StarcoinFramework::SnapshotUtil{
 
         let offset = 0;
         let (state_option, offset) = BCS::deserialize_option_bytes(&snpashot_raw_proofs, offset);
-        let state = Option::get_with_default(&mut state_option, Vector::empty());
+        let state = Option::extract(&mut state_option);
         Debug::print(&state);
-//        Debug::print(&x"016bfb460477adf9dd0455d3de2fc7f21101000000000000000664616f313031000a69616d67655f6461746100570400000000000064000000000000000000000000000000");
+        Debug::print(&x"016bfb460477adf9dd0455d3de2fc7f21101000000000000000664616f313031000a69616d67655f6461746100570400000000000064000000000000000000000000000000");
         Debug::print(&offset);
         let (_account_state_option, offset) = BCS::deserialize_option_bytes(&snpashot_raw_proofs, offset);
-        let _account_state = Option::get_with_default(&mut _account_state_option, Vector::empty());
+        let _account_state = Option::extract(&mut _account_state_option);
         Debug::print(&110110);
         Debug::print(&_account_state);
         Debug::print(&offset);
 
         let (_account_proof_leaf1_option, _account_proof_leaf2_option, offset) = BCS::deserialize_option_tuple(&snpashot_raw_proofs, offset);
-        let _account_proof_leaf1 = Option::get_with_default(&mut _account_proof_leaf1_option, Vector::empty());
-        let _account_proof_leaf2 = Option::get_with_default(&mut _account_proof_leaf2_option, Vector::empty());
+        let _account_proof_leaf1 = Option::extract(&mut _account_proof_leaf1_option);
+        let _account_proof_leaf2 = Option::extract(&mut _account_proof_leaf2_option);
         Debug::print(&offset);
 
         let account_proof_leaf_nodes = Vector::empty<vector<u8>>();
@@ -43,26 +43,14 @@ module StarcoinFramework::SnapshotUtil{
         let (_account_proof_siblings, offset) = BCS::deserialize_bytes_vector(&snpashot_raw_proofs, offset);
 
         let (_account_state_proof_leaf1_option, _account_state_proof_leaf2_option, offset) = BCS::deserialize_option_tuple(&snpashot_raw_proofs, offset);
-        let _account_state_proof_leaf1 = Option::get_with_default(&mut _account_state_proof_leaf1_option, Vector::empty());
-        let _account_state_proof_leaf2 = Option::get_with_default(&mut _account_state_proof_leaf2_option, Vector::empty());
+        let _account_state_proof_leaf1 = Option::extract(&mut _account_state_proof_leaf1_option);
+        let _account_state_proof_leaf2 = Option::extract(&mut _account_state_proof_leaf2_option);
         Debug::print(&_account_state_proof_leaf1);
         Debug::print(&_account_state_proof_leaf2);
         let (_account_state_proof_siblings, _offset) = BCS::deserialize_bytes_vector(&snpashot_raw_proofs, offset);
 
         Debug::print(&_account_state_proof_siblings);
         Debug::print(&_offset);
-    }
-
-    #[test]
-    fun test_snapshot_proof_deserialize_with_empty_state() {
-        let snpashot_raw_proofs = x"00012402000120161d07d221d7b31df7d29d45926b6444fa07e8b5f1021dd704fc1def6738011d0120e76e5b4bcf07c7e3864b399cfca72b0863678487813a1cfe8df48cf35729def820f135bf4b03034b8a3c21950231d3c4fe8136442064c9809d593e78ed4775f0b6042072659a01138c59e84e8e608e0d1908be7289c47f8f4080a14eaa852d1ace35f420bb3f0cc0cde2e05ba56a26bbc15161a930af6f66a65091b285870c557e8bc07a205350415253455f4d45524b4c455f504c414345484f4c4445525f484153480000204bb30b63b4c41126a2f8c98a3d66f351160732481ae633da47d647976004942e000420fbd31ef1cbaf26c37259325e5ee71625e67f7ecf8311cbf67758431d65ae8f5c205350415253455f4d45524b4c455f504c414345484f4c4445525f484153480000207460a35efdba40ce6ec4442b32e0bf39fee59a69887e18f118f49b325434fda820417ddaf2cf3fce9b50dd9b16e1ea545d65d480b855bfd0aed0a819a6a7d0f641";
-
-        let offset = 0;
-        let (state_option, offset) = BCS::deserialize_option_bytes(&snpashot_raw_proofs, offset);
-        Debug::print(&state_option);
-        let state = Option::get_with_default(&mut state_option, Vector::empty());
-        Debug::print(&state);
-        Debug::print(&offset);
     }
 
     /// Struct Tag which identify a unique Struct.
