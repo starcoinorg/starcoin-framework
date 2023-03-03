@@ -42,17 +42,6 @@ task 11 'run'. lines 67-87:
 
 task 13 'run'. lines 92-106:
 {
-  "gas_used": 68033,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "OnChainConfigDao"
-        }
-      },
-      "function": 1,
-      "code_offset": 6
-    }
-  }
+  "gas_used": 119263,
+  "status": "Executed"
 }

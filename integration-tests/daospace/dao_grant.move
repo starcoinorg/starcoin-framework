@@ -122,9 +122,11 @@ module creator::DAOHelper {
 
 //# run --signers creator
 script{
+    use StarcoinFramework::StdlibUpgradeScripts;
     use creator::DAOHelper;
 
     fun main(sender: signer){
+        StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
         DAOHelper::initialize_x_plugin(&sender);
 
         // time unit is millsecond

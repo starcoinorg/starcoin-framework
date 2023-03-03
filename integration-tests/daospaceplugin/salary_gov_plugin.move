@@ -251,10 +251,12 @@ module creator::XDAO {
 
 //# run --signers creator
 script {
+    use StarcoinFramework::StdlibUpgradeScripts;
     use creator::SalaryGovPlugin;
     use creator::XDAO;
 
     fun main(sender: signer) {
+        StdlibUpgradeScripts::upgrade_from_v12_to_v12_1();
         SalaryGovPlugin::initialize(&sender);
 
         // time unit is millsecond

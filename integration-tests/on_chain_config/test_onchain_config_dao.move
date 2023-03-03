@@ -103,5 +103,5 @@ script {
         assert!(TransactionPublishOption::is_script_allowed(@StarcoinFramework), 402);
     }
 }
-// check: ExecutionFailure, WrappedConfigModifyCapability is migrate to StarcoinDAO
+// check: EXECUTED
 

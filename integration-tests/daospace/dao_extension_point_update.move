@@ -29,6 +29,16 @@ module creator::TestExtentionPoint {
     }
 }
 
+//# run --signers Genesis
+script {
+    use StarcoinFramework::DAOExtensionPoint;
+
+    fun main(_sender: signer) {
+        DAOExtensionPoint::initialize();
+    }
+}
+// check: EXECUTED
+
 //# run --signers bob
 script {
     use creator::TestExtentionPoint;

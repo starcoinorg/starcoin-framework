@@ -1,11 +1,17 @@
-processed 5 tasks
+processed 6 tasks
 
-task 3 'view'. lines 7-7:
+task 3 'run'. lines 7-15:
+{
+  "gas_used": 177755,
+  "status": "Executed"
+}
+
+task 4 'view'. lines 17-17:
 store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
     next_id: 1
 }
 
-task 4 'run'. lines 9-17:
+task 5 'run'. lines 19-27:
 {
   "gas_used": 13211,
   "status": {

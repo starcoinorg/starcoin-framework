@@ -46,42 +46,41 @@ task 10 'run'. lines 95-108:
   "status": "Executed"
 }
 
-task 11 'run'. lines 110-130:
+task 11 'run'. lines 110-129:
 {
-  "gas_used": 11530,
+  "gas_used": 21895,
   "status": {
-    "ExecutionFailure": {
+    "MoveAbort": {
       "location": {
         "Module": {
           "address": "0x00000000000000000000000000000001",
           "name": "UpgradeModuleDaoProposal"
         }
       },
-      "function": 2,
-      "code_offset": 1
+      "abort_code": "102916"
     }
   }
 }
 
-task 12 'run'. lines 132-151:
+task 12 'run'. lines 131-150:
 {
   "gas_used": 164029,
   "status": "Executed"
 }
 
-task 14 'run'. lines 156-172:
+task 14 'run'. lines 155-171:
 {
   "gas_used": 148558,
   "status": "Executed"
 }
 
-task 16 'run'. lines 176-190:
+task 16 'run'. lines 175-189:
 {
   "gas_used": 62339,
   "status": "Executed"
 }
 
-task 18 'run'. lines 194-207:
+task 18 'run'. lines 193-206:
 {
   "gas_used": 109151,
   "status": "Executed"

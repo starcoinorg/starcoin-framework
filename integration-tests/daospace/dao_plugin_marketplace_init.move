@@ -12,4 +12,14 @@ script {
         DAOPluginMarketplace::initialize();
     }
 }
+// check: EXECUTED
+
+//# run --signers Genesis
+script {
+    use StarcoinFramework::DAOPluginMarketplace;
+
+    fun main(_sender: signer) {
+        DAOPluginMarketplace::initialize();
+    }
+}
 // check: MoveAbort

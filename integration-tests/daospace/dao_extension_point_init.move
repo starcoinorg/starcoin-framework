@@ -4,6 +4,16 @@
 
 //# faucet --addr bob --amount 2000000000
 
+//# run --signers Genesis
+script {
+    use StarcoinFramework::DAOExtensionPoint;
+
+    fun main(_sender: signer) {
+        DAOExtensionPoint::initialize();
+    }
+}
+// check: EXECUTED
+
 //# view --address Genesis --resource 0x1::DAOExtensionPoint::Registry
 
 //# run --signers Genesis

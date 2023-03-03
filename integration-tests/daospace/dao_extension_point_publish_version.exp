@@ -1,17 +1,23 @@
-processed 16 tasks
+processed 17 tasks
 
 task 4 'run'. lines 46-54:
+{
+  "gas_used": 177755,
+  "status": "Executed"
+}
+
+task 5 'run'. lines 56-64:
 {
   "gas_used": 418615,
   "status": "Executed"
 }
 
-task 5 'view'. lines 56-56:
+task 6 'view'. lines 66-66:
 store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
     next_id: 2
 }
 
-task 6 'view'. lines 58-58:
+task 7 'view'. lines 68-68:
 store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::TestExtentionPoint> {
     id: 1
     name: 54657374457874656e74696f6e506f696e74
@@ -33,18 +39,18 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
     updated_at: 10
 }
 
-task 7 'run'. lines 60-68:
+task 8 'run'. lines 70-78:
 {
   "gas_used": 152078,
   "status": "Executed"
 }
 
-task 8 'view'. lines 70-70:
+task 9 'view'. lines 80-80:
 store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
     next_id: 2
 }
 
-task 9 'view'. lines 72-72:
+task 10 'view'. lines 82-82:
 store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::TestExtentionPoint> {
     id: 1
     name: 54657374457874656e74696f6e506f696e74
@@ -73,18 +79,18 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
     updated_at: 10
 }
 
-task 10 'run'. lines 74-82:
+task 11 'run'. lines 84-92:
 {
   "gas_used": 156078,
   "status": "Executed"
 }
 
-task 11 'view'. lines 84-84:
+task 12 'view'. lines 94-94:
 store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
     next_id: 2
 }
 
-task 12 'view'. lines 86-86:
+task 13 'view'. lines 96-96:
 store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::TestExtentionPoint> {
     id: 1
     name: 54657374457874656e74696f6e506f696e74
@@ -120,7 +126,7 @@ store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a
     updated_at: 10
 }
 
-task 13 'run'. lines 88-96:
+task 14 'run'. lines 98-106:
 {
   "gas_used": 111323,
   "status": {
@@ -136,12 +142,12 @@ task 13 'run'. lines 88-96:
   }
 }
 
-task 14 'view'. lines 98-98:
+task 15 'view'. lines 108-108:
 store key 0x00000000000000000000000000000001::DAOExtensionPoint::Registry {
     next_id: 2
 }
 
-task 15 'view'. lines 100-100:
+task 16 'view'. lines 110-110:
 store key 0x00000000000000000000000000000001::DAOExtensionPoint::Entry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestExtentionPoint::TestExtentionPoint> {
     id: 1
     name: 54657374457874656e74696f6e506f696e74
