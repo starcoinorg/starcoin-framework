@@ -8,19 +8,19 @@ task 4 'run'. lines 91-99:
 
 task 5 'run'. lines 101-113:
 {
-  "gas_used": 260942,
+  "gas_used": 260314,
   "status": "Executed"
 }
 
 task 7 'run'. lines 118-130:
 {
-  "gas_used": 339370,
+  "gas_used": 318954,
   "status": "Executed"
 }
 
 task 8 'run'. lines 132-152:
 {
-  "gas_used": 135702,
+  "gas_used": 122330,
   "status": {
     "MoveAbort": {
       "location": "Script",
