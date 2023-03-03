@@ -80,8 +80,6 @@ module StarcoinFramework::TreasuryPlugin {
 
     public fun create_withdraw_proposal<DAOT: store, TokenT: store>(
         sender: &signer,
-        title:vector<u8>,
-        introduction:vector<u8>,
         description: vector<u8>,
         receiver: address,
         amount: u128,
@@ -97,20 +95,18 @@ module StarcoinFramework::TreasuryPlugin {
             amount,
             period,
         };
-        DAOSpace::create_proposal(&cap, sender, action, title, introduction, description, action_delay);
+        DAOSpace::create_proposal(&cap, sender, action, description, action_delay);
     }
 
     public(script) fun create_withdraw_proposal_entry<DAOT: store, TokenT: store>(
         sender: signer,
-        title:vector<u8>,
-        introduction:vector<u8>,
         description: vector<u8>,
         receiver: address,
         amount: u128,
         period: u64,
         action_delay: u64)
     {
-        create_withdraw_proposal<DAOT, TokenT>(&sender, title, introduction, description, receiver, amount, period, action_delay);
+        create_withdraw_proposal<DAOT, TokenT>(&sender, description, receiver, amount, period, action_delay);
     }
 
     public fun execute_withdraw_proposal<DAOT: store, TokenT: store>(sender: &signer, proposal_id: u64) acquires WithdrawCapabilityHolder {

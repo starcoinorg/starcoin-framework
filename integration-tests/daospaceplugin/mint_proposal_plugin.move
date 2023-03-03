@@ -186,7 +186,7 @@ script {
         let amount = 100000;
         let action_delay = 0;
         MintProposalPlugin::create_mint_proposal<XDAO, AliceToken>(
-            &sender,b"mint to bob", b"mint to bob", description, @bob, amount, action_delay);
+            &sender, description, @bob, amount, action_delay);
 
         let proposal = DAOSpace::proposal<XDAO>(1);
         

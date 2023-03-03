@@ -40,7 +40,7 @@ module StarcoinFramework::ConfigProposalPlugin {
         caps
     }
 
-    public fun create_proposal<DAOT: store, ConfigT: store+drop>(sender: &signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>,action_delay: u64, config: ConfigT) {
+    public fun create_proposal<DAOT: store, ConfigT: store+drop>(sender: &signer, description: vector<u8>,action_delay: u64, config: ConfigT) {
         let witness = ConfigProposalPlugin{};
         let cap = DAOSpace::acquire_proposal_cap<DAOT, ConfigProposalPlugin>(&witness);
         let action = ConfigProposalAction<ConfigT>{
@@ -49,7 +49,7 @@ module StarcoinFramework::ConfigProposalPlugin {
         DAOSpace::create_proposal<
             DAOT,
             ConfigProposalPlugin,
-            ConfigProposalAction<ConfigT>>(&cap, sender, action, title, introduction, description, action_delay);
+            ConfigProposalAction<ConfigT>>(&cap, sender, action, description, action_delay);
     }
 
     public fun execute_proposal<DAOT: store, ConfigT: copy + drop + store>(sender: &signer, proposal_id: u64) {
@@ -70,12 +70,12 @@ module StarcoinFramework::ConfigProposalPlugin {
         execute_proposal<DAOT, ConfigT>(&sender, proposal_id);
     }
 
-    public fun install_plugin_proposal<DAOT:store>(sender:&signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay:u64){
-        InstallPluginProposalPlugin::create_proposal<DAOT, ConfigProposalPlugin>(sender, required_caps(), title, introduction, description, action_delay);
+    public fun install_plugin_proposal<DAOT:store>(sender:&signer, description: vector<u8>, action_delay:u64){
+        InstallPluginProposalPlugin::create_proposal<DAOT, ConfigProposalPlugin>(sender, required_caps(), description, action_delay);
     }
 
-    public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, title:vector<u8>, introduction:vector<u8>, description: vector<u8>, action_delay:u64){
-        install_plugin_proposal<DAOT>(&sender, title, introduction, description, action_delay);
+    public (script) fun install_plugin_proposal_entry<DAOT:store>(sender:signer, description: vector<u8>, action_delay:u64){
+        install_plugin_proposal<DAOT>(&sender, description, action_delay);
     }
 
 }
