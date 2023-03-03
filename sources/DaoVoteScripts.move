@@ -10,7 +10,7 @@ module DaoVoteScripts {
         pragma aborts_if_is_strict = true;
     }
 
-    public ( script ) fun cast_vote<Token: copy + drop + store, ActionT: copy + drop + store>(
+    public entry fun cast_vote<Token: copy + drop + store, ActionT: copy + drop + store>(
         signer: signer,
         proposer_address: address,
         proposal_id: u64,
@@ -32,7 +32,7 @@ module DaoVoteScripts {
     }
 
     /// revoke all votes on a proposal
-    public ( script ) fun revoke_vote<Token: copy + drop + store, Action: copy + drop + store>(
+    public entry fun revoke_vote<Token: copy + drop + store, Action: copy + drop + store>(
         signer: signer,
         proposer_address: address,
         proposal_id: u64,
@@ -44,7 +44,7 @@ module DaoVoteScripts {
     }
 
     /// Let user change their vote during the voting time.
-    public(script) fun flip_vote<TokenT: copy + drop + store, ActionT: copy + drop + store>(
+    public entry fun flip_vote<TokenT: copy + drop + store, ActionT: copy + drop + store>(
         signer: signer,
         proposer_address: address,
         proposal_id: u64,
@@ -54,7 +54,7 @@ module DaoVoteScripts {
     }
 
     /// revoke some votes on a proposal
-    public ( script ) fun revoke_vote_of_power<Token: copy + drop + store, Action: copy + drop + store>(
+    public entry fun revoke_vote_of_power<Token: copy + drop + store, Action: copy + drop + store>(
         signer: signer,
         proposer_address: address,
         proposal_id: u64,
@@ -65,7 +65,7 @@ module DaoVoteScripts {
         Account::deposit(sender, my_token);
     }
 
-    public ( script ) fun unstake_vote<Token: copy + drop + store, Action: copy + drop + store>(
+    public entry fun unstake_vote<Token: copy + drop + store, Action: copy + drop + store>(
         signer: signer,
         proposer_address: address,
         proposal_id: u64,

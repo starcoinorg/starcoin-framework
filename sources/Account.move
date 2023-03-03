@@ -182,7 +182,7 @@ module Account {
             Event::emit_event<SignerDelegateEvent>(
                 &mut event_store.signer_delegate_events,
                 SignerDelegateEvent {
-                    account_address: signer_addr    
+                    account_address: signer_addr
                 }
             );
         };
@@ -192,7 +192,7 @@ module Account {
     }
 
     //TODO: Create StarcoinDAO , need modify or remove get_genesis_capability soon
-    public (friend) fun get_genesis_capability():SignerCapability{
+    public entry fun get_genesis_capability():SignerCapability{
         let signer_cap = SignerCapability {addr: Token::token_address<STC>() };
         signer_cap
     }
@@ -313,17 +313,17 @@ module Account {
 
     native fun create_signer(addr: address): signer;
 
-    public(script) fun create_account_with_initial_amount<TokenType: store>(account: signer, fresh_address: address, _auth_key: vector<u8>, initial_amount: u128) 
+    public entry fun create_account_with_initial_amount<TokenType: store>(account: signer, fresh_address: address, _auth_key: vector<u8>, initial_amount: u128)
     acquires Account, Balance, AutoAcceptToken {
         create_account_with_initial_amount_entry<TokenType>(account, fresh_address, initial_amount);
     }
 
-    public(script) fun create_account_with_initial_amount_v2<TokenType: store>(account: signer, fresh_address: address, initial_amount: u128)
+    public entry fun create_account_with_initial_amount_v2<TokenType: store>(account: signer, fresh_address: address, initial_amount: u128)
     acquires Account, Balance, AutoAcceptToken {
         create_account_with_initial_amount_entry<TokenType>(account, fresh_address, initial_amount);
     }
-    
-    public(script) fun create_account_with_initial_amount_entry<TokenType: store>(account: signer, fresh_address: address, initial_amount: u128)
+
+    public entry fun create_account_with_initial_amount_entry<TokenType: store>(account: signer, fresh_address: address, initial_amount: u128)
     acquires Account, Balance, AutoAcceptToken {
         create_account_with_address<TokenType>(fresh_address);
         if (initial_amount > 0) {
@@ -745,11 +745,11 @@ module Account {
         aborts_if !exists<Account>(cap.account_address);
     }
 
-    public(script) fun rotate_authentication_key(account: signer, new_key: vector<u8>) acquires Account, EventStore {
+    public entry fun rotate_authentication_key(account: signer, new_key: vector<u8>) acquires Account, EventStore {
         rotate_authentication_key_entry(account, new_key);
     }
 
-    public(script) fun rotate_authentication_key_entry(account: signer, new_key: vector<u8>) acquires Account, EventStore {
+    public entry fun rotate_authentication_key_entry(account: signer, new_key: vector<u8>) acquires Account, EventStore {
         do_rotate_authentication_key(&account, new_key);
     }
 
@@ -813,11 +813,11 @@ module Account {
         aborts_if !exists<Account>(Signer::address_of(account));
     }
 
-    public(script) fun accept_token<TokenType: store>(account: signer) acquires Account {
+    public entry fun accept_token<TokenType: store>(account: signer) acquires Account {
         accept_token_entry<TokenType>(account);
     }
 
-    public(script) fun accept_token_entry<TokenType: store>(account: signer) acquires Account {
+    public entry fun accept_token_entry<TokenType: store>(account: signer) acquires Account {
         do_accept_token<TokenType>(&account);
     }
 
@@ -1119,7 +1119,7 @@ module Account {
                 global<TransactionFee::TransactionFee<TokenType>>(CoreAddresses::GENESIS_ADDRESS()).fee.value + txn_gas_price * (txn_max_gas_units - gas_units_remaining) > max_u128();
     }
 
-    public(script) fun remove_zero_balance_entry<TokenType: store>(account: signer) acquires Balance {
+    public entry fun remove_zero_balance_entry<TokenType: store>(account: signer) acquires Balance {
         remove_zero_balance<TokenType>(&account);
     }
 

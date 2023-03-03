@@ -5,7 +5,7 @@ module TreasuryScripts {
     use StarcoinFramework::Offer;
     use StarcoinFramework::TreasuryWithdrawDaoProposal;
 
-    public(script) fun withdraw_and_split_lt_withdraw_cap<TokenT: store>(
+    public entry fun withdraw_and_split_lt_withdraw_cap<TokenT: store>(
         signer: signer,
         for_address: address,
         amount: u128,
@@ -35,7 +35,7 @@ module TreasuryScripts {
         pragma verify = false;
     }
 
-    public(script) fun withdraw_token_with_linear_withdraw_capability<TokenT: store>(
+    public entry fun withdraw_token_with_linear_withdraw_capability<TokenT: store>(
         signer: signer,
     ) {
         // 1. take cap
@@ -59,7 +59,7 @@ module TreasuryScripts {
         pragma verify = false;
     }
 
-    public(script) fun propose_withdraw<TokenT: copy + drop + store>(signer: signer, receiver: address, amount: u128, period: u64, exec_delay: u64){
+    public entry fun propose_withdraw<TokenT: copy + drop + store>(signer: signer, receiver: address, amount: u128, period: u64, exec_delay: u64){
         TreasuryWithdrawDaoProposal::propose_withdraw<TokenT>(&signer, receiver, amount, period, exec_delay)
     }
 
@@ -67,7 +67,7 @@ module TreasuryScripts {
         pragma verify = false;
     }
 
-    public(script) fun execute_withdraw_proposal<TokenT:copy + drop + store>(signer: signer, proposer_address: address,
+    public entry fun execute_withdraw_proposal<TokenT:copy + drop + store>(signer: signer, proposer_address: address,
                                                                        proposal_id: u64,){
         TreasuryWithdrawDaoProposal::execute_withdraw_proposal<TokenT>(&signer, proposer_address, proposal_id);
     }

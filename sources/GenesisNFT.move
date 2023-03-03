@@ -37,7 +37,7 @@ module StarcoinFramework::GenesisNFT {
         move_to(sender, nft_info);
     }
 
-    public(script) fun mint_entry(sender: signer, index: u64, merkle_proof:vector<vector<u8>>) 
+    public(script) fun mint_entry(sender: signer, index: u64, merkle_proof:vector<vector<u8>>)
     acquires GenesisNFTMintCapability {
         mint(&sender, index, merkle_proof);
     }
@@ -76,7 +76,7 @@ module StarcoinFramework::GenesisNFTScripts {
     }
 
     /// Mint a GenesisNFT
-    public(script) fun mint(sender: signer, index: u64, merkle_proof:vector<vector<u8>>) {
+    public entry fun mint(sender: signer, index: u64, merkle_proof:vector<vector<u8>>) {
         GenesisNFT::mint_entry(sender, index, merkle_proof);
     }
 }
