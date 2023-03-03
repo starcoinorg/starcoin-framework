@@ -19,11 +19,6 @@ module TransactionManager {
     use StarcoinFramework::Epoch;
     use StarcoinFramework::Hash;
     use StarcoinFramework::Vector;
-    use StarcoinFramework::GasOracle::STCToken;
-    use StarcoinFramework::StarcoinDAO::StarcoinDAO;
-    use StarcoinFramework::GasOracleProposalPlugin;
-    use StarcoinFramework::STC;
-    use StarcoinFramework::GasOracle;
 
     spec module {
         pragma verify = false;
@@ -67,21 +62,13 @@ module TransactionManager {
         // Check that the chain ID stored on-chain matches the chain ID
         // specified by the transaction
         assert!(ChainId::get() == chain_id, Errors::invalid_argument(EPROLOGUE_BAD_CHAIN_ID));
-        let (stc_price,scaling_factor)= if (!STC::is_stc<TokenType>()){
-            (GasOracleProposalPlugin::gas_oracle_read<StarcoinDAO, STCToken<TokenType>>(),GasOracle::get_scaling_factor<TokenType>())
-        }else{
-            (1,1)
-        };
-
-        Account::txn_prologue_v2<TokenType>(
+        Account::txn_prologue<TokenType>(
             &account,
             txn_sender,
             txn_sequence_number,
             txn_authentication_key_preimage,
             txn_gas_price,
             txn_max_gas_units,
-            stc_price,
-            scaling_factor,
         );
         assert!(
             TransactionTimeout::is_valid_transaction_timestamp(txn_expiration_time),
@@ -122,6 +109,8 @@ module TransactionManager {
         include Timestamp::AbortsIfTimestampNotExists;
         include Block::AbortsIfBlockMetadataNotExist;
         aborts_if txn_gas_price * txn_max_gas_units > 0 && !exists<Account::Balance<TokenType>>(txn_sender);
+        aborts_if txn_gas_price * txn_max_gas_units > 0 && StarcoinFramework::Token::spec_token_code<TokenType>() != StarcoinFramework::Token::spec_token_code<STC>();
+        aborts_if txn_gas_price * txn_max_gas_units > 0 && global<Account::Balance<TokenType>>(txn_sender).token.value < txn_gas_price * txn_max_gas_units;
         aborts_if txn_gas_price * txn_max_gas_units > 0 && txn_sequence_number >= max_u64();
         aborts_if txn_sequence_number < global<Account::Account>(txn_sender).sequence_number;
         aborts_if txn_sequence_number != global<Account::Account>(txn_sender).sequence_number;
@@ -170,12 +159,6 @@ module TransactionManager {
         success: bool,
     ) {
         CoreAddresses::assert_genesis_address(&account);
-        let (stc_price,scaling_factor) =
-        if (!STC::is_stc<TokenType>()){
-            (GasOracleProposalPlugin::gas_oracle_read<StarcoinDAO, TokenType>(),GasOracle::get_scaling_factor<TokenType>())
-        }else{
-            (1,1)
-        };
         Account::txn_epilogue_v2<TokenType>(
             &account,
             txn_sender,
@@ -184,8 +167,6 @@ module TransactionManager {
             txn_gas_price,
             txn_max_gas_units,
             gas_units_remaining,
-            stc_price,
-            scaling_factor
         );
         if (txn_payload_type == TXN_PAYLOAD_TYPE_PACKAGE) {
             PackageTxnManager::package_txn_epilogue(

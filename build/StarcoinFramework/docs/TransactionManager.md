@@ -23,12 +23,9 @@
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
 <b>use</b> <a href="Epoch.md#0x1_Epoch">0x1::Epoch</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
-<b>use</b> <a href="Oracle.md#0x1_GasOracle">0x1::GasOracle</a>;
-<b>use</b> <a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin">0x1::GasOracleProposalPlugin</a>;
 <b>use</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager">0x1::PackageTxnManager</a>;
 <b>use</b> <a href="STC.md#0x1_STC">0x1::STC</a>;
 <b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
-<b>use</b> <a href="StarcoinDAO.md#0x1_StarcoinDAO">0x1::StarcoinDAO</a>;
 <b>use</b> <a href="Timestamp.md#0x1_Timestamp">0x1::Timestamp</a>;
 <b>use</b> <a href="Token.md#0x1_Token">0x1::Token</a>;
 <b>use</b> <a href="TransactionFee.md#0x1_TransactionFee">0x1::TransactionFee</a>;
@@ -157,21 +154,13 @@ It verifies:
     // Check that the chain ID stored on-chain matches the chain ID
     // specified by the transaction
     <b>assert</b>!(<a href="ChainId.md#0x1_ChainId_get">ChainId::get</a>() == chain_id, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_BAD_CHAIN_ID">EPROLOGUE_BAD_CHAIN_ID</a>));
-    <b>let</b> (stc_price,scaling_factor)= <b>if</b> (!<a href="STC.md#0x1_STC_is_stc">STC::is_stc</a>&lt;TokenType&gt;()){
-        (<a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_gas_oracle_read">GasOracleProposalPlugin::gas_oracle_read</a>&lt;<a href="StarcoinDAO.md#0x1_StarcoinDAO">StarcoinDAO</a>, STCToken&lt;TokenType&gt;&gt;(),<a href="Oracle.md#0x1_GasOracle_get_scaling_factor">GasOracle::get_scaling_factor</a>&lt;TokenType&gt;())
-    }<b>else</b>{
-        (1,1)
-    };
-
-    <a href="Account.md#0x1_Account_txn_prologue_v2">Account::txn_prologue_v2</a>&lt;TokenType&gt;(
+    <a href="Account.md#0x1_Account_txn_prologue">Account::txn_prologue</a>&lt;TokenType&gt;(
         &account,
         txn_sender,
         txn_sequence_number,
         txn_authentication_key_preimage,
         txn_gas_price,
         txn_max_gas_units,
-        stc_price,
-        scaling_factor,
     );
     <b>assert</b>!(
         <a href="TransactionTimeout.md#0x1_TransactionTimeout_is_valid_transaction_timestamp">TransactionTimeout::is_valid_transaction_timestamp</a>(txn_expiration_time),
@@ -221,6 +210,8 @@ It verifies:
 <b>include</b> <a href="Timestamp.md#0x1_Timestamp_AbortsIfTimestampNotExists">Timestamp::AbortsIfTimestampNotExists</a>;
 <b>include</b> <a href="Block.md#0x1_Block_AbortsIfBlockMetadataNotExist">Block::AbortsIfBlockMetadataNotExist</a>;
 <b>aborts_if</b> txn_gas_price * txn_max_gas_units &gt; 0 && !<b>exists</b>&lt;<a href="Account.md#0x1_Account_Balance">Account::Balance</a>&lt;TokenType&gt;&gt;(txn_sender);
+<b>aborts_if</b> txn_gas_price * txn_max_gas_units &gt; 0 && StarcoinFramework::Token::spec_token_code&lt;TokenType&gt;() != StarcoinFramework::Token::spec_token_code&lt;<a href="STC.md#0x1_STC">STC</a>&gt;();
+<b>aborts_if</b> txn_gas_price * txn_max_gas_units &gt; 0 && <b>global</b>&lt;<a href="Account.md#0x1_Account_Balance">Account::Balance</a>&lt;TokenType&gt;&gt;(txn_sender).token.value &lt; txn_gas_price * txn_max_gas_units;
 <b>aborts_if</b> txn_gas_price * txn_max_gas_units &gt; 0 && txn_sequence_number &gt;= max_u64();
 <b>aborts_if</b> txn_sequence_number &lt; <b>global</b>&lt;<a href="Account.md#0x1_Account_Account">Account::Account</a>&gt;(txn_sender).sequence_number;
 <b>aborts_if</b> txn_sequence_number != <b>global</b>&lt;<a href="Account.md#0x1_Account_Account">Account::Account</a>&gt;(txn_sender).sequence_number;
@@ -332,12 +323,6 @@ It collects gas and bumps the sequence number
     success: bool,
 ) {
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(&account);
-    <b>let</b> (stc_price,scaling_factor) =
-    <b>if</b> (!<a href="STC.md#0x1_STC_is_stc">STC::is_stc</a>&lt;TokenType&gt;()){
-        (<a href="GasOracleProposalPlugin.md#0x1_GasOracleProposalPlugin_gas_oracle_read">GasOracleProposalPlugin::gas_oracle_read</a>&lt;<a href="StarcoinDAO.md#0x1_StarcoinDAO">StarcoinDAO</a>, TokenType&gt;(),<a href="Oracle.md#0x1_GasOracle_get_scaling_factor">GasOracle::get_scaling_factor</a>&lt;TokenType&gt;())
-    }<b>else</b>{
-        (1,1)
-    };
     <a href="Account.md#0x1_Account_txn_epilogue_v2">Account::txn_epilogue_v2</a>&lt;TokenType&gt;(
         &account,
         txn_sender,
@@ -346,8 +331,6 @@ It collects gas and bumps the sequence number
         txn_gas_price,
         txn_max_gas_units,
         gas_units_remaining,
-        stc_price,
-        scaling_factor
     );
     <b>if</b> (txn_payload_type == <a href="TransactionManager.md#0x1_TransactionManager_TXN_PAYLOAD_TYPE_PACKAGE">TXN_PAYLOAD_TYPE_PACKAGE</a>) {
         <a href="PackageTxnManager.md#0x1_PackageTxnManager_package_txn_epilogue">PackageTxnManager::package_txn_epilogue</a>(

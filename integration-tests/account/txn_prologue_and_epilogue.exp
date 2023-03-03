@@ -1,14 +1,14 @@
-processed 15 tasks
+processed 12 tasks
 
-task 3 'run'. lines 7-28:
+task 3 'run'. lines 8-23:
 {
-  "gas_used": 621301,
+  "gas_used": 494124,
   "status": "Executed"
 }
 
-task 4 'run'. lines 30-62:
+task 4 'run'. lines 27-59:
 {
-  "gas_used": 180803,
+  "gas_used": 174759,
   "status": {
     "MoveAbort": {
       "location": {
@@ -22,9 +22,9 @@ task 4 'run'. lines 30-62:
   }
 }
 
-task 5 'run'. lines 66-92:
+task 5 'run'. lines 63-90:
 {
-  "gas_used": 330588,
+  "gas_used": 329083,
   "status": {
     "MoveAbort": {
       "location": {
@@ -38,9 +38,9 @@ task 5 'run'. lines 66-92:
   }
 }
 
-task 6 'run'. lines 96-124:
+task 6 'run'. lines 94-122:
 {
-  "gas_used": 306856,
+  "gas_used": 300870,
   "status": {
     "MoveAbort": {
       "location": {
@@ -54,9 +54,9 @@ task 6 'run'. lines 96-124:
   }
 }
 
-task 7 'run'. lines 128-158:
+task 7 'run'. lines 126-156:
 {
-  "gas_used": 355103,
+  "gas_used": 335601,
   "status": {
     "MoveAbort": {
       "location": {
@@ -70,15 +70,15 @@ task 7 'run'. lines 128-158:
   }
 }
 
-task 8 'run'. lines 162-207:
+task 8 'run'. lines 160-205:
 {
-  "gas_used": 478362,
+  "gas_used": 403810,
   "status": "Executed"
 }
 
-task 9 'run'. lines 211-241:
+task 9 'run'. lines 209-239:
 {
-  "gas_used": 354973,
+  "gas_used": 335471,
   "status": {
     "MoveAbort": {
       "location": {
@@ -92,9 +92,9 @@ task 9 'run'. lines 211-241:
   }
 }
 
-task 10 'run'. lines 245-276:
+task 10 'run'. lines 243-274:
 {
-  "gas_used": 197287,
+  "gas_used": 180123,
   "status": {
     "MoveAbort": {
       "location": {
@@ -108,9 +108,9 @@ task 10 'run'. lines 245-276:
   }
 }
 
-task 11 'run'. lines 280-311:
+task 11 'run'. lines 278-309:
 {
-  "gas_used": 175186,
+  "gas_used": 174016,
   "status": {
     "MoveAbort": {
       "location": {
@@ -122,32 +122,4 @@ task 11 'run'. lines 280-311:
       "abort_code": "2818"
     }
   }
-}
-
-task 12 'run'. lines 313-349:
-{
-  "gas_used": 359119,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "Account"
-        }
-      },
-      "abort_code": "1031"
-    }
-  }
-}
-
-task 13 'run'. lines 351-401:
-{
-  "gas_used": 517887,
-  "status": "Executed"
-}
-
-task 14 'run'. lines 404-427:
-{
-  "gas_used": 37463,
-  "status": "Executed"
 }

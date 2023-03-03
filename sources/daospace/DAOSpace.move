@@ -115,7 +115,6 @@ module StarcoinFramework::DAOSpace {
         cap: DAOAccountCap,
     }
 
-
     /// Capability for minting SBT.
     struct DAOSBTMintCapHolder<phantom DAOT> has key {
         cap: Token::MintCapability<DAOT>,
@@ -483,6 +482,7 @@ module StarcoinFramework::DAOSpace {
     fun do_install_plugin<DAOT: store, ToInstallPluginT:store>(granted_caps: vector<CapType>) acquires DAOAccountCapHolder {
         assert!(DAOPluginMarketplace::exists_plugin<ToInstallPluginT>(), Errors::invalid_state(ERR_PLUGIN_NOT_EXIST));
         assert_no_repeat(&granted_caps);
+
         let dao_signer = dao_signer<DAOT>();
         let plugin_id = DAOPluginMarketplace::take_plugin_id<ToInstallPluginT>();
 
@@ -554,14 +554,6 @@ module StarcoinFramework::DAOSpace {
         exists<StorageItem<PluginT, V>>(dao_address<DAOT>())
     }
 
-    /// borow the item from the storage
-    public fun borrow_storage<DAOT: store, PluginT, V: store+copy>(_cap: &DAOStorageCap<DAOT, PluginT>): V acquires StorageItem {
-        let dao_address = dao_address<DAOT>();
-        assert!(exists<StorageItem<PluginT, V>>(dao_address), Errors::not_published(ERR_STORAGE_ERROR));
-        let storage_item  = borrow_global<StorageItem<PluginT, V>>(dao_address);
-        *&storage_item.item
-    }
-    
     // Withdraw Token capability function
 
     /// Withdraw the token from the DAO account
