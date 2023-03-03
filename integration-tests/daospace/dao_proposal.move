@@ -107,8 +107,8 @@ module creator::DAOHelper {
         Account::deposit(receiver, token);
     }
 
-    public fun queue_proposal_action<DAOT: store>(_sender: &signer, proposal_id: u64){
-        DAOSpace::queue_proposal_action<DAOT>(proposal_id);
+    public fun queue_proposal_action<DAOT: store>(sender: &signer, proposal_id: u64){
+        DAOSpace::do_queue_proposal_action<DAOT>(sender, proposal_id);
     }
 
     public fun member_join<DAOT:store>(to_address: address, init_sbt: u128){

@@ -712,7 +712,7 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// Query amount of the member SBT
-    public fun query_sbt<DAOT: store>(member_addr: address)
+    public fun query_sbt<DAOT: store, PluginT>(member_addr: address)
     : u128 acquires DAONFTUpdateCapHolder {
         if (!is_member<DAOT>(member_addr)) {
             return 0
@@ -1852,15 +1852,16 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// queue agreed proposal to execute.
-    public(script) fun queue_proposal_action_entry<DAOT:store>(
+    public(script) fun queue_proposal_action<DAOT:store>(
         _signer: signer,
         proposal_id: u64,
     ) acquires GlobalProposalActions, GlobalProposals {
-        queue_proposal_action<DAOT>(proposal_id)
+        do_queue_proposal_action<DAOT>(&_signer, proposal_id)
     }
 
     /// queue agreed proposal to execute.
-    public fun queue_proposal_action<DAOT:store>(
+    public fun do_queue_proposal_action<DAOT:store>(
+        _signer: &signer,
         proposal_id: u64,
     ) acquires GlobalProposalActions, GlobalProposals {
         // Only agreed proposal can be submitted.

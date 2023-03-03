@@ -118,7 +118,7 @@ module creator::SalaryGovPlugin {
     }
 
     fun compute_salary_amount<DAOT: store, TokenT>(member: address): u128 acquires SalaryReceive {
-        let sbt_amount = DAOSpace::query_sbt<DAOT>(member);
+        let sbt_amount = DAOSpace::query_sbt<DAOT, SalaryGovPlugin>(member);
         let receive = borrow_global<SalaryReceive<DAOT, TokenT>>(member);
 
         sbt_amount * ((Timestamp::now_seconds() - receive.last_receive_time) as u128)
