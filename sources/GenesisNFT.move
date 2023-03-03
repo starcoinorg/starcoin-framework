@@ -24,7 +24,8 @@ module StarcoinFramework::GenesisNFT {
     public fun initialize(sender: &signer, merkle_root: vector<u8>, leafs: u64, image: vector<u8>){
         CoreAddresses::assert_genesis_address(sender);
         let metadata = NFT::new_meta_with_image(b"StarcoinGenesisNFT", image, b"The starcoin genesis NFT");
-        let cap = MerkleNFTDistributor::register_v2<GenesisNFTMeta>(sender, merkle_root, leafs, metadata);
+        let  nft_info = GenesisNFTInfo{merkle_root: *&merkle_root, total_supply: leafs};
+        let cap = MerkleNFTDistributor::register<GenesisNFTMeta, GenesisNFTInfo>(sender, merkle_root, leafs, nft_info, metadata);
         move_to(sender, GenesisNFTMintCapability{cap});
     }
 

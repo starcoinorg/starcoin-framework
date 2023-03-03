@@ -414,6 +414,8 @@ The module for init Genesis
         <a href="GenesisNFT.md#0x1_GenesisNFT_initialize">GenesisNFT::initialize</a>(&genesis_account, merkle_root, 1639u64, image);
     };
     <a href="Config.md#0x1_Config_publish_new_config">Config::publish_new_config</a>(&genesis_account, <a href="LanguageVersion.md#0x1_LanguageVersion_new">LanguageVersion::new</a>(4));
+    // upgrade genesis <a href="NFT.md#0x1_NFT">NFT</a>
+    <a href="GenesisNFT.md#0x1_GenesisNFT_upgrade_to_nft_type_info_v2">GenesisNFT::upgrade_to_nft_type_info_v2</a>(&genesis_account);
 
     //v11 -&gt; v12
     <a href="Block.md#0x1_Block_checkpoints_init">Block::checkpoints_init</a>();
