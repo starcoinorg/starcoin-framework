@@ -14,7 +14,7 @@ task 8 'run'. lines 121-128:
 
 task 9 'run'. lines 130-144:
 {
-  "gas_used": 200239,
+  "gas_used": 173698,
   "status": "Executed"
 }
 
@@ -29,7 +29,7 @@ Publish failure: Discard { status_code: StrView(2015), status_code_name: "UNEXPE
 
 task 13 'run'. lines 160-167:
 {
-  "gas_used": 123208,
+  "gas_used": 110070,
   "status": "Executed"
 }
 
