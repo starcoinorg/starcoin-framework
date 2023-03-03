@@ -2,34 +2,28 @@ processed 7 tasks
 
 task 4 'run'. lines 9-20:
 {
-  "gas_used": 74502,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 74258,
+  "status": "Executed"
 }
 
 task 5 'run'. lines 23-36:
 {
-  "gas_used": 91645,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 91365,
+  "status": "Executed"
 }
 
 task 6 'run'. lines 40-52:
 {
   "gas_used": 23262,
   "status": {
-    "Keep": {
-      "MoveAbort": [
-        {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "CoreAddresses"
-          }
-        },
-        2818
-      ]
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "CoreAddresses"
+        }
+      },
+      "abort_code": "2818"
     }
   }
 }

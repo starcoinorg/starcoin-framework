@@ -2,106 +2,82 @@ processed 21 tasks
 
 task 4 'run'. lines 10-24:
 {
-  "gas_used": 216046,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 215178,
+  "status": "Executed"
 }
 
 task 5 'run'. lines 27-37:
 {
-  "gas_used": 162267,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 161219,
+  "status": "Executed"
 }
 
 task 6 'run'. lines 40-62:
 {
-  "gas_used": 26430,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 26380,
+  "status": "Executed"
 }
 
 task 8 'run'. lines 68-84:
 {
-  "gas_used": 148289,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 147821,
+  "status": "Executed"
 }
 
 task 9 'run'. lines 87-103:
 {
-  "gas_used": 140583,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 140121,
+  "status": "Executed"
 }
 
 task 11 'run'. lines 109-127:
 {
-  "gas_used": 171029,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 170563,
+  "status": "Executed"
 }
 
 task 12 'run'. lines 131-151:
 {
-  "gas_used": 154638,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 154178,
+  "status": "Executed"
 }
 
 task 13 'run'. lines 154-187:
 {
-  "gas_used": 503674,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 501780,
+  "status": "Executed"
 }
 
 task 15 'run'. lines 194-216:
 {
-  "gas_used": 157265,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 156869,
+  "status": "Executed"
 }
 
 task 17 'run'. lines 223-235:
 {
-  "gas_used": 32339,
+  "gas_used": 32327,
   "status": {
-    "Keep": {
-      "MoveAbort": [
-        {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "Dao"
-          }
-        },
-        359169
-      ]
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Dao"
+        }
+      },
+      "abort_code": "359169"
     }
   }
 }
 
 task 18 'run'. lines 238-254:
 {
-  "gas_used": 163394,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 162456,
+  "status": "Executed"
 }
 
 task 20 'run'. lines 261-275:
 {
-  "gas_used": 76680,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 76650,
+  "status": "Executed"
 }

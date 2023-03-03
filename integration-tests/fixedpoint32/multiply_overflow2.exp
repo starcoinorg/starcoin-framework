@@ -2,18 +2,16 @@ processed 3 tasks
 
 task 2 'run'. lines 5-18:
 {
-  "gas_used": 14374,
+  "gas_used": 14310,
   "status": {
-    "Keep": {
-      "MoveAbort": [
-        {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "FixedPoint32"
-          }
-        },
-        26376
-      ]
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "FixedPoint32"
+        }
+      },
+      "abort_code": "26376"
     }
   }
 }

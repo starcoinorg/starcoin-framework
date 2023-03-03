@@ -2,92 +2,74 @@ processed 12 tasks
 
 task 3 'run'. lines 7-21:
 {
-  "gas_used": 202807,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 202015,
+  "status": "Executed"
 }
 
 task 4 'run'. lines 24-40:
 {
   "gas_used": 30790,
   "status": {
-    "Keep": {
-      "MoveAbort": [
-        {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "CoreAddresses"
-          }
-        },
-        2818
-      ]
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "CoreAddresses"
+        }
+      },
+      "abort_code": "2818"
     }
   }
 }
 
 task 5 'run'. lines 43-58:
 {
-  "gas_used": 35600,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 35540,
+  "status": "Executed"
 }
 
 task 6 'run'. lines 61-76:
 {
   "gas_used": 36780,
   "status": {
-    "Keep": {
-      "MoveAbort": [
-        {
-          "Module": {
-            "address": "0x00000000000000000000000000000001",
-            "name": "BlockReward"
-          }
-        },
-        26119
-      ]
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "BlockReward"
+        }
+      },
+      "abort_code": "26119"
     }
   }
 }
 
 task 7 'run'. lines 80-96:
 {
-  "gas_used": 517784,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 516642,
+  "status": "Executed"
 }
 
 task 8 'run'. lines 99-115:
 {
-  "gas_used": 394355,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 393181,
+  "status": "Executed"
 }
 
 task 9 'run'. lines 118-133:
 {
-  "gas_used": 210007,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 209215,
+  "status": "Executed"
 }
 
 task 10 'run'. lines 136-150:
 {
-  "gas_used": 95714,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 95550,
+  "status": "Executed"
 }
 
 task 11 'run'. lines 153-167:
 {
-  "gas_used": 210007,
-  "status": {
-    "Keep": "Executed"
-  }
+  "gas_used": 209215,
+  "status": "Executed"
 }
