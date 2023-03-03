@@ -4,14 +4,14 @@
 
 // TODO figure out how to call genesis init script in integration tests
 
-////# run --signers creator
-//script{
-//    use StarcoinFramework::StdlibUpgradeScripts;
-//
-//    fun main(){
-//        StdlibUpgradeScripts::upgrade_from_v11_to_v12();
-//    }
-//}
+//# run --signers creator
+script{
+    use StarcoinFramework::StdlibUpgradeScripts;
+    
+    fun main(){
+        StdlibUpgradeScripts::upgrade_from_v11_to_v12();
+    }
+}
 
 //# publish
 module creator::XDAO {

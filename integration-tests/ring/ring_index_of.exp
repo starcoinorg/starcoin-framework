@@ -3,27 +3,33 @@ processed 6 tasks
 task 2 'run'. lines 5-33:
 {
   "gas_used": 1051801,
-  "status": "Executed"
+  "status": {
+    "Keep": "Executed"
+  }
 }
 
 task 3 'run'. lines 35-68:
 {
   "gas_used": 1072590,
-  "status": "Executed"
+  "status": {
+    "Keep": "Executed"
+  }
 }
 
 task 4 'run'. lines 71-93:
 {
   "gas_used": 414425,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "Ring"
-        }
-      },
-      "abort_code": "25863"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "Ring"
+          }
+        },
+        25863
+      ]
     }
   }
 }
@@ -32,14 +38,16 @@ task 5 'run'. lines 96-118:
 {
   "gas_used": 414507,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "Ring"
-        }
-      },
-      "abort_code": "25863"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "Ring"
+          }
+        },
+        25863
+      ]
     }
   }
 }

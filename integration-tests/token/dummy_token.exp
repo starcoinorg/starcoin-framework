@@ -3,27 +3,33 @@ processed 6 tasks
 task 3 'run'. lines 8-26:
 {
   "gas_used": 178842,
-  "status": "Executed"
+  "status": {
+    "Keep": "Executed"
+  }
 }
 
 task 4 'run'. lines 28-46:
 {
   "gas_used": 116316,
-  "status": "Executed"
+  "status": {
+    "Keep": "Executed"
+  }
 }
 
 task 5 'run'. lines 48-66:
 {
   "gas_used": 25635,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "DummyToken"
-        }
-      },
-      "abort_code": "25863"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "DummyToken"
+          }
+        },
+        25863
+      ]
     }
   }
 }

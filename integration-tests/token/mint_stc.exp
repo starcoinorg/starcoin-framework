@@ -4,15 +4,17 @@ task 3 'run'. lines 7-27:
 {
   "gas_used": 17379,
   "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "Token"
-        }
-      },
-      "function": 16,
-      "code_offset": 2
+    "Keep": {
+      "ExecutionFailure": {
+        "location": {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "Token"
+          }
+        },
+        "function": 16,
+        "code_offset": 2
+      }
     }
   }
 }
@@ -20,5 +22,7 @@ task 3 'run'. lines 7-27:
 task 4 'run'. lines 31-49:
 {
   "gas_used": 114188,
-  "status": "Executed"
+  "status": {
+    "Keep": "Executed"
+  }
 }

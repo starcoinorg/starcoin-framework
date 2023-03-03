@@ -3,21 +3,25 @@ processed 11 tasks
 task 3 'run'. lines 7-14:
 {
   "gas_used": 14623,
-  "status": "Executed"
+  "status": {
+    "Keep": "Executed"
+  }
 }
 
 task 4 'run'. lines 16-24:
 {
   "gas_used": 16116,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "Timestamp"
-        }
-      },
-      "abort_code": "3073"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "Timestamp"
+          }
+        },
+        3073
+      ]
     }
   }
 }
@@ -26,14 +30,16 @@ task 5 'run'. lines 26-35:
 {
   "gas_used": 21945,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "CoreAddresses"
-        }
-      },
-      "abort_code": "2818"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "CoreAddresses"
+          }
+        },
+        2818
+      ]
     }
   }
 }
@@ -42,15 +48,17 @@ task 6 'run'. lines 39-48:
 {
   "gas_used": 15687,
   "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "Timestamp"
-        }
-      },
-      "function": 1,
-      "code_offset": 7
+    "Keep": {
+      "ExecutionFailure": {
+        "location": {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "Timestamp"
+          }
+        },
+        "function": 1,
+        "code_offset": 7
+      }
     }
   }
 }
@@ -59,14 +67,16 @@ task 7 'run'. lines 52-61:
 {
   "gas_used": 21945,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "CoreAddresses"
-        }
-      },
-      "abort_code": "2818"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "CoreAddresses"
+          }
+        },
+        2818
+      ]
     }
   }
 }
@@ -74,21 +84,25 @@ task 7 'run'. lines 52-61:
 task 8 'run'. lines 64-73:
 {
   "gas_used": 27291,
-  "status": "Executed"
+  "status": {
+    "Keep": "Executed"
+  }
 }
 
 task 9 'run'. lines 78-87:
 {
   "gas_used": 34856,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "Timestamp"
-        }
-      },
-      "abort_code": "3591"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "Timestamp"
+          }
+        },
+        3591
+      ]
     }
   }
 }
@@ -97,14 +111,16 @@ task 10 'run'. lines 90-101:
 {
   "gas_used": 34860,
   "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "Timestamp"
-        }
-      },
-      "abort_code": "3591"
+    "Keep": {
+      "MoveAbort": [
+        {
+          "Module": {
+            "address": "0x00000000000000000000000000000001",
+            "name": "Timestamp"
+          }
+        },
+        3591
+      ]
     }
   }
 }
