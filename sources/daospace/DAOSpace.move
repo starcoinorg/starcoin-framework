@@ -23,7 +23,6 @@ module StarcoinFramework::DAOSpace {
     use StarcoinFramework::Block;
     use StarcoinFramework::DAOPluginMarketplace;
     use StarcoinFramework::EventUtil;
-    use StarcoinFramework::ASCII;
 
     friend StarcoinFramework::StarcoinDAO;
     
@@ -78,6 +77,7 @@ module StarcoinFramework::DAOSpace {
     /// DAO resource, every DAO has this resource at it's DAO account
     struct DAO has key {
         id: u64,
+        // TODO migrate ASIIC String and use ASSIC String
         name: vector<u8>,
         // description ipfs://xxxxx
         description:vector<u8>,
@@ -269,7 +269,6 @@ module StarcoinFramework::DAOSpace {
 
         let dao_address = Signer::address_of(&dao_signer);
         let id = DAORegistry::register<DAOT>(dao_address);
-        ASCII::string(copy name);
         let dao = DAO{
             id,
             name: copy name,

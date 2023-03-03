@@ -12,7 +12,6 @@ This is the root document for the Move StarcoinFramework module documentation. T
 ## Index
 
 
--  [`0x1::ASCII`](ASCII.md#0x1_ASCII)
 -  [`0x1::Account`](Account.md#0x1_Account)
 -  [`0x1::AccountScripts`](AccountScripts.md#0x1_AccountScripts)
 -  [`0x1::AnyMemberPlugin`](AnyMemberPlugin.md#0x1_AnyMemberPlugin)
