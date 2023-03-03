@@ -24,14 +24,14 @@ module StarcoinFramework::StakeToSBTPlugin {
     struct Stake<phantom DAOT, phantom TokenT> has key, store {
         id: u64,
         token: Token::Token<TokenT>,
-        // The timestamp when user stake
         stake_time: u64,
-        // How long where the user locked
+        // The timestamp when user stake
         lock_time: u64,
-        // Which multiplier by the user stake
+        // How long where the user locked
         weight: u64,
-        //  The SBT amount that user swap in the token
+        // Which multiplier by the user stake
         sbt_amount: u128,
+        //  The SBT amount that user swap in the token
     }
 
     struct StakeList<phantom DAOT, phantom TokenT> has key, store {
@@ -215,7 +215,6 @@ module StarcoinFramework::StakeToSBTPlugin {
 
     public fun query_stake<DAOT: store, TokenT: store>(member: address, id: u64)
     : (u64, u64, u64, u128, u128) acquires StakeList {
-        assert!(exists<StakeList<DAOT, TokenT>>(member), Errors::not_published(ERR_PLUGIN_NOT_STAKE));
         let stake_list = borrow_global_mut<StakeList<DAOT, TokenT>>(member);
         let item_index = find_item(id, &stake_list.items);
 
@@ -235,14 +234,12 @@ module StarcoinFramework::StakeToSBTPlugin {
 
     /// Query stake count from stake list
     public fun query_stake_count<DAOT: store, TokenT: store>(member: address): u64 acquires StakeList {
-        assert!(exists<StakeList<DAOT, TokenT>>(member), Errors::not_published(ERR_PLUGIN_NOT_STAKE));
         let stake_list = borrow_global<StakeList<DAOT, TokenT>>(member);
         Vector::length(&stake_list.items)
     }
 
     /// Unstake from staking
     public fun unstake_by_id<DAOT: store, TokenT: store>(member: address, id: u64) acquires StakeList {
-        assert!(exists<StakeList<DAOT, TokenT>>(member), Errors::not_published(ERR_PLUGIN_NOT_STAKE));
         let stake_list = borrow_global_mut<StakeList<DAOT, TokenT>>(member);
         let item_index = find_item(id, &stake_list.items);
 
@@ -279,7 +276,6 @@ module StarcoinFramework::StakeToSBTPlugin {
     /// Unstake all staking items from member address,
     /// No care whether the user is member or not
     public fun unstake_all<DAOT: store, TokenT: store>(member: address) acquires StakeList {
-        assert!(exists<StakeList<DAOT, TokenT>>(member), Errors::not_published(ERR_PLUGIN_NOT_STAKE));
         let stake_list = borrow_global_mut<StakeList<DAOT, TokenT>>(member);
         let len = Vector::length(&mut stake_list.items);
 
