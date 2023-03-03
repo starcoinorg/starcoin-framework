@@ -195,9 +195,11 @@ script{
 script{
     use creator::DAOHelper::{X};
     use StarcoinFramework::DAOSpace;
+    use StarcoinFramework::IdentifierNFT;
 
     // execute action
     fun join(sender: signer){
+        IdentifierNFT::accept<DAOSpace::DAOMember<X>,DAOSpace::DAOMemberBody<X>>(&sender);
         DAOSpace::join_member_entry<X>(sender);
     }
 }

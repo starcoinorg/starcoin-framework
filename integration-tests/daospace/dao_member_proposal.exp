@@ -51,8 +51,8 @@ task 27 'run'. lines 182-192:
   "status": "Executed"
 }
 
-task 28 'run'. lines 194-204:
+task 28 'run'. lines 194-206:
 {
-  "gas_used": 424233,
+  "gas_used": 424219,
   "status": "Executed"
 }

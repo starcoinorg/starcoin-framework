@@ -705,7 +705,6 @@ module StarcoinFramework::DAOSpace {
         let dao_address = dao_address<DAOT>();
         let op_index = Offer::find_offer<OfferMemeber<DAOT>>(dao_address, Signer::address_of(sender));
         assert!(Option::is_some(&op_index),1003);
-        IdentifierNFT::accept<DAOMember<DAOT>, DAOMemberBody<DAOT>>(sender);
         let memeber_event = borrow_global_mut<MemberEvent>(dao_address);
         let OfferMemeber<DAOT> {
             to_address,
