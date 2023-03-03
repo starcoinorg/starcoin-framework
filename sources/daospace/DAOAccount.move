@@ -13,7 +13,6 @@ module StarcoinFramework::DAOAccount{
     }
 
     const ERR_ACCOUNT_CAP_NOT_EXISTS:u64 = 100;
-    const ERR_ACCOUNT_CAP_EXISTS: u64 = 101;
 
     /// DAOAccount
     struct DAOAccount has key{
@@ -37,7 +36,6 @@ module StarcoinFramework::DAOAccount{
     /// Entry function for create dao account, the `DAOAccountCap` save to the `creator` account
     public(script) fun create_account_entry(sender: signer){
         let cap = create_account(&sender);
-        assert!(!exists<DAOAccountCap>(Signer::address_of(&sender)), Errors::already_published(ERR_ACCOUNT_CAP_EXISTS));
         move_to(&sender, cap);
     }
 
@@ -50,8 +48,6 @@ module StarcoinFramework::DAOAccount{
 
     /// Restore the DAOAccountCap to the `sender`
     public fun restore_dao_account_cap(sender: &signer, cap: DAOAccountCap) {
-        let sender_addr = Signer::address_of(sender);
-        assert!(!exists<DAOAccountCap>(sender_addr), Errors::already_published(ERR_ACCOUNT_CAP_EXISTS));
         move_to(sender, cap)
     }
 
