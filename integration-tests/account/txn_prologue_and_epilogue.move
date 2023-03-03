@@ -382,7 +382,7 @@ script {
         );
         // execute the txn...
         let gas_units_remaining = 10;
-        Account::txn_epilogue_v3<DummyToken>(
+        Account::txn_epilogue_v2<DummyToken>(
             &account,
             txn_sender,
             txn_sequence_number,

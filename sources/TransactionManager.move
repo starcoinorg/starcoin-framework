@@ -176,7 +176,7 @@ module TransactionManager {
         }else{
             (1,1)
         };
-        Account::txn_epilogue_v3<TokenType>(
+        Account::txn_epilogue_v2<TokenType>(
             &account,
             txn_sender,
             txn_sequence_number,
