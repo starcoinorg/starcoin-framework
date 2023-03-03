@@ -22,7 +22,6 @@ module StarcoinFramework::DAOSpace {
     use StarcoinFramework::SnapshotUtil;
     use StarcoinFramework::Block;
     use StarcoinFramework::DAOPluginMarketplace;
-    use StarcoinFramework::EventUtil;
 
     friend StarcoinFramework::StarcoinDAO;
     
@@ -728,12 +727,7 @@ module StarcoinFramework::DAOSpace {
         });
     }
 
-    public fun set_member_image<DAOT: store, PluginT>(
-        _cap: &DAOMemberCap<DAOT, PluginT>,
-        member_addr: address,
-        image_data: Option::Option<vector<u8>>,
-        image_url: Option::Option<vector<u8>>
-    ) acquires DAONFTUpdateCapHolder {
+    public fun set_member_image<DAOT: store, PluginT>(_cap: &DAOMemberCap<DAOT, PluginT>, member_addr: address, image_data:Option::Option<vector<u8>>, image_url:Option::Option<vector<u8>>) acquires DAONFTUpdateCapHolder{
         ensure_member<DAOT>(member_addr);
 
         let dao_address = dao_address<DAOT>();
@@ -785,24 +779,24 @@ module StarcoinFramework::DAOSpace {
     }
 
     /// Plugin event
-    public fun init_plugin_event<
-        DAOT: store,
-        PluginT: store,
-        EventT: store + drop
-    >(_cap: &DAOPluginEventCap<DAOT, PluginT>) acquires DAOAccountCapHolder {
+    public fun init_plugin_event<DAOT: store,
+                                 PluginT: store,
+                                 EventT: store + drop>(_cap: &DAOPluginEventCap<DAOT, PluginT>)
+    acquires DAOAccountCapHolder {
         let dao_signer = dao_signer<DAOT>();
-        EventUtil::init_event<EventT>(&dao_signer);
+        assert!(!exists<PluginEvent<DAOT, PluginT, EventT>>(dao_address<DAOT>()), Errors::invalid_state(ERR_ALREADY_INIT));
+        move_to(&dao_signer, PluginEvent<DAOT, PluginT, EventT> {
+            event_handle: Event::new_event_handle<EventT>(&dao_signer)
+        });
     }
 
-    public fun emit_plugin_event<
-        DAOT: store,
-        PluginT: store,
-        EventT: store + drop
-    >(
-        _cap: &DAOPluginEventCap<DAOT, PluginT>,
-        event: EventT
-    ) {
-        EventUtil::emit_event(dao_address<DAOT>(), event);
+    public fun emit_plugin_event<DAOT: store,
+                                 PluginT: store,
+                                 EventT: store + drop>(_cap: &DAOPluginEventCap<DAOT, PluginT>,
+                                                       event: EventT) acquires PluginEvent {
+        let dao_address = dao_address<DAOT>();
+        let plugin_event = borrow_global_mut<PluginEvent<DAOT, PluginT, EventT>>(dao_address);
+        Event::emit_event(&mut plugin_event.event_handle, event);
     }
 
 
@@ -880,7 +874,7 @@ module StarcoinFramework::DAOSpace {
         let dao_address = dao_address<DAOT>();
         let account_address = Signer::address_of(sender);
 
-        if (!exists<GrantEvent<PluginT>>(dao_address)){
+        if(! exists<GrantEvent<PluginT>>(dao_address)){
             move_to(&dao_signer, GrantEvent<PluginT>{
                 create_grant_event_handler:Event::new_event_handle<GrantCreateEvent<PluginT>>(&dao_signer),
                 revoke_grant_event_handler:Event::new_event_handle<GrantRevokeEvent<PluginT>>(&dao_signer),
