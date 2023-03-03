@@ -135,10 +135,6 @@ module StdlibUpgradeScripts {
             UpgradeModulePlugin::initialize();
 
             //TODO : config rate need mind
-            // voting_delay: 60000 ms
-            // voting_period: 3600000 ms
-            // voting_quorum_rate: 4
-            // min_action_delay: 3600000 ms
             StarcoinDAO::create_dao( Dao::voting_delay<STC>(), Dao::voting_period<STC>(), Dao::voting_quorum_rate<STC>(), Dao::min_action_delay<STC>(), 1000 * 1000 * 1000 * 1000);
         }
 }

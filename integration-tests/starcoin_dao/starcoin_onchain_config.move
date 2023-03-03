@@ -4,21 +4,8 @@
 
 //# faucet --addr alice --amount 1000000000000000
 
-//# faucet --addr bob --amount 1000000000000000
-
-//# faucet --addr carol --amount 1000000000000000
-
-//# faucet --addr dave --amount 1000000000000000
-
-//# var alice={{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}
-
-//# var bob={{$.faucet[2].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}
-
-//# var carol={{$.faucet[3].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}
-
-//# var dave={{$.faucet[4].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}
-
 //# block --author 0x1 --timestamp 86400000
+
 
 //# run --signers alice
 script {
@@ -31,58 +18,12 @@ script {
     fun stake_and_check(sender: signer) {
         let token = Account::withdraw<STC::STC>(
             &sender, 1000 * Token::scaling_factor<STC::STC>());
+        StakeToSBTPlugin::install_event<StarcoinDAO>();
         StakeToSBTPlugin::stake<StarcoinDAO, STC::STC>(&sender, token, 60000);
     }
 }
 // check: EXECUTED
 
-//# run --signers bob
-script {
-    use StarcoinFramework::StakeToSBTPlugin;
-    use StarcoinFramework::STC;
-    use StarcoinFramework::Token;
-    use StarcoinFramework::Account;
-    use StarcoinFramework::StarcoinDAO::StarcoinDAO;
-
-    fun stake_and_check(sender: signer) {
-        let token = Account::withdraw<STC::STC>(
-            &sender, 1000 * Token::scaling_factor<STC::STC>());
-        StakeToSBTPlugin::stake<StarcoinDAO, STC::STC>(&sender, token, 60000);
-    }
-}
-// check: EXECUTED
-
-//# run --signers carol
-script {
-    use StarcoinFramework::StakeToSBTPlugin;
-    use StarcoinFramework::STC;
-    use StarcoinFramework::Token;
-    use StarcoinFramework::Account;
-    use StarcoinFramework::StarcoinDAO::StarcoinDAO;
-
-    fun stake_and_check(sender: signer) {
-        let token = Account::withdraw<STC::STC>(
-            &sender, 1000 * Token::scaling_factor<STC::STC>());
-        StakeToSBTPlugin::stake<StarcoinDAO, STC::STC>(&sender, token, 60000);
-    }
-}
-// check: EXECUTED
-
-//# run --signers dave
-script {
-    use StarcoinFramework::StakeToSBTPlugin;
-    use StarcoinFramework::STC;
-    use StarcoinFramework::Token;
-    use StarcoinFramework::Account;
-    use StarcoinFramework::StarcoinDAO::StarcoinDAO;
-
-    fun stake_and_check(sender: signer) {
-        let token = Account::withdraw<STC::STC>(
-            &sender, 1000 * Token::scaling_factor<STC::STC>());
-        StakeToSBTPlugin::stake<StarcoinDAO, STC::STC>(&sender, token, 60000);
-    }
-}
-// check: EXECUTED
 
 //# block --author 0x1 --timestamp 86401000
 
@@ -127,15 +68,16 @@ script {
 
     fun propose (sender: signer){
         assert!(RewardConfig::reward_delay() == 1, 101);
-        OnChainStarcoinDAOConfig::propose_update_reward_config(&sender, b"update", 5 , 3600000);
+        OnChainStarcoinDAOConfig::propose_update_reward_config(&sender, b"update", 5 , 20000);
     }
 }
 
 //# block --author=0x3 --timestamp 86520000
 
-//# call 0x1::SnapshotUtil::get_access_path --type-args 0x1::StarcoinDAO::StarcoinDAO --args {{$.var[0].alice}}
+//# call 0x1::SnapshotUtil::get_access_path --type-args 0x1::StarcoinDAO::StarcoinDAO --args {{$.faucet[1].txn.raw_txn.decoded_payload.ScriptFunction.args[0]}}
 
 //# call-api state.get_with_proof_by_root_raw ["{{$.call[0]}}","{{$.call-api[1].header.state_root}}"]
+
 
 //# run --signers alice --args {{$.call-api[2]}}
 script{
@@ -149,62 +91,7 @@ script{
 }
 // check: EXECUTED
 
-
-// index 1
-//# call 0x1::SnapshotUtil::get_access_path --type-args 0x1::StarcoinDAO::StarcoinDAO --args {{$.var[1].bob}}
-
-// index: 3
-//# call-api state.get_with_proof_by_root_raw ["{{$.call[1]}}","{{$.call-api[1].header.state_root}}"]
-
-//# run --signers bob --args {{$.call-api[3]}}
-script{
-    use StarcoinFramework::DAOSpace;
-    use StarcoinFramework::StarcoinDAO::StarcoinDAO;
-    // bob vote
-    fun cast_vote(sender: signer, snpashot_raw_proofs: vector<u8>){
-        DAOSpace::cast_vote_entry<StarcoinDAO>(sender, 1, snpashot_raw_proofs, 1);
-    }
-}
-// check: EXECUTED
-
-// index 2
-//# call 0x1::SnapshotUtil::get_access_path --type-args 0x1::StarcoinDAO::StarcoinDAO --args {{$.var[2].carol}}
-
-// index: 4
-//# call-api state.get_with_proof_by_root_raw ["{{$.call[2]}}","{{$.call-api[1].header.state_root}}"]
-
-//# run --signers carol --args {{$.call-api[4]}}
-script{
-    use StarcoinFramework::DAOSpace;
-    use StarcoinFramework::StarcoinDAO::StarcoinDAO;
-    // alice vote
-    fun cast_vote(sender: signer, snpashot_raw_proofs: vector<u8>){
-
-        DAOSpace::cast_vote_entry<StarcoinDAO>(sender, 1, snpashot_raw_proofs, 1);
-    }
-}
-// check: EXECUTED
-
-// index 3
-//# call 0x1::SnapshotUtil::get_access_path --type-args 0x1::StarcoinDAO::StarcoinDAO --args {{$.var[3].dave}}
-
-// index: 5
-//# call-api state.get_with_proof_by_root_raw ["{{$.call[3]}}","{{$.call-api[1].header.state_root}}"]
-
-
-//# run --signers dave --args {{$.call-api[5]}}
-script{
-    use StarcoinFramework::DAOSpace;
-    use StarcoinFramework::StarcoinDAO::StarcoinDAO;
-    // alice vote
-    fun cast_vote(sender: signer, snpashot_raw_proofs: vector<u8>){
-
-        DAOSpace::cast_vote_entry<StarcoinDAO>(sender, 1, snpashot_raw_proofs, 1);
-    }
-}
-// check: EXECUTED
-
-//# block --author=0x3 --timestamp 90240000
+//# block --author=0x3 --timestamp 86640000
 
 //# run --signers alice
 script{
@@ -215,6 +102,8 @@ script{
     }
 }
 // check: EXECUTED
+
+//# block --author=0x3 --timestamp 86660000
 
 //# run --signers alice
 script{
@@ -227,7 +116,7 @@ script{
 }
 // check: EXECUTED
 
-//# block --author=0x3 --timestamp 93860000
+//# block --author=0x3 --timestamp 86680000
 
 //# run --signers alice
 script{
