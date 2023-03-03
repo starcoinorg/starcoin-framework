@@ -333,44 +333,26 @@ module Account {
 
     /// Generate an new address and create a new account, then delegate the account and return the new account address and `SignerCapability`
     public fun create_delegate_account(sender: &signer) : (address, SignerCapability) acquires Balance, Account, EventStore {
-        let new_address = generate_fresh_address(sender);
+        let sender_address = Signer::address_of(sender);
+        let sequence_number = Self::sequence_number(sender_address);
+        // use stc balance as part of seed, just for new address more random.
+        let stc_balance = Self::balance<STC>(sender_address);
+
+        let seed_bytes = BCS::to_bytes(&sender_address);
+        Vector::append(&mut seed_bytes, BCS::to_bytes(&sequence_number));
+        Vector::append(&mut seed_bytes, BCS::to_bytes(&stc_balance));
+
+        let seed_hash = Hash::sha3_256(seed_bytes);
+        let i = 0;
+        let address_bytes = Vector::empty();
+        while (i < ADDRESS_LENGTH) {
+            Vector::push_back(&mut address_bytes, *Vector::borrow(&seed_hash,i));
+            i = i + 1;
+        };
+        let new_address = BCS::to_address(address_bytes);
         Self::create_account_with_address<STC>(new_address);
         let new_signer = Self::create_signer(new_address);
         (new_address, Self::remove_signer_capability(&new_signer))
-    }
-
-    /// Generate a fresh address from the sender address and the sender's sequence number, and ensure the generated address is not exists onchain.
-    public fun generate_fresh_address(sender: &signer) : address acquires Balance, Account {
-        let try_times = 0u64;
-        while(true){
-            let sender_address = Signer::address_of(sender);
-            let sequence_number = Self::sequence_number(sender_address);
-            // use stc balance as part of seed, just for new address more random.
-            let stc_balance = Self::balance<STC>(sender_address);
-
-            let seed_bytes = BCS::to_bytes(&sender_address);
-            Vector::append(&mut seed_bytes, BCS::to_bytes(&sequence_number));
-            Vector::append(&mut seed_bytes, BCS::to_bytes(&stc_balance));
-            Vector::append(&mut seed_bytes, BCS::to_bytes(&try_times));
-
-            let seed_hash = Hash::sha3_256(seed_bytes);
-            
-            let i = 0;
-            let address_bytes = Vector::empty();
-            while (i < ADDRESS_LENGTH) {
-                Vector::push_back(&mut address_bytes, *Vector::borrow(&seed_hash,i));
-                i = i + 1;
-            };
-            let new_address = BCS::to_address(address_bytes);
-            if (Self::exists_at(new_address)){
-                try_times = try_times + 1;
-                continue
-            }else{
-                return new_address
-            }
-        };
-        //unreachable
-        abort 0
     }
 
     spec create_delegate_account {
