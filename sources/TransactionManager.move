@@ -19,6 +19,7 @@ module TransactionManager {
     use StarcoinFramework::Epoch;
     use StarcoinFramework::Hash;
     use StarcoinFramework::Vector;
+    use StarcoinFramework::GasOracle::STCToken;
     use StarcoinFramework::StarcoinDAO::StarcoinDAO;
     use StarcoinFramework::GasOracleProposalPlugin;
     use StarcoinFramework::STC;
@@ -67,7 +68,7 @@ module TransactionManager {
         // specified by the transaction
         assert!(ChainId::get() == chain_id, Errors::invalid_argument(EPROLOGUE_BAD_CHAIN_ID));
         let (stc_price,scaling_factor)= if (!STC::is_stc<TokenType>()){
-            (GasOracleProposalPlugin::gas_oracle_read<StarcoinDAO, TokenType>(),GasOracle::get_scaling_factor<TokenType>())
+            (GasOracleProposalPlugin::gas_oracle_read<StarcoinDAO, STCToken<TokenType>>(),GasOracle::get_scaling_factor<TokenType>())
         }else{
             (1,1)
         };

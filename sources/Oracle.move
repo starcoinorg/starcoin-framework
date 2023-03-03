@@ -56,7 +56,7 @@ module Oracle {
     const ERR_NO_UPDATE_CAPABILITY: u64 = 102;
     const ERR_NO_DATA_SOURCE: u64 = 103;
     const ERR_CAPABILITY_ACCOUNT_MISS_MATCH: u64 = 104;
-    const ERR_NO_ORACLE_FEED:u64 =105;
+
     /// deprecated.
     public fun initialize(_sender: &signer) {
     }
@@ -143,14 +143,12 @@ module Oracle {
 
     /// Read the Oracle's value from `ds_addr`
     public fun read<OracleT:copy+store+drop, ValueT: copy+store+drop>(ds_addr: address): ValueT acquires OracleFeed{
-        assert!(exists<OracleFeed<OracleT,ValueT>>(ds_addr), Errors::invalid_state(ERR_NO_ORACLE_FEED));
         let oracle_feed = borrow_global<OracleFeed<OracleT, ValueT>>(ds_addr);
         *&oracle_feed.record.value
     }
 
     /// Read the Oracle's DataRecord from `ds_addr`
     public fun read_record<OracleT:copy+store+drop, ValueT: copy+store+drop>(ds_addr: address): DataRecord<ValueT> acquires OracleFeed{
-        assert!(exists<OracleFeed<OracleT,ValueT>>(ds_addr), Errors::invalid_state(ERR_NO_ORACLE_FEED));
         let oracle_feed = borrow_global<OracleFeed<OracleT, ValueT>>(ds_addr);
         *&oracle_feed.record
     }
@@ -259,16 +257,16 @@ module GasOracle {
     struct STCToken<phantom TokenType:store> has copy, store, drop {
     }
 
-    public(script) fun register<TokenType:store>(sender: signer, precision: u8){
-        PriceOracle::register_oracle<STCToken<TokenType>>(&sender, precision);
+    public fun register<TokenType:store>(sender: &signer, precision: u8){
+        PriceOracle::register_oracle<STCToken<TokenType>>(sender, precision);
     }
 
-    public(script) fun init_data_source<TokenType: store>(sender: signer, init_value: u128){
-        PriceOracle::init_data_source<STCToken<TokenType>>(&sender, init_value);
+    public fun init_data_source<TokenType: store>(sender: &signer, init_value: u128){
+        PriceOracle::init_data_source<STCToken<TokenType>>(sender, init_value);
     }
     
-    public(script) fun update<TokenType:store>(sender: signer, value: u128){
-        PriceOracle::update<STCToken<TokenType>>(&sender, value);
+    public fun update<TokenType:store>(sender: &signer, value: u128){
+        PriceOracle::update<STCToken<TokenType>>(sender, value);
     }
     public fun get_scaling_factor<TokenType: store>(): u128 {
         PriceOracle::get_scaling_factor<STCToken<TokenType>>()
