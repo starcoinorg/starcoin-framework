@@ -65,7 +65,7 @@ module DummyTokenScripts{
     use StarcoinFramework::Account;
     use StarcoinFramework::Signer;
 
-    public(script) fun mint(sender: signer, amount: u128){
+    public entry fun mint(sender: signer, amount: u128){
         let token = DummyToken::mint(&sender, amount);
         let sender_addr = Signer::address_of(&sender);
         if(Account::is_accept_token<DummyToken>(sender_addr)){

@@ -71,7 +71,7 @@ module StarcoinFramework::GenesisNFTScripts {
     }
 
     /// Mint a GenesisNFT
-    public(script) fun mint(sender: signer, index: u64, merkle_proof:vector<vector<u8>>) {
+    public entry fun mint(sender: signer, index: u64, merkle_proof:vector<vector<u8>>) {
         GenesisNFT::mint(&sender, index, merkle_proof);
     }
 }
