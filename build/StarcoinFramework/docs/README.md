@@ -93,7 +93,6 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::Signature`](Signature.md#0x1_Signature)
 -  [`0x1::SignedInteger64`](SignedInteger64.md#0x1_SignedInteger64)
 -  [`0x1::Signer`](Signer.md#0x1_Signer)
--  [`0x1::SimpleMap`](SimpleMap.md#0x1_SimpleMap)
 -  [`0x1::SnapshotUtil`](SnapshotUtil.md#0x1_SnapshotUtil)
 -  [`0x1::StakeToSBTPlugin`](StakeToSBTPlugin.md#0x1_StakeToSBTPlugin)
 -  [`0x1::StarcoinDAO`](StarcoinDAO.md#0x1_StarcoinDAO)
