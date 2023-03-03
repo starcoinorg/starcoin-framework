@@ -71,6 +71,7 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::SIP_3`](SIPs.md#0x1_SIP_3)
 -  [`0x1::STC`](STC.md#0x1_STC)
 -  [`0x1::STCUSDOracle`](Oracle.md#0x1_STCUSDOracle)
+-  [`0x1::Secp256k1`](Secp256k1.md#0x1_Secp256k1)
 -  [`0x1::SharedEd25519PublicKey`](SharedEd25519PublicKey.md#0x1_SharedEd25519PublicKey)
 -  [`0x1::Signature`](Signature.md#0x1_Signature)
 -  [`0x1::SignedInteger64`](SignedInteger64.md#0x1_SignedInteger64)

@@ -19,7 +19,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="EmptyScripts.md#0x1_EmptyScripts_empty_script">empty_script</a>()
+<pre><code><b>public</b> entry <b>fun</b> <a href="EmptyScripts.md#0x1_EmptyScripts_empty_script">empty_script</a>()
 </code></pre>
 
 
@@ -28,7 +28,7 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="EmptyScripts.md#0x1_EmptyScripts_empty_script">empty_script</a>() {
+<pre><code><b>public</b> entry <b>fun</b> <a href="EmptyScripts.md#0x1_EmptyScripts_empty_script">empty_script</a>() {
 }
 </code></pre>
 

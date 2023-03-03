@@ -60,7 +60,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer">peer_to_peer</a>&lt;TokenType: store&gt;(account: signer, payee: <b>address</b>, _payee_auth_key: vector&lt;u8&gt;, amount: u128)
+<pre><code><b>public</b> entry <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer">peer_to_peer</a>&lt;TokenType: store&gt;(account: signer, payee: <b>address</b>, _payee_auth_key: vector&lt;u8&gt;, amount: u128)
 </code></pre>
 
 
@@ -69,7 +69,7 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer">peer_to_peer</a>&lt;TokenType: store&gt;(account: signer, payee: <b>address</b>, _payee_auth_key: vector&lt;u8&gt;, amount: u128) {
+<pre><code><b>public</b> entry <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer">peer_to_peer</a>&lt;TokenType: store&gt;(account: signer, payee: <b>address</b>, _payee_auth_key: vector&lt;u8&gt;, amount: u128) {
      <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_v2">peer_to_peer_v2</a>&lt;TokenType&gt;(account, payee, amount)
 }
 </code></pre>
@@ -84,7 +84,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_v2">peer_to_peer_v2</a>&lt;TokenType: store&gt;(account: signer, payee: <b>address</b>, amount: u128)
+<pre><code><b>public</b> entry <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_v2">peer_to_peer_v2</a>&lt;TokenType: store&gt;(account: signer, payee: <b>address</b>, amount: u128)
 </code></pre>
 
 
@@ -93,7 +93,7 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_v2">peer_to_peer_v2</a>&lt;TokenType: store&gt;(account: signer, payee: <b>address</b>, amount: u128) {
+<pre><code><b>public</b> entry <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_v2">peer_to_peer_v2</a>&lt;TokenType: store&gt;(account: signer, payee: <b>address</b>, amount: u128) {
     <b>if</b> (!<a href="Account.md#0x1_Account_exists_at">Account::exists_at</a>(payee)) {
         <a href="Account.md#0x1_Account_create_account_with_address">Account::create_account_with_address</a>&lt;TokenType&gt;(payee);
     };
@@ -112,7 +112,7 @@
 Batch transfer token to others.
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_batch_peer_to_peer">batch_peer_to_peer</a>&lt;TokenType: store&gt;(account: signer, payeees: vector&lt;<b>address</b>&gt;, _payee_auth_keys: vector&lt;vector&lt;u8&gt;&gt;, amounts: vector&lt;u128&gt;)
+<pre><code><b>public</b> entry <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_batch_peer_to_peer">batch_peer_to_peer</a>&lt;TokenType: store&gt;(account: signer, payeees: vector&lt;<b>address</b>&gt;, _payee_auth_keys: vector&lt;vector&lt;u8&gt;&gt;, amounts: vector&lt;u128&gt;)
 </code></pre>
 
 
@@ -121,7 +121,7 @@ Batch transfer token to others.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_batch_peer_to_peer">batch_peer_to_peer</a>&lt;TokenType: store&gt;(account: signer, payeees: vector&lt;<b>address</b>&gt;, _payee_auth_keys: vector&lt;vector&lt;u8&gt;&gt;, amounts: vector&lt;u128&gt;) {
+<pre><code><b>public</b> entry <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_batch_peer_to_peer">batch_peer_to_peer</a>&lt;TokenType: store&gt;(account: signer, payeees: vector&lt;<b>address</b>&gt;, _payee_auth_keys: vector&lt;vector&lt;u8&gt;&gt;, amounts: vector&lt;u128&gt;) {
      <a href="TransferScripts.md#0x1_TransferScripts_batch_peer_to_peer_v2">batch_peer_to_peer_v2</a>&lt;TokenType&gt;(account, payeees, amounts)
 }
 </code></pre>
@@ -137,7 +137,7 @@ Batch transfer token to others.
 Batch transfer token to others.
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_batch_peer_to_peer_v2">batch_peer_to_peer_v2</a>&lt;TokenType: store&gt;(account: signer, payeees: vector&lt;<b>address</b>&gt;, amounts: vector&lt;u128&gt;)
+<pre><code><b>public</b> entry <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_batch_peer_to_peer_v2">batch_peer_to_peer_v2</a>&lt;TokenType: store&gt;(account: signer, payeees: vector&lt;<b>address</b>&gt;, amounts: vector&lt;u128&gt;)
 </code></pre>
 
 
@@ -146,7 +146,7 @@ Batch transfer token to others.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_batch_peer_to_peer_v2">batch_peer_to_peer_v2</a>&lt;TokenType: store&gt;(account: signer, payeees: vector&lt;<b>address</b>&gt;, amounts: vector&lt;u128&gt;) {
+<pre><code><b>public</b> entry <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_batch_peer_to_peer_v2">batch_peer_to_peer_v2</a>&lt;TokenType: store&gt;(account: signer, payeees: vector&lt;<b>address</b>&gt;, amounts: vector&lt;u128&gt;) {
     <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&payeees);
     <b>assert</b>!(len == <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&amounts), <a href="TransferScripts.md#0x1_TransferScripts_ELENGTH_MISMATCH">ELENGTH_MISMATCH</a>);
     <b>let</b> i = 0;
@@ -172,7 +172,7 @@ Batch transfer token to others.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_batch">peer_to_peer_batch</a>&lt;TokenType: store&gt;(_account: signer, _payeees: vector&lt;u8&gt;, _payee_auth_keys: vector&lt;u8&gt;, _amount: u128)
+<pre><code><b>public</b> entry <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_batch">peer_to_peer_batch</a>&lt;TokenType: store&gt;(_account: signer, _payeees: vector&lt;u8&gt;, _payee_auth_keys: vector&lt;u8&gt;, _amount: u128)
 </code></pre>
 
 
@@ -181,7 +181,7 @@ Batch transfer token to others.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_batch">peer_to_peer_batch</a>&lt;TokenType: store&gt;(_account: signer, _payeees: vector&lt;u8&gt;, _payee_auth_keys: vector&lt;u8&gt;, _amount: u128) {
+<pre><code><b>public</b> entry <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_batch">peer_to_peer_batch</a>&lt;TokenType: store&gt;(_account: signer, _payeees: vector&lt;u8&gt;, _payee_auth_keys: vector&lt;u8&gt;, _amount: u128) {
     <b>abort</b> <a href="Errors.md#0x1_Errors_deprecated">Errors::deprecated</a>(<a href="TransferScripts.md#0x1_TransferScripts_EDEPRECATED_FUNCTION">EDEPRECATED_FUNCTION</a>)
 }
 </code></pre>
@@ -196,7 +196,7 @@ Batch transfer token to others.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_with_metadata">peer_to_peer_with_metadata</a>&lt;TokenType: store&gt;(account: signer, payee: <b>address</b>, _payee_auth_key: vector&lt;u8&gt;, amount: u128, metadata: vector&lt;u8&gt;)
+<pre><code><b>public</b> entry <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_with_metadata">peer_to_peer_with_metadata</a>&lt;TokenType: store&gt;(account: signer, payee: <b>address</b>, _payee_auth_key: vector&lt;u8&gt;, amount: u128, metadata: vector&lt;u8&gt;)
 </code></pre>
 
 
@@ -205,7 +205,7 @@ Batch transfer token to others.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_with_metadata">peer_to_peer_with_metadata</a>&lt;TokenType: store&gt;(
+<pre><code><b>public</b> entry <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_with_metadata">peer_to_peer_with_metadata</a>&lt;TokenType: store&gt;(
     account: signer,
     payee: <b>address</b>,
     _payee_auth_key: vector&lt;u8&gt;,
@@ -226,7 +226,7 @@ Batch transfer token to others.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_with_metadata_v2">peer_to_peer_with_metadata_v2</a>&lt;TokenType: store&gt;(account: signer, payee: <b>address</b>, amount: u128, metadata: vector&lt;u8&gt;)
+<pre><code><b>public</b> entry <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_with_metadata_v2">peer_to_peer_with_metadata_v2</a>&lt;TokenType: store&gt;(account: signer, payee: <b>address</b>, amount: u128, metadata: vector&lt;u8&gt;)
 </code></pre>
 
 
@@ -235,7 +235,7 @@ Batch transfer token to others.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_with_metadata_v2">peer_to_peer_with_metadata_v2</a>&lt;TokenType: store&gt;(
+<pre><code><b>public</b> entry <b>fun</b> <a href="TransferScripts.md#0x1_TransferScripts_peer_to_peer_with_metadata_v2">peer_to_peer_with_metadata_v2</a>&lt;TokenType: store&gt;(
         account: signer,
         payee: <b>address</b>,
         amount: u128,

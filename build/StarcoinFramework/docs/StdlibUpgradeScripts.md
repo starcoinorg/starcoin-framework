@@ -46,7 +46,7 @@ The module for StdlibUpgrade init scripts
 Stdlib upgrade script from v2 to v3
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v2_to_v3">upgrade_from_v2_to_v3</a>(account: signer, total_stc_amount: u128)
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v2_to_v3">upgrade_from_v2_to_v3</a>(account: signer, total_stc_amount: u128)
 </code></pre>
 
 
@@ -55,7 +55,7 @@ Stdlib upgrade script from v2 to v3
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v2_to_v3">upgrade_from_v2_to_v3</a>(account: signer, total_stc_amount: u128 ) {
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v2_to_v3">upgrade_from_v2_to_v3</a>(account: signer, total_stc_amount: u128 ) {
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(&account);
 
     <b>let</b> withdraw_cap = <a href="STC.md#0x1_STC_upgrade_from_v1_to_v2">STC::upgrade_from_v1_to_v2</a>(&account, total_stc_amount);
@@ -85,7 +85,7 @@ Stdlib upgrade script from v2 to v3
 association account should call this script after upgrade from v2 to v3.
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_take_linear_withdraw_capability">take_linear_withdraw_capability</a>(signer: signer)
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_take_linear_withdraw_capability">take_linear_withdraw_capability</a>(signer: signer)
 </code></pre>
 
 
@@ -94,7 +94,7 @@ association account should call this script after upgrade from v2 to v3.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_take_linear_withdraw_capability">take_linear_withdraw_capability</a>(signer: signer){
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_take_linear_withdraw_capability">take_linear_withdraw_capability</a>(signer: signer){
     <b>let</b> offered = <a href="Offer.md#0x1_Offer_redeem">Offer::redeem</a>&lt;LinearWithdrawCapability&lt;<a href="STC.md#0x1_STC">STC</a>&gt;&gt;(&signer, <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
     <a href="Treasury.md#0x1_Treasury_add_linear_withdraw_capability">Treasury::add_linear_withdraw_capability</a>(&signer, offered);
     <b>let</b> mint_key = <a href="Collection.md#0x1_Collection_take">Collection::take</a>&lt;LinearTimeMintKey&lt;<a href="STC.md#0x1_STC">STC</a>&gt;&gt;(&signer);
@@ -143,7 +143,7 @@ association account should call this script after upgrade from v2 to v3.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v5_to_v6">upgrade_from_v5_to_v6</a>(sender: signer)
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v5_to_v6">upgrade_from_v5_to_v6</a>(sender: signer)
 </code></pre>
 
 
@@ -152,7 +152,7 @@ association account should call this script after upgrade from v2 to v3.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v5_to_v6">upgrade_from_v5_to_v6</a>(sender: signer) {
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v5_to_v6">upgrade_from_v5_to_v6</a>(sender: signer) {
    <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v5_to_v6">Self::do_upgrade_from_v5_to_v6</a>(&sender)
 }
 </code></pre>
@@ -167,7 +167,7 @@ association account should call this script after upgrade from v2 to v3.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v6_to_v7">upgrade_from_v6_to_v7</a>(sender: signer)
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v6_to_v7">upgrade_from_v6_to_v7</a>(sender: signer)
 </code></pre>
 
 
@@ -176,7 +176,7 @@ association account should call this script after upgrade from v2 to v3.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v6_to_v7">upgrade_from_v6_to_v7</a>(sender: signer) {
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v6_to_v7">upgrade_from_v6_to_v7</a>(sender: signer) {
     <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v6_to_v7_with_language_version">Self::do_upgrade_from_v6_to_v7_with_language_version</a>(&sender, 2);
 }
 </code></pre>
@@ -245,7 +245,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v7_to_v8">upgrade_from_v7_to_v8</a>(sender: signer)
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v7_to_v8">upgrade_from_v7_to_v8</a>(sender: signer)
 </code></pre>
 
 
@@ -254,7 +254,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v7_to_v8">upgrade_from_v7_to_v8</a>(sender: signer) {
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v7_to_v8">upgrade_from_v7_to_v8</a>(sender: signer) {
     <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v7_to_v8">do_upgrade_from_v7_to_v8</a>(&sender);
 }
 </code></pre>
