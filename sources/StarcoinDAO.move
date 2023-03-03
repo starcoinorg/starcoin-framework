@@ -13,7 +13,6 @@ module StarcoinFramework::StarcoinDAO {
     use StarcoinFramework::TreasuryPlugin::{Self, TreasuryPlugin};
     use StarcoinFramework::Config;
     use StarcoinFramework::PackageTxnManager;
-    use StarcoinFramework::WithdrawPlugin::{Self, WithdrawPlugin};
 
     friend StarcoinFramework::Genesis;
     friend StarcoinFramework::StdlibUpgradeScripts;
@@ -64,11 +63,5 @@ module StarcoinFramework::StarcoinDAO {
     /// scale up the quorum votes for treasury withdraw proposal.
     public(friend) fun set_treasury_withdraw_proposal_scale(scale: u8) {
         TreasuryPlugin::set_scale_factor(scale, &StarcoinDAO {});
-    }
-
-    public(friend) fun upgrade_dao() {
-        let witness = StarcoinDAO {};
-        let install_cap = DAOSpace::acquire_install_plugin_cap<StarcoinDAO, StarcoinDAO>(&witness);
-        DAOSpace::install_plugin<StarcoinDAO, StarcoinDAO, WithdrawPlugin>(&install_cap, WithdrawPlugin::required_caps());
     }
 }

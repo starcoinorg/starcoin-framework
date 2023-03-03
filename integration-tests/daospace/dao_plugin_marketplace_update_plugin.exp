@@ -8,7 +8,7 @@ task 6 'run'. lines 46-54:
 
 task 7 'view'. lines 56-56:
 store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
-    id: 12
+    id: 11
     name: 54657374506c7567696e
     description: 697066733a2f2f6465736372697074696f6e
     labels: [
@@ -29,7 +29,7 @@ task 8 'run'. lines 58-66:
 
 task 9 'view'. lines 68-68:
 store key 0x00000000000000000000000000000001::DAOPluginMarketplace::PluginEntry<0x662ba5a1a1da0f1c70a9762c7eeb7aaf::TestPlugin::TestPlugin> {
-    id: 12
+    id: 11
     name: 54657374506c7567696e
     description: 697066733a2f2f6465736372697074696f6e32
     labels: [
