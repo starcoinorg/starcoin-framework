@@ -115,8 +115,7 @@ module StdlibUpgradeScripts {
             do_upgrade_from_v12_to_v12_1();
         }
         public fun do_upgrade_from_v12_to_v12_1() {
-            //TODO : config rate need mind
-            StarcoinDAO::create_dao( 60000, 120000, 10, 10000, 1000 * 1000 * 1000 * 1000);
+            StarcoinDAO::create_dao( 60000, 120000, 10, 10000, 0);
         }
 }
 }

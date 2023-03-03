@@ -112,7 +112,7 @@ script{
     use StarcoinFramework::DAOSpace;
     use StarcoinFramework::StarcoinDAO::StarcoinDAO;
     fun state(_sender: signer){
-        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 5 , 103);
+        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 4 , 103);
     }
 }
 // check: EXECUTED
@@ -125,7 +125,7 @@ script{
     use StarcoinFramework::StarcoinDAO::StarcoinDAO;
     fun queue_proposal_action(_sender: signer){
         DAOSpace::queue_proposal_action<StarcoinDAO>(1);
-        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 6 , 103);
+        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 5 , 103);
     }
 }
 // check: EXECUTED
@@ -139,9 +139,9 @@ script{
     use StarcoinFramework::UpgradeModulePlugin;
 
     fun execute_proposal(sender: signer){
-        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 7 , 103);
+        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 6 , 103);
         UpgradeModulePlugin::execute_proposal<StarcoinDAO>(&sender, 1);
-        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 8 , 103);
+        assert!(DAOSpace::proposal_state<StarcoinDAO>(1) == 7 , 103);
     }
 }
 // check: EXECUTED
