@@ -8,7 +8,7 @@ address StarcoinFramework {
             pragma aborts_if_is_strict = false;
         }
 
-        public(script) fun empty_script() {
+        public entry fun empty_script() {
         }
     }
 }
