@@ -17,7 +17,7 @@ task 5 'run'. lines 22-30:
           "name": "Block"
         }
       },
-      "function": 4,
+      "function": 5,
       "code_offset": 10
     }
   }
