@@ -99,3 +99,4 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::Version`](Version.md#0x1_Version)
 -  [`0x1::YieldFarming`](YieldFarming.md#0x1_YieldFarming)
 -  [`0x1::YieldFarmingV2`](YieldFarmingV2.md#0x1_YieldFarmingV2)
+-  [`0x1::simple_map`](SimpleMap.md#0x1_simple_map)
