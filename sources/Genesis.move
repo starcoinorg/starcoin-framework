@@ -445,7 +445,7 @@ module Genesis {
             let image = b"ipfs://QmSPcvcXgdtHHiVTAAarzTeubk5X3iWymPAoKBfiRFjPMY";
             GenesisNFT::initialize(&genesis_account, merkle_root, 1639u64, image);
         };
-        StdlibUpgradeScripts::do_upgrade_from_v6_to_v7_with_language_version(&genesis_account, 4);
+        StdlibUpgradeScripts::do_upgrade_from_v6_to_v7_with_language_version(&genesis_account, 6);
     
         //v11 -> v12
         {
