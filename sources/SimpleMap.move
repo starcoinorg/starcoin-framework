@@ -1,10 +1,11 @@
+address StarcoinFramework {
 /// This module provides a solution for sorted maps, that is it has the properties that
 /// 1) Keys point to Values
 /// 2) Each Key must be unique
 /// 3) A Key can be found within O(N) time
 /// 4) The keys are unsorted.
 /// 5) Adds and removals take O(N) time
-module StarcoinFramework::simple_map {
+module SimpleMap {
     use StarcoinFramework::Errors;
     use StarcoinFramework::Option;
     use StarcoinFramework::Vector;
@@ -89,7 +90,7 @@ module StarcoinFramework::simple_map {
         while (i < len) {
             let element = Vector::borrow(data, i);
             if (&element.key == &key) {
-                Vector::push_back(data, Element { key, value});
+                Vector::push_back(data, Element { key, value });
                 Vector::swap(data, i, len);
                 let Element { key, value } = Vector::pop_back(data);
                 return (Option::some(key), Option::some(value))
@@ -114,12 +115,12 @@ module StarcoinFramework::simple_map {
     fun find<Key: store, Value: store>(
         map: &SimpleMap<Key, Value>,
         key: &Key,
-    ): Option::Option<u64>{
+    ): Option::Option<u64> {
         let leng = Vector::length(&map.data);
         let i = 0;
         while (i < leng) {
             let element = Vector::borrow(&map.data, i);
-            if (&element.key == key){
+            if (&element.key == key) {
                 return Option::some(i)
             };
             i = i + 1;
@@ -186,9 +187,9 @@ module StarcoinFramework::simple_map {
     public fun upsert_test() {
         let map = create<u64, u64>();
         // test adding 3 elements using upsert
-        upsert<u64, u64>(&mut map, 1, 1 );
-        upsert(&mut map, 2, 2 );
-        upsert(&mut map, 3, 3 );
+        upsert<u64, u64>(&mut map, 1, 1);
+        upsert(&mut map, 2, 2);
+        upsert(&mut map, 3, 3);
 
         assert!(length(&map) == 3, 0);
         assert!(contains_key(&map, &1), 1);
@@ -199,10 +200,11 @@ module StarcoinFramework::simple_map {
         assert!(borrow(&map, &3) == &3, 6);
 
         // change mapping 1->1 to 1->4
-        upsert(&mut map, 1, 4 );
+        upsert(&mut map, 1, 4);
 
         assert!(length(&map) == 3, 7);
         assert!(contains_key(&map, &1), 8);
         assert!(borrow(&map, &1) == &4, 9);
     }
+}
 }
