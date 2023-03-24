@@ -274,8 +274,8 @@ compiled_package_info:
   build_flags:
     dev_mode: false
     test_mode: false
-    generate_docs: false
-    generate_abis: false
+    generate_docs: true
+    generate_abis: true
     install_dir: ~
     force_recompilation: true
     additional_named_addresses: {}
