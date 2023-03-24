@@ -270,12 +270,12 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: simple_map
     : StarcoinFramework
-  source_digest: BDBAC26A4AC6B3B6E64E5CC103E930AE851DE49792FA64A37B4F7D91DF0B6030
+  source_digest: 241A6580154F7786F435A440D2CC1B040821078292DAD817F835CC042357A3C8
   build_flags:
     dev_mode: false
     test_mode: false
-    generate_docs: true
-    generate_abis: true
+    generate_docs: false
+    generate_abis: false
     install_dir: ~
     force_recompilation: true
     additional_named_addresses: {}
