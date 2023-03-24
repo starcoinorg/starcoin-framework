@@ -57,11 +57,11 @@ module creator::AnyNFT {
         NFTGallery::accept<AnyNFT, AnyNFTBody>(sender);
     }
 
-    public(script) fun accept(sender: signer) {
+    public entry fun accept(sender: signer) {
         Self::do_accept(&sender);
     }
 
-    public(script) fun transfer(sender: signer, id: u64, receiver: address) {
+    public entry fun transfer(sender: signer, id: u64, receiver: address) {
         NFTGallery::transfer<AnyNFT, AnyNFTBody>(&sender, id, receiver);
     }
 }

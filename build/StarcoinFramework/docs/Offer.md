@@ -260,7 +260,7 @@ Fails if no such <code><a href="Offer.md#0x1_Offer">Offer</a></code> exists.
 Take Offer and put to signer's Collection<Offered>.
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Offer.md#0x1_Offer_take_offer">take_offer</a>&lt;Offered: store&gt;(signer: signer, offer_address: <b>address</b>)
+<pre><code><b>public</b> entry <b>fun</b> <a href="Offer.md#0x1_Offer_take_offer">take_offer</a>&lt;Offered: store&gt;(signer: signer, offer_address: <b>address</b>)
 </code></pre>
 
 
@@ -269,7 +269,7 @@ Take Offer and put to signer's Collection<Offered>.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Offer.md#0x1_Offer_take_offer">take_offer</a>&lt;Offered: store&gt;(
+<pre><code><b>public</b> entry <b>fun</b> <a href="Offer.md#0x1_Offer_take_offer">take_offer</a>&lt;Offered: store&gt;(
     signer: signer,
     offer_address: <b>address</b>,
 ) <b>acquires</b> <a href="Offer.md#0x1_Offer">Offer</a> {

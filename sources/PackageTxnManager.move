@@ -183,7 +183,7 @@ address StarcoinFramework {
             aborts_if !exists<UpgradePlanCapability>(Signer::address_of(account));
         }
 
-        public(script) fun convert_TwoPhaseUpgrade_to_TwoPhaseUpgradeV2(account: signer, package_address: address) acquires TwoPhaseUpgrade {
+        public entry fun convert_TwoPhaseUpgrade_to_TwoPhaseUpgradeV2(account: signer, package_address: address) acquires TwoPhaseUpgrade {
             let account_address = Signer::address_of(&account);
             // sender should be package owner
             assert!(account_address == package_address, Errors::requires_address(ESENDER_AND_PACKAGE_ADDRESS_MISMATCH));

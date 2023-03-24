@@ -2,13 +2,13 @@ processed 14 tasks
 
 task 4 'run'. lines 10-21:
 {
-  "gas_used": 216046,
+  "gas_used": 215178,
   "status": "Executed"
 }
 
 task 5 'run'. lines 22-31:
 {
-  "gas_used": 21947,
+  "gas_used": 21883,
   "status": {
     "MoveAbort": {
       "location": {
@@ -24,35 +24,24 @@ task 5 'run'. lines 22-31:
 
 task 6 'run'. lines 32-42:
 {
-  "gas_used": 161955,
+  "gas_used": 160905,
   "status": "Executed"
 }
 
 task 8 'run'. lines 47-60:
 {
-  "gas_used": 148289,
+  "gas_used": 147821,
   "status": "Executed"
 }
 
 task 11 'run'. lines 67-87:
 {
-  "gas_used": 157265,
+  "gas_used": 156869,
   "status": "Executed"
 }
 
 task 13 'run'. lines 92-106:
 {
-  "gas_used": 68033,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "OnChainConfigDao"
-        }
-      },
-      "function": 0,
-      "code_offset": 6
-    }
-  }
+  "gas_used": 118891,
+  "status": "Executed"
 }

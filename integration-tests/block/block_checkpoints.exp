@@ -8,24 +8,13 @@ task 3 'run'. lines 7-17:
 
 task 5 'run'. lines 22-30:
 {
-  "gas_used": 437303,
-  "status": {
-    "ExecutionFailure": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "Block"
-        }
-      },
-      "function": 5,
-      "code_offset": 10
-    }
-  }
+  "gas_used": 450241,
+  "status": "Executed"
 }
 
 task 6 'run'. lines 32-40:
 {
-  "gas_used": 20027,
+  "gas_used": 19993,
   "status": {
     "MoveAbort": {
       "location": {
@@ -41,19 +30,19 @@ task 6 'run'. lines 32-40:
 
 task 7 'run'. lines 42-50:
 {
-  "gas_used": 87834,
+  "gas_used": 87796,
   "status": "Executed"
 }
 
 task 13 'run'. lines 64-72:
 {
-  "gas_used": 94920,
+  "gas_used": 94884,
   "status": "Executed"
 }
 
 task 14 'run'. lines 74-83:
 {
-  "gas_used": 553900,
+  "gas_used": 553678,
   "status": {
     "MoveAbort": {
       "location": {
@@ -69,7 +58,7 @@ task 14 'run'. lines 74-83:
 
 task 15 'run'. lines 86-97:
 {
-  "gas_used": 95673,
+  "gas_used": 95643,
   "status": {
     "MoveAbort": {
       "location": {

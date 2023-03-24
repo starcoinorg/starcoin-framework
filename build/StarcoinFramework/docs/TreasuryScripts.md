@@ -26,7 +26,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TreasuryScripts.md#0x1_TreasuryScripts_withdraw_and_split_lt_withdraw_cap">withdraw_and_split_lt_withdraw_cap</a>&lt;TokenT: store&gt;(signer: signer, for_address: <b>address</b>, amount: u128, lock_period: u64)
+<pre><code><b>public</b> entry <b>fun</b> <a href="TreasuryScripts.md#0x1_TreasuryScripts_withdraw_and_split_lt_withdraw_cap">withdraw_and_split_lt_withdraw_cap</a>&lt;TokenT: store&gt;(signer: signer, for_address: <b>address</b>, amount: u128, lock_period: u64)
 </code></pre>
 
 
@@ -35,7 +35,7 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TreasuryScripts.md#0x1_TreasuryScripts_withdraw_and_split_lt_withdraw_cap">withdraw_and_split_lt_withdraw_cap</a>&lt;TokenT: store&gt;(
+<pre><code><b>public</b> entry <b>fun</b> <a href="TreasuryScripts.md#0x1_TreasuryScripts_withdraw_and_split_lt_withdraw_cap">withdraw_and_split_lt_withdraw_cap</a>&lt;TokenT: store&gt;(
     signer: signer,
     for_address: <b>address</b>,
     amount: u128,
@@ -84,7 +84,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TreasuryScripts.md#0x1_TreasuryScripts_withdraw_token_with_linear_withdraw_capability">withdraw_token_with_linear_withdraw_capability</a>&lt;TokenT: store&gt;(signer: signer)
+<pre><code><b>public</b> entry <b>fun</b> <a href="TreasuryScripts.md#0x1_TreasuryScripts_withdraw_token_with_linear_withdraw_capability">withdraw_token_with_linear_withdraw_capability</a>&lt;TokenT: store&gt;(signer: signer)
 </code></pre>
 
 
@@ -93,7 +93,7 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TreasuryScripts.md#0x1_TreasuryScripts_withdraw_token_with_linear_withdraw_capability">withdraw_token_with_linear_withdraw_capability</a>&lt;TokenT: store&gt;(
+<pre><code><b>public</b> entry <b>fun</b> <a href="TreasuryScripts.md#0x1_TreasuryScripts_withdraw_token_with_linear_withdraw_capability">withdraw_token_with_linear_withdraw_capability</a>&lt;TokenT: store&gt;(
     signer: signer,
 ) {
     // 1. take cap
@@ -136,7 +136,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TreasuryScripts.md#0x1_TreasuryScripts_propose_withdraw">propose_withdraw</a>&lt;TokenT: <b>copy</b>, drop, store&gt;(signer: signer, receiver: <b>address</b>, amount: u128, period: u64, exec_delay: u64)
+<pre><code><b>public</b> entry <b>fun</b> <a href="TreasuryScripts.md#0x1_TreasuryScripts_propose_withdraw">propose_withdraw</a>&lt;TokenT: <b>copy</b>, drop, store&gt;(signer: signer, receiver: <b>address</b>, amount: u128, period: u64, exec_delay: u64)
 </code></pre>
 
 
@@ -145,7 +145,7 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TreasuryScripts.md#0x1_TreasuryScripts_propose_withdraw">propose_withdraw</a>&lt;TokenT: <b>copy</b> + drop + store&gt;(signer: signer, receiver: <b>address</b>, amount: u128, period: u64, exec_delay: u64){
+<pre><code><b>public</b> entry <b>fun</b> <a href="TreasuryScripts.md#0x1_TreasuryScripts_propose_withdraw">propose_withdraw</a>&lt;TokenT: <b>copy</b> + drop + store&gt;(signer: signer, receiver: <b>address</b>, amount: u128, period: u64, exec_delay: u64){
     <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_propose_withdraw">TreasuryWithdrawDaoProposal::propose_withdraw</a>&lt;TokenT&gt;(&signer, receiver, amount, period, exec_delay)
 }
 </code></pre>
@@ -172,7 +172,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TreasuryScripts.md#0x1_TreasuryScripts_execute_withdraw_proposal">execute_withdraw_proposal</a>&lt;TokenT: <b>copy</b>, drop, store&gt;(signer: signer, proposer_address: <b>address</b>, proposal_id: u64)
+<pre><code><b>public</b> entry <b>fun</b> <a href="TreasuryScripts.md#0x1_TreasuryScripts_execute_withdraw_proposal">execute_withdraw_proposal</a>&lt;TokenT: <b>copy</b>, drop, store&gt;(signer: signer, proposer_address: <b>address</b>, proposal_id: u64)
 </code></pre>
 
 
@@ -181,7 +181,7 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="TreasuryScripts.md#0x1_TreasuryScripts_execute_withdraw_proposal">execute_withdraw_proposal</a>&lt;TokenT:<b>copy</b> + drop + store&gt;(signer: signer, proposer_address: <b>address</b>,
+<pre><code><b>public</b> entry <b>fun</b> <a href="TreasuryScripts.md#0x1_TreasuryScripts_execute_withdraw_proposal">execute_withdraw_proposal</a>&lt;TokenT:<b>copy</b> + drop + store&gt;(signer: signer, proposer_address: <b>address</b>,
                                                                    proposal_id: u64,){
     <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_execute_withdraw_proposal">TreasuryWithdrawDaoProposal::execute_withdraw_proposal</a>&lt;TokenT&gt;(&signer, proposer_address, proposal_id);
 }

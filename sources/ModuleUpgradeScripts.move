@@ -16,7 +16,7 @@ module ModuleUpgradeScripts {
         pragma aborts_if_is_strict = true;
     }
 
-    public(script) fun propose_module_upgrade_v2<Token: copy + drop + store>(
+    public entry fun propose_module_upgrade_v2<Token: copy + drop + store>(
         signer: signer,
         module_address: address,
         package_hash: vector<u8>,
@@ -35,7 +35,7 @@ module ModuleUpgradeScripts {
     }
 
     ///Update `sender`'s module upgrade strategy to `strategy`
-    public(script) fun update_module_upgrade_strategy(
+    public entry fun update_module_upgrade_strategy(
         sender: signer,
         strategy: u8,
     ) {
@@ -56,7 +56,7 @@ module ModuleUpgradeScripts {
 
     /// Update `sender`'s module upgrade strategy to `strategy` with min_time_limit.
     /// This can only be invoked when strategy is STRATEGY_TWO_PHASE.
-    public(script) fun update_module_upgrade_strategy_with_min_time(
+    public entry fun update_module_upgrade_strategy_with_min_time(
         sender: signer,
         strategy: u8,
         min_time_limit: u64,
@@ -72,7 +72,7 @@ module ModuleUpgradeScripts {
     }
 
     /// a alias of execute_module_upgrade_plan_propose, will deprecated in the future.
-    public(script) fun submit_module_upgrade_plan<Token: copy + drop + store>(
+    public entry fun submit_module_upgrade_plan<Token: copy + drop + store>(
         sender: signer,
         proposer_address: address,
         proposal_id: u64,
@@ -81,7 +81,7 @@ module ModuleUpgradeScripts {
     }
 
     ///Execute module upgrade plan propose by submit module upgrade plan, the propose must been agreed, and anyone can execute this function.
-    public(script) fun execute_module_upgrade_plan_propose<Token: copy + drop + store>(
+    public entry fun execute_module_upgrade_plan_propose<Token: copy + drop + store>(
         _sender: signer,
         proposer_address: address,
         proposal_id: u64,
@@ -94,7 +94,7 @@ module ModuleUpgradeScripts {
     }
 
     ///Directly submit a upgrade plan, the `sender`'s module upgrade plan must been PackageTxnManager::STRATEGY_TWO_PHASE and have UpgradePlanCapability
-    public(script) fun submit_upgrade_plan(sender: signer, package_hash: vector<u8>, version:u64, enforced: bool) {
+    public entry fun submit_upgrade_plan(sender: signer, package_hash: vector<u8>, version:u64, enforced: bool) {
         PackageTxnManager::submit_upgrade_plan_v2(&sender, package_hash, version, enforced);
     }
 
@@ -103,7 +103,7 @@ module ModuleUpgradeScripts {
     }
 
     ///Cancel current upgrade plan, the `sender` must have `UpgradePlanCapability`.
-    public(script) fun cancel_upgrade_plan(
+    public entry fun cancel_upgrade_plan(
         signer: signer,
     ) {
         PackageTxnManager::cancel_upgrade_plan(&signer);

@@ -47,7 +47,7 @@
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_propose_module_upgrade_v2">propose_module_upgrade_v2</a>&lt;<a href="Token.md#0x1_Token">Token</a>: <b>copy</b>, drop, store&gt;(signer: signer, module_address: <b>address</b>, package_hash: vector&lt;u8&gt;, version: u64, exec_delay: u64, enforced: bool)
+<pre><code><b>public</b> entry <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_propose_module_upgrade_v2">propose_module_upgrade_v2</a>&lt;<a href="Token.md#0x1_Token">Token</a>: <b>copy</b>, drop, store&gt;(signer: signer, module_address: <b>address</b>, package_hash: vector&lt;u8&gt;, version: u64, exec_delay: u64, enforced: bool)
 </code></pre>
 
 
@@ -56,7 +56,7 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_propose_module_upgrade_v2">propose_module_upgrade_v2</a>&lt;<a href="Token.md#0x1_Token">Token</a>: <b>copy</b> + drop + store&gt;(
+<pre><code><b>public</b> entry <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_propose_module_upgrade_v2">propose_module_upgrade_v2</a>&lt;<a href="Token.md#0x1_Token">Token</a>: <b>copy</b> + drop + store&gt;(
     signer: signer,
     module_address: <b>address</b>,
     package_hash: vector&lt;u8&gt;,
@@ -86,7 +86,7 @@
 Update <code>sender</code>'s module upgrade strategy to <code>strategy</code>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_update_module_upgrade_strategy">update_module_upgrade_strategy</a>(sender: signer, strategy: u8)
+<pre><code><b>public</b> entry <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_update_module_upgrade_strategy">update_module_upgrade_strategy</a>(sender: signer, strategy: u8)
 </code></pre>
 
 
@@ -95,7 +95,7 @@ Update <code>sender</code>'s module upgrade strategy to <code>strategy</code>
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_update_module_upgrade_strategy">update_module_upgrade_strategy</a>(
+<pre><code><b>public</b> entry <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_update_module_upgrade_strategy">update_module_upgrade_strategy</a>(
     sender: signer,
     strategy: u8,
 ) {
@@ -127,7 +127,7 @@ Update <code>sender</code>'s module upgrade strategy to <code>strategy</code> wi
 This can only be invoked when strategy is STRATEGY_TWO_PHASE.
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_update_module_upgrade_strategy_with_min_time">update_module_upgrade_strategy_with_min_time</a>(sender: signer, strategy: u8, min_time_limit: u64)
+<pre><code><b>public</b> entry <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_update_module_upgrade_strategy_with_min_time">update_module_upgrade_strategy_with_min_time</a>(sender: signer, strategy: u8, min_time_limit: u64)
 </code></pre>
 
 
@@ -136,7 +136,7 @@ This can only be invoked when strategy is STRATEGY_TWO_PHASE.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_update_module_upgrade_strategy_with_min_time">update_module_upgrade_strategy_with_min_time</a>(
+<pre><code><b>public</b> entry <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_update_module_upgrade_strategy_with_min_time">update_module_upgrade_strategy_with_min_time</a>(
     sender: signer,
     strategy: u8,
     min_time_limit: u64,
@@ -163,7 +163,7 @@ This can only be invoked when strategy is STRATEGY_TWO_PHASE.
 a alias of execute_module_upgrade_plan_propose, will deprecated in the future.
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_submit_module_upgrade_plan">submit_module_upgrade_plan</a>&lt;<a href="Token.md#0x1_Token">Token</a>: <b>copy</b>, drop, store&gt;(sender: signer, proposer_address: <b>address</b>, proposal_id: u64)
+<pre><code><b>public</b> entry <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_submit_module_upgrade_plan">submit_module_upgrade_plan</a>&lt;<a href="Token.md#0x1_Token">Token</a>: <b>copy</b>, drop, store&gt;(sender: signer, proposer_address: <b>address</b>, proposal_id: u64)
 </code></pre>
 
 
@@ -172,7 +172,7 @@ a alias of execute_module_upgrade_plan_propose, will deprecated in the future.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_submit_module_upgrade_plan">submit_module_upgrade_plan</a>&lt;<a href="Token.md#0x1_Token">Token</a>: <b>copy</b> + drop + store&gt;(
+<pre><code><b>public</b> entry <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_submit_module_upgrade_plan">submit_module_upgrade_plan</a>&lt;<a href="Token.md#0x1_Token">Token</a>: <b>copy</b> + drop + store&gt;(
     sender: signer,
     proposer_address: <b>address</b>,
     proposal_id: u64,
@@ -192,7 +192,7 @@ a alias of execute_module_upgrade_plan_propose, will deprecated in the future.
 Execute module upgrade plan propose by submit module upgrade plan, the propose must been agreed, and anyone can execute this function.
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_execute_module_upgrade_plan_propose">execute_module_upgrade_plan_propose</a>&lt;<a href="Token.md#0x1_Token">Token</a>: <b>copy</b>, drop, store&gt;(_sender: signer, proposer_address: <b>address</b>, proposal_id: u64)
+<pre><code><b>public</b> entry <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_execute_module_upgrade_plan_propose">execute_module_upgrade_plan_propose</a>&lt;<a href="Token.md#0x1_Token">Token</a>: <b>copy</b>, drop, store&gt;(_sender: signer, proposer_address: <b>address</b>, proposal_id: u64)
 </code></pre>
 
 
@@ -201,7 +201,7 @@ Execute module upgrade plan propose by submit module upgrade plan, the propose m
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_execute_module_upgrade_plan_propose">execute_module_upgrade_plan_propose</a>&lt;<a href="Token.md#0x1_Token">Token</a>: <b>copy</b> + drop + store&gt;(
+<pre><code><b>public</b> entry <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_execute_module_upgrade_plan_propose">execute_module_upgrade_plan_propose</a>&lt;<a href="Token.md#0x1_Token">Token</a>: <b>copy</b> + drop + store&gt;(
     _sender: signer,
     proposer_address: <b>address</b>,
     proposal_id: u64,
@@ -233,7 +233,7 @@ Execute module upgrade plan propose by submit module upgrade plan, the propose m
 Directly submit a upgrade plan, the <code>sender</code>'s module upgrade plan must been PackageTxnManager::STRATEGY_TWO_PHASE and have UpgradePlanCapability
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_submit_upgrade_plan">submit_upgrade_plan</a>(sender: signer, package_hash: vector&lt;u8&gt;, version: u64, enforced: bool)
+<pre><code><b>public</b> entry <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_submit_upgrade_plan">submit_upgrade_plan</a>(sender: signer, package_hash: vector&lt;u8&gt;, version: u64, enforced: bool)
 </code></pre>
 
 
@@ -242,7 +242,7 @@ Directly submit a upgrade plan, the <code>sender</code>'s module upgrade plan mu
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_submit_upgrade_plan">submit_upgrade_plan</a>(sender: signer, package_hash: vector&lt;u8&gt;, version:u64, enforced: bool) {
+<pre><code><b>public</b> entry <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_submit_upgrade_plan">submit_upgrade_plan</a>(sender: signer, package_hash: vector&lt;u8&gt;, version:u64, enforced: bool) {
     <a href="PackageTxnManager.md#0x1_PackageTxnManager_submit_upgrade_plan_v2">PackageTxnManager::submit_upgrade_plan_v2</a>(&sender, package_hash, version, enforced);
 }
 </code></pre>
@@ -270,7 +270,7 @@ Directly submit a upgrade plan, the <code>sender</code>'s module upgrade plan mu
 Cancel current upgrade plan, the <code>sender</code> must have <code>UpgradePlanCapability</code>.
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_cancel_upgrade_plan">cancel_upgrade_plan</a>(signer: signer)
+<pre><code><b>public</b> entry <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_cancel_upgrade_plan">cancel_upgrade_plan</a>(signer: signer)
 </code></pre>
 
 
@@ -279,7 +279,7 @@ Cancel current upgrade plan, the <code>sender</code> must have <code>UpgradePlan
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_cancel_upgrade_plan">cancel_upgrade_plan</a>(
+<pre><code><b>public</b> entry <b>fun</b> <a href="ModuleUpgradeScripts.md#0x1_ModuleUpgradeScripts_cancel_upgrade_plan">cancel_upgrade_plan</a>(
     signer: signer,
 ) {
     <a href="PackageTxnManager.md#0x1_PackageTxnManager_cancel_upgrade_plan">PackageTxnManager::cancel_upgrade_plan</a>(&signer);

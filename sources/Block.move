@@ -164,7 +164,7 @@ module Block {
         pragma verify = false;
     }
 
-    public (script) fun checkpoint_entry(_account: signer) acquires BlockMetadata, Checkpoints {
+    public entry fun checkpoint_entry(_account: signer) acquires BlockMetadata, Checkpoints {
         checkpoint();
     }
 
@@ -240,7 +240,7 @@ module Block {
         pragma verify = false;
     }
 
-    public (script) fun update_state_root_entry(_account: signer , header: vector<u8>)
+    public entry fun update_state_root_entry(_account: signer , header: vector<u8>)
     acquires Checkpoints {
         update_state_root(header);
     }
