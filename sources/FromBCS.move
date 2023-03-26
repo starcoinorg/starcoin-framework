@@ -54,14 +54,19 @@ module StarcoinFramework::FromBCS {
 
 
     #[test_only]
-    use StarcoinFramework::BCS::to_bytes;
+    use StarcoinFramework::BCS;
+    #[test_only]
+    use StarcoinFramework::Debug;
 
     #[test]
     fun test_address() {
-        let addr = @0x01;
-        let addr_vec = x"0000000000000000000000000000000000000000000000000000000000000001";
+        let addr = @0x1;
+        //let addr_vec = x"0000000000000000000000000000000000000000000000000000000000000001";
+        let addr_vec = x"00000000000000000000000000000001";
         let addr_out = to_address(addr_vec);
-        let addr_vec_out = to_bytes(&addr_out);
+        let addr_vec_out = BCS::to_bytes(&addr_out);
+        Debug::print(&addr);
+        Debug::print(&addr_vec_out);
         assert!(addr == addr_out, 0);
         assert!(addr_vec == addr_vec_out, 1);
     }
