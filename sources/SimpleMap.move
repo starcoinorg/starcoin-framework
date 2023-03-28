@@ -28,10 +28,18 @@ module SimpleMap {
         Vector::length(&map.data)
     }
 
+    spec length {
+        pragma intrinsic = true;
+    }
+
     public fun create<Key: store, Value: store>(): SimpleMap<Key, Value> {
         SimpleMap {
             data: Vector::empty(),
         }
+    }
+
+    spec create {
+        pragma intrinsic = true;
     }
 
     public fun borrow<Key: store, Value: store>(
@@ -44,6 +52,11 @@ module SimpleMap {
         &Vector::borrow(&map.data, idx).value
     }
 
+    spec borrow {
+        pragma intrinsic = true;
+    }
+
+
     public fun borrow_mut<Key: store, Value: store>(
         map: &mut SimpleMap<Key, Value>,
         key: &Key,
@@ -54,6 +67,11 @@ module SimpleMap {
         &mut Vector::borrow_mut(&mut map.data, idx).value
     }
 
+    spec borrow_mut {
+        pragma intrinsic = true;
+    }
+
+
     public fun contains_key<Key: store, Value: store>(
         map: &SimpleMap<Key, Value>,
         key: &Key,
@@ -62,9 +80,18 @@ module SimpleMap {
         Option::is_some(&maybe_idx)
     }
 
+    spec contains_key {
+        pragma intrinsic = true;
+    }
+
+
     public fun destroy_empty<Key: store, Value: store>(map: SimpleMap<Key, Value>) {
         let SimpleMap { data } = map;
         Vector::destroy_empty(data);
+    }
+
+    spec destroy_empty {
+        pragma intrinsic = true;
     }
 
     public fun add<Key: store, Value: store>(
@@ -77,6 +104,11 @@ module SimpleMap {
 
         Vector::push_back(&mut map.data, Element { key, value });
     }
+
+    spec add {
+        pragma intrinsic = true;
+    }
+
 
     /// Insert key/value pair or update an existing key to a new value
     public fun upsert<Key: store, Value: store>(
@@ -101,6 +133,11 @@ module SimpleMap {
         (Option::none(), Option::none())
     }
 
+    spec upsert {
+        pragma verify=false;
+    }
+
+
     public fun remove<Key: store, Value: store>(
         map: &mut SimpleMap<Key, Value>,
         key: &Key,
@@ -110,6 +147,10 @@ module SimpleMap {
         let placement = Option::extract(&mut maybe_idx);
         let Element { key, value } = Vector::swap_remove(&mut map.data, placement);
         (key, value)
+    }
+
+    spec remove {
+        pragma intrinsic = true;
     }
 
     fun find<Key: store, Value: store>(
@@ -127,6 +168,11 @@ module SimpleMap {
         };
         Option::none<u64>()
     }
+
+    spec find {
+        pragma verify=false;
+    }
+
 
     #[test]
     public fun add_remove_many() {

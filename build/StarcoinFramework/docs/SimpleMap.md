@@ -142,6 +142,18 @@ Map key is not found
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> intrinsic = <b>true</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_SimpleMap_create"></a>
 
 ## Function `create`
@@ -162,6 +174,18 @@ Map key is not found
         data: <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>(),
     }
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> intrinsic = <b>true</b>;
 </code></pre>
 
 
@@ -198,6 +222,18 @@ Map key is not found
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> intrinsic = <b>true</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_SimpleMap_borrow_mut"></a>
 
 ## Function `borrow_mut`
@@ -222,6 +258,18 @@ Map key is not found
     <b>let</b> idx = <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> maybe_idx);
     &<b>mut</b> <a href="Vector.md#0x1_Vector_borrow_mut">Vector::borrow_mut</a>(&<b>mut</b> map.data, idx).value
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> intrinsic = <b>true</b>;
 </code></pre>
 
 
@@ -256,6 +304,18 @@ Map key is not found
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> intrinsic = <b>true</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_SimpleMap_destroy_empty"></a>
 
 ## Function `destroy_empty`
@@ -275,6 +335,18 @@ Map key is not found
     <b>let</b> <a href="SimpleMap.md#0x1_SimpleMap">SimpleMap</a> { data } = map;
     <a href="Vector.md#0x1_Vector_destroy_empty">Vector::destroy_empty</a>(data);
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> intrinsic = <b>true</b>;
 </code></pre>
 
 
@@ -306,6 +378,18 @@ Map key is not found
 
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> map.data, <a href="SimpleMap.md#0x1_SimpleMap_Element">Element</a> { key, value });
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> intrinsic = <b>true</b>;
 </code></pre>
 
 
@@ -355,6 +439,18 @@ Insert key/value pair or update an existing key to a new value
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify=<b>false</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_SimpleMap_remove"></a>
 
 ## Function `remove`
@@ -380,6 +476,18 @@ Insert key/value pair or update an existing key to a new value
     <b>let</b> <a href="SimpleMap.md#0x1_SimpleMap_Element">Element</a> { key, value } = <a href="Vector.md#0x1_Vector_swap_remove">Vector::swap_remove</a>(&<b>mut</b> map.data, placement);
     (key, value)
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> intrinsic = <b>true</b>;
 </code></pre>
 
 
@@ -416,6 +524,18 @@ Insert key/value pair or update an existing key to a new value
     };
     <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u64&gt;()
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify=<b>false</b>;
 </code></pre>
 
 
