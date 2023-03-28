@@ -17,8 +17,8 @@ set -eo pipefail
 
 Z3_VERSION=4.8.13
 CVC5_VERSION=0.0.3
-DOTNET_VERSION=5.0
-BOOGIE_VERSION=2.9.6
+DOTNET_VERSION=6.0
+BOOGIE_VERSION=2.15.8
 MPM_VERSION=v1.13.3-alpha
 
 
@@ -211,7 +211,7 @@ function install_dotnet {
     # Below we need to (a) set TERM variable because the .net installer expects it and it is not set
     # in some environments (b) use bash not sh because the installer uses bash features.
     curl -sSL https://dot.net/v1/dotnet-install.sh \
-        | TERM=linux /bin/bash -s -- --channel $DOTNET_VERSION --install-dir "${DOTNET_INSTALL_DIR}" --version 5.0.200
+        | TERM=linux /bin/bash -s -- --channel $DOTNET_VERSION --install-dir "${DOTNET_INSTALL_DIR}" --version latest
   else
     echo Dotnet already installed.
   fi
