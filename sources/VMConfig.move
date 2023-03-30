@@ -291,6 +291,28 @@ module VMConfig {
         // Vector::reverse 32
         Vector::push_back(&mut table, new_gas_cost(10, 1));
 
+        // Table::new_table_handle 33
+        Vector::push_back(&mut table, new_gas_cost(4, 1));
+        // Table::add_box 34
+        Vector::push_back(&mut table, new_gas_cost(4, 1));
+        // Table::borrow_box 35
+        Vector::push_back(&mut table, new_gas_cost(10, 1));
+        // Table::remove_box 36
+        Vector::push_back(&mut table, new_gas_cost(8, 1));
+        // Table::contains_box 37
+        Vector::push_back(&mut table, new_gas_cost(40, 1));
+        // Table::destroy_empty_box 38
+        Vector::push_back(&mut table, new_gas_cost(20, 1));
+        // Table::drop_unchecked_box 39
+        Vector::push_back(&mut table, new_gas_cost(73, 1));
+        // string.check_utf8 40
+        Vector::push_back(&mut table, new_gas_cost(4, 1));
+        // string.sub_str 41
+        Vector::push_back(&mut table, new_gas_cost(4, 1));
+        // string.is_char_boundary 42
+        Vector::push_back(&mut table, new_gas_cost(4, 1));
+        // Table::string.index_of 43
+        Vector::push_back(&mut table, new_gas_cost(4, 1));
         table
     }
 

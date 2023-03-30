@@ -82,6 +82,8 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::SimpleMap`](SimpleMap.md#0x1_SimpleMap)
 -  [`0x1::StdlibUpgradeScripts`](StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts)
 -  [`0x1::StructuredHash`](StarcoinVerifier.md#0x1_StructuredHash)
+-  [`0x1::String`](String.md#0x1_String)
+-  [`0x1::Table`](Table.md#0x1_Table)
 -  [`0x1::Timestamp`](Timestamp.md#0x1_Timestamp)
 -  [`0x1::Token`](Token.md#0x1_Token)
 -  [`0x1::TransactionFee`](TransactionFee.md#0x1_TransactionFee)
