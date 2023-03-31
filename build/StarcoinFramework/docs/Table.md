@@ -13,10 +13,12 @@ Type of large-scale storage tables.
 -  [Function `destroy_empty`](#0x1_Table_destroy_empty)
 -  [Function `add`](#0x1_Table_add)
 -  [Function `borrow`](#0x1_Table_borrow)
+-  [Function `borrow_with_default`](#0x1_Table_borrow_with_default)
 -  [Function `borrow_mut`](#0x1_Table_borrow_mut)
 -  [Function `length`](#0x1_Table_length)
 -  [Function `empty`](#0x1_Table_empty)
 -  [Function `borrow_mut_with_default`](#0x1_Table_borrow_mut_with_default)
+-  [Function `upsert`](#0x1_Table_upsert)
 -  [Function `remove`](#0x1_Table_remove)
 -  [Function `contains`](#0x1_Table_contains)
 -  [Function `new_table_handle`](#0x1_Table_new_table_handle)
@@ -312,6 +314,36 @@ Aborts if there is no entry for <code>key</code>.
 
 </details>
 
+<a name="0x1_Table_borrow_with_default"></a>
+
+## Function `borrow_with_default`
+
+Acquire an immutable reference to the value which <code>key</code> maps to.
+Returns specified default value if there is no entry for <code>key</code>.
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Table.md#0x1_Table_borrow_with_default">borrow_with_default</a>&lt;K: <b>copy</b>, drop, V&gt;(table: &<a href="Table.md#0x1_Table_Table">Table::Table</a>&lt;K, V&gt;, key: K, default: &V): &V
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Table.md#0x1_Table_borrow_with_default">borrow_with_default</a>&lt;K: <b>copy</b> + drop, V&gt;(table: &<a href="Table.md#0x1_Table">Table</a>&lt;K, V&gt;, key: K, default: &V): &V {
+    <b>if</b> (!<a href="Table.md#0x1_Table_contains">contains</a>(table, <b>copy</b> key)) {
+        default
+    } <b>else</b> {
+        <a href="Table.md#0x1_Table_borrow">borrow</a>(table, <b>copy</b> key)
+    }
+}
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Table_borrow_mut"></a>
 
 ## Function `borrow_mut`
@@ -460,6 +492,37 @@ Insert the pair (<code>key</code>, <code>default</code>) first if there is no en
 
 <pre><code><b>pragma</b> opaque, verify=<b>false</b>;
 <b>aborts_if</b> <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_Table_upsert"></a>
+
+## Function `upsert`
+
+Insert the pair (<code>key</code>, <code>value</code>) if there is no entry for <code>key</code>.
+update the value of the entry for <code>key</code> to <code>value</code> otherwise
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Table.md#0x1_Table_upsert">upsert</a>&lt;K: <b>copy</b>, drop, V: drop&gt;(table: &<b>mut</b> <a href="Table.md#0x1_Table_Table">Table::Table</a>&lt;K, V&gt;, key: K, value: V)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Table.md#0x1_Table_upsert">upsert</a>&lt;K: <b>copy</b> + drop, V: drop&gt;(table: &<b>mut</b> <a href="Table.md#0x1_Table">Table</a>&lt;K, V&gt;, key: K, value: V) {
+    <b>if</b> (!<a href="Table.md#0x1_Table_contains">contains</a>(table, <b>copy</b> key)) {
+        <a href="Table.md#0x1_Table_add">add</a>(table, <b>copy</b> key, value)
+    } <b>else</b> {
+        <b>let</b> ref = <a href="Table.md#0x1_Table_borrow_mut">borrow_mut</a>(table, key);
+        *ref = value;
+    };
+}
 </code></pre>
 
 
