@@ -79,6 +79,16 @@ module Table {
         pragma intrinsic;
     }
 
+    /// Acquire an immutable reference to the value which `key` maps to.
+    /// Returns specified default value if there is no entry for `key`.
+    public fun borrow_with_default<K: copy + drop, V>(table: &Table<K, V>, key: K, default: &V): &V {
+        if (!contains(table, copy key)) {
+            default
+        } else {
+            borrow(table, copy key)
+        }
+    }
+
     /// Acquire a mutable reference to the value which `key` maps to.
     /// Aborts if there is no entry for `key`.
     public fun borrow_mut<K: copy + drop, V>(table: &mut Table<K, V>, key: K): &mut V {
@@ -124,6 +134,17 @@ module Table {
         // It seems not possible to write an abstract postcondition for this function.
     }
 
+    /// Insert the pair (`key`, `value`) if there is no entry for `key`.
+    /// update the value of the entry for `key` to `value` otherwise
+    public fun upsert<K: copy + drop, V: drop>(table: &mut Table<K, V>, key: K, value: V) {
+        if (!contains(table, copy key)) {
+            add(table, copy key, value)
+        } else {
+            let ref = borrow_mut(table, key);
+            *ref = value;
+        };
+    }
+
     /// Remove from `table` and return the value which `key` maps to.
     /// Aborts if there is no entry for `key`.
     public fun remove<K: copy + drop, V>(table: &mut Table<K, V>, key: K): V {
@@ -150,6 +171,39 @@ module Table {
     public fun drop_unchecked<K: copy + drop, V>(table: Table<K, V>) {
         drop_unchecked_box<K, V, Box<V>>(table)
     }
+
+    #[test_only]
+    struct TableHolder<phantom K: copy + drop, phantom V: drop> has key {
+        t: Table<K, V>
+    }
+
+    #[test(account = @0x1)]
+    fun test_upsert(account: signer) {
+        let t = new<u64, u8>();
+        let key: u64 = 111;
+        let error_code: u64 = 1;
+        assert!(!contains(&t, key), error_code);
+        upsert(&mut t, key, 12);
+        assert!(*borrow(&t, key) == 12, error_code);
+        upsert(&mut t, key, 23);
+        assert!(*borrow(&t, key) == 23, error_code);
+
+        move_to(&account, TableHolder { t });
+    }
+
+    #[test(account = @0x1)]
+    fun test_borrow_with_default(account: signer) {
+        let t = new<u64, u8>();
+        let key: u64 = 100;
+        let error_code: u64 = 1;
+        assert!(!contains(&t, key), error_code);
+        assert!(*borrow_with_default(&t, key, &12) == 12, error_code);
+        add(&mut t, key, 1);
+        assert!(*borrow_with_default(&t, key, &12) == 1, error_code);
+
+        move_to(&account, TableHolder{ t });
+    }
+
 
     // ======================================================================================================
     // Internal API
