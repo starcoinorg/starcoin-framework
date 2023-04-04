@@ -5,7 +5,7 @@
 //# faucet --addr bob
 
 
-//# run --signers alice --args 0x75995fa86f8ebc0b0819ebf80abc0ee6 --args 100u128
+//# run --signers alice --args @0x75995fa86f8ebc0b0819ebf80abc0ee6 --args 100u128
 script {
     use StarcoinFramework::Account;
     use StarcoinFramework::STC::STC;

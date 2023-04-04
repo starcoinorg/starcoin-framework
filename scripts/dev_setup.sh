@@ -15,11 +15,11 @@
 set -eo pipefail
 
 
-Z3_VERSION=4.8.13
+Z3_VERSION=4.11.2
 CVC5_VERSION=0.0.3
-DOTNET_VERSION=5.0
-BOOGIE_VERSION=2.9.6
-MPM_VERSION=v1.12.5
+DOTNET_VERSION=6.0
+BOOGIE_VERSION=2.15.8
+MPM_VERSION=v1.13.3-alpha
 
 
 SCRIPT_PATH="$( cd "$( dirname "$0" )" >/dev/null 2>&1 && pwd )"
@@ -211,7 +211,7 @@ function install_dotnet {
     # Below we need to (a) set TERM variable because the .net installer expects it and it is not set
     # in some environments (b) use bash not sh because the installer uses bash features.
     curl -sSL https://dot.net/v1/dotnet-install.sh \
-        | TERM=linux /bin/bash -s -- --channel $DOTNET_VERSION --install-dir "${DOTNET_INSTALL_DIR}" --version 5.0.200
+        | TERM=linux /bin/bash -s -- --channel $DOTNET_VERSION --install-dir "${DOTNET_INSTALL_DIR}" --version latest
   else
     echo Dotnet already installed.
   fi
@@ -239,7 +239,7 @@ function install_z3 {
      return
   fi
   if [[ "$(uname)" == "Linux" ]]; then
-    Z3_PKG="z3-$Z3_VERSION-x64-glibc-2.28"
+    Z3_PKG="z3-$Z3_VERSION-x64-glibc-2.31"
   elif [[ "$(uname)" == "Darwin" ]]; then
     Z3_PKG="z3-$Z3_VERSION-x64-osx-10.16"
   else
@@ -251,7 +251,7 @@ function install_z3 {
   mkdir -p "$TMPFILE"/
   (
     cd "$TMPFILE" || exit
-    curl -LOs "https://github.com/junkil-park/z3/releases/download/z3-$Z3_VERSION/$Z3_PKG.zip"
+    curl -LOs "https://github.com/Z3Prover/z3/releases/download/z3-$Z3_VERSION/$Z3_PKG.zip"
     unzip -q "$Z3_PKG.zip"
     cp "$Z3_PKG/bin/z3" "${INSTALL_DIR}"
     chmod +x "${INSTALL_DIR}z3"

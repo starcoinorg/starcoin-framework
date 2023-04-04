@@ -564,7 +564,7 @@ Call at block prologue
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Block.md#0x1_Block_checkpoint_entry">checkpoint_entry</a>(_account: signer)
+<pre><code><b>public</b> entry <b>fun</b> <a href="Block.md#0x1_Block_checkpoint_entry">checkpoint_entry</a>(_account: signer)
 </code></pre>
 
 
@@ -573,7 +573,7 @@ Call at block prologue
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="Block.md#0x1_Block_checkpoint_entry">checkpoint_entry</a>(_account: signer) <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>, <a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a> {
+<pre><code><b>public</b> entry <b>fun</b> <a href="Block.md#0x1_Block_checkpoint_entry">checkpoint_entry</a>(_account: signer) <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>, <a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a> {
     <a href="Block.md#0x1_Block_checkpoint">checkpoint</a>();
 }
 </code></pre>
@@ -780,7 +780,7 @@ Call at block prologue
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Block.md#0x1_Block_update_state_root_entry">update_state_root_entry</a>(_account: signer, header: vector&lt;u8&gt;)
+<pre><code><b>public</b> entry <b>fun</b> <a href="Block.md#0x1_Block_update_state_root_entry">update_state_root_entry</a>(_account: signer, header: vector&lt;u8&gt;)
 </code></pre>
 
 
@@ -789,7 +789,7 @@ Call at block prologue
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> (<b>script</b>) <b>fun</b> <a href="Block.md#0x1_Block_update_state_root_entry">update_state_root_entry</a>(_account: signer , header: vector&lt;u8&gt;)
+<pre><code><b>public</b> entry <b>fun</b> <a href="Block.md#0x1_Block_update_state_root_entry">update_state_root_entry</a>(_account: signer , header: vector&lt;u8&gt;)
 <b>acquires</b> <a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a> {
     <a href="Block.md#0x1_Block_update_state_root">update_state_root</a>(header);
 }

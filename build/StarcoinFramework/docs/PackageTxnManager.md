@@ -789,7 +789,7 @@ extract out UpgradePlanCapability from <code>signer</code>.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_convert_TwoPhaseUpgrade_to_TwoPhaseUpgradeV2">convert_TwoPhaseUpgrade_to_TwoPhaseUpgradeV2</a>(account: signer, package_address: <b>address</b>)
+<pre><code><b>public</b> entry <b>fun</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_convert_TwoPhaseUpgrade_to_TwoPhaseUpgradeV2">convert_TwoPhaseUpgrade_to_TwoPhaseUpgradeV2</a>(account: signer, package_address: <b>address</b>)
 </code></pre>
 
 
@@ -798,7 +798,7 @@ extract out UpgradePlanCapability from <code>signer</code>.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_convert_TwoPhaseUpgrade_to_TwoPhaseUpgradeV2">convert_TwoPhaseUpgrade_to_TwoPhaseUpgradeV2</a>(account: signer, package_address: <b>address</b>) <b>acquires</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_TwoPhaseUpgrade">TwoPhaseUpgrade</a> {
+<pre><code><b>public</b> entry <b>fun</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_convert_TwoPhaseUpgrade_to_TwoPhaseUpgradeV2">convert_TwoPhaseUpgrade_to_TwoPhaseUpgradeV2</a>(account: signer, package_address: <b>address</b>) <b>acquires</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_TwoPhaseUpgrade">TwoPhaseUpgrade</a> {
     <b>let</b> account_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&account);
     // sender should be package owner
     <b>assert</b>!(account_address == package_address, <a href="Errors.md#0x1_Errors_requires_address">Errors::requires_address</a>(<a href="PackageTxnManager.md#0x1_PackageTxnManager_ESENDER_AND_PACKAGE_ADDRESS_MISMATCH">ESENDER_AND_PACKAGE_ADDRESS_MISMATCH</a>));

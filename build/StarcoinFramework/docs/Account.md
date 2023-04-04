@@ -1220,7 +1220,7 @@ reserved address for the MoveVM.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount">create_account_with_initial_amount</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, _auth_key: vector&lt;u8&gt;, initial_amount: u128)
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount">create_account_with_initial_amount</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, _auth_key: vector&lt;u8&gt;, initial_amount: u128)
 </code></pre>
 
 
@@ -1229,7 +1229,7 @@ reserved address for the MoveVM.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount">create_account_with_initial_amount</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, _auth_key: vector&lt;u8&gt;, initial_amount: u128)
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount">create_account_with_initial_amount</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, _auth_key: vector&lt;u8&gt;, initial_amount: u128)
 <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a> {
     <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType&gt;(account, fresh_address, initial_amount);
 }
@@ -1257,7 +1257,7 @@ reserved address for the MoveVM.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_v2">create_account_with_initial_amount_v2</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_v2">create_account_with_initial_amount_v2</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
 </code></pre>
 
 
@@ -1266,7 +1266,7 @@ reserved address for the MoveVM.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_v2">create_account_with_initial_amount_v2</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_v2">create_account_with_initial_amount_v2</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
 <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a> {
     <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType&gt;(account, fresh_address, initial_amount);
 }
@@ -1294,7 +1294,7 @@ reserved address for the MoveVM.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
 </code></pre>
 
 
@@ -1303,7 +1303,7 @@ reserved address for the MoveVM.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, initial_amount: u128)
 <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a> {
     <a href="Account.md#0x1_Account_create_account_with_address">create_account_with_address</a>&lt;TokenType&gt;(fresh_address);
     <b>if</b> (initial_amount &gt; 0) {
@@ -2323,7 +2323,7 @@ Return the key rotation capability to the account it originally came from
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_rotate_authentication_key">rotate_authentication_key</a>(account: signer, new_key: vector&lt;u8&gt;)
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_rotate_authentication_key">rotate_authentication_key</a>(account: signer, new_key: vector&lt;u8&gt;)
 </code></pre>
 
 
@@ -2332,7 +2332,7 @@ Return the key rotation capability to the account it originally came from
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_rotate_authentication_key">rotate_authentication_key</a>(account: signer, new_key: vector&lt;u8&gt;) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_EventStore">EventStore</a> {
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_rotate_authentication_key">rotate_authentication_key</a>(account: signer, new_key: vector&lt;u8&gt;) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_EventStore">EventStore</a> {
     <a href="Account.md#0x1_Account_rotate_authentication_key_entry">rotate_authentication_key_entry</a>(account, new_key);
 }
 </code></pre>
@@ -2359,7 +2359,7 @@ Return the key rotation capability to the account it originally came from
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_rotate_authentication_key_entry">rotate_authentication_key_entry</a>(account: signer, new_key: vector&lt;u8&gt;)
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_rotate_authentication_key_entry">rotate_authentication_key_entry</a>(account: signer, new_key: vector&lt;u8&gt;)
 </code></pre>
 
 
@@ -2368,7 +2368,7 @@ Return the key rotation capability to the account it originally came from
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_rotate_authentication_key_entry">rotate_authentication_key_entry</a>(account: signer, new_key: vector&lt;u8&gt;) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_EventStore">EventStore</a> {
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_rotate_authentication_key_entry">rotate_authentication_key_entry</a>(account: signer, new_key: vector&lt;u8&gt;) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_EventStore">EventStore</a> {
     <a href="Account.md#0x1_Account_do_rotate_authentication_key">do_rotate_authentication_key</a>(&account, new_key);
 }
 </code></pre>
@@ -2534,7 +2534,7 @@ Add a balance of <code><a href="Token.md#0x1_Token">Token</a></code> type to the
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_accept_token">accept_token</a>&lt;TokenType: store&gt;(account: signer)
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_accept_token">accept_token</a>&lt;TokenType: store&gt;(account: signer)
 </code></pre>
 
 
@@ -2543,7 +2543,7 @@ Add a balance of <code><a href="Token.md#0x1_Token">Token</a></code> type to the
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_accept_token">accept_token</a>&lt;TokenType: store&gt;(account: signer) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a> {
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_accept_token">accept_token</a>&lt;TokenType: store&gt;(account: signer) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a> {
     <a href="Account.md#0x1_Account_accept_token_entry">accept_token_entry</a>&lt;TokenType&gt;(account);
 }
 </code></pre>
@@ -2570,7 +2570,7 @@ Add a balance of <code><a href="Token.md#0x1_Token">Token</a></code> type to the
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_accept_token_entry">accept_token_entry</a>&lt;TokenType: store&gt;(account: signer)
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_accept_token_entry">accept_token_entry</a>&lt;TokenType: store&gt;(account: signer)
 </code></pre>
 
 
@@ -2579,7 +2579,7 @@ Add a balance of <code><a href="Token.md#0x1_Token">Token</a></code> type to the
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_accept_token_entry">accept_token_entry</a>&lt;TokenType: store&gt;(account: signer) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a> {
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_accept_token_entry">accept_token_entry</a>&lt;TokenType: store&gt;(account: signer) <b>acquires</b> <a href="Account.md#0x1_Account">Account</a> {
     <a href="Account.md#0x1_Account_do_accept_token">do_accept_token</a>&lt;TokenType&gt;(&account);
 }
 </code></pre>
@@ -2707,7 +2707,7 @@ Check whether the address can auto accept token.
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_set_auto_accept_token_entry">set_auto_accept_token_entry</a>(account: signer, enable: bool)
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_set_auto_accept_token_entry">set_auto_accept_token_entry</a>(account: signer, enable: bool)
 </code></pre>
 
 
@@ -2716,7 +2716,7 @@ Check whether the address can auto accept token.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_set_auto_accept_token_entry">set_auto_accept_token_entry</a>(account: signer, enable: bool) <b>acquires</b> <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a> {
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_set_auto_accept_token_entry">set_auto_accept_token_entry</a>(account: signer, enable: bool) <b>acquires</b> <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a> {
     <a href="Account.md#0x1_Account_set_auto_accept_token">set_auto_accept_token</a>(&account, enable);
 }
 </code></pre>
@@ -3363,7 +3363,7 @@ It collects gas and bumps the sequence number
 
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_remove_zero_balance_entry">remove_zero_balance_entry</a>&lt;TokenType: store&gt;(account: signer)
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_remove_zero_balance_entry">remove_zero_balance_entry</a>&lt;TokenType: store&gt;(account: signer)
 </code></pre>
 
 
@@ -3372,7 +3372,7 @@ It collects gas and bumps the sequence number
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b>(<b>script</b>) <b>fun</b> <a href="Account.md#0x1_Account_remove_zero_balance_entry">remove_zero_balance_entry</a>&lt;TokenType: store&gt;(account: signer) <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a> {
+<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_remove_zero_balance_entry">remove_zero_balance_entry</a>&lt;TokenType: store&gt;(account: signer) <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a> {
     <a href="Account.md#0x1_Account_remove_zero_balance">remove_zero_balance</a>&lt;TokenType&gt;(&account);
 }
 </code></pre>
