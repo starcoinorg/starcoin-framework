@@ -1,12 +1,12 @@
 /// This module provides a number of functions to convert _primitive_ types from their representation in `std::bcs`
 /// to values. This is the opposite of `bcs::to_bytes`. Note that it is not safe to define a generic public `from_bytes`
 /// function because this can violate implicit struct invariants, therefore only primitive types are offerred. If
-/// a general conversion back-and-force is needed, consider the `aptos_std::Any` type which preserves invariants.
+/// a general conversion back-and-force is needed, consider the `StarcoinFramework::Any` type which preserves invariants.
 ///
 /// Example:
 /// ```
 /// use std::bcs;
-/// use aptos_std::from_bcs;
+/// use StarcoinFramework::from_bcs;
 ///
 /// assert!(from_bcs::to_address(bcs::to_bytes(&@0xabcdef)) == @0xabcdef, 0);
 /// ```
@@ -49,8 +49,8 @@ module StarcoinFramework::FromBCS {
     /// deserialize a linear value, its their responsibility that the data they deserialize is
     /// owned.
     public(friend) native fun from_bytes<T>(bytes: vector<u8>): T;
-    // friend aptos_std::any;
-    // friend aptos_std::copyable_any;
+    // friend StarcoinFramework::any;
+    // friend StarcoinFramework::copyable_any;
 
 
     #[test_only]
