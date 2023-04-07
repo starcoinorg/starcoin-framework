@@ -41,12 +41,17 @@ module Vector {
     native public fun destroy_empty<Element>(v: vector<Element>);
 
     /// Spawn a sub vector from a vector
-    native fun spawn_from<Element>(v: &vector<Element>, offset: u64, length: u64): vector<Element>;
+    native fun spawn_from<Element>(v: &vector<Element>, offset: u64, size: u64): vector<Element>;
 
-    public fun spawn_from_vec<Element>(v: &vector<Element>, offset: u64, length: u64): vector<Element> {
-        let vlen = length(v);
-        assert!(offset + length < vlen, EINDEX_OUT_OF_BOUNDS);
-        spawn_from(v, offset, length)
+    public fun spawn_from_vec<Element: copy>(v: &vector<Element>, offset: u64, size: u64): vector<Element> {
+        let len = length(v);
+        let end_idx = (offset + size);
+        assert!(end_idx <= len, EINDEX_OUT_OF_BOUNDS);
+        assert!(size > 0, EINDEX_OUT_OF_BOUNDS);
+        if (offset == 0 && end_idx == len) {
+            return *v
+        };
+        spawn_from(v, offset, size)
     }
 
     /// Swaps the elements at the `i`th and `j`th indices in the vector `v`.
