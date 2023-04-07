@@ -40,6 +40,15 @@ module Vector {
     /// Aborts if `v` is not empty.
     native public fun destroy_empty<Element>(v: vector<Element>);
 
+    /// Spawn a sub vector from a vector
+    native fun spawn_from<Element>(v: &vector<Element>, offset: u64, length: u64): vector<Element>;
+
+    public fun spawn_from_vec<Element>(v: &vector<Element>, offset: u64, length: u64): vector<Element> {
+        let vlen = length(v);
+        assert!(offset + length < vlen, EINDEX_OUT_OF_BOUNDS);
+        spawn_from(v, offset, length)
+    }
+
     /// Swaps the elements at the `i`th and `j`th indices in the vector `v`.
     /// Aborts if `i`or `j` is out of bounds.
     native public fun swap<Element>(v: &mut vector<Element>, i: u64, j: u64);
@@ -184,6 +193,8 @@ module Vector {
         pragma verify = false; // timeout, skip
         aborts_if sub_len == 0;
     }
+
+
      // =================================================================
     // Module Specification
 
