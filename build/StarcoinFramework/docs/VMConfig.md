@@ -73,7 +73,7 @@ address, and will preload the vector with the gas schedule for instructions. The
 load this into memory at the startup of each block.
 
 
-<pre><code><b>struct</b> <a href="VMConfig.md#0x1_VMConfig_GasSchedule">GasSchedule</a> <b>has</b> <b>copy</b>, drop, store
+<pre><code><b>struct</b> <a href="GasSchedule.md#0x1_GasSchedule">GasSchedule</a> <b>has</b> <b>copy</b>, drop, store
 </code></pre>
 
 
@@ -610,7 +610,7 @@ Create a new vm config, mainly used in DAO.
         default_account_size,
     };
     <a href="VMConfig.md#0x1_VMConfig">VMConfig</a> {
-        gas_schedule: <a href="VMConfig.md#0x1_VMConfig_GasSchedule">GasSchedule</a> { instruction_schedule, native_schedule, gas_constants },
+        gas_schedule: <a href="GasSchedule.md#0x1_GasSchedule">GasSchedule</a> { instruction_schedule, native_schedule, gas_constants },
     }
 }
 </code></pre>
