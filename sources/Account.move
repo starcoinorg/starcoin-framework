@@ -297,11 +297,6 @@ module Account {
               sequence_number: 0,
         });
         move_to(new_account, AutoAcceptToken{enable: true});
-        move_to(new_account, EventStore {
-              rotate_auth_key_events: Event::new_event_handle<RotateAuthKeyEvent>(new_account),
-              extract_withdraw_cap_events: Event::new_event_handle<ExtractWithdrawCapEvent>(new_account),
-              signer_delegate_events: Event::new_event_handle<SignerDelegateEvent>(new_account),
-        });
     }
 
     spec make_account {
@@ -315,7 +310,7 @@ module Account {
 
     public entry fun create_account_with_initial_amount<TokenType: store>(account: signer, fresh_address: address, _auth_key: vector<u8>, initial_amount: u128)
     acquires Account, Balance, AutoAcceptToken {
-        create_account_with_initial_amount_entry<TokenType>(account, fresh_address, initial_amount);
+         create_account_with_initial_amount_v2<TokenType>(account, fresh_address, initial_amount)
     }
 
     public entry fun create_account_with_initial_amount_v2<TokenType: store>(account: signer, fresh_address: address, initial_amount: u128)
@@ -340,7 +335,7 @@ module Account {
     }
 
     /// Generate an new address and create a new account, then delegate the account and return the new account address and `SignerCapability`
-    public fun create_delegate_account(sender: &signer) : (address, SignerCapability) acquires Balance, Account, EventStore {
+    public fun create_delegate_account(sender: &signer) : (address, SignerCapability) acquires Balance, Account {
         let sender_address = Signer::address_of(sender);
         let sequence_number = Self::sequence_number(sender_address);
         // use stc balance as part of seed, just for new address more random.
@@ -856,7 +851,7 @@ module Account {
         }
     }
 
-    public(script) fun set_auto_accept_token_entry(account: signer, enable: bool) acquires AutoAcceptToken {
+    public entry fun set_auto_accept_token_entry(account: signer, enable: bool) acquires AutoAcceptToken {
         set_auto_accept_token(&account, enable);
     }
 

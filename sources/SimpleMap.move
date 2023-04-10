@@ -226,32 +226,4 @@ module StarcoinFramework::SimpleMap {
 
         destroy_empty(map);
     }
-<<<<<<< HEAD
-
-    #[test]
-    public fun upsert_test() {
-        let map = create<u64, u64>();
-        // test adding 3 elements using upsert
-        upsert<u64, u64>(&mut map, 1, 1 );
-        upsert(&mut map, 2, 2 );
-        upsert(&mut map, 3, 3 );
-
-        assert!(length(&map) == 3, 0);
-        assert!(contains_key(&map, &1), 1);
-        assert!(contains_key(&map, &2), 2);
-        assert!(contains_key(&map, &3), 3);
-        assert!(borrow(&map, &1) == &1, 4);
-        assert!(borrow(&map, &2) == &2, 5);
-        assert!(borrow(&map, &3) == &3, 6);
-
-        // change mapping 1->1 to 1->4
-        upsert(&mut map, 1, 4 );
-
-        assert!(length(&map) == 3, 7);
-        assert!(contains_key(&map, &1), 8);
-        assert!(borrow(&map, &1) == &4, 9);
-    }
 }
-=======
-}
->>>>>>> ae436d0 ([Feature] Simple map (#182))
