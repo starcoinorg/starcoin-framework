@@ -37,8 +37,13 @@ module StarcoinFramework::GenesisNFT {
         move_to(sender, nft_info);
     }
 
+    public entry fun mint_entry(sender: signer, index: u64, merkle_proof:vector<vector<u8>>)
+    acquires GenesisNFTMintCapability {
+        mint(&sender, index, merkle_proof);
+    }
+
     public fun mint(sender: &signer, index: u64, merkle_proof:vector<vector<u8>>)
-        acquires GenesisNFTMintCapability{
+    acquires GenesisNFTMintCapability {
         let metadata = NFT::empty_meta();
         let cap = borrow_global_mut<GenesisNFTMintCapability>(CoreAddresses::GENESIS_ADDRESS());
         let nft = MerkleNFTDistributor::mint_with_cap<GenesisNFTMeta, GenesisNFT, GenesisNFTInfo>(sender, &mut cap.cap, CoreAddresses::GENESIS_ADDRESS(), index, metadata, GenesisNFTMeta{index}, GenesisNFT{}, merkle_proof);
@@ -72,6 +77,6 @@ module StarcoinFramework::GenesisNFTScripts {
 
     /// Mint a GenesisNFT
     public entry fun mint(sender: signer, index: u64, merkle_proof:vector<vector<u8>>) {
-        GenesisNFT::mint(&sender, index, merkle_proof);
+        GenesisNFT::mint_entry(sender, index, merkle_proof);
     }
 }

@@ -403,7 +403,7 @@ module BCS {
     }
 
     #[test]
-    #[expected_failure(abort_code = 206, location=Self)]
+    #[expected_failure(abort_code = 206, location=StarcoinFramework::BCS)]
     public fun test_deserialize_uleb128_as_u32_exceeded_max_int() {
         let max_int: u64 = 2147483647;
         let exceeded_max_int: u64 = max_int + 1;

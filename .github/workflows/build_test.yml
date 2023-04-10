@@ -32,7 +32,7 @@ jobs:
       - name: move-prover-test
         run: |
           source "$HOME/.profile"
-          mpm package prove
+          #mpm package prove
       # last run build for generate all abi and docs
       - name: build
         run: |

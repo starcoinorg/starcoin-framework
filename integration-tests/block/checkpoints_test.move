@@ -6,7 +6,7 @@
 
 //# call-api chain.info
 
-//# run --signers alice --args {{$.call-api[0].head.parent_hash}} --args {{$.call-api[0].head.state_root}}
+//# run --signers alice --args "{{$.call-api[0].head.parent_hash}}" --args "{{$.call-api[0].head.state_root}}"
 script {
     use StarcoinFramework::Block;
     use StarcoinFramework::Debug;
@@ -30,7 +30,7 @@ script {
 
 //# call-api chain.get_block_by_hash ["{{$.call-api[0].head.block_hash}}",{"raw":true}]
 
-//# run --signers alice  --args {{$.call-api[1].raw.header}}
+//# run --signers alice  --args "{{$.call-api[1].raw.header}}"
 
 script {
     use StarcoinFramework::Block;
@@ -50,7 +50,7 @@ script {
 
 //# call-api chain.get_block_by_hash ["{{$.call-api[0].head.parent_hash}}",{"raw":true}]
 
-//# run --signers alice  --args {{$.call-api[2].raw.header}}
+//# run --signers alice  --args "{{$.call-api[2].raw.header}}"
 
 script {
     use StarcoinFramework::Block;
@@ -65,7 +65,7 @@ script {
 
 //# call-api chain.get_block_by_hash ["{{$.call-api[0].head.parent_hash}}"]
 
-//# run --signers alice --args {{$.call-api[3].header.state_root}}
+//# run --signers alice --args "{{$.call-api[3].header.state_root}}"
 script {
     use StarcoinFramework::Block;
     use StarcoinFramework::Debug;
