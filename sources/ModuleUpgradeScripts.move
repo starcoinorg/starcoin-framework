@@ -56,7 +56,7 @@ module ModuleUpgradeScripts {
 
     /// Update `sender`'s module upgrade strategy to `strategy` with min_time_limit.
     /// This can only be invoked when strategy is STRATEGY_TWO_PHASE.
-    public(script) fun update_module_upgrade_strategy_with_min_time(
+    public entry fun update_module_upgrade_strategy_with_min_time(
         sender: signer,
         strategy: u8,
         min_time_limit: u64,

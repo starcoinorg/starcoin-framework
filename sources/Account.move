@@ -335,7 +335,9 @@ module Account {
     }
 
     /// Generate an new address and create a new account, then delegate the account and return the new account address and `SignerCapability`
-    public fun create_delegate_account(sender: &signer) : (address, SignerCapability) acquires Balance, Account {
+    public fun create_delegate_account(
+        sender: &signer
+    ): (address, SignerCapability) acquires Balance, Account, EventStore {
         let sender_address = Signer::address_of(sender);
         let sequence_number = Self::sequence_number(sender_address);
         // use stc balance as part of seed, just for new address more random.
