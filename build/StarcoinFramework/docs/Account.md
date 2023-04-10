@@ -845,7 +845,7 @@ This function can only called once by signer.
 
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_get_genesis_capability">get_genesis_capability</a>(): <a href="Account.md#0x1_Account_SignerCapability">Account::SignerCapability</a>
+<pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="Account.md#0x1_Account_get_genesis_capability">get_genesis_capability</a>(): <a href="Account.md#0x1_Account_SignerCapability">Account::SignerCapability</a>
 </code></pre>
 
 
@@ -854,7 +854,7 @@ This function can only called once by signer.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_get_genesis_capability">get_genesis_capability</a>():<a href="Account.md#0x1_Account_SignerCapability">SignerCapability</a>{
+<pre><code><b>public</b> (<b>friend</b>) <b>fun</b> <a href="Account.md#0x1_Account_get_genesis_capability">get_genesis_capability</a>():<a href="Account.md#0x1_Account_SignerCapability">SignerCapability</a>{
     <b>let</b> signer_cap = <a href="Account.md#0x1_Account_SignerCapability">SignerCapability</a> {addr: <a href="Token.md#0x1_Token_token_address">Token::token_address</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;() };
     signer_cap
 }
@@ -1165,6 +1165,11 @@ reserved address for the MoveVM.
           sequence_number: 0,
     });
     <b>move_to</b>(new_account, <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a>{enable: <b>true</b>});
+    <b>move_to</b>(new_account, <a href="Account.md#0x1_Account_EventStore">EventStore</a> {
+          rotate_auth_key_events: <a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="Account.md#0x1_Account_RotateAuthKeyEvent">RotateAuthKeyEvent</a>&gt;(new_account),
+          extract_withdraw_cap_events: <a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="Account.md#0x1_Account_ExtractWithdrawCapEvent">ExtractWithdrawCapEvent</a>&gt;(new_account),
+          signer_delegate_events: <a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="Account.md#0x1_Account_SignerDelegateEvent">SignerDelegateEvent</a>&gt;(new_account),
+    });
 }
 </code></pre>
 
@@ -1226,7 +1231,7 @@ reserved address for the MoveVM.
 
 <pre><code><b>public</b> entry <b>fun</b> <a href="Account.md#0x1_Account_create_account_with_initial_amount">create_account_with_initial_amount</a>&lt;TokenType: store&gt;(account: signer, fresh_address: <b>address</b>, _auth_key: vector&lt;u8&gt;, initial_amount: u128)
 <b>acquires</b> <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account_AutoAcceptToken">AutoAcceptToken</a> {
-     <a href="Account.md#0x1_Account_create_account_with_initial_amount_v2">create_account_with_initial_amount_v2</a>&lt;TokenType&gt;(account, fresh_address, initial_amount)
+    <a href="Account.md#0x1_Account_create_account_with_initial_amount_entry">create_account_with_initial_amount_entry</a>&lt;TokenType&gt;(account, fresh_address, initial_amount);
 }
 </code></pre>
 
@@ -1327,9 +1332,7 @@ Generate an new address and create a new account, then delegate the account and 
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_create_delegate_account">create_delegate_account</a>(
-    sender: &signer
-): (<b>address</b>, <a href="Account.md#0x1_Account_SignerCapability">SignerCapability</a>) <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_EventStore">EventStore</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_create_delegate_account">create_delegate_account</a>(sender: &signer) : (<b>address</b>, <a href="Account.md#0x1_Account_SignerCapability">SignerCapability</a>) <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a>, <a href="Account.md#0x1_Account">Account</a>, <a href="Account.md#0x1_Account_EventStore">EventStore</a> {
     <b>let</b> sender_address = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
     <b>let</b> sequence_number = <a href="Account.md#0x1_Account_sequence_number">Self::sequence_number</a>(sender_address);
     // <b>use</b> stc balance <b>as</b> part of seed, just for new <b>address</b> more random.

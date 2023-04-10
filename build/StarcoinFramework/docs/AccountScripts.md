@@ -33,7 +33,7 @@ The script function is reenterable.
 
 
 <pre><code><b>public</b> entry <b>fun</b> <a href="AccountScripts.md#0x1_AccountScripts_enable_auto_accept_token">enable_auto_accept_token</a>(account: signer) {
-    <a href="Account.md#0x1_Account_set_auto_accept_token">Account::set_auto_accept_token</a>(&account, <b>true</b>);
+    <a href="Account.md#0x1_Account_set_auto_accept_token_entry">Account::set_auto_accept_token_entry</a>(account, <b>true</b>);
 }
 </code></pre>
 
@@ -59,7 +59,7 @@ The script function is reenterable.
 
 
 <pre><code><b>public</b> entry <b>fun</b> <a href="AccountScripts.md#0x1_AccountScripts_disable_auto_accept_token">disable_auto_accept_token</a>(account: signer) {
-    <a href="Account.md#0x1_Account_set_auto_accept_token">Account::set_auto_accept_token</a>(&account, <b>false</b>);
+    <a href="Account.md#0x1_Account_set_auto_accept_token_entry">Account::set_auto_accept_token_entry</a>(account, <b>false</b>);
 }
 </code></pre>
 
@@ -84,7 +84,7 @@ Remove zero Balance
 
 
 <pre><code><b>public</b> entry <b>fun</b> <a href="AccountScripts.md#0x1_AccountScripts_remove_zero_balance">remove_zero_balance</a>&lt;TokenType: store&gt;(account: signer) {
-    <a href="Account.md#0x1_Account_remove_zero_balance">Account::remove_zero_balance</a>&lt;TokenType&gt;(&account);
+    <a href="Account.md#0x1_Account_remove_zero_balance_entry">Account::remove_zero_balance_entry</a>&lt;TokenType&gt;(account);
 }
 </code></pre>
 

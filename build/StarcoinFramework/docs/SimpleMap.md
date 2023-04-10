@@ -6,8 +6,8 @@
 This module provides a solution for sorted maps, that is it has the properties that
 1) Keys point to Values
 2) Each Key must be unique
-3) A Key can be found within O(Log N) time
-4) The data is stored as sorted by Key
+3) A Key can be found within O(N) time
+4) The keys are unsorted.
 5) Adds and removals take O(N) time
 
 
@@ -21,14 +21,12 @@ This module provides a solution for sorted maps, that is it has the properties t
 -  [Function `contains_key`](#0x1_SimpleMap_contains_key)
 -  [Function `destroy_empty`](#0x1_SimpleMap_destroy_empty)
 -  [Function `add`](#0x1_SimpleMap_add)
+-  [Function `upsert`](#0x1_SimpleMap_upsert)
 -  [Function `remove`](#0x1_SimpleMap_remove)
 -  [Function `find`](#0x1_SimpleMap_find)
--  [Module Specification](#@Module_Specification_1)
 
 
-<pre><code><b>use</b> <a href="BCS.md#0x1_BCS">0x1::BCS</a>;
-<b>use</b> <a href="Compare.md#0x1_Compare">0x1::Compare</a>;
-<b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
+<pre><code><b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
 <b>use</b> <a href="Vector.md#0x1_Vector">0x1::Vector</a>;
 </code></pre>
@@ -144,6 +142,18 @@ Map key is not found
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> intrinsic = <b>true</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_SimpleMap_create"></a>
 
 ## Function `create`
@@ -170,6 +180,18 @@ Map key is not found
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> intrinsic = <b>true</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_SimpleMap_borrow"></a>
 
 ## Function `borrow`
@@ -189,11 +211,23 @@ Map key is not found
     map: &<a href="SimpleMap.md#0x1_SimpleMap">SimpleMap</a>&lt;Key, Value&gt;,
     key: &Key,
 ): &Value {
-    <b>let</b> (maybe_idx, _) = <a href="SimpleMap.md#0x1_SimpleMap_find">find</a>(map, key);
+    <b>let</b> maybe_idx = <a href="SimpleMap.md#0x1_SimpleMap_find">find</a>(map, key);
     <b>assert</b>!(<a href="Option.md#0x1_Option_is_some">Option::is_some</a>(&maybe_idx), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="SimpleMap.md#0x1_SimpleMap_EKEY_NOT_FOUND">EKEY_NOT_FOUND</a>));
     <b>let</b> idx = <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> maybe_idx);
     &<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&map.data, idx).value
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> intrinsic = <b>true</b>;
 </code></pre>
 
 
@@ -219,11 +253,23 @@ Map key is not found
     map: &<b>mut</b> <a href="SimpleMap.md#0x1_SimpleMap">SimpleMap</a>&lt;Key, Value&gt;,
     key: &Key,
 ): &<b>mut</b> Value {
-    <b>let</b> (maybe_idx, _) = <a href="SimpleMap.md#0x1_SimpleMap_find">find</a>(map, key);
+    <b>let</b> maybe_idx = <a href="SimpleMap.md#0x1_SimpleMap_find">find</a>(map, key);
     <b>assert</b>!(<a href="Option.md#0x1_Option_is_some">Option::is_some</a>(&maybe_idx), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="SimpleMap.md#0x1_SimpleMap_EKEY_NOT_FOUND">EKEY_NOT_FOUND</a>));
     <b>let</b> idx = <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> maybe_idx);
     &<b>mut</b> <a href="Vector.md#0x1_Vector_borrow_mut">Vector::borrow_mut</a>(&<b>mut</b> map.data, idx).value
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> intrinsic = <b>true</b>;
 </code></pre>
 
 
@@ -249,9 +295,21 @@ Map key is not found
     map: &<a href="SimpleMap.md#0x1_SimpleMap">SimpleMap</a>&lt;Key, Value&gt;,
     key: &Key,
 ): bool {
-    <b>let</b> (maybe_idx, _) = <a href="SimpleMap.md#0x1_SimpleMap_find">find</a>(map, key);
+    <b>let</b> maybe_idx = <a href="SimpleMap.md#0x1_SimpleMap_find">find</a>(map, key);
     <a href="Option.md#0x1_Option_is_some">Option::is_some</a>(&maybe_idx)
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> intrinsic = <b>true</b>;
 </code></pre>
 
 
@@ -283,6 +341,18 @@ Map key is not found
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> intrinsic = <b>true</b>;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_SimpleMap_add"></a>
 
 ## Function `add`
@@ -303,19 +373,78 @@ Map key is not found
     key: Key,
     value: Value,
 ) {
-    <b>let</b> (maybe_idx, maybe_placement) = <a href="SimpleMap.md#0x1_SimpleMap_find">find</a>(map, &key);
+    <b>let</b> maybe_idx = <a href="SimpleMap.md#0x1_SimpleMap_find">find</a>(map, &key);
     <b>assert</b>!(<a href="Option.md#0x1_Option_is_none">Option::is_none</a>(&maybe_idx), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="SimpleMap.md#0x1_SimpleMap_EKEY_ALREADY_EXISTS">EKEY_ALREADY_EXISTS</a>));
 
-    // Append <b>to</b> the end and then swap elements until the list is ordered again
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> map.data, <a href="SimpleMap.md#0x1_SimpleMap_Element">Element</a> { key, value });
-
-    <b>let</b> placement = <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> maybe_placement);
-    <b>let</b> end = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&map.data) - 1;
-    <b>while</b> (placement &lt; end) {
-        <a href="Vector.md#0x1_Vector_swap">Vector::swap</a>(&<b>mut</b> map.data, placement, end);
-        placement = placement + 1;
-    };
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> intrinsic = <b>true</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_SimpleMap_upsert"></a>
+
+## Function `upsert`
+
+Insert key/value pair or update an existing key to a new value
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="SimpleMap.md#0x1_SimpleMap_upsert">upsert</a>&lt;Key: store, Value: store&gt;(map: &<b>mut</b> <a href="SimpleMap.md#0x1_SimpleMap_SimpleMap">SimpleMap::SimpleMap</a>&lt;Key, Value&gt;, key: Key, value: Value): (<a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;Key&gt;, <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;Value&gt;)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="SimpleMap.md#0x1_SimpleMap_upsert">upsert</a>&lt;Key: store, Value: store&gt;(
+    map: &<b>mut</b> <a href="SimpleMap.md#0x1_SimpleMap">SimpleMap</a>&lt;Key, Value&gt;,
+    key: Key,
+    value: Value
+): (<a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;Key&gt;, <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;Value&gt;) {
+    <b>let</b> data = &<b>mut</b> map.data;
+    <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(data);
+    <b>let</b> i = 0;
+    <b>while</b> (i &lt; len) {
+        <b>let</b> element = <a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(data, i);
+        <b>if</b> (&element.key == &key) {
+            <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(data, <a href="SimpleMap.md#0x1_SimpleMap_Element">Element</a> { key, value });
+            <a href="Vector.md#0x1_Vector_swap">Vector::swap</a>(data, i, len);
+            <b>let</b> <a href="SimpleMap.md#0x1_SimpleMap_Element">Element</a> { key, value } = <a href="Vector.md#0x1_Vector_pop_back">Vector::pop_back</a>(data);
+            <b>return</b> (<a href="Option.md#0x1_Option_some">Option::some</a>(key), <a href="Option.md#0x1_Option_some">Option::some</a>(value))
+        };
+        i = i + 1;
+    };
+    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> map.data, <a href="SimpleMap.md#0x1_SimpleMap_Element">Element</a> { key, value });
+    (<a href="Option.md#0x1_Option_none">Option::none</a>(), <a href="Option.md#0x1_Option_none">Option::none</a>())
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify=<b>false</b>;
 </code></pre>
 
 
@@ -341,20 +470,24 @@ Map key is not found
     map: &<b>mut</b> <a href="SimpleMap.md#0x1_SimpleMap">SimpleMap</a>&lt;Key, Value&gt;,
     key: &Key,
 ): (Key, Value) {
-    <b>let</b> (maybe_idx, _) = <a href="SimpleMap.md#0x1_SimpleMap_find">find</a>(map, key);
+    <b>let</b> maybe_idx = <a href="SimpleMap.md#0x1_SimpleMap_find">find</a>(map, key);
     <b>assert</b>!(<a href="Option.md#0x1_Option_is_some">Option::is_some</a>(&maybe_idx), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="SimpleMap.md#0x1_SimpleMap_EKEY_NOT_FOUND">EKEY_NOT_FOUND</a>));
-
     <b>let</b> placement = <a href="Option.md#0x1_Option_extract">Option::extract</a>(&<b>mut</b> maybe_idx);
-    <b>let</b> end = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&map.data) - 1;
-
-    <b>while</b> (placement &lt; end) {
-        <a href="Vector.md#0x1_Vector_swap">Vector::swap</a>(&<b>mut</b> map.data, placement, placement + 1);
-        placement = placement + 1;
-    };
-
-    <b>let</b> <a href="SimpleMap.md#0x1_SimpleMap_Element">Element</a> { key, value } = <a href="Vector.md#0x1_Vector_pop_back">Vector::pop_back</a>(&<b>mut</b> map.data);
+    <b>let</b> <a href="SimpleMap.md#0x1_SimpleMap_Element">Element</a> { key, value } = <a href="Vector.md#0x1_Vector_swap_remove">Vector::swap_remove</a>(&<b>mut</b> map.data, placement);
     (key, value)
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> intrinsic = <b>true</b>;
 </code></pre>
 
 
@@ -367,7 +500,7 @@ Map key is not found
 
 
 
-<pre><code><b>fun</b> <a href="SimpleMap.md#0x1_SimpleMap_find">find</a>&lt;Key: store, Value: store&gt;(map: &<a href="SimpleMap.md#0x1_SimpleMap_SimpleMap">SimpleMap::SimpleMap</a>&lt;Key, Value&gt;, key: &Key): (<a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;u64&gt;, <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;u64&gt;)
+<pre><code><b>fun</b> <a href="SimpleMap.md#0x1_SimpleMap_find">find</a>&lt;Key: store, Value: store&gt;(map: &<a href="SimpleMap.md#0x1_SimpleMap_SimpleMap">SimpleMap::SimpleMap</a>&lt;Key, Value&gt;, key: &Key): <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;u64&gt;
 </code></pre>
 
 
@@ -379,31 +512,17 @@ Map key is not found
 <pre><code><b>fun</b> <a href="SimpleMap.md#0x1_SimpleMap_find">find</a>&lt;Key: store, Value: store&gt;(
     map: &<a href="SimpleMap.md#0x1_SimpleMap">SimpleMap</a>&lt;Key, Value&gt;,
     key: &Key,
-): (<a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;u64&gt;, <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;u64&gt;) {
-    <b>let</b> length = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&map.data);
-
-    <b>if</b> (length == 0) {
-        <b>return</b> (<a href="Option.md#0x1_Option_none">Option::none</a>(), <a href="Option.md#0x1_Option_some">Option::some</a>(0))
-    };
-
-    <b>let</b> left = 0;
-    <b>let</b> right = length;
-
-    <b>while</b> (left != right) {
-        <b>let</b> mid = left + (right - left) / 2;
-        <b>let</b> potential_key = &<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&map.data, mid).key;
-        <b>if</b> (<a href="Compare.md#0x1_Compare_is_less_than">Compare::is_less_than</a>(<a href="Compare.md#0x1_Compare_cmp_bytes">Compare::cmp_bytes</a>(&<a href="BCS.md#0x1_BCS_to_bytes">BCS::to_bytes</a>(potential_key), &<a href="BCS.md#0x1_BCS_to_bytes">BCS::to_bytes</a>(key)))) {
-            left = mid + 1;
-        } <b>else</b> {
-            right = mid;
+): <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;u64&gt; {
+    <b>let</b> leng = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&map.data);
+    <b>let</b> i = 0;
+    <b>while</b> (i &lt; leng) {
+        <b>let</b> element = <a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&map.data, i);
+        <b>if</b> (&element.key == key) {
+            <b>return</b> <a href="Option.md#0x1_Option_some">Option::some</a>(i)
         };
+        i = i + 1;
     };
-
-    <b>if</b> (left != length && key == &<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&map.data, left).key) {
-        (<a href="Option.md#0x1_Option_some">Option::some</a>(left), <a href="Option.md#0x1_Option_none">Option::none</a>())
-    } <b>else</b> {
-        (<a href="Option.md#0x1_Option_none">Option::none</a>(), <a href="Option.md#0x1_Option_some">Option::some</a>(left))
-    }
+    <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u64&gt;()
 }
 </code></pre>
 
@@ -411,12 +530,14 @@ Map key is not found
 
 </details>
 
-<a name="@Module_Specification_1"></a>
-
-## Module Specification
-
+<details>
+<summary>Specification</summary>
 
 
-<pre><code><b>pragma</b> verify = <b>false</b>;
-<b>pragma</b> aborts_if_is_strict = <b>true</b>;
+
+<pre><code><b>pragma</b> verify=<b>false</b>;
 </code></pre>
+
+
+
+</details>

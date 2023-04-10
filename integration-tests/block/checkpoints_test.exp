@@ -2,34 +2,62 @@ processed 13 tasks
 
 task 4 'run'. lines 9-27:
 {
-  "gas_used": 114496,
-  "status": "Executed"
+  "gas_used": 12402,
+  "status": {
+    "MoveAbort": {
+      "location": "Script",
+      "abort_code": "1001"
+    }
+  }
 }
 
 task 7 'run'. lines 33-46:
 {
-  "gas_used": 532055,
+  "gas_used": 17431,
   "status": {
-    "MoveAbort": {
+    "ExecutionFailure": {
       "location": {
         "Module": {
           "address": "0x00000000000000000000000000000001",
           "name": "Block"
         }
       },
-      "abort_code": "4609"
+      "function": 12,
+      "code_offset": 1
     }
   }
 }
 
 task 10 'run'. lines 53-64:
 {
-  "gas_used": 577411,
-  "status": "Executed"
+  "gas_used": 9251,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Block"
+        }
+      },
+      "function": 12,
+      "code_offset": 1
+    }
+  }
 }
 
 task 12 'run'. lines 68-81:
 {
-  "gas_used": 103912,
-  "status": "Executed"
+  "gas_used": 5803,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Block"
+        }
+      },
+      "function": 10,
+      "code_offset": 1
+    }
+  }
 }
