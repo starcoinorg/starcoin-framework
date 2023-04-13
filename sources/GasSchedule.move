@@ -268,6 +268,12 @@ module GasSchedule {
         Vector::push_back(&mut table, new_gas_entry(b"move_stdlib.string.is_char_boundary.base", 4, 1));
         // Table::string.index_of 43
         Vector::push_back(&mut table, new_gas_entry(b"move_stdlib.string.index_of.per_byte_searched", 4, 1));
+        // Table::string.index_of 44
+        Vector::push_back(&mut table, new_gas_entry(b"move_stdlib.frombcs.from_bytes.per_byte", 4, 1));
+        // Table::string.index_of 45
+        Vector::push_back(&mut table, new_gas_entry(b"move_stdlib.ecdsa_recover_internal.base", 4, 1));
+        // Table::string.index_of 46
+        Vector::push_back(&mut table, new_gas_entry(b"move_stdlib.vector.spawn_from.per_byte", 4, 1));
 
         Vector::push_back(&mut table, new_constant_entry(b"nursery.debug.print.base_cost", 1));
         Vector::push_back(&mut table, new_constant_entry(b"nursery.debug.print_stack_trace.base_cost", 1));
