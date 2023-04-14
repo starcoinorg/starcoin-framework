@@ -208,6 +208,36 @@ module SimpleMap {
     }
 
     #[test]
+    public fun test_several() {
+        let map = create<u64, u64>();
+        add(&mut map, 6, 6);
+        add(&mut map, 1, 1);
+        add(&mut map, 5, 5);
+        add(&mut map, 2, 2);
+        add(&mut map, 3, 3);
+        add(&mut map, 0, 0);
+        add(&mut map, 7, 7);
+        add(&mut map, 4, 4);
+
+        let idx = 0;
+        while (idx < Vector::length(&map.data)) {
+            assert!(idx == Vector::borrow(&map.data, idx).key, idx);
+            idx = idx + 1;
+        };
+
+        remove(&mut map, &0);
+        remove(&mut map, &1);
+        remove(&mut map, &2);
+        remove(&mut map, &3);
+        remove(&mut map, &4);
+        remove(&mut map, &5);
+        remove(&mut map, &6);
+        remove(&mut map, &7);
+
+        destroy_empty(map);
+    }
+
+    #[test]
     #[expected_failure]
     public fun add_twice() {
         let map = create<u64, u64>();

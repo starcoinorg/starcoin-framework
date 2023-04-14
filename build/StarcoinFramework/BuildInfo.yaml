@@ -5,14 +5,14 @@ compiled_package_info:
     StarcoinAssociation: "0x0000000000000000000000000a550c18"
     StarcoinFramework: "0x00000000000000000000000000000001"
     VMReserved: "0x00000000000000000000000000000000"
-  source_digest: 32EB7BD043E711FA856D619F22B5E07CC6BCA81F3806FD37E176C05DF3AF3ED2
+  source_digest: F8B518527647B580CE9005DF8D2CF518A8EC108DBED17C5C3217DDDDAA3B1555
   build_flags:
     dev_mode: false
     test_mode: false
-    generate_docs: true
-    generate_abis: true
+    generate_docs: false
+    generate_abis: false
     install_dir: ~
-    force_recompilation: true
+    force_recompilation: false
     additional_named_addresses: {}
     architecture: ~
     fetch_deps_only: false

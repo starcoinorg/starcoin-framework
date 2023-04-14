@@ -3,6 +3,8 @@ address StarcoinFramework {
 module GasSchedule {
     use StarcoinFramework::Vector;
     use StarcoinFramework::ChainId;
+    use StarcoinFramework::Config;
+    use StarcoinFramework::CoreAddresses;
     spec module {
         pragma verify = false;
         pragma aborts_if_is_strict;
@@ -13,14 +15,14 @@ module GasSchedule {
         val: u64,
     }
 
-    struct GasSchedule has copy, drop, store {
+    struct GasSchedule has copy, drop, store, key {
         entries: vector<GasEntry>,
     }
 
     /// The  `GasCost` tracks:
     /// - instruction cost: how much time/computational power is needed to perform the instruction
     /// - memory cost: how much memory is required for the instruction, and storage overhead
-    public fun initialize(): vector<GasEntry> {
+    public fun gas_schedule(): vector<GasEntry> {
         let table = Vector::empty();
 
         // instruction_schedule
@@ -266,6 +268,12 @@ module GasSchedule {
         Vector::push_back(&mut table, new_gas_entry(b"move_stdlib.string.is_char_boundary.base", 4, 1));
         // Table::string.index_of 43
         Vector::push_back(&mut table, new_gas_entry(b"move_stdlib.string.index_of.per_byte_searched", 4, 1));
+        // Table::string.index_of 44
+        Vector::push_back(&mut table, new_gas_entry(b"starcoin_natives.frombcs.base", 4, 1));
+        // Table::string.index_of 45
+        Vector::push_back(&mut table, new_gas_entry(b"starcoin_natives.secp256k1.base", 4, 1));
+        // Table::string.index_of 46
+        Vector::push_back(&mut table, new_gas_entry(b"move_stdlib.vector.spawn_from.legacy_per_abstract_memory_unit", 4, 1));
 
         Vector::push_back(&mut table, new_constant_entry(b"nursery.debug.print.base_cost", 1));
         Vector::push_back(&mut table, new_constant_entry(b"nursery.debug.print_stack_trace.base_cost", 1));
@@ -294,7 +302,7 @@ module GasSchedule {
         table
     }
 
-    fun new_gas_entry(key: vector<u8>, instr_gas: u64, mem_gas: u64): GasEntry {
+    public fun new_gas_entry(key: vector<u8>, instr_gas: u64, mem_gas: u64): GasEntry {
         GasEntry {
             key,
             val: instr_gas + mem_gas,
@@ -306,6 +314,54 @@ module GasSchedule {
             key,
             val,
         }
+    }
+
+    /// Initialize the gas schedule under the genesis account
+    public fun initialize(account: &signer, gas_schedule: GasSchedule) {
+        CoreAddresses::assert_genesis_address(account);
+        Config::publish_new_config<GasSchedule>(
+            account, 
+            gas_schedule,
+        );
+    }
+
+    public fun new_gas_schedule_for_test(): GasSchedule {
+        let entry = GasEntry {
+            key: Vector::empty(),
+            val: 1,
+        };
+        let entries = Vector::empty();
+        Vector::push_back(&mut entries, entry);
+
+        GasSchedule {
+            entries,
+        }
+    }
+
+    public fun check_gas_schedule(): bool acquires GasSchedule {
+        let move_gas_schedule = gas_schedule();
+        let core_address_gas_schedule = borrow_global<GasSchedule>(CoreAddresses::GENESIS_ADDRESS());
+        let len = Vector::length(&move_gas_schedule);
+
+        if (len != Vector::length(&core_address_gas_schedule.entries)) {
+            return false
+        };
+
+        let count = 0;
+
+        while (count < len) {
+            let core_entry = Vector::borrow(&core_address_gas_schedule.entries, count);
+            let (exist, index) = Vector::index_of(&move_gas_schedule, core_entry);
+            if (!exist) {
+                return false
+            };
+            if (index != count) {
+                return false
+            };
+            count = count + 1;
+        };
+
+        true
     }
 }
 }

@@ -182,7 +182,7 @@ module Account {
             Event::emit_event<SignerDelegateEvent>(
                 &mut event_store.signer_delegate_events,
                 SignerDelegateEvent {
-                    account_address: signer_addr    
+                    account_address: signer_addr
                 }
             );
         };
