@@ -313,7 +313,6 @@ module VMConfig {
         Vector::push_back(&mut table, new_gas_cost(4, 1));
         // Table::string.index_of 43
         Vector::push_back(&mut table, new_gas_cost(4, 1));
-        
         // FromBCS::from_bytes 44
         Vector::push_back(&mut table, new_gas_cost(4, 1));
         // Secp256k1::ecdsa_recover_internal 45
