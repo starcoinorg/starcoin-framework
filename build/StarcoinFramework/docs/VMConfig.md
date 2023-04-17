@@ -73,7 +73,7 @@ address, and will preload the vector with the gas schedule for instructions. The
 load this into memory at the startup of each block.
 
 
-<pre><code><b>struct</b> <a href="VMConfig.md#0x1_VMConfig_GasSchedule">GasSchedule</a> <b>has</b> <b>copy</b>, drop, store
+<pre><code><b>struct</b> <a href="GasSchedule.md#0x1_GasSchedule">GasSchedule</a> <b>has</b> <b>copy</b>, drop, store
 </code></pre>
 
 
@@ -510,6 +510,13 @@ The  <code><a href="VMConfig.md#0x1_VMConfig_GasCost">GasCost</a></code> tracks:
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="VMConfig.md#0x1_VMConfig_new_gas_cost">new_gas_cost</a>(4, 1));
     // Table::string.index_of 43
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="VMConfig.md#0x1_VMConfig_new_gas_cost">new_gas_cost</a>(4, 1));
+    // <a href="FromBCS.md#0x1_FromBCS_from_bytes">FromBCS::from_bytes</a> 44
+    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="VMConfig.md#0x1_VMConfig_new_gas_cost">new_gas_cost</a>(4, 1));
+    // <a href="Secp256k1.md#0x1_Secp256k1_ecdsa_recover_internal">Secp256k1::ecdsa_recover_internal</a> 45
+    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="VMConfig.md#0x1_VMConfig_new_gas_cost">new_gas_cost</a>(4, 1));
+    // <a href="Vector.md#0x1_Vector_spawn_from">Vector::spawn_from</a> 46
+    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="VMConfig.md#0x1_VMConfig_new_gas_cost">new_gas_cost</a>(4, 1));
+
     table
 }
 </code></pre>
@@ -632,7 +639,7 @@ Create a new vm config, mainly used in DAO.
         default_account_size,
     };
     <a href="VMConfig.md#0x1_VMConfig">VMConfig</a> {
-        gas_schedule: <a href="VMConfig.md#0x1_VMConfig_GasSchedule">GasSchedule</a> { instruction_schedule, native_schedule, gas_constants },
+        gas_schedule: <a href="GasSchedule.md#0x1_GasSchedule">GasSchedule</a> { instruction_schedule, native_schedule, gas_constants },
     }
 }
 </code></pre>

@@ -42,6 +42,7 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::EventUtil`](EventUtil.md#0x1_EventUtil)
 -  [`0x1::FixedPoint32`](FixedPoint32.md#0x1_FixedPoint32)
 -  [`0x1::FromBCS`](FromBCS.md#0x1_FromBCS)
+-  [`0x1::GasSchedule`](GasSchedule.md#0x1_GasSchedule)
 -  [`0x1::Genesis`](Genesis.md#0x1_Genesis)
 -  [`0x1::GenesisNFT`](GenesisNFT.md#0x1_GenesisNFT)
 -  [`0x1::GenesisNFTScripts`](GenesisNFT.md#0x1_GenesisNFTScripts)
