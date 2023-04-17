@@ -154,7 +154,7 @@ module Block {
         move_to<Checkpoints>(
             account,
             Checkpoints {
-               checkpoints  : checkpoints,
+               checkpoints,
                index        : 0,
                last_number  : 0,
         });

@@ -12,6 +12,7 @@ This is the root document for the Move StarcoinFramework module documentation. T
 ## Index
 
 
+-  [`0x1::ACL`](ACL.md#0x1_ACL)
 -  [`0x1::Account`](Account.md#0x1_Account)
 -  [`0x1::AccountScripts`](AccountScripts.md#0x1_AccountScripts)
 -  [`0x1::Arith`](U256.md#0x1_Arith)
@@ -40,6 +41,8 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::Event`](Event.md#0x1_Event)
 -  [`0x1::EventUtil`](EventUtil.md#0x1_EventUtil)
 -  [`0x1::FixedPoint32`](FixedPoint32.md#0x1_FixedPoint32)
+-  [`0x1::FromBCS`](FromBCS.md#0x1_FromBCS)
+-  [`0x1::GasSchedule`](GasSchedule.md#0x1_GasSchedule)
 -  [`0x1::Genesis`](Genesis.md#0x1_Genesis)
 -  [`0x1::GenesisNFT`](GenesisNFT.md#0x1_GenesisNFT)
 -  [`0x1::GenesisNFTScripts`](GenesisNFT.md#0x1_GenesisNFTScripts)
@@ -73,6 +76,7 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::SIP_3`](SIPs.md#0x1_SIP_3)
 -  [`0x1::STC`](STC.md#0x1_STC)
 -  [`0x1::STCUSDOracle`](Oracle.md#0x1_STCUSDOracle)
+-  [`0x1::Secp256k1`](Secp256k1.md#0x1_Secp256k1)
 -  [`0x1::SharedEd25519PublicKey`](SharedEd25519PublicKey.md#0x1_SharedEd25519PublicKey)
 -  [`0x1::Signature`](Signature.md#0x1_Signature)
 -  [`0x1::SignedInteger64`](SignedInteger64.md#0x1_SignedInteger64)
@@ -80,7 +84,9 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::SimpleMap`](SimpleMap.md#0x1_SimpleMap)
 -  [`0x1::StarcoinVerifier`](StarcoinVerifier.md#0x1_StarcoinVerifier)
 -  [`0x1::StdlibUpgradeScripts`](StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts)
+-  [`0x1::String`](String.md#0x1_String)
 -  [`0x1::StructuredHash`](StarcoinVerifier.md#0x1_StructuredHash)
+-  [`0x1::Table`](Table.md#0x1_Table)
 -  [`0x1::Timestamp`](Timestamp.md#0x1_Timestamp)
 -  [`0x1::Token`](Token.md#0x1_Token)
 -  [`0x1::TransactionFee`](TransactionFee.md#0x1_TransactionFee)

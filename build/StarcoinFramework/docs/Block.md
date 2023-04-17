@@ -535,7 +535,7 @@ Call at block prologue
     <b>move_to</b>&lt;<a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a>&gt;(
         account,
         <a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a> {
-           checkpoints  : checkpoints,
+           checkpoints,
            index        : 0,
            last_number  : 0,
     });

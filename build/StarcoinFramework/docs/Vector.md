@@ -23,6 +23,8 @@ the return on investment didn't seem worth it for these simple functions.
 -  [Function `borrow_mut`](#0x1_Vector_borrow_mut)
 -  [Function `pop_back`](#0x1_Vector_pop_back)
 -  [Function `destroy_empty`](#0x1_Vector_destroy_empty)
+-  [Function `spawn_from`](#0x1_Vector_spawn_from)
+-  [Function `spawn_from_vec`](#0x1_Vector_spawn_from_vec)
 -  [Function `swap`](#0x1_Vector_swap)
 -  [Function `singleton`](#0x1_Vector_singleton)
 -  [Function `reverse`](#0x1_Vector_reverse)
@@ -218,6 +220,60 @@ Aborts if <code>v</code> is not empty.
 
 
 <pre><code><b>native</b> <b>public</b> <b>fun</b> <a href="Vector.md#0x1_Vector_destroy_empty">destroy_empty</a>&lt;Element&gt;(v: vector&lt;Element&gt;);
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_Vector_spawn_from"></a>
+
+## Function `spawn_from`
+
+Spawn a sub vector from a vector
+
+
+<pre><code><b>fun</b> <a href="Vector.md#0x1_Vector_spawn_from">spawn_from</a>&lt;Element&gt;(v: &vector&lt;Element&gt;, offset: u64, size: u64): vector&lt;Element&gt;
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>native</b> <b>fun</b> <a href="Vector.md#0x1_Vector_spawn_from">spawn_from</a>&lt;Element&gt;(v: &vector&lt;Element&gt;, offset: u64, size: u64): vector&lt;Element&gt;;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_Vector_spawn_from_vec"></a>
+
+## Function `spawn_from_vec`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Vector.md#0x1_Vector_spawn_from_vec">spawn_from_vec</a>&lt;Element: <b>copy</b>&gt;(v: &vector&lt;Element&gt;, offset: u64, size: u64): vector&lt;Element&gt;
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Vector.md#0x1_Vector_spawn_from_vec">spawn_from_vec</a>&lt;Element: <b>copy</b>&gt;(v: &vector&lt;Element&gt;, offset: u64, size: u64): vector&lt;Element&gt; {
+    <b>let</b> len = <a href="Vector.md#0x1_Vector_length">length</a>(v);
+    <b>let</b> end_idx = (offset + size);
+    <b>assert</b>!(end_idx &lt;= len, <a href="Vector.md#0x1_Vector_EINDEX_OUT_OF_BOUNDS">EINDEX_OUT_OF_BOUNDS</a>);
+    <b>assert</b>!(size &gt; 0, <a href="Vector.md#0x1_Vector_EINDEX_OUT_OF_BOUNDS">EINDEX_OUT_OF_BOUNDS</a>);
+    <b>if</b> (offset == 0 && end_idx == len) {
+        <b>return</b> *v
+    };
+    <a href="Vector.md#0x1_Vector_spawn_from">spawn_from</a>(v, offset, size)
+}
 </code></pre>
 
 

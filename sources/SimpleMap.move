@@ -208,6 +208,39 @@ module SimpleMap {
     }
 
     #[test]
+    public fun test_several() {
+        let map = create<u64, u64>();
+        add(&mut map, 6, 6);
+        add(&mut map, 1, 1);
+        add(&mut map, 5, 5);
+        add(&mut map, 2, 2);
+        add(&mut map, 3, 3);
+        add(&mut map, 0, 0);
+        add(&mut map, 7, 7);
+        add(&mut map, 4, 4);
+
+        assert!(Option::destroy_some(find(&map, &6)) == 0, 100);
+        assert!(Option::destroy_some(find(&map, &1)) == 1, 101);
+        assert!(Option::destroy_some(find(&map, &5)) == 2, 102);
+        assert!(Option::destroy_some(find(&map, &2)) == 3, 103);
+        assert!(Option::destroy_some(find(&map, &3)) == 4, 104);
+        assert!(Option::destroy_some(find(&map, &0)) == 5, 105);
+        assert!(Option::destroy_some(find(&map, &7)) == 6, 106);
+        assert!(Option::destroy_some(find(&map, &4)) == 7, 107);
+
+        remove(&mut map, &0);
+        remove(&mut map, &1);
+        remove(&mut map, &2);
+        remove(&mut map, &3);
+        remove(&mut map, &4);
+        remove(&mut map, &5);
+        remove(&mut map, &6);
+        remove(&mut map, &7);
+
+        destroy_empty(map);
+    }
+
+    #[test]
     #[expected_failure]
     public fun add_twice() {
         let map = create<u64, u64>();
