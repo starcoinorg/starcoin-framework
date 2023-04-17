@@ -13,7 +13,6 @@ Gas schedule configuration.
 -  [Function `new_constant_entry`](#0x1_GasSchedule_new_constant_entry)
 -  [Function `initialize`](#0x1_GasSchedule_initialize)
 -  [Function `new_gas_schedule_for_test`](#0x1_GasSchedule_new_gas_schedule_for_test)
--  [Function `check_gas_schedule`](#0x1_GasSchedule_check_gas_schedule)
 -  [Module Specification](#@Module_Specification_0)
 
 
@@ -497,52 +496,6 @@ Initialize the gas schedule under the genesis account
     <a href="GasSchedule.md#0x1_GasSchedule">GasSchedule</a> {
         entries,
     }
-}
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_GasSchedule_check_gas_schedule"></a>
-
-## Function `check_gas_schedule`
-
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="GasSchedule.md#0x1_GasSchedule_check_gas_schedule">check_gas_schedule</a>(): bool
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="GasSchedule.md#0x1_GasSchedule_check_gas_schedule">check_gas_schedule</a>(): bool <b>acquires</b> <a href="GasSchedule.md#0x1_GasSchedule">GasSchedule</a> {
-    <b>let</b> move_gas_schedule = <a href="GasSchedule.md#0x1_GasSchedule_gas_schedule">gas_schedule</a>();
-    <b>let</b> core_address_gas_schedule = <b>borrow_global</b>&lt;<a href="GasSchedule.md#0x1_GasSchedule">GasSchedule</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
-    <b>let</b> len = <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&move_gas_schedule);
-
-    <b>if</b> (len != <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&core_address_gas_schedule.entries)) {
-        <b>return</b> <b>false</b>
-    };
-
-    <b>let</b> count = 0;
-
-    <b>while</b> (count &lt; len) {
-        <b>let</b> core_entry = <a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&core_address_gas_schedule.entries, count);
-        <b>let</b> (exist, index) = <a href="Vector.md#0x1_Vector_index_of">Vector::index_of</a>(&move_gas_schedule, core_entry);
-        <b>if</b> (!exist) {
-            <b>return</b> <b>false</b>
-        };
-        <b>if</b> (index != count) {
-            <b>return</b> <b>false</b>
-        };
-        count = count + 1;
-    };
-
-    <b>true</b>
 }
 </code></pre>
 
