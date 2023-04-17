@@ -219,11 +219,14 @@ module SimpleMap {
         add(&mut map, 7, 7);
         add(&mut map, 4, 4);
 
-        let idx = 0;
-        while (idx < Vector::length(&map.data)) {
-            assert!(idx == Vector::borrow(&map.data, idx).key, idx);
-            idx = idx + 1;
-        };
+        assert!(Option::destroy_some(find(&map, &6)) == 0, 100);
+        assert!(Option::destroy_some(find(&map, &1)) == 1, 101);
+        assert!(Option::destroy_some(find(&map, &5)) == 2, 102);
+        assert!(Option::destroy_some(find(&map, &2)) == 3, 103);
+        assert!(Option::destroy_some(find(&map, &3)) == 4, 104);
+        assert!(Option::destroy_some(find(&map, &0)) == 5, 105);
+        assert!(Option::destroy_some(find(&map, &7)) == 6, 106);
+        assert!(Option::destroy_some(find(&map, &4)) == 7, 107);
 
         remove(&mut map, &0);
         remove(&mut map, &1);
