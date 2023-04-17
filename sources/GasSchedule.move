@@ -338,30 +338,12 @@ module GasSchedule {
         }
     }
 
-    public fun check_gas_schedule(): bool acquires GasSchedule {
-        let move_gas_schedule = gas_schedule();
-        let core_address_gas_schedule = borrow_global<GasSchedule>(CoreAddresses::GENESIS_ADDRESS());
-        let len = Vector::length(&move_gas_schedule);
-
-        if (len != Vector::length(&core_address_gas_schedule.entries)) {
-            return false
-        };
-
-        let count = 0;
-
-        while (count < len) {
-            let core_entry = Vector::borrow(&core_address_gas_schedule.entries, count);
-            let (exist, index) = Vector::index_of(&move_gas_schedule, core_entry);
-            if (!exist) {
-                return false
-            };
-            if (index != count) {
-                return false
-            };
-            count = count + 1;
-        };
-
-        true
+    #[test]
+    fun test_gas_schedule_initialized() {
+        use StarcoinFramework::Account;
+        let genesis_account = Account::create_genesis_account(CoreAddresses::GENESIS_ADDRESS());
+        Self::initialize(&genesis_account, Self::new_gas_schedule_for_test());
+        assert!(Config::config_exist_by_address<GasSchedule>(CoreAddresses::GENESIS_ADDRESS()), 0);
     }
 }
 }
