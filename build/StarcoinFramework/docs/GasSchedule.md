@@ -369,11 +369,13 @@ The  <code>GasCost</code> tracks:
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="GasSchedule.md#0x1_GasSchedule_new_constant_entry">new_constant_entry</a>(b"txn.large_transaction_cutoff", 600));
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="GasSchedule.md#0x1_GasSchedule_new_constant_entry">new_constant_entry</a>(b"txn.intrinsic_gas_per_byte", 8));
     <b>let</b> maximum_number_of_gas_units: u64 = 40000000;//must less than base_block_gas_limit
+    <b>let</b> min_price_per_gas_unit = 1;
     <b>if</b> (<a href="ChainId.md#0x1_ChainId_is_test">ChainId::is_test</a>() || <a href="ChainId.md#0x1_ChainId_is_dev">ChainId::is_dev</a>() || <a href="ChainId.md#0x1_ChainId_is_halley">ChainId::is_halley</a>()) {
-        maximum_number_of_gas_units = maximum_number_of_gas_units * 10
+        maximum_number_of_gas_units = maximum_number_of_gas_units * 10;
+        min_price_per_gas_unit = 0;
     };
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="GasSchedule.md#0x1_GasSchedule_new_constant_entry">new_constant_entry</a>(b"txn.maximum_number_of_gas_units", maximum_number_of_gas_units));
-    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="GasSchedule.md#0x1_GasSchedule_new_constant_entry">new_constant_entry</a>(b"txn.min_price_per_gas_unit", <b>if</b> (<a href="ChainId.md#0x1_ChainId_is_test">ChainId::is_test</a>()) { 0 }  <b>else</b> { 1 }));
+    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="GasSchedule.md#0x1_GasSchedule_new_constant_entry">new_constant_entry</a>(b"txn.min_price_per_gas_unit", min_price_per_gas_unit));
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="GasSchedule.md#0x1_GasSchedule_new_constant_entry">new_constant_entry</a>(b"txn.max_price_per_gas_unit", 10000));
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="GasSchedule.md#0x1_GasSchedule_new_constant_entry">new_constant_entry</a>(b"txn.max_transaction_size_in_bytes", 1024 * 128));
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="GasSchedule.md#0x1_GasSchedule_new_constant_entry">new_constant_entry</a>(b"txn.gas_unit_scaling_factor", 1));
