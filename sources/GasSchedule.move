@@ -289,11 +289,13 @@ module GasSchedule {
         Vector::push_back(&mut table, new_constant_entry(b"txn.large_transaction_cutoff", 600));
         Vector::push_back(&mut table, new_constant_entry(b"txn.intrinsic_gas_per_byte", 8));
         let maximum_number_of_gas_units: u64 = 40000000;//must less than base_block_gas_limit
+        let min_price_per_gas_unit = 1;
         if (ChainId::is_test() || ChainId::is_dev() || ChainId::is_halley()) {
-            maximum_number_of_gas_units = maximum_number_of_gas_units * 10
+            maximum_number_of_gas_units = maximum_number_of_gas_units * 10;
+            min_price_per_gas_unit = 0;
         };
         Vector::push_back(&mut table, new_constant_entry(b"txn.maximum_number_of_gas_units", maximum_number_of_gas_units));
-        Vector::push_back(&mut table, new_constant_entry(b"txn.min_price_per_gas_unit", if (ChainId::is_test()) { 0 }  else { 1 }));
+        Vector::push_back(&mut table, new_constant_entry(b"txn.min_price_per_gas_unit", min_price_per_gas_unit));
         Vector::push_back(&mut table, new_constant_entry(b"txn.max_price_per_gas_unit", 10000));
         Vector::push_back(&mut table, new_constant_entry(b"txn.max_transaction_size_in_bytes", 1024 * 128));
         Vector::push_back(&mut table, new_constant_entry(b"txn.gas_unit_scaling_factor", 1));
