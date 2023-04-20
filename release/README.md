@@ -71,3 +71,10 @@
 - Use move pacakge system to organize stdlib source files.(#3109)
 - Add `phantom` modifier to NFT and Token Module. (#3109)
 - [docs](./v11/docs)
+
+## Version 12
+
+- Upgrade bytecode to v6.[#3889](https://github.com/starcoinorg/starcoin/pull/3889)
+- Make, `spawn_from` native in Vector. [#3889](https://github.com/starcoinorg/starcoin/pull/3889)
+- add Secp256k1, Table, SimpleMap, FromBCS module [#3889](https://github.com/starcoinorg/starcoin/pull/3889)
+- [docs](./12/docs)
