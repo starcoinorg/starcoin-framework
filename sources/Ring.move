@@ -52,7 +52,6 @@ module Ring {
     }
 
     spec capacity{
-        pragma intrinsic = true;
     }
     
     /// Add element `e` to the insertion_index of the Ring `r`.
@@ -102,8 +101,7 @@ module Ring {
         
     }
 
-    spec borrow_mut{
-        pragma intrinsic = true;
+    spec borrow_mut {
     }
 
 

@@ -376,6 +376,7 @@ module BCS {
     }
 
     spec deserialize_uleb128_as_u32 {
+        pragma opaque;
         pragma verify = false;
     }
     
