@@ -31,7 +31,6 @@
 <b>use</b> <a href="TransactionFee.md#0x1_TransactionFee">0x1::TransactionFee</a>;
 <b>use</b> <a href="TransactionPublishOption.md#0x1_TransactionPublishOption">0x1::TransactionPublishOption</a>;
 <b>use</b> <a href="TransactionTimeout.md#0x1_TransactionTimeout">0x1::TransactionTimeout</a>;
-<b>use</b> <a href="Vector.md#0x1_Vector">0x1::Vector</a>;
 </code></pre>
 
 
