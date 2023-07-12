@@ -961,7 +961,8 @@ Return the address of key bytes
 
 
 
-<pre><code><b>pragma</b> verify = <b>false</b>;
+<pre><code><b>pragma</b> opaque;
+<b>pragma</b> verify = <b>false</b>;
 </code></pre>
 
 

@@ -701,3 +701,16 @@ Verify sparse merkle proof by key and value.
 
 
 </details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+<b>pragma</b> opaque;
+</code></pre>
+
+
+
+</details>
