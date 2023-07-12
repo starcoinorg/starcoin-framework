@@ -43,6 +43,11 @@ module Vector {
     /// Spawn a sub vector from a vector
     native fun spawn_from<Element>(v: &vector<Element>, offset: u64, size: u64): vector<Element>;
 
+    spec spawn_from {
+       pragma opaque;
+       ensures [abstract] result == v[offset..offset+size];
+    }
+
     public fun spawn_from_vec<Element: copy>(v: &vector<Element>, offset: u64, size: u64): vector<Element> {
         let len = length(v);
         let end_idx = (offset + size);

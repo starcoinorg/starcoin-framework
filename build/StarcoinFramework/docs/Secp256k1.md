@@ -283,3 +283,15 @@ and returns <code>([], <b>false</b>)</code> otherwise.
 
 
 </details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> opaque;
+</code></pre>
+
+
+
+</details>

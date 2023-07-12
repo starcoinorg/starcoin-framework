@@ -326,6 +326,11 @@ module StarcoinVerifier {
         let bit = (7 - index % 8);
         (*Vector::borrow(data, pos) >> (bit as u8)) & 1u8 != 0
     }
+
+    spec get_bit_at_from_msb {
+        pragma verify = false; // Bitwise operator
+        pragma opaque;
+    }
 }
 
 module StructuredHash {

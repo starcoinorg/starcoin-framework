@@ -194,11 +194,6 @@ Return the capacity of the Ring.
 
 
 
-<pre><code><b>pragma</b> intrinsic = <b>true</b>;
-</code></pre>
-
-
-
 </details>
 
 <a name="0x1_Ring_push"></a>
@@ -326,11 +321,6 @@ Return a mutable reference to the <code>i</code>th element in the Ring <code>r</
 
 <details>
 <summary>Specification</summary>
-
-
-
-<pre><code><b>pragma</b> intrinsic = <b>true</b>;
-</code></pre>
 
 
 

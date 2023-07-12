@@ -80,6 +80,10 @@ module StarcoinFramework::Secp256k1 {
         signature: vector<u8>
     ): (vector<u8>, bool);
 
+    spec ecdsa_recover_internal {
+        pragma opaque; // Native
+    }
+
     //
     // Tests
     //
