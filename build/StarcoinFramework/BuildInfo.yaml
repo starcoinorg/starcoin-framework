@@ -97,6 +97,12 @@ compiled_package_info:
       name: EVMAddress
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
+      name: EasyGasOracle
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
+      name: EasyGasOracleScript
+    : StarcoinFramework
+    ? address: "0x00000000000000000000000000000001"
       name: EmptyScripts
     : StarcoinFramework
     ? address: "0x00000000000000000000000000000001"
@@ -327,7 +333,7 @@ compiled_package_info:
     ? address: "0x00000000000000000000000000000001"
       name: YieldFarmingV2
     : StarcoinFramework
-  source_digest: ED5865EE32CFBE2F512A15B58FF667E36F78B037FF0FB3AAD4A09BEB78CA8C46
+  source_digest: 2287CA6EB62047F867E4F4285A3AAEA386247D54D9CA77C6A9F6A3F89EDFBA70
   build_flags:
     dev_mode: false
     test_mode: false
