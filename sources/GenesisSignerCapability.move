@@ -10,6 +10,7 @@ module StarcoinFramework::GenesisSignerCapability {
     friend StarcoinFramework::Genesis;
     friend StarcoinFramework::StdlibUpgradeScripts;
     friend StarcoinFramework::EasyGasOracle;
+    friend StarcoinFramework::EasyGas;
     const ENOT_GENESIS_ACCOUNT: u64 = 11;
 
     struct GenesisSignerCapability has key {

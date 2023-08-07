@@ -35,6 +35,7 @@ This is the root document for the Move StarcoinFramework module documentation. T
 -  [`0x1::DummyToken`](DummyToken.md#0x1_DummyToken)
 -  [`0x1::DummyTokenScripts`](DummyToken.md#0x1_DummyTokenScripts)
 -  [`0x1::EVMAddress`](Signature.md#0x1_EVMAddress)
+-  [`0x1::EasyGas`](EasyGas.md#0x1_EasyGas)
 -  [`0x1::EasyGasOracle`](EasyGas.md#0x1_EasyGasOracle)
 -  [`0x1::EasyGasOracleScript`](EasyGas.md#0x1_EasyGasOracleScript)
 -  [`0x1::EmptyScripts`](EmptyScripts.md#0x1_EmptyScripts)

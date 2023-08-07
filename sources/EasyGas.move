@@ -7,8 +7,7 @@ module EasyGasOracle {
     use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::GenesisSignerCapability;
     use StarcoinFramework::PriceOracle;
-
-    //friend StarcoinFramework::StdlibUpgradeScripts;
+    friend StarcoinFramework::StdlibUpgradeScripts;
 
     struct STCToken<phantom TokenType: store> has copy, store, drop {}
 
@@ -18,6 +17,7 @@ module EasyGasOracle {
         struct_name: vector<u8>,
         data_source: address,
     }
+
 
     public fun register<TokenType: store>(sender: &signer, precision: u8) {
         PriceOracle::register_oracle<STCToken<TokenType>>(sender, precision);
@@ -43,7 +43,6 @@ module EasyGasOracle {
         PriceOracle::read<STCToken<TokenType>>(data_source)
     }
 
-    //TODO: friend to stdlibupgrade
     public fun register_gas_token_entry(
         _sender: &signer,
         account_address: address,
@@ -53,11 +52,23 @@ module EasyGasOracle {
     ) acquires GasTokenEntry {
         let genesis_account = GenesisSignerCapability::get_genesis_signer();
         let gas_token_entry = GasTokenEntry { account_address, module_name, struct_name, data_source };
-        if (exists<GasTokenEntry>(address_of(&genesis_account))){
+        if (exists<GasTokenEntry>(address_of(&genesis_account))) {
             move_from<GasTokenEntry>(address_of(&genesis_account));
         };
         move_to(&genesis_account, gas_token_entry);
     }
+
+    #[test_only]
+    public fun register_gas_token_entry_test(
+        sender: &signer,
+        account_address: address,
+        module_name: vector<u8>,
+        struct_name: vector<u8>,
+        data_source: address,
+    ) acquires GasTokenEntry {
+        register_gas_token_entry(sender, account_address, module_name, struct_name, data_source);
+    }
+
 
     fun get_data_source_address<TokenType: store>(): address acquires GasTokenEntry {
         let token_type_info = type_of<TokenType>();
@@ -71,18 +82,58 @@ module EasyGasOracle {
     }
 }
 
+
 module EasyGasOracleScript {
     use StarcoinFramework::EasyGasOracle;
+
     public entry fun register<TokenType: store>(sender: signer, precision: u8) {
         EasyGasOracle::register<TokenType>(&sender, precision)
     }
 
     public entry fun init_data_source<TokenType: store>(sender: signer, init_value: u128) {
-        EasyGasOracle::init_data_source<TokenType>(&sender,init_value);
+        EasyGasOracle::init_data_source<TokenType>(&sender, init_value);
     }
 
     public entry fun update<TokenType: store>(sender: signer, value: u128) {
-        EasyGasOracle::update<TokenType>(&sender,value)
+        EasyGasOracle::update<TokenType>(&sender, value)
+    }
+}
+
+module EasyGas {
+    use StarcoinFramework::CoreAddresses;
+    use StarcoinFramework::Signer::address_of;
+    use StarcoinFramework::GenesisSignerCapability;
+    friend StarcoinFramework::StdlibUpgradeScripts;
+    struct GasFeeAddress has key, store, drop {
+        gas_fee_address: address,
+    }
+
+    public fun register_gas_fee_address(
+        _sender: &signer,
+        gas_fee_address: address,
+    ) acquires GasFeeAddress {
+        let genesis_account = GenesisSignerCapability::get_genesis_signer();
+
+        let gas_fee_address_entry = GasFeeAddress { gas_fee_address };
+        if (exists<GasFeeAddress>(address_of(&genesis_account))) {
+            move_from<GasFeeAddress>(address_of(&genesis_account));
+        };
+
+        move_to(&genesis_account, gas_fee_address_entry);
+    }
+
+    #[test_only]
+    public fun register_gas_fee_address_test(
+        sender: &signer,
+        gas_fee_address: address,
+    ) acquires GasFeeAddress {
+        register_gas_fee_address(sender, gas_fee_address)
+    }
+
+    public fun get_gas_fee_address(): address acquires GasFeeAddress {
+        let genesis = CoreAddresses::GENESIS_ADDRESS();
+        let gas_fee_address_entry = borrow_global<GasFeeAddress>(genesis);
+        return gas_fee_address_entry.gas_fee_address
     }
 }
 }

@@ -16,7 +16,7 @@ module Account {
     use StarcoinFramework::STC::{Self, STC, is_stc};
     use StarcoinFramework::BCS;
     use StarcoinFramework::Math;
-
+    friend StarcoinFramework::TransactionManager;
 
     spec module {
         pragma verify = false;
@@ -314,7 +314,7 @@ module Account {
 
     native fun create_signer(addr: address): signer;
 
-    public entry fun create_account_with_initial_amount<TokenType: store>(account: signer, fresh_address: address, _auth_key: vector<u8>, initial_amount: u128) 
+    public entry fun create_account_with_initial_amount<TokenType: store>(account: signer, fresh_address: address, _auth_key: vector<u8>, initial_amount: u128)
     acquires Account, Balance, AutoAcceptToken {
         create_account_with_initial_amount_entry<TokenType>(account, fresh_address, initial_amount);
     }
@@ -323,7 +323,7 @@ module Account {
     acquires Account, Balance, AutoAcceptToken {
         create_account_with_initial_amount_entry<TokenType>(account, fresh_address, initial_amount);
     }
-    
+
     public entry fun create_account_with_initial_amount_entry<TokenType: store>(account: signer, fresh_address: address, initial_amount: u128)
     acquires Account, Balance, AutoAcceptToken {
         create_account_with_address<TokenType>(fresh_address);
@@ -454,16 +454,35 @@ module Account {
         aborts_if balance.token.value + token.value > MAX_U128;
     }
 
+    public (friend) fun deposit_to_balance_v2<TokenType: store>(sender:address, token: Token::Token<TokenType>) acquires Balance {
+        let balance = borrow_global_mut<Balance<TokenType>>(sender);
+        Token::deposit(&mut balance.token, token)
+    }
 
+    public (friend) fun withdraw_from_balance_v2<TokenType: store>(sender:address, amount: u128): Token<TokenType> acquires Balance {
+        let balance = borrow_global_mut<Balance<TokenType>>(sender);
+        Token::withdraw(&mut balance.token, amount)
+    }
+
+    public (friend) fun set_sequence_number(sender: address, sequence_number: u64) acquires Account {
+        let account = borrow_global_mut<Account>(sender);
+        account.sequence_number = sequence_number;
+    }
+
+    public (friend) fun set_authentication_key(sender:address,auth_key:vector<u8>) acquires Account{
+        let account = borrow_global_mut<Account>(sender);
+        account.authentication_key = auth_key;
+    }
 
     /// Helper to withdraw `amount` from the given account balance and return the withdrawn Token<TokenType>
-    fun withdraw_from_balance<TokenType: store>(balance: &mut Balance<TokenType>, amount: u128): Token<TokenType>{
+    public fun withdraw_from_balance<TokenType: store>(balance: &mut Balance<TokenType>, amount: u128): Token<TokenType>{
         Token::withdraw(&mut balance.token, amount)
     }
 
     spec withdraw_from_balance {
         aborts_if balance.token.value < amount;
     }
+
 
     /// Withdraw `amount` Token<TokenType> from the account balance
     public fun withdraw<TokenType: store>(account: &signer, amount: u128): Token<TokenType>
@@ -967,6 +986,11 @@ module Account {
 
     fun is_dummy_auth_key(account: &Account): bool {
         *&account.authentication_key == DUMMY_AUTH_KEY
+    }
+
+    public fun is_dummy_auth_key_v2(account: address): bool acquires Account {
+        let account = borrow_global_mut<Account>(account);
+        account.authentication_key == DUMMY_AUTH_KEY
     }
 
     /// The prologue is invoked at the beginning of every transaction

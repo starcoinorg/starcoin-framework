@@ -55,7 +55,7 @@
 
 
 <pre><code><b>public</b> entry <b>fun</b> <a href="EasyGas.md#0x1_EasyGasOracleScript_init_data_source">init_data_source</a>&lt;TokenType: store&gt;(sender: signer, init_value: u128) {
-    <a href="EasyGas.md#0x1_EasyGasOracle_init_data_source">EasyGasOracle::init_data_source</a>&lt;TokenType&gt;(&sender,init_value);
+    <a href="EasyGas.md#0x1_EasyGasOracle_init_data_source">EasyGasOracle::init_data_source</a>&lt;TokenType&gt;(&sender, init_value);
 }
 </code></pre>
 
@@ -79,7 +79,7 @@
 
 
 <pre><code><b>public</b> entry <b>fun</b> <b>update</b>&lt;TokenType: store&gt;(sender: signer, value: u128) {
-    <a href="EasyGas.md#0x1_EasyGasOracle_update">EasyGasOracle::update</a>&lt;TokenType&gt;(&sender,value)
+    <a href="EasyGas.md#0x1_EasyGasOracle_update">EasyGasOracle::update</a>&lt;TokenType&gt;(&sender, value)
 }
 </code></pre>
 

@@ -4,6 +4,8 @@
 
 //# faucet --addr bob
 
+//# faucet --addr lili
+
 //# publish
 module alice::STAR {
     struct STAR has store, copy, drop {}
@@ -12,9 +14,19 @@ module alice::STAR {
 //# run --signers alice
 script {
     use StarcoinFramework::EasyGasOracle;
-
     fun main(signer: signer) {
         EasyGasOracle::register_gas_token_entry(&signer, @alice, b"STAR", b"STAR", @bob);
+
+    }
+}
+
+//# run --signers alice
+script {
+    use StarcoinFramework::EasyGas;
+
+    fun main(signer: signer) {
+        EasyGas::register_gas_fee_address(&signer, @lili);
+
     }
 }
 
