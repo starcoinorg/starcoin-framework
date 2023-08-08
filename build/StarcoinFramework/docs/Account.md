@@ -41,7 +41,6 @@ The module for the account resource that governs every account
 -  [Function `deposit`](#0x1_Account_deposit)
 -  [Function `deposit_with_metadata`](#0x1_Account_deposit_with_metadata)
 -  [Function `deposit_to_balance`](#0x1_Account_deposit_to_balance)
--  [Function `deposit_to_balance_v2`](#0x1_Account_deposit_to_balance_v2)
 -  [Function `withdraw_from_balance_v2`](#0x1_Account_withdraw_from_balance_v2)
 -  [Function `set_sequence_number`](#0x1_Account_set_sequence_number)
 -  [Function `set_authentication_key`](#0x1_Account_set_authentication_key)
@@ -1581,31 +1580,6 @@ Helper to deposit <code>amount</code> to the given account balance
 
 </details>
 
-<a name="0x1_Account_deposit_to_balance_v2"></a>
-
-## Function `deposit_to_balance_v2`
-
-
-
-<pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="Account.md#0x1_Account_deposit_to_balance_v2">deposit_to_balance_v2</a>&lt;TokenType: store&gt;(sender: <b>address</b>, token: <a href="Token.md#0x1_Token_Token">Token::Token</a>&lt;TokenType&gt;)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> (<b>friend</b>) <b>fun</b> <a href="Account.md#0x1_Account_deposit_to_balance_v2">deposit_to_balance_v2</a>&lt;TokenType: store&gt;(sender:<b>address</b>, token: <a href="Token.md#0x1_Token_Token">Token::Token</a>&lt;TokenType&gt;) <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a> {
-    <b>let</b> balance = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;TokenType&gt;&gt;(sender);
-    <a href="Token.md#0x1_Token_deposit">Token::deposit</a>(&<b>mut</b> balance.token, token)
-}
-</code></pre>
-
-
-
-</details>
-
 <a name="0x1_Account_withdraw_from_balance_v2"></a>
 
 ## Function `withdraw_from_balance_v2`
@@ -1621,7 +1595,7 @@ Helper to deposit <code>amount</code> to the given account balance
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> (<b>friend</b>) <b>fun</b> <a href="Account.md#0x1_Account_withdraw_from_balance_v2">withdraw_from_balance_v2</a>&lt;TokenType: store&gt;(sender:<b>address</b>, amount: u128): <a href="Token.md#0x1_Token">Token</a>&lt;TokenType&gt; <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a> {
+<pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="Account.md#0x1_Account_withdraw_from_balance_v2">withdraw_from_balance_v2</a>&lt;TokenType: store&gt;(sender:<b>address</b>, amount: u128): <a href="Token.md#0x1_Token">Token</a>&lt;TokenType&gt; <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a> {
     <b>let</b> balance = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;TokenType&gt;&gt;(sender);
     <a href="Token.md#0x1_Token_withdraw">Token::withdraw</a>(&<b>mut</b> balance.token, amount)
 }

@@ -1,13 +1,34 @@
-processed 6 tasks
+processed 7 tasks
 
-task 4 'run'. lines 12-19:
+task 5 'run'. lines 14-20:
 {
-  "gas_used": 45211,
-  "status": "Executed"
+  "gas_used": 32320,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "CoreAddresses"
+        }
+      },
+      "abort_code": "2818"
+    }
+  }
 }
 
-task 5 'run'. lines 21-33:
+task 6 'run'. lines 22-34:
 {
-  "gas_used": 207236,
-  "status": "Executed"
+  "gas_used": 175859,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "EasyGas"
+        }
+      },
+      "function": 2,
+      "code_offset": 3
+    }
+  }
 }

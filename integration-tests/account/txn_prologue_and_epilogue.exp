@@ -1,4 +1,4 @@
-processed 15 tasks
+processed 16 tasks
 
 task 3 'run'. lines 7-28:
 {
@@ -6,9 +6,9 @@ task 3 'run'. lines 7-28:
   "status": "Executed"
 }
 
-task 4 'run'. lines 30-62:
+task 4 'run'. lines 30-64:
 {
-  "gas_used": 97925,
+  "gas_used": 93051,
   "status": {
     "MoveAbort": {
       "location": {
@@ -22,7 +22,7 @@ task 4 'run'. lines 30-62:
   }
 }
 
-task 5 'run'. lines 66-92:
+task 5 'run'. lines 68-94:
 {
   "gas_used": 169688,
   "status": {
@@ -38,7 +38,7 @@ task 5 'run'. lines 66-92:
   }
 }
 
-task 6 'run'. lines 96-124:
+task 6 'run'. lines 98-126:
 {
   "gas_used": 146018,
   "status": {
@@ -54,7 +54,7 @@ task 6 'run'. lines 96-124:
   }
 }
 
-task 7 'run'. lines 128-158:
+task 7 'run'. lines 130-160:
 {
   "gas_used": 193967,
   "status": {
@@ -70,13 +70,13 @@ task 7 'run'. lines 128-158:
   }
 }
 
-task 8 'run'. lines 162-207:
+task 8 'run'. lines 164-210:
 {
-  "gas_used": 313388,
+  "gas_used": 319957,
   "status": "Executed"
 }
 
-task 9 'run'. lines 211-241:
+task 9 'run'. lines 214-244:
 {
   "gas_used": 193835,
   "status": {
@@ -92,7 +92,7 @@ task 9 'run'. lines 211-241:
   }
 }
 
-task 10 'run'. lines 245-276:
+task 10 'run'. lines 248-279:
 {
   "gas_used": 112720,
   "status": {
@@ -108,7 +108,7 @@ task 10 'run'. lines 245-276:
   }
 }
 
-task 11 'run'. lines 280-311:
+task 11 'run'. lines 283-314:
 {
   "gas_used": 90621,
   "status": {
@@ -124,7 +124,7 @@ task 11 'run'. lines 280-311:
   }
 }
 
-task 12 'run'. lines 313-349:
+task 12 'run'. lines 316-352:
 {
   "gas_used": 197881,
   "status": {
@@ -140,13 +140,19 @@ task 12 'run'. lines 313-349:
   }
 }
 
-task 13 'run'. lines 351-401:
+task 13 'run'. lines 354-365:
 {
-  "gas_used": 351985,
+  "gas_used": 603097,
   "status": "Executed"
 }
 
-task 14 'run'. lines 404-427:
+task 14 'run'. lines 367-417:
+{
+  "gas_used": 470181,
+  "status": "Executed"
+}
+
+task 15 'run'. lines 420-443:
 {
   "gas_used": 37331,
   "status": "Executed"

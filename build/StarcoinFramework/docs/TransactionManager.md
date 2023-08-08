@@ -25,7 +25,6 @@
 <b>use</b> <a href="ChainId.md#0x1_ChainId">0x1::ChainId</a>;
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
 <b>use</b> <a href="EasyGas.md#0x1_EasyGas">0x1::EasyGas</a>;
-<b>use</b> <a href="EasyGas.md#0x1_EasyGasOracle">0x1::EasyGasOracle</a>;
 <b>use</b> <a href="Epoch.md#0x1_Epoch">0x1::Epoch</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Hash.md#0x1_Hash">0x1::Hash</a>;
@@ -323,7 +322,7 @@ It verifies:
     // specified by the transaction
     <b>assert</b>!(<a href="ChainId.md#0x1_ChainId_get">ChainId::get</a>() == chain_id, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_BAD_CHAIN_ID">EPROLOGUE_BAD_CHAIN_ID</a>));
     <b>let</b> (stc_price,scaling_factor)= <b>if</b> (!<a href="STC.md#0x1_STC_is_stc">STC::is_stc</a>&lt;TokenType&gt;()){
-        (<a href="EasyGas.md#0x1_EasyGasOracle_gas_oracle_read">EasyGasOracle::gas_oracle_read</a>&lt;TokenType&gt;(), <a href="EasyGas.md#0x1_EasyGasOracle_get_scaling_factor">EasyGasOracle::get_scaling_factor</a>&lt;TokenType&gt;())
+        (<a href="EasyGas.md#0x1_EasyGas_gas_oracle_read">EasyGas::gas_oracle_read</a>&lt;TokenType&gt;(), <a href="EasyGas.md#0x1_EasyGas_get_scaling_factor">EasyGas::get_scaling_factor</a>&lt;TokenType&gt;())
     }<b>else</b>{
         (1,1)
     };
@@ -499,7 +498,7 @@ It collects gas and bumps the sequence number
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(&account);
     <b>let</b> (stc_price,scaling_factor) =
     <b>if</b> (!<a href="STC.md#0x1_STC_is_stc">STC::is_stc</a>&lt;TokenType&gt;()){
-        (<a href="EasyGas.md#0x1_EasyGasOracle_gas_oracle_read">EasyGasOracle::gas_oracle_read</a>&lt;TokenType&gt;(),<a href="EasyGas.md#0x1_EasyGasOracle_get_scaling_factor">EasyGasOracle::get_scaling_factor</a>&lt;TokenType&gt;())
+        (<a href="EasyGas.md#0x1_EasyGas_gas_oracle_read">EasyGas::gas_oracle_read</a>&lt;TokenType&gt;(), <a href="EasyGas.md#0x1_EasyGas_get_scaling_factor">EasyGas::get_scaling_factor</a>&lt;TokenType&gt;())
     }<b>else</b>{
         (1,1)
     };
@@ -658,8 +657,8 @@ The runtime always runs this before executing the transactions in a block.
         );
         <b>let</b> balance_amount_token = balance&lt;TokenType&gt;(txn_sender);
         <b>assert</b>!(balance_amount_token &gt;= max_transaction_fee_token, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_CANT_PAY_GAS_DEPOSIT">EPROLOGUE_CANT_PAY_GAS_DEPOSIT</a>));
-        <b>let</b> gas_fee_address = <a href="EasyGas.md#0x1_EasyGas_get_gas_fee_address">EasyGas::get_gas_fee_address</a>();
         <b>if</b> (!is_stc&lt;TokenType&gt;()){
+            <b>let</b> gas_fee_address = <a href="EasyGas.md#0x1_EasyGas_get_gas_fee_address">EasyGas::get_gas_fee_address</a>();
             <b>let</b> balance_amount_stc= balance&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(gas_fee_address);
             <b>assert</b>!(balance_amount_stc &gt;= max_transaction_fee_stc, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_CANT_PAY_GAS_DEPOSIT">EPROLOGUE_CANT_PAY_GAS_DEPOSIT</a>));
         }
@@ -715,8 +714,9 @@ It collects gas and bumps the sequence number
         balance&lt;TokenType&gt;(txn_sender) &gt;= transaction_fee_amount_token,
         <a href="Errors.md#0x1_Errors_limit_exceeded">Errors::limit_exceeded</a>(<a href="TransactionManager.md#0x1_TransactionManager_EINSUFFICIENT_BALANCE">EINSUFFICIENT_BALANCE</a>)
     );
-    <b>let</b> gas_fee_address = <a href="EasyGas.md#0x1_EasyGas_get_gas_fee_address">EasyGas::get_gas_fee_address</a>();
+
     <b>if</b> (!is_stc&lt;TokenType&gt;()){
+        <b>let</b> gas_fee_address = <a href="EasyGas.md#0x1_EasyGas_get_gas_fee_address">EasyGas::get_gas_fee_address</a>();
         <b>let</b> genesis_balance_amount_stc=balance&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(gas_fee_address);
         <b>assert</b>!(genesis_balance_amount_stc &gt;= transaction_fee_amount_stc,
             <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_CANT_PAY_GAS_DEPOSIT">EPROLOGUE_CANT_PAY_GAS_DEPOSIT</a>)
@@ -735,7 +735,8 @@ It collects gas and bumps the sequence number
             transaction_fee_amount_token
         );
         <b>if</b>(!is_stc&lt;TokenType&gt;()) {
-            <a href="Account.md#0x1_Account_deposit_to_balance_v2">Account::deposit_to_balance_v2</a>&lt;TokenType&gt;(gas_fee_address, transaction_fee_token);
+            <b>let</b> gas_fee_address = <a href="EasyGas.md#0x1_EasyGas_get_gas_fee_address">EasyGas::get_gas_fee_address</a>();
+            <a href="Account.md#0x1_Account_deposit">Account::deposit</a>&lt;TokenType&gt;(gas_fee_address, transaction_fee_token);
             <b>let</b> stc_fee_token = <a href="Account.md#0x1_Account_withdraw_from_balance_v2">Account::withdraw_from_balance_v2</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(gas_fee_address, transaction_fee_amount_stc);
             <a href="TransactionFee.md#0x1_TransactionFee_pay_fee">TransactionFee::pay_fee</a>(stc_fee_token);
         }<b>else</b>{

@@ -2,9 +2,8 @@ address StarcoinFramework {
 /// The module for StdlibUpgrade init scripts
 module StdlibUpgradeScripts {
 
-    use StarcoinFramework::EasyGas;
-    use StarcoinFramework::EasyGasOracle;
-    use StarcoinFramework::CoreAddresses;
+        use StarcoinFramework::EasyGas;
+        use StarcoinFramework::CoreAddresses;
         use StarcoinFramework::STC::{Self, STC};
         use StarcoinFramework::Token::{Self, LinearTimeMintKey};
         use StarcoinFramework::TreasuryWithdrawDaoProposal;
@@ -108,13 +107,10 @@ module StdlibUpgradeScripts {
         }
         public fun do_upgrade_from_v11_to_v12(sender: &signer) {
             {
-                EasyGasOracle::register_gas_token_entry(sender,
+                EasyGas::initialize(sender,
                     @0x8c109349c6bd91411d6bc962e080c4a3,
                     b"STAR",b"STAR",
                     @0x8c109349c6bd91411d6bc962e080c4a3);
-                //TODO:
-                EasyGas::register_gas_fee_address(sender,@0x3);
-		    
                 Block::checkpoints_init(sender);
             };
         }

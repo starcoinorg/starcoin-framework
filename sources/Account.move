@@ -454,12 +454,7 @@ module Account {
         aborts_if balance.token.value + token.value > MAX_U128;
     }
 
-    public (friend) fun deposit_to_balance_v2<TokenType: store>(sender:address, token: Token::Token<TokenType>) acquires Balance {
-        let balance = borrow_global_mut<Balance<TokenType>>(sender);
-        Token::deposit(&mut balance.token, token)
-    }
-
-    public (friend) fun withdraw_from_balance_v2<TokenType: store>(sender:address, amount: u128): Token<TokenType> acquires Balance {
+    public(friend) fun withdraw_from_balance_v2<TokenType: store>(sender:address, amount: u128): Token<TokenType> acquires Balance {
         let balance = borrow_global_mut<Balance<TokenType>>(sender);
         Token::withdraw(&mut balance.token, amount)
     }

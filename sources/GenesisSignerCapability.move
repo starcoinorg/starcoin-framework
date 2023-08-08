@@ -3,14 +3,12 @@ module StarcoinFramework::GenesisSignerCapability {
     use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Errors;
 
-
-
     friend StarcoinFramework::NFT;
     friend StarcoinFramework::Oracle;
     friend StarcoinFramework::Genesis;
     friend StarcoinFramework::StdlibUpgradeScripts;
-    friend StarcoinFramework::EasyGasOracle;
     friend StarcoinFramework::EasyGas;
+
     const ENOT_GENESIS_ACCOUNT: u64 = 11;
 
     struct GenesisSignerCapability has key {

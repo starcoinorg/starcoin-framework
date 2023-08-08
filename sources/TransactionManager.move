@@ -24,7 +24,6 @@ module TransactionManager {
     use StarcoinFramework::Hash;
     use StarcoinFramework::Vector;
     use StarcoinFramework::STC;
-    use StarcoinFramework::EasyGasOracle;
     use StarcoinFramework::EasyGas;
     spec module {
         pragma verify = false;
@@ -69,7 +68,7 @@ module TransactionManager {
         // specified by the transaction
         assert!(ChainId::get() == chain_id, Errors::invalid_argument(EPROLOGUE_BAD_CHAIN_ID));
         let (stc_price,scaling_factor)= if (!STC::is_stc<TokenType>()){
-            (EasyGasOracle::gas_oracle_read<TokenType>(), EasyGasOracle::get_scaling_factor<TokenType>())
+            (EasyGas::gas_oracle_read<TokenType>(), EasyGas::get_scaling_factor<TokenType>())
         }else{
             (1,1)
         };
@@ -173,7 +172,7 @@ module TransactionManager {
         CoreAddresses::assert_genesis_address(&account);
         let (stc_price,scaling_factor) =
         if (!STC::is_stc<TokenType>()){
-            (EasyGasOracle::gas_oracle_read<TokenType>(),EasyGasOracle::get_scaling_factor<TokenType>())
+            (EasyGas::gas_oracle_read<TokenType>(), EasyGas::get_scaling_factor<TokenType>())
         }else{
             (1,1)
         };
@@ -319,8 +318,8 @@ module TransactionManager {
             );
             let balance_amount_token = balance<TokenType>(txn_sender);
             assert!(balance_amount_token >= max_transaction_fee_token, Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT));
-            let gas_fee_address = EasyGas::get_gas_fee_address();
             if (!is_stc<TokenType>()){
+                let gas_fee_address = EasyGas::get_gas_fee_address();
                 let balance_amount_stc= balance<STC>(gas_fee_address);
                 assert!(balance_amount_stc >= max_transaction_fee_stc, Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT));
             }
@@ -356,8 +355,9 @@ module TransactionManager {
             balance<TokenType>(txn_sender) >= transaction_fee_amount_token,
             Errors::limit_exceeded(EINSUFFICIENT_BALANCE)
         );
-        let gas_fee_address = EasyGas::get_gas_fee_address();
+
         if (!is_stc<TokenType>()){
+            let gas_fee_address = EasyGas::get_gas_fee_address();
             let genesis_balance_amount_stc=balance<STC>(gas_fee_address);
             assert!(genesis_balance_amount_stc >= transaction_fee_amount_stc,
                 Errors::invalid_argument(EPROLOGUE_CANT_PAY_GAS_DEPOSIT)
@@ -376,7 +376,8 @@ module TransactionManager {
                 transaction_fee_amount_token
             );
             if(!is_stc<TokenType>()) {
-                Account::deposit_to_balance_v2<TokenType>(gas_fee_address, transaction_fee_token);
+                let gas_fee_address = EasyGas::get_gas_fee_address();
+                Account::deposit<TokenType>(gas_fee_address, transaction_fee_token);
                 let stc_fee_token = Account::withdraw_from_balance_v2<STC>(gas_fee_address, transaction_fee_amount_stc);
                 TransactionFee::pay_fee(stc_fee_token);
             }else{
@@ -395,6 +396,5 @@ module TransactionManager {
         aborts_if !exists<Balance<TokenType>>(txn_sender);
         aborts_if txn_max_gas_units < gas_units_remaining;
     }
-
 }
 }

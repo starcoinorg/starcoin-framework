@@ -13,33 +13,22 @@ module alice::STAR {
 
 //# run --signers alice
 script {
-    use StarcoinFramework::EasyGasOracle;
-    fun main(signer: signer) {
-        EasyGasOracle::register_gas_token_entry(&signer, @alice, b"STAR", b"STAR", @bob);
-
-    }
-}
-
-//# run --signers alice
-script {
     use StarcoinFramework::EasyGas;
-
     fun main(signer: signer) {
-        EasyGas::register_gas_fee_address(&signer, @lili);
-
+        EasyGas::initialize(&signer, @alice, b"STAR", b"STAR", @bob);
     }
 }
 
 //# run --signers bob
 script {
     use alice::STAR::STAR;
-    use StarcoinFramework::EasyGasOracle;
+    use StarcoinFramework::EasyGas;
 
     fun main(signer: signer) {
-        EasyGasOracle::register<STAR>(&signer, 9);
-        EasyGasOracle::init_data_source<STAR>(&signer, 0);
-        EasyGasOracle::update<STAR>(&signer, 100);
-        let star_price= EasyGasOracle::gas_oracle_read<STAR>();
+        EasyGas::register_oracle<STAR>(&signer, 9);
+        EasyGas::init_oracle_source<STAR>(&signer, 0);
+        EasyGas::update_oracle<STAR>(&signer, 100);
+        let star_price= EasyGas::gas_oracle_read<STAR>();
         assert!(star_price==100,1000);
     }
 }

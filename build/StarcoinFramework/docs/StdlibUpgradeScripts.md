@@ -26,7 +26,6 @@ The module for StdlibUpgrade init scripts
 <b>use</b> <a href="Config.md#0x1_Config">0x1::Config</a>;
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
 <b>use</b> <a href="EasyGas.md#0x1_EasyGas">0x1::EasyGas</a>;
-<b>use</b> <a href="EasyGas.md#0x1_EasyGasOracle">0x1::EasyGasOracle</a>;
 <b>use</b> <a href="GenesisNFT.md#0x1_GenesisNFT">0x1::GenesisNFT</a>;
 <b>use</b> <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability">0x1::GenesisSignerCapability</a>;
 <b>use</b> <a href="LanguageVersion.md#0x1_LanguageVersion">0x1::LanguageVersion</a>;
@@ -341,13 +340,10 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 
 <pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>(sender: &signer) {
     {
-        <a href="EasyGas.md#0x1_EasyGasOracle_register_gas_token_entry">EasyGasOracle::register_gas_token_entry</a>(sender,
+        <a href="EasyGas.md#0x1_EasyGas_initialize">EasyGas::initialize</a>(sender,
             @0x8c109349c6bd91411d6bc962e080c4a3,
             b"STAR",b"STAR",
             @0x8c109349c6bd91411d6bc962e080c4a3);
-        //TODO:
-        <a href="EasyGas.md#0x1_EasyGas_register_gas_fee_address">EasyGas::register_gas_fee_address</a>(sender,@0x3);
-		
         <a href="Block.md#0x1_Block_checkpoints_init">Block::checkpoints_init</a>(sender);
     };
 }
