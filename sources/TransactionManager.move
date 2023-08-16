@@ -5,7 +5,7 @@ address StarcoinFramework {
 module TransactionManager {
     use StarcoinFramework::Authenticator;
     use StarcoinFramework::Account::{exists_at, is_signer_delegated, transaction_fee_simulate,
-        balance, Account
+        balance, Account, Balance
     };
     use StarcoinFramework::TransactionTimeout;
     use StarcoinFramework::Signer;
@@ -386,7 +386,7 @@ module TransactionManager {
         };
     }
 
-    spec txn_epilogue_v2 {
+    spec txn_epilogue_v3 {
 
         pragma verify = false; // Todo: fix me, cost too much time
         aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();

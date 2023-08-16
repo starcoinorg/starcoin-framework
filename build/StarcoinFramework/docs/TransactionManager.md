@@ -750,16 +750,8 @@ It collects gas and bumps the sequence number
 
 </details>
 
-<a name="@Module_Specification_1"></a>
-
-## Module Specification
-
-
-
-<pre><code><b>pragma</b> verify = <b>false</b>;
-<b>pragma</b> aborts_if_is_strict = <b>true</b>;
-</code></pre>
-
+<details>
+<summary>Specification</summary>
 
 
 
@@ -770,4 +762,18 @@ It collects gas and bumps the sequence number
 <b>aborts_if</b> txn_sequence_number + 1 &gt; max_u64();
 <b>aborts_if</b> !<b>exists</b>&lt;Balance&lt;TokenType&gt;&gt;(txn_sender);
 <b>aborts_if</b> txn_max_gas_units &lt; gas_units_remaining;
+</code></pre>
+
+
+
+</details>
+
+<a name="@Module_Specification_1"></a>
+
+## Module Specification
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+<b>pragma</b> aborts_if_is_strict = <b>true</b>;
 </code></pre>
