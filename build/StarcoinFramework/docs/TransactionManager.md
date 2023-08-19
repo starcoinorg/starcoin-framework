@@ -13,16 +13,21 @@
 -  [Function `epilogue`](#0x1_TransactionManager_epilogue)
 -  [Function `epilogue_v2`](#0x1_TransactionManager_epilogue_v2)
 -  [Function `block_prologue`](#0x1_TransactionManager_block_prologue)
+-  [Function `txn_prologue_v2`](#0x1_TransactionManager_txn_prologue_v2)
+-  [Function `txn_epilogue_v3`](#0x1_TransactionManager_txn_epilogue_v3)
 -  [Module Specification](#@Module_Specification_1)
 
 
 <pre><code><b>use</b> <a href="Account.md#0x1_Account">0x1::Account</a>;
+<b>use</b> <a href="Authenticator.md#0x1_Authenticator">0x1::Authenticator</a>;
 <b>use</b> <a href="Block.md#0x1_Block">0x1::Block</a>;
 <b>use</b> <a href="BlockReward.md#0x1_BlockReward">0x1::BlockReward</a>;
 <b>use</b> <a href="ChainId.md#0x1_ChainId">0x1::ChainId</a>;
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
+<b>use</b> <a href="EasyGas.md#0x1_EasyGas">0x1::EasyGas</a>;
 <b>use</b> <a href="Epoch.md#0x1_Epoch">0x1::Epoch</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
+<b>use</b> <a href="Hash.md#0x1_Hash">0x1::Hash</a>;
 <b>use</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager">0x1::PackageTxnManager</a>;
 <b>use</b> <a href="STC.md#0x1_STC">0x1::STC</a>;
 <b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
@@ -31,6 +36,7 @@
 <b>use</b> <a href="TransactionFee.md#0x1_TransactionFee">0x1::TransactionFee</a>;
 <b>use</b> <a href="TransactionPublishOption.md#0x1_TransactionPublishOption">0x1::TransactionPublishOption</a>;
 <b>use</b> <a href="TransactionTimeout.md#0x1_TransactionTimeout">0x1::TransactionTimeout</a>;
+<b>use</b> <a href="Vector.md#0x1_Vector">0x1::Vector</a>;
 </code></pre>
 
 
@@ -40,11 +46,173 @@
 ## Constants
 
 
+<a name="0x1_TransactionManager_MAX_U64"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_MAX_U64">MAX_U64</a>: u128 = 18446744073709551615;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EDEPRECATED_FUNCTION"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EDEPRECATED_FUNCTION">EDEPRECATED_FUNCTION</a>: u64 = 19;
+</code></pre>
+
+
+
 <a name="0x1_TransactionManager_EPROLOGUE_ACCOUNT_DOES_NOT_EXIST"></a>
 
 
 
 <pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_ACCOUNT_DOES_NOT_EXIST">EPROLOGUE_ACCOUNT_DOES_NOT_EXIST</a>: u64 = 0;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EADDRESS_AND_AUTH_KEY_MISMATCH"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EADDRESS_AND_AUTH_KEY_MISMATCH">EADDRESS_AND_AUTH_KEY_MISMATCH</a>: u64 = 105;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EADDRESS_PUBLIC_KEY_INCONSISTENT"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EADDRESS_PUBLIC_KEY_INCONSISTENT">EADDRESS_PUBLIC_KEY_INCONSISTENT</a>: u64 = 104;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EBAD_TRANSACTION_FEE_TOKEN"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EBAD_TRANSACTION_FEE_TOKEN">EBAD_TRANSACTION_FEE_TOKEN</a>: u64 = 18;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_ECOIN_DEPOSIT_IS_ZERO"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_ECOIN_DEPOSIT_IS_ZERO">ECOIN_DEPOSIT_IS_ZERO</a>: u64 = 15;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EINSUFFICIENT_BALANCE"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EINSUFFICIENT_BALANCE">EINSUFFICIENT_BALANCE</a>: u64 = 10;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EKEY_ROTATION_CAPABILITY_ALREADY_EXTRACTED"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EKEY_ROTATION_CAPABILITY_ALREADY_EXTRACTED">EKEY_ROTATION_CAPABILITY_ALREADY_EXTRACTED</a>: u64 = 103;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EMALFORMED_AUTHENTICATION_KEY"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EMALFORMED_AUTHENTICATION_KEY">EMALFORMED_AUTHENTICATION_KEY</a>: u64 = 102;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EPROLOGUE_CANT_PAY_GAS_DEPOSIT"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_CANT_PAY_GAS_DEPOSIT">EPROLOGUE_CANT_PAY_GAS_DEPOSIT</a>: u64 = 4;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EPROLOGUE_INVALID_ACCOUNT_AUTH_KEY"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_INVALID_ACCOUNT_AUTH_KEY">EPROLOGUE_INVALID_ACCOUNT_AUTH_KEY</a>: u64 = 1;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EPROLOGUE_SEQUENCE_NUMBER_TOO_BIG"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SEQUENCE_NUMBER_TOO_BIG">EPROLOGUE_SEQUENCE_NUMBER_TOO_BIG</a>: u64 = 9;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EPROLOGUE_SEQUENCE_NUMBER_TOO_NEW"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SEQUENCE_NUMBER_TOO_NEW">EPROLOGUE_SEQUENCE_NUMBER_TOO_NEW</a>: u64 = 3;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD">EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD</a>: u64 = 2;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EPROLOGUE_SIGNER_ALREADY_DELEGATED"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SIGNER_ALREADY_DELEGATED">EPROLOGUE_SIGNER_ALREADY_DELEGATED</a>: u64 = 200;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_ERR_SIGNER_ALREADY_DELEGATED"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_ERR_SIGNER_ALREADY_DELEGATED">ERR_SIGNER_ALREADY_DELEGATED</a>: u64 = 107;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_ERR_TOKEN_NOT_ACCEPT"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_ERR_TOKEN_NOT_ACCEPT">ERR_TOKEN_NOT_ACCEPT</a>: u64 = 106;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EWITHDRAWAL_CAPABILITY_ALREADY_EXTRACTED"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EWITHDRAWAL_CAPABILITY_ALREADY_EXTRACTED">EWITHDRAWAL_CAPABILITY_ALREADY_EXTRACTED</a>: u64 = 101;
 </code></pre>
 
 
@@ -153,13 +321,21 @@ It verifies:
     // Check that the chain ID stored on-chain matches the chain ID
     // specified by the transaction
     <b>assert</b>!(<a href="ChainId.md#0x1_ChainId_get">ChainId::get</a>() == chain_id, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_BAD_CHAIN_ID">EPROLOGUE_BAD_CHAIN_ID</a>));
-    <a href="Account.md#0x1_Account_txn_prologue">Account::txn_prologue</a>&lt;TokenType&gt;(
+    <b>let</b> (stc_price,scaling_factor)= <b>if</b> (!<a href="STC.md#0x1_STC_is_stc">STC::is_stc</a>&lt;TokenType&gt;()){
+        (<a href="EasyGas.md#0x1_EasyGas_gas_oracle_read">EasyGas::gas_oracle_read</a>&lt;TokenType&gt;(), <a href="EasyGas.md#0x1_EasyGas_get_scaling_factor">EasyGas::get_scaling_factor</a>&lt;TokenType&gt;())
+    }<b>else</b>{
+        (1,1)
+    };
+
+    <a href="TransactionManager.md#0x1_TransactionManager_txn_prologue_v2">txn_prologue_v2</a>&lt;TokenType&gt;(
         &account,
         txn_sender,
         txn_sequence_number,
         txn_authentication_key_preimage,
         txn_gas_price,
         txn_max_gas_units,
+        stc_price,
+        scaling_factor,
     );
     <b>assert</b>!(
         <a href="TransactionTimeout.md#0x1_TransactionTimeout_is_valid_transaction_timestamp">TransactionTimeout::is_valid_transaction_timestamp</a>(txn_expiration_time),
@@ -209,8 +385,6 @@ It verifies:
 <b>include</b> <a href="Timestamp.md#0x1_Timestamp_AbortsIfTimestampNotExists">Timestamp::AbortsIfTimestampNotExists</a>;
 <b>include</b> <a href="Block.md#0x1_Block_AbortsIfBlockMetadataNotExist">Block::AbortsIfBlockMetadataNotExist</a>;
 <b>aborts_if</b> txn_gas_price * txn_max_gas_units &gt; 0 && !<b>exists</b>&lt;<a href="Account.md#0x1_Account_Balance">Account::Balance</a>&lt;TokenType&gt;&gt;(txn_sender);
-<b>aborts_if</b> txn_gas_price * txn_max_gas_units &gt; 0 && StarcoinFramework::Token::spec_token_code&lt;TokenType&gt;() != StarcoinFramework::Token::spec_token_code&lt;<a href="STC.md#0x1_STC">STC</a>&gt;();
-<b>aborts_if</b> txn_gas_price * txn_max_gas_units &gt; 0 && <b>global</b>&lt;<a href="Account.md#0x1_Account_Balance">Account::Balance</a>&lt;TokenType&gt;&gt;(txn_sender).token.value &lt; txn_gas_price * txn_max_gas_units;
 <b>aborts_if</b> txn_gas_price * txn_max_gas_units &gt; 0 && txn_sequence_number &gt;= max_u64();
 <b>aborts_if</b> txn_sequence_number &lt; <b>global</b>&lt;<a href="Account.md#0x1_Account_Account">Account::Account</a>&gt;(txn_sender).sequence_number;
 <b>aborts_if</b> txn_sequence_number != <b>global</b>&lt;<a href="Account.md#0x1_Account_Account">Account::Account</a>&gt;(txn_sender).sequence_number;
@@ -322,7 +496,13 @@ It collects gas and bumps the sequence number
     success: bool,
 ) {
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(&account);
-    <a href="Account.md#0x1_Account_txn_epilogue_v2">Account::txn_epilogue_v2</a>&lt;TokenType&gt;(
+    <b>let</b> (stc_price,scaling_factor) =
+    <b>if</b> (!<a href="STC.md#0x1_STC_is_stc">STC::is_stc</a>&lt;TokenType&gt;()){
+        (<a href="EasyGas.md#0x1_EasyGas_gas_oracle_read">EasyGas::gas_oracle_read</a>&lt;TokenType&gt;(), <a href="EasyGas.md#0x1_EasyGas_get_scaling_factor">EasyGas::get_scaling_factor</a>&lt;TokenType&gt;())
+    }<b>else</b>{
+        (1,1)
+    };
+    <a href="TransactionManager.md#0x1_TransactionManager_txn_epilogue_v3">txn_epilogue_v3</a>&lt;TokenType&gt;(
         &account,
         txn_sender,
         txn_sequence_number,
@@ -330,6 +510,8 @@ It collects gas and bumps the sequence number
         txn_gas_price,
         txn_max_gas_units,
         gas_units_remaining,
+        stc_price,
+        scaling_factor
     );
     <b>if</b> (txn_payload_type == <a href="TransactionManager.md#0x1_TransactionManager_TXN_PAYLOAD_TYPE_PACKAGE">TXN_PAYLOAD_TYPE_PACKAGE</a>) {
         <a href="PackageTxnManager.md#0x1_PackageTxnManager_package_txn_epilogue">PackageTxnManager::package_txn_epilogue</a>(
@@ -409,6 +591,177 @@ The runtime always runs this before executing the transactions in a block.
 
 
 <pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_TransactionManager_txn_prologue_v2"></a>
+
+## Function `txn_prologue_v2`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="TransactionManager.md#0x1_TransactionManager_txn_prologue_v2">txn_prologue_v2</a>&lt;TokenType: store&gt;(account: &signer, txn_sender: <b>address</b>, txn_sequence_number: u64, txn_authentication_key_preimage: vector&lt;u8&gt;, txn_gas_price: u64, txn_max_gas_units: u64, stc_price: u128, stc_price_scaling: u128)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="TransactionManager.md#0x1_TransactionManager_txn_prologue_v2">txn_prologue_v2</a>&lt;TokenType: store&gt;(
+    account: &signer,
+    txn_sender: <b>address</b>,
+    txn_sequence_number: u64,
+    txn_authentication_key_preimage: vector&lt;u8&gt;,
+    txn_gas_price: u64,
+    txn_max_gas_units: u64,
+    stc_price: u128,
+    stc_price_scaling: u128
+)  {
+    <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
+
+    // Verify that the transaction sender's account <b>exists</b>
+    <b>assert</b>!(exists_at(txn_sender), <a href="Errors.md#0x1_Errors_requires_address">Errors::requires_address</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_ACCOUNT_DOES_NOT_EXIST">EPROLOGUE_ACCOUNT_DOES_NOT_EXIST</a>));
+    // Verify the account <b>has</b> not delegate its signer cap.
+    <b>assert</b>!(!is_signer_delegated(txn_sender), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SIGNER_ALREADY_DELEGATED">EPROLOGUE_SIGNER_ALREADY_DELEGATED</a>));
+
+    // Load the transaction sender's account
+    //<b>let</b> sender_account = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account">Account</a>&gt;(txn_sender);
+    <b>if</b> (<a href="Account.md#0x1_Account_is_dummy_auth_key_v2">Account::is_dummy_auth_key_v2</a>(txn_sender)){
+        // <b>if</b> sender's auth key is empty, <b>use</b> <b>address</b> <b>as</b> auth key for check transaction.
+        <b>assert</b>!(
+            <a href="Authenticator.md#0x1_Authenticator_derived_address">Authenticator::derived_address</a>(<a href="Hash.md#0x1_Hash_sha3_256">Hash::sha3_256</a>(txn_authentication_key_preimage)) == txn_sender,
+            <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_INVALID_ACCOUNT_AUTH_KEY">EPROLOGUE_INVALID_ACCOUNT_AUTH_KEY</a>)
+        );
+    }<b>else</b>{
+        // Check that the hash of the transaction's <b>public</b> key matches the account's auth key
+        <b>assert</b>!(
+            <a href="Hash.md#0x1_Hash_sha3_256">Hash::sha3_256</a>(txn_authentication_key_preimage) == <a href="Account.md#0x1_Account_authentication_key">Account::authentication_key</a>(txn_sender),
+            <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_INVALID_ACCOUNT_AUTH_KEY">EPROLOGUE_INVALID_ACCOUNT_AUTH_KEY</a>)
+        );
+    };
+    // Check that the account <b>has</b> enough balance for all of the gas
+    <b>let</b> (max_transaction_fee_stc,max_transaction_fee_token) = transaction_fee_simulate(txn_gas_price,txn_max_gas_units,0, stc_price, stc_price_scaling);
+    <b>assert</b>!(
+        max_transaction_fee_stc &lt;= <a href="TransactionManager.md#0x1_TransactionManager_MAX_U64">MAX_U64</a>,
+        <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_CANT_PAY_GAS_DEPOSIT">EPROLOGUE_CANT_PAY_GAS_DEPOSIT</a>),
+    );
+    <b>if</b> (max_transaction_fee_stc &gt; 0) {
+        <b>assert</b>!(
+            (txn_sequence_number <b>as</b> u128) &lt; <a href="TransactionManager.md#0x1_TransactionManager_MAX_U64">MAX_U64</a>,
+            <a href="Errors.md#0x1_Errors_limit_exceeded">Errors::limit_exceeded</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SEQUENCE_NUMBER_TOO_BIG">EPROLOGUE_SEQUENCE_NUMBER_TOO_BIG</a>)
+        );
+        <b>let</b> balance_amount_token = balance&lt;TokenType&gt;(txn_sender);
+        <b>assert</b>!(balance_amount_token &gt;= max_transaction_fee_token, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_CANT_PAY_GAS_DEPOSIT">EPROLOGUE_CANT_PAY_GAS_DEPOSIT</a>));
+        <b>if</b> (!is_stc&lt;TokenType&gt;()){
+            <b>let</b> gas_fee_address = <a href="EasyGas.md#0x1_EasyGas_get_gas_fee_address">EasyGas::get_gas_fee_address</a>();
+            <b>let</b> balance_amount_stc= balance&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(gas_fee_address);
+            <b>assert</b>!(balance_amount_stc &gt;= max_transaction_fee_stc, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_CANT_PAY_GAS_DEPOSIT">EPROLOGUE_CANT_PAY_GAS_DEPOSIT</a>));
+        }
+    };
+    // Check that the transaction sequence number matches the sequence number of the account
+    <b>assert</b>!(txn_sequence_number &gt;= <a href="Account.md#0x1_Account_sequence_number">Account::sequence_number</a>(txn_sender), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD">EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD</a>));
+    <b>assert</b>!(txn_sequence_number == <a href="Account.md#0x1_Account_sequence_number">Account::sequence_number</a>(txn_sender), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SEQUENCE_NUMBER_TOO_NEW">EPROLOGUE_SEQUENCE_NUMBER_TOO_NEW</a>));
+
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_TransactionManager_txn_epilogue_v3"></a>
+
+## Function `txn_epilogue_v3`
+
+The epilogue is invoked at the end of transactions.
+It collects gas and bumps the sequence number
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="TransactionManager.md#0x1_TransactionManager_txn_epilogue_v3">txn_epilogue_v3</a>&lt;TokenType: store&gt;(account: &signer, txn_sender: <b>address</b>, txn_sequence_number: u64, txn_authentication_key_preimage: vector&lt;u8&gt;, txn_gas_price: u64, txn_max_gas_units: u64, gas_units_remaining: u64, stc_price: u128, stc_price_scaling: u128)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="TransactionManager.md#0x1_TransactionManager_txn_epilogue_v3">txn_epilogue_v3</a>&lt;TokenType: store&gt;(
+    account: &signer,
+    txn_sender: <b>address</b>,
+    txn_sequence_number: u64,
+    txn_authentication_key_preimage: vector&lt;u8&gt;,
+    txn_gas_price: u64,
+    txn_max_gas_units: u64,
+    gas_units_remaining: u64,
+    stc_price: u128,
+    stc_price_scaling: u128,
+) {
+    <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
+    // Charge for gas
+    <b>let</b> (transaction_fee_amount_stc,transaction_fee_amount_token) = transaction_fee_simulate(
+        txn_gas_price,
+        txn_max_gas_units,
+        gas_units_remaining,
+        stc_price,
+        stc_price_scaling);
+    <b>assert</b>!(
+        balance&lt;TokenType&gt;(txn_sender) &gt;= transaction_fee_amount_token,
+        <a href="Errors.md#0x1_Errors_limit_exceeded">Errors::limit_exceeded</a>(<a href="TransactionManager.md#0x1_TransactionManager_EINSUFFICIENT_BALANCE">EINSUFFICIENT_BALANCE</a>)
+    );
+
+    <b>if</b> (!is_stc&lt;TokenType&gt;()){
+        <b>let</b> gas_fee_address = <a href="EasyGas.md#0x1_EasyGas_get_gas_fee_address">EasyGas::get_gas_fee_address</a>();
+        <b>let</b> genesis_balance_amount_stc=balance&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(gas_fee_address);
+        <b>assert</b>!(genesis_balance_amount_stc &gt;= transaction_fee_amount_stc,
+            <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_CANT_PAY_GAS_DEPOSIT">EPROLOGUE_CANT_PAY_GAS_DEPOSIT</a>)
+        );
+    };
+    // Bump the sequence number
+    <a href="Account.md#0x1_Account_set_sequence_number">Account::set_sequence_number</a>(txn_sender,txn_sequence_number+1);
+    // Set auth key when user send transaction first.
+    <b>if</b> (<a href="Account.md#0x1_Account_is_dummy_auth_key_v2">Account::is_dummy_auth_key_v2</a>(txn_sender) && !<a href="Vector.md#0x1_Vector_is_empty">Vector::is_empty</a>(&txn_authentication_key_preimage)){
+        <a href="Account.md#0x1_Account_set_authentication_key">Account::set_authentication_key</a>(txn_sender, <a href="Hash.md#0x1_Hash_sha3_256">Hash::sha3_256</a>(txn_authentication_key_preimage));
+    };
+
+    <b>if</b> (transaction_fee_amount_stc &gt; 0) {
+        <b>let</b> transaction_fee_token = <a href="Account.md#0x1_Account_withdraw_from_balance_v2">Account::withdraw_from_balance_v2</a>&lt;TokenType&gt;(
+            txn_sender,
+            transaction_fee_amount_token
+        );
+        <b>if</b>(!is_stc&lt;TokenType&gt;()) {
+            <b>let</b> gas_fee_address = <a href="EasyGas.md#0x1_EasyGas_get_gas_fee_address">EasyGas::get_gas_fee_address</a>();
+            <a href="Account.md#0x1_Account_deposit">Account::deposit</a>&lt;TokenType&gt;(gas_fee_address, transaction_fee_token);
+            <b>let</b> stc_fee_token = <a href="Account.md#0x1_Account_withdraw_from_balance_v2">Account::withdraw_from_balance_v2</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(gas_fee_address, transaction_fee_amount_stc);
+            <a href="TransactionFee.md#0x1_TransactionFee_pay_fee">TransactionFee::pay_fee</a>(stc_fee_token);
+        }<b>else</b>{
+            <a href="TransactionFee.md#0x1_TransactionFee_pay_fee">TransactionFee::pay_fee</a>(transaction_fee_token);
+        }
+    };
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+<b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>();
+<b>aborts_if</b> !<b>exists</b>&lt;<a href="Account.md#0x1_Account">Account</a>&gt;(txn_sender);
+<b>aborts_if</b> !<b>exists</b>&lt;Balance&lt;TokenType&gt;&gt;(txn_sender);
+<b>aborts_if</b> txn_sequence_number + 1 &gt; max_u64();
+<b>aborts_if</b> !<b>exists</b>&lt;Balance&lt;TokenType&gt;&gt;(txn_sender);
+<b>aborts_if</b> txn_max_gas_units &lt; gas_units_remaining;
 </code></pre>
 
 
