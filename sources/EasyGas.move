@@ -10,6 +10,8 @@ module EasyGas {
     use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::GenesisSignerCapability;
     use StarcoinFramework::PriceOracle;
+    use StarcoinFramework::Errors;
+
     const EBAD_TRANSACTION_FEE_TOKEN: u64 = 18;
     struct STCToken<phantom TokenType: store> has copy, store, drop {}
 
@@ -83,7 +85,7 @@ module EasyGas {
         let gas_token_entry = borrow_global<GasTokenEntry>(genesis);
         assert!(module_name(&token_type_info) == *&gas_token_entry.module_name && account_address(
             &token_type_info
-        ) == *&gas_token_entry.account_address && struct_name(&token_type_info) == *&gas_token_entry.struct_name, EBAD_TRANSACTION_FEE_TOKEN);
+        ) == *&gas_token_entry.account_address && struct_name(&token_type_info) == *&gas_token_entry.struct_name, Errors::invalid_argument(EBAD_TRANSACTION_FEE_TOKEN));
         gas_token_entry.data_source
     }
 
