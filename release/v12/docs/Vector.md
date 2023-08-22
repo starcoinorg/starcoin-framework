@@ -249,6 +249,19 @@ Spawn a sub vector from a vector
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> opaque;
+<b>ensures</b> [abstract] result == v[offset..offset+size];
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Vector_spawn_from_vec"></a>
 
 ## Function `spawn_from_vec`

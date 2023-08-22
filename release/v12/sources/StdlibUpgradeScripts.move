@@ -2,6 +2,7 @@ address StarcoinFramework {
 /// The module for StdlibUpgrade init scripts
 module StdlibUpgradeScripts {
 
+        use StarcoinFramework::EasyGas;
         use StarcoinFramework::CoreAddresses;
         use StarcoinFramework::STC::{Self, STC};
         use StarcoinFramework::Token::{Self, LinearTimeMintKey};
@@ -106,6 +107,10 @@ module StdlibUpgradeScripts {
         }
         public fun do_upgrade_from_v11_to_v12(sender: &signer) {
             {
+                EasyGas::initialize(sender,
+                    @0x8c109349c6bd91411d6bc962e080c4a3,
+                    b"STAR",b"STAR",
+                    @0x8c109349c6bd91411d6bc962e080c4a3);
                 Block::checkpoints_init(sender);
             };
         }

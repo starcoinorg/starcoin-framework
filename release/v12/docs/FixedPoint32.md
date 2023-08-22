@@ -323,7 +323,8 @@ not in the range 2^-32 .. 2^32-1.
 See comment at <code>Self::multiply_64</code>.
 
 
-<pre><code><b>pragma</b> opaque = <b>true</b>;
+<pre><code><b>pragma</b> verify = <b>false</b>;
+<b>pragma</b> opaque = <b>true</b>;
 <b>include</b> <a href="FixedPoint32.md#0x1_FixedPoint32_CreateFromRationalAbortsIf">CreateFromRationalAbortsIf</a>;
 <b>ensures</b> result == <a href="FixedPoint32.md#0x1_FixedPoint32_spec_create_from_rational">spec_create_from_rational</a>(numerator, denominator);
 </code></pre>

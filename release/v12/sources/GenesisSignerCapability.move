@@ -7,7 +7,7 @@ module StarcoinFramework::GenesisSignerCapability {
     friend StarcoinFramework::Oracle;
     friend StarcoinFramework::Genesis;
     friend StarcoinFramework::StdlibUpgradeScripts;
-
+    friend StarcoinFramework::EasyGas;
 
     const ENOT_GENESIS_ACCOUNT: u64 = 11;
 
@@ -28,12 +28,10 @@ module StarcoinFramework::GenesisSignerCapability {
         let cap = borrow_global<GenesisSignerCapability>(CoreAddresses::GENESIS_ADDRESS());
         Account::create_signer_with_cap(&cap.cap)
     }
-
     #[test_only]
     public fun initialize_for_test(signer: &signer, cap: Account::SignerCapability) {
         initialize(signer, cap);
     }
-
     #[test_only]
     public fun get_genesis_signer_for_test(): signer acquires GenesisSignerCapability {
         get_genesis_signer()

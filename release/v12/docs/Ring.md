@@ -21,7 +21,6 @@ The capacity is fixed at creation time, and the accessible index is constantly g
 
 <pre><code><b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
-<b>use</b> <a href="Vector.md#0x1_Vector">0x1::Vector</a>;
 </code></pre>
 
 
@@ -194,11 +193,6 @@ Return the capacity of the Ring.
 
 
 
-<pre><code><b>pragma</b> intrinsic = <b>true</b>;
-</code></pre>
-
-
-
 </details>
 
 <a name="0x1_Ring_push"></a>
@@ -326,11 +320,6 @@ Return a mutable reference to the <code>i</code>th element in the Ring <code>r</
 
 <details>
 <summary>Specification</summary>
-
-
-
-<pre><code><b>pragma</b> intrinsic = <b>true</b>;
-</code></pre>
 
 
 
