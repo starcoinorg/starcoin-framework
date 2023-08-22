@@ -97,6 +97,11 @@ module StarcoinFramework::MerkleNFTDistributor {
         *word = (*word | mask);
     }
 
+    spec set_minted_ {
+        pragma verify = false; // Bitwise operator
+        pragma opaque;
+    }
+
     public fun verify_proof<NFTMeta: copy + store + drop>(account: address, creator: address, index: u64, merkle_proof:vector<vector<u8>>): bool
         acquires MerkleNFTDistribution {
             let distribution = borrow_global_mut<MerkleNFTDistribution<NFTMeta>>(creator);
@@ -116,6 +121,11 @@ module StarcoinFramework::MerkleNFTDistributor {
         let word = Vector::borrow( &distribution.claimed_bitmap, claimed_word_index);
         let mask = 1u128 << claimed_bit_index;
         (*word & mask) == mask
+    }
+
+    spec is_minted_ {
+        pragma verify = false; // Bitwise operator
+        pragma opaque;
     }
 
 }

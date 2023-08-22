@@ -15,8 +15,7 @@
 -  [Module Specification](#@Module_Specification_1)
 
 
-<pre><code><b>use</b> <a href="Vector.md#0x1_Vector">0x1::Vector</a>;
-</code></pre>
+<pre><code></code></pre>
 
 
 

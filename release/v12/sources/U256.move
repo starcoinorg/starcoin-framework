@@ -19,9 +19,10 @@ module Arith {
     }
 
     spec split_u64 {
+        pragma verify = false;
         pragma opaque; // MVP cannot reason about bitwise operation
-        ensures result_1 == i / P32;
-        ensures result_2 == i % P32;
+        ensures [abstract] result_1 == i / P32;
+        ensures [abstract] result_2 == i % P32;
     }
 
     /// combine (high, low) to u64,
@@ -31,10 +32,11 @@ module Arith {
     }
 
     spec combine_u64 {
-        pragma opaque; // MVP cannot reason about bitwise operation
+        pragma verify = false;
+        pragma opaque = true; // MVP cannot reason about bitwise operation
         let hi_32 = hi % P32;
         let lo_32 = lo % P32;
-        ensures result == hi_32 * P32 + lo_32;
+        ensures [abstract] result == hi_32 * P32 + lo_32;
     }
 
     /// a + b, with carry
@@ -138,6 +140,7 @@ module U256 {
     }
 
     spec from_u128 {
+        pragma verify = false;
         pragma opaque; // Original function has bitwise operator
         ensures value_of_U256(result) == v;
     }
@@ -179,6 +182,7 @@ module U256 {
     }
 
     spec to_u128 {
+        pragma verify = false;
         pragma opaque; // Original function has bitwise operator
         aborts_if value_of_U256(v) >= P64 * P64;
         ensures value_of_U256(v) == result;

@@ -222,6 +222,19 @@
 
 </details>
 
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+<b>pragma</b> opaque;
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_MerkleNFTDistributor_verify_proof"></a>
 
 ## Function `verify_proof`
@@ -297,6 +310,19 @@
     <b>let</b> mask = 1u128 &lt;&lt; claimed_bit_index;
     (*word & mask) == mask
 }
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+<b>pragma</b> opaque;
 </code></pre>
 
 

@@ -49,6 +49,11 @@ module StarcoinFramework::FromBCS {
     /// deserialize a linear value, its their responsibility that the data they deserialize is
     /// owned.
     public(friend) native fun from_bytes<T>(bytes: vector<u8>): T;
+
+    spec from_bytes {
+        pragma opaque; // internal
+    }
+
     // friend StarcoinFramework::any;
     // friend StarcoinFramework::copyable_any;
 

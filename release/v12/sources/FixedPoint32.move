@@ -117,6 +117,7 @@ module FixedPoint32 {
     }
     spec create_from_rational {
         /// See comment at `Self::multiply_64`.
+        pragma verify = false;
         pragma opaque = true;
         include CreateFromRationalAbortsIf;
         ensures result == spec_create_from_rational(numerator, denominator);

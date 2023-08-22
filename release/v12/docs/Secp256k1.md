@@ -19,7 +19,6 @@ This module implements ECDSA signatures based on the prime-order secp256k1 ellpt
 
 <pre><code><b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
-<b>use</b> <a href="Vector.md#0x1_Vector">0x1::Vector</a>;
 </code></pre>
 
 
@@ -278,6 +277,18 @@ and returns <code>([], <b>false</b>)</code> otherwise.
     recovery_id: u8,
     signature: vector&lt;u8&gt;
 ): (vector&lt;u8&gt;, bool);
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> opaque;
 </code></pre>
 
 
