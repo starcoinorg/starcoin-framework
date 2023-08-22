@@ -73,33 +73,6 @@
 
 
 
-<a name="0x1_TransactionManager_EADDRESS_AND_AUTH_KEY_MISMATCH"></a>
-
-
-
-<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EADDRESS_AND_AUTH_KEY_MISMATCH">EADDRESS_AND_AUTH_KEY_MISMATCH</a>: u64 = 105;
-</code></pre>
-
-
-
-<a name="0x1_TransactionManager_EADDRESS_PUBLIC_KEY_INCONSISTENT"></a>
-
-
-
-<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EADDRESS_PUBLIC_KEY_INCONSISTENT">EADDRESS_PUBLIC_KEY_INCONSISTENT</a>: u64 = 104;
-</code></pre>
-
-
-
-<a name="0x1_TransactionManager_EBAD_TRANSACTION_FEE_TOKEN"></a>
-
-
-
-<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EBAD_TRANSACTION_FEE_TOKEN">EBAD_TRANSACTION_FEE_TOKEN</a>: u64 = 18;
-</code></pre>
-
-
-
 <a name="0x1_TransactionManager_ECOIN_DEPOSIT_IS_ZERO"></a>
 
 
@@ -114,24 +87,6 @@
 
 
 <pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EINSUFFICIENT_BALANCE">EINSUFFICIENT_BALANCE</a>: u64 = 10;
-</code></pre>
-
-
-
-<a name="0x1_TransactionManager_EKEY_ROTATION_CAPABILITY_ALREADY_EXTRACTED"></a>
-
-
-
-<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EKEY_ROTATION_CAPABILITY_ALREADY_EXTRACTED">EKEY_ROTATION_CAPABILITY_ALREADY_EXTRACTED</a>: u64 = 103;
-</code></pre>
-
-
-
-<a name="0x1_TransactionManager_EMALFORMED_AUTHENTICATION_KEY"></a>
-
-
-
-<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EMALFORMED_AUTHENTICATION_KEY">EMALFORMED_AUTHENTICATION_KEY</a>: u64 = 102;
 </code></pre>
 
 
@@ -186,33 +141,6 @@
 
 
 <pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SIGNER_ALREADY_DELEGATED">EPROLOGUE_SIGNER_ALREADY_DELEGATED</a>: u64 = 200;
-</code></pre>
-
-
-
-<a name="0x1_TransactionManager_ERR_SIGNER_ALREADY_DELEGATED"></a>
-
-
-
-<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_ERR_SIGNER_ALREADY_DELEGATED">ERR_SIGNER_ALREADY_DELEGATED</a>: u64 = 107;
-</code></pre>
-
-
-
-<a name="0x1_TransactionManager_ERR_TOKEN_NOT_ACCEPT"></a>
-
-
-
-<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_ERR_TOKEN_NOT_ACCEPT">ERR_TOKEN_NOT_ACCEPT</a>: u64 = 106;
-</code></pre>
-
-
-
-<a name="0x1_TransactionManager_EWITHDRAWAL_CAPABILITY_ALREADY_EXTRACTED"></a>
-
-
-
-<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EWITHDRAWAL_CAPABILITY_ALREADY_EXTRACTED">EWITHDRAWAL_CAPABILITY_ALREADY_EXTRACTED</a>: u64 = 101;
 </code></pre>
 
 
