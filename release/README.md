@@ -78,5 +78,5 @@
 - Make, `spawn_from` native in Vector. [#3889](https://github.com/starcoinorg/starcoin/pull/3889)
 - add Secp256k1, Table, SimpleMap, FromBCS module [#3889](https://github.com/starcoinorg/starcoin/pull/3889)
 - add EasyGas (https://github.com/starcoinorg/starcoin-framework/pull/242)
-- init_script: StdlibUpgradeScripts -f upgrade_from_v11_to_v12
+- init_script: "mpm release --function 0x1::StdlibUpgradeScripts::upgrade_from_v11_to_v12"
 - [docs](./12/docs)

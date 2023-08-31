@@ -307,7 +307,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12">upgrade_from_v11_to_v12</a>(sender: &signer)
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12">upgrade_from_v11_to_v12</a>(sender: signer)
 </code></pre>
 
 
@@ -316,8 +316,8 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12">upgrade_from_v11_to_v12</a>(sender: &signer) {
-    <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>(sender);
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12">upgrade_from_v11_to_v12</a>(sender: signer) {
+    <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>(&sender);
 }
 </code></pre>
 

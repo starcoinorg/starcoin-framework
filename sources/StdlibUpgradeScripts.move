@@ -104,8 +104,8 @@ module StdlibUpgradeScripts {
             };
         }
 
-        public entry fun upgrade_from_v11_to_v12(sender: &signer) {
-            do_upgrade_from_v11_to_v12(sender);
+        public entry fun upgrade_from_v11_to_v12(sender: signer) {
+            do_upgrade_from_v11_to_v12(&sender);
         }
         public fun do_upgrade_from_v11_to_v12(sender: &signer) {
             {
