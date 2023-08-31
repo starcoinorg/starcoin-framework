@@ -320,9 +320,15 @@ module GasSchedule {
     public fun initialize(account: &signer, gas_schedule: GasSchedule) {
         CoreAddresses::assert_genesis_address(account);
         Config::publish_new_config<GasSchedule>(
-            account, 
+            account,
             gas_schedule,
         );
+    }
+
+    public fun new_gas_schedule(): GasSchedule {
+        GasSchedule {
+            entries: gas_schedule(),
+        }
     }
 
     public fun new_gas_schedule_for_test(): GasSchedule {
