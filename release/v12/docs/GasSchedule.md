@@ -12,6 +12,7 @@ Gas schedule configuration.
 -  [Function `new_gas_entry`](#0x1_GasSchedule_new_gas_entry)
 -  [Function `new_constant_entry`](#0x1_GasSchedule_new_constant_entry)
 -  [Function `initialize`](#0x1_GasSchedule_initialize)
+-  [Function `new_gas_schedule`](#0x1_GasSchedule_new_gas_schedule)
 -  [Function `new_gas_schedule_for_test`](#0x1_GasSchedule_new_gas_schedule_for_test)
 -  [Module Specification](#@Module_Specification_0)
 
@@ -462,6 +463,32 @@ Initialize the gas schedule under the genesis account
         account,
         gas_schedule,
     );
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GasSchedule_new_gas_schedule"></a>
+
+## Function `new_gas_schedule`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GasSchedule.md#0x1_GasSchedule_new_gas_schedule">new_gas_schedule</a>(): <a href="GasSchedule.md#0x1_GasSchedule_GasSchedule">GasSchedule::GasSchedule</a>
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GasSchedule.md#0x1_GasSchedule_new_gas_schedule">new_gas_schedule</a>(): <a href="GasSchedule.md#0x1_GasSchedule">GasSchedule</a> {
+    <a href="GasSchedule.md#0x1_GasSchedule">GasSchedule</a> {
+        entries: <a href="GasSchedule.md#0x1_GasSchedule_gas_schedule">gas_schedule</a>(),
+    }
 }
 </code></pre>
 
