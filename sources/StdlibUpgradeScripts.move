@@ -22,9 +22,9 @@ module StdlibUpgradeScripts {
         use StarcoinFramework::GenesisSignerCapability;
         use StarcoinFramework::Account;
         use StarcoinFramework::Block;
-    use StarcoinFramework::GasSchedule;
+        use StarcoinFramework::GasSchedule;
 
-    spec module {
+        spec module {
             pragma verify = false;
             pragma aborts_if_is_strict = true;
         }
