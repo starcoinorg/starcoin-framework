@@ -193,16 +193,6 @@ module Account {
         signer_cap
     }
 
-    //TODO: Create StarcoinDAO , need modify or remove get_genesis_capability soon
-    public (friend) fun get_genesis_capability():SignerCapability{
-        let signer_cap = SignerCapability {addr: Token::token_address<STC>() };
-        signer_cap
-    }
-    #[test_only]
-    public fun get_genesis_capability_for_test(): SignerCapability {
-        get_genesis_capability()
-    }
-
     public fun create_signer_with_cap(cap: &SignerCapability): signer {
         create_signer(cap.addr)
     }

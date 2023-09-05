@@ -22,11 +22,11 @@ The module for StdlibUpgrade init scripts
 
 <pre><code><b>use</b> <a href="Account.md#0x1_Account">0x1::Account</a>;
 <b>use</b> <a href="Block.md#0x1_Block">0x1::Block</a>;
-<b>use</b> <a href="ChainId.md#0x1_ChainId">0x1::ChainId</a>;
 <b>use</b> <a href="Collection.md#0x1_Collection">0x1::Collection</a>;
 <b>use</b> <a href="Config.md#0x1_Config">0x1::Config</a>;
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
 <b>use</b> <a href="EasyGas.md#0x1_EasyGas">0x1::EasyGas</a>;
+<b>use</b> <a href="GasSchedule.md#0x1_GasSchedule">0x1::GasSchedule</a>;
 <b>use</b> <a href="GenesisNFT.md#0x1_GenesisNFT">0x1::GenesisNFT</a>;
 <b>use</b> <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability">0x1::GenesisSignerCapability</a>;
 <b>use</b> <a href="LanguageVersion.md#0x1_LanguageVersion">0x1::LanguageVersion</a>;
@@ -341,11 +341,8 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 
 <pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>(sender: &signer) {
     {
-        <b>let</b> <b>address</b> = <b>if</b> (<a href="ChainId.md#0x1_ChainId_is_main">ChainId::is_main</a>()){
-            @0x8c109349c6bd91411d6bc962e080c4a3
-        }<b>else</b> {
-            @0x4783d08fb16990bd35d83f3e23bf93b8
-        };
+        <a href="GasSchedule.md#0x1_GasSchedule_initialize">GasSchedule::initialize</a>(sender,<a href="GasSchedule.md#0x1_GasSchedule_new_gas_schedule">GasSchedule::new_gas_schedule</a>());
+        <b>let</b> <b>address</b> = @0x8c109349c6bd91411d6bc962e080c4a3;
         <a href="EasyGas.md#0x1_EasyGas_initialize">EasyGas::initialize</a>(sender,
             <b>address</b>,
             b"STAR",b"STAR",

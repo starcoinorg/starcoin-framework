@@ -121,6 +121,7 @@ module EasyGas {
 
 
 module EasyGasScript {
+    use StarcoinFramework::TransferScripts::peer_to_peer_v2;
     use StarcoinFramework::EasyGas;
 
     public entry fun register<TokenType: store>(sender: signer, precision: u8) {
@@ -138,6 +139,9 @@ module EasyGasScript {
     public entry fun withdraw_gas_fee_entry<TokenType: store>(sender: signer, amount: u128) {
         EasyGas::withdraw_gas_fee<TokenType>(&sender, amount);
     }
-
+    public entry fun deposit<TokenType: store>(sender: signer, amount:u128)  {
+        let address = EasyGas::get_gas_fee_address();
+        peer_to_peer_v2<TokenType>(sender, address, amount)
+    }
 }
 }

@@ -12,6 +12,7 @@ Gas schedule configuration.
 -  [Function `new_gas_entry`](#0x1_GasSchedule_new_gas_entry)
 -  [Function `new_constant_entry`](#0x1_GasSchedule_new_constant_entry)
 -  [Function `initialize`](#0x1_GasSchedule_initialize)
+-  [Function `new_gas_schedule`](#0x1_GasSchedule_new_gas_schedule)
 -  [Function `new_gas_schedule_for_test`](#0x1_GasSchedule_new_gas_schedule_for_test)
 -  [Module Specification](#@Module_Specification_0)
 
@@ -265,7 +266,7 @@ The  <code>GasCost</code> tracks:
     //<a href="Signature.md#0x1_Signature_ed25519_verify">Signature::ed25519_verify</a> 2
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="GasSchedule.md#0x1_GasSchedule_new_gas_entry">new_gas_entry</a>(b"starcoin_natives.signature.ed25519_verify.per_byte", 61, 1));
     //ED25519_THRESHOLD_VERIFY 3 this <b>native</b> funciton is deprecated
-    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="GasSchedule.md#0x1_GasSchedule_new_gas_entry">new_gas_entry</a>(b"", 3351, 1));
+    //<a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="GasSchedule.md#0x1_GasSchedule_new_gas_entry">new_gas_entry</a>(b"", 3351, 1));
     //BSC::to_bytes 4
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="GasSchedule.md#0x1_GasSchedule_new_gas_entry">new_gas_entry</a>(b"move_stdlib.bcs.to_bytes.per_byte_serialized", 181, 1));
     //<a href="Vector.md#0x1_Vector_length">Vector::length</a> 5
@@ -275,7 +276,7 @@ The  <code>GasCost</code> tracks:
     //<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a> 7
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="GasSchedule.md#0x1_GasSchedule_new_gas_entry">new_gas_entry</a>(b"move_stdlib.vector.borrow.base", 1334, 1));
     //<a href="Vector.md#0x1_Vector_borrow_mut">Vector::borrow_mut</a> 8
-    <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="GasSchedule.md#0x1_GasSchedule_new_gas_entry">new_gas_entry</a>(b"", 1902, 1));
+    //<a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="GasSchedule.md#0x1_GasSchedule_new_gas_entry">new_gas_entry</a>(b"", 1902, 1));
     //<a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a> 9
     <a href="Vector.md#0x1_Vector_push_back">Vector::push_back</a>(&<b>mut</b> table, <a href="GasSchedule.md#0x1_GasSchedule_new_gas_entry">new_gas_entry</a>(b"move_stdlib.vector.push_back.legacy_per_abstract_memory_unit", 53, 1));
     //<a href="Vector.md#0x1_Vector_pop_back">Vector::pop_back</a> 10
@@ -462,6 +463,32 @@ Initialize the gas schedule under the genesis account
         account,
         gas_schedule,
     );
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_GasSchedule_new_gas_schedule"></a>
+
+## Function `new_gas_schedule`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GasSchedule.md#0x1_GasSchedule_new_gas_schedule">new_gas_schedule</a>(): <a href="GasSchedule.md#0x1_GasSchedule_GasSchedule">GasSchedule::GasSchedule</a>
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="GasSchedule.md#0x1_GasSchedule_new_gas_schedule">new_gas_schedule</a>(): <a href="GasSchedule.md#0x1_GasSchedule">GasSchedule</a> {
+    <a href="GasSchedule.md#0x1_GasSchedule">GasSchedule</a> {
+        entries: <a href="GasSchedule.md#0x1_GasSchedule_gas_schedule">gas_schedule</a>(),
+    }
 }
 </code></pre>
 

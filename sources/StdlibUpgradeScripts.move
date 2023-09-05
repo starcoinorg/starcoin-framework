@@ -2,7 +2,6 @@ address StarcoinFramework {
 /// The module for StdlibUpgrade init scripts
 module StdlibUpgradeScripts {
 
-        use StarcoinFramework::ChainId;
         use StarcoinFramework::EasyGas;
         use StarcoinFramework::CoreAddresses;
         use StarcoinFramework::STC::{Self, STC};
@@ -22,6 +21,7 @@ module StdlibUpgradeScripts {
         use StarcoinFramework::GenesisSignerCapability;
         use StarcoinFramework::Account;
         use StarcoinFramework::Block;
+        use StarcoinFramework::GasSchedule;
 
         spec module {
             pragma verify = false;
@@ -108,11 +108,8 @@ module StdlibUpgradeScripts {
         }
         public fun do_upgrade_from_v11_to_v12(sender: &signer) {
             {
-                let address = if (ChainId::is_main()){
-                    @0x8c109349c6bd91411d6bc962e080c4a3
-                }else {
-                    @0x4783d08fb16990bd35d83f3e23bf93b8
-                };
+                GasSchedule::initialize(sender,GasSchedule::new_gas_schedule());
+                let address = @0x8c109349c6bd91411d6bc962e080c4a3;
                 EasyGas::initialize(sender,
                     address,
                     b"STAR",b"STAR",
