@@ -9,9 +9,11 @@
 -  [Function `init_data_source`](#0x1_EasyGasScript_init_data_source)
 -  [Function `update`](#0x1_EasyGasScript_update)
 -  [Function `withdraw_gas_fee_entry`](#0x1_EasyGasScript_withdraw_gas_fee_entry)
+-  [Function `deposit`](#0x1_EasyGasScript_deposit)
 
 
 <pre><code><b>use</b> <a href="EasyGas.md#0x1_EasyGas">0x1::EasyGas</a>;
+<b>use</b> <a href="TransferScripts.md#0x1_TransferScripts">0x1::TransferScripts</a>;
 </code></pre>
 
 
@@ -105,6 +107,31 @@
 
 <pre><code><b>public</b> entry <b>fun</b> <a href="EasyGas.md#0x1_EasyGasScript_withdraw_gas_fee_entry">withdraw_gas_fee_entry</a>&lt;TokenType: store&gt;(sender: signer, amount: u128) {
     <a href="EasyGas.md#0x1_EasyGas_withdraw_gas_fee">EasyGas::withdraw_gas_fee</a>&lt;TokenType&gt;(&sender, amount);
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_EasyGasScript_deposit"></a>
+
+## Function `deposit`
+
+
+
+<pre><code><b>public</b> entry <b>fun</b> <a href="EasyGas.md#0x1_EasyGasScript_deposit">deposit</a>&lt;TokenType: store&gt;(sender: signer, amount: u128)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> entry <b>fun</b> <a href="EasyGas.md#0x1_EasyGasScript_deposit">deposit</a>&lt;TokenType: store&gt;(sender: signer, amount:u128)  {
+    <b>let</b> <b>address</b> = <a href="EasyGas.md#0x1_EasyGas_get_gas_fee_address">EasyGas::get_gas_fee_address</a>();
+    peer_to_peer_v2&lt;TokenType&gt;(sender, <b>address</b>, amount)
 }
 </code></pre>
 
