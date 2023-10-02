@@ -20,6 +20,7 @@ module StdlibUpgradeScripts {
         use StarcoinFramework::GenesisSignerCapability;
         use StarcoinFramework::Account;
         use StarcoinFramework::Block;
+        use StarcoinFramework::GasSchedule;
 
         spec module {
             pragma verify = false;
@@ -106,6 +107,7 @@ module StdlibUpgradeScripts {
         }
         public fun do_upgrade_from_v11_to_v12(sender: &signer) {
             {
+                GasSchedule::initialize(sender, GasSchedule::new_gas_schedule());
                 Block::checkpoints_init(sender);
             };
         }

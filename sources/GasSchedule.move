@@ -186,7 +186,7 @@ module GasSchedule {
         //Signature::ed25519_verify 2
         Vector::push_back(&mut table, new_gas_entry(b"starcoin_natives.signature.ed25519_verify.per_byte", 61, 1));
         //ED25519_THRESHOLD_VERIFY 3 this native funciton is deprecated
-        Vector::push_back(&mut table, new_gas_entry(b"", 3351, 1));
+        // Vector::push_back(&mut table, new_gas_entry(b"", 3351, 1));
         //BSC::to_bytes 4
         Vector::push_back(&mut table, new_gas_entry(b"move_stdlib.bcs.to_bytes.per_byte_serialized", 181, 1));
         //Vector::length 5
@@ -196,7 +196,7 @@ module GasSchedule {
         //Vector::borrow 7
         Vector::push_back(&mut table, new_gas_entry(b"move_stdlib.vector.borrow.base", 1334, 1));
         //Vector::borrow_mut 8
-        Vector::push_back(&mut table, new_gas_entry(b"", 1902, 1));
+        //Vector::push_back(&mut table, new_gas_entry(b"", 1902, 1));
         //Vector::push_back 9
         Vector::push_back(&mut table, new_gas_entry(b"move_stdlib.vector.push_back.legacy_per_abstract_memory_unit", 53, 1));
         //Vector::pop_back 10
@@ -323,6 +323,12 @@ module GasSchedule {
             account, 
             gas_schedule,
         );
+    }
+
+    public fun new_gas_schedule(): GasSchedule {
+        GasSchedule {
+            entries: gas_schedule(),
+        }
     }
 
     public fun new_gas_schedule_for_test(): GasSchedule {
