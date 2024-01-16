@@ -2,6 +2,8 @@ address StarcoinFramework {
 /// The module for init Genesis
 module Genesis {
 
+    use StarcoinFramework::Math::u64_max;
+    use StarcoinFramework::FlexiDagConfig;
     use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Account;
     use StarcoinFramework::Signer;
@@ -402,6 +404,7 @@ module Genesis {
             Option::some(0u64),
         );
         BlockReward::initialize(&genesis_account, reward_delay);
+        FlexiDagConfig::initialize(&genesis_account, u64_max());
 
         // stc should be initialized after genesis_account's module upgrade strategy set and all on chain config init.
         let withdraw_cap = STC::initialize_v2(&genesis_account, total_stc_amount, voting_delay, voting_period, voting_quorum_rate, min_action_delay);
@@ -447,6 +450,7 @@ module Genesis {
         };
         StdlibUpgradeScripts::do_upgrade_from_v6_to_v7_with_language_version(&genesis_account, 6);
         StdlibUpgradeScripts::do_upgrade_from_v11_to_v12(&genesis_account);
+        StdlibUpgradeScripts::do_upgrade_from_v12_to_v13(&genesis_account);
         //Start time, Timestamp::is_genesis() will return false. this call should at the end of genesis init.
         Timestamp::set_time_has_started(&genesis_account);
         Account::release_genesis_signer(genesis_account);

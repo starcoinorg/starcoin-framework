@@ -2,6 +2,8 @@ address StarcoinFramework {
 /// The module for StdlibUpgrade init scripts
 module StdlibUpgradeScripts {
 
+        use StarcoinFramework::Math::u64_max;
+        use StarcoinFramework::FlexiDagConfig;
         use StarcoinFramework::EasyGas;
         use StarcoinFramework::CoreAddresses;
         use StarcoinFramework::STC::{Self, STC};
@@ -115,6 +117,15 @@ module StdlibUpgradeScripts {
                     b"STAR",b"STAR",
                     address);
                 Block::checkpoints_init(sender);
+            };
+        }
+
+        public entry fun upgrade_from_v12_to_v13(sender: signer) {
+            do_upgrade_from_v12_to_v13(&sender);
+        }
+        public fun do_upgrade_from_v12_to_v13(sender: &signer) {
+            {
+                FlexiDagConfig::initialize(sender, u64_max());
             };
         }
 }
