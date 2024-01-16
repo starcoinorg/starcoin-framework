@@ -1,6 +1,8 @@
 address StarcoinFramework {
 /// Block module provide metadata for generated blocks.
 module Block {
+    use StarcoinFramework::Option;
+    use StarcoinFramework::FlexiDagConfig;
     use StarcoinFramework::Event;
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::Signer;
@@ -22,6 +24,8 @@ module Block {
         author: address,
         /// number of uncles.
         uncles: u64,
+        /// Hash of the parents hash for a Dag block.
+        parents_hash: Option::Option<vector<u8>>,
         /// Handle of events when new blocks are emitted
         new_block_events: Event::EventHandle<Self::NewBlockEvent>,
     }
@@ -32,6 +36,7 @@ module Block {
         author: address,
         timestamp: u64,
         uncles: u64,
+        parents_hash: Option::Option<vector<u8>>,
     }
 
     const EBLOCK_NUMBER_MISMATCH: u64 = 17;
@@ -45,9 +50,10 @@ module Block {
             account,
             BlockMetadata {
                 number: 0,
-                parent_hash: parent_hash,
+                parent_hash,
                 author: CoreAddresses::GENESIS_ADDRESS(),
                 uncles: 0,
+                parents_hash: Option::none<vector<u8>>(),
                 new_block_events: Event::new_event_handle<Self::NewBlockEvent>(account),
             });
     }
@@ -60,7 +66,7 @@ module Block {
 
     /// Get the current block number
     public fun get_current_block_number(): u64 acquires BlockMetadata {
-      borrow_global<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS()).number
+        borrow_global<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS()).number
     }
 
     spec get_current_block_number {
@@ -69,16 +75,24 @@ module Block {
 
     /// Get the hash of the parent block.
     public fun get_parent_hash(): vector<u8> acquires BlockMetadata {
-      *&borrow_global<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS()).parent_hash
+        *&borrow_global<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS()).parent_hash
     }
 
     spec get_parent_hash {
         aborts_if !exists<BlockMetadata>(CoreAddresses::SPEC_GENESIS_ADDRESS());
     }
 
+    public fun get_parents_hash(): Option::Option<vector<u8>> acquires BlockMetadata {
+        *&borrow_global<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS()).parents_hash
+    }
+
+    spec get_parents_hash {
+        aborts_if !exists<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
+    }
+
     /// Gets the address of the author of the current block
     public fun get_current_author(): address acquires BlockMetadata {
-      borrow_global<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS()).author
+        borrow_global<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS()).author
     }
 
     spec get_current_author {
@@ -86,24 +100,38 @@ module Block {
     }
 
     /// Call at block prologue
-    public fun process_block_metadata(account: &signer, parent_hash: vector<u8>,author: address, timestamp: u64, uncles:u64, number:u64) acquires BlockMetadata{
+    public fun process_block_metadata(
+        account: &signer,
+        parent_hash: vector<u8>,
+        author: address,
+        timestamp: u64,
+        uncles: u64,
+        number: u64,
+        parents_hash: Option::Option<vector<u8>>
+    ) acquires BlockMetadata {
         CoreAddresses::assert_genesis_address(account);
 
         let block_metadata_ref = borrow_global_mut<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
         assert!(number == (block_metadata_ref.number + 1), Errors::invalid_argument(EBLOCK_NUMBER_MISMATCH));
+        assert!(
+            number > FlexiDagConfig::effective_height(CoreAddresses::GENESIS_ADDRESS()),
+            Errors::invalid_state(EBLOCK_NUMBER_MISMATCH)
+        );
         block_metadata_ref.number = number;
-        block_metadata_ref.author= author;
+        block_metadata_ref.author = author;
         block_metadata_ref.parent_hash = parent_hash;
         block_metadata_ref.uncles = uncles;
+        block_metadata_ref.parents_hash = parents_hash;
 
         Event::emit_event<NewBlockEvent>(
-          &mut block_metadata_ref.new_block_events,
-          NewBlockEvent {
-              number: number,
-              author: author,
-              timestamp: timestamp,
-              uncles: uncles,
-          }
+            &mut block_metadata_ref.new_block_events,
+            NewBlockEvent {
+                number,
+                author,
+                timestamp,
+                uncles,
+                parents_hash,
+            }
         );
     }
 

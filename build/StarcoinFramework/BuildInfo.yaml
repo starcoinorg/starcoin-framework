@@ -1,0 +1,20 @@
+---
+compiled_package_info:
+  package_name: StarcoinFramework
+  address_alias_instantiation:
+    StarcoinAssociation: "0x0000000000000000000000000a550c18"
+    StarcoinFramework: "0x00000000000000000000000000000001"
+    VMReserved: "0x00000000000000000000000000000000"
+  source_digest: D44931F7D1A422F556EC2F1A0AC206D39AB15F0F8669C202ED2BFCBD020CB302
+  build_flags:
+    dev_mode: false
+    test_mode: false
+    generate_docs: true
+    generate_abis: true
+    install_dir: ~
+    force_recompilation: true
+    additional_named_addresses: {}
+    architecture: ~
+    fetch_deps_only: false
+    skip_fetch_latest_git_deps: false
+dependencies: []

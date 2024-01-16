@@ -4,6 +4,7 @@ address StarcoinFramework {
 /// 2. prologue of blocks.
 module TransactionManager {
     use StarcoinFramework::FrozenConfigStrategy;
+    use StarcoinFramework::Option;
     use StarcoinFramework::TransactionTimeout;
     use StarcoinFramework::Signer;
     use StarcoinFramework::CoreAddresses;
@@ -118,13 +119,18 @@ module TransactionManager {
         aborts_if !exists<ChainId::ChainId>(CoreAddresses::GENESIS_ADDRESS());
         aborts_if ChainId::get() != chain_id;
         aborts_if !exists<Account::Account>(txn_sender);
-        aborts_if Hash::sha3_256(txn_authentication_key_preimage) != global<Account::Account>(txn_sender).authentication_key;
+        aborts_if Hash::sha3_256(txn_authentication_key_preimage) != global<Account::Account>(
+            txn_sender
+        ).authentication_key;
         aborts_if txn_gas_price * txn_max_gas_units > max_u64();
         include Timestamp::AbortsIfTimestampNotExists;
         include Block::AbortsIfBlockMetadataNotExist;
         aborts_if txn_gas_price * txn_max_gas_units > 0 && !exists<Account::Balance<TokenType>>(txn_sender);
-        aborts_if txn_gas_price * txn_max_gas_units > 0 && StarcoinFramework::Token::spec_token_code<TokenType>() != StarcoinFramework::Token::spec_token_code<STC>();
-        aborts_if txn_gas_price * txn_max_gas_units > 0 && global<Account::Balance<TokenType>>(txn_sender).token.value < txn_gas_price * txn_max_gas_units;
+        aborts_if txn_gas_price * txn_max_gas_units > 0 && StarcoinFramework::Token::spec_token_code<TokenType>(
+        ) != StarcoinFramework::Token::spec_token_code<STC>();
+        aborts_if txn_gas_price * txn_max_gas_units > 0 && global<Account::Balance<TokenType>>(
+            txn_sender
+        ).token.value < txn_gas_price * txn_max_gas_units;
         aborts_if txn_gas_price * txn_max_gas_units > 0 && txn_sequence_number >= max_u64();
         aborts_if txn_sequence_number < global<Account::Account>(txn_sender).sequence_number;
         aborts_if txn_sequence_number != global<Account::Account>(txn_sender).sequence_number;
@@ -133,9 +139,12 @@ module TransactionManager {
         include TransactionPublishOption::AbortsIfTxnPublishOptionNotExistWithBool {
             is_script_or_package: (txn_payload_type == TXN_PAYLOAD_TYPE_PACKAGE || txn_payload_type == TXN_PAYLOAD_TYPE_SCRIPT),
         };
-        aborts_if txn_payload_type == TXN_PAYLOAD_TYPE_PACKAGE && txn_package_address != CoreAddresses::GENESIS_ADDRESS() && !TransactionPublishOption::spec_is_module_allowed(Signer::address_of(account));
-        aborts_if txn_payload_type == TXN_PAYLOAD_TYPE_SCRIPT && !TransactionPublishOption::spec_is_script_allowed(Signer::address_of(account));
-        include PackageTxnManager::CheckPackageTxnAbortsIfWithType{is_package: (txn_payload_type == TXN_PAYLOAD_TYPE_PACKAGE), sender:txn_sender, package_address: txn_package_address, package_hash: txn_script_or_package_hash};
+        aborts_if txn_payload_type == TXN_PAYLOAD_TYPE_PACKAGE && txn_package_address != CoreAddresses::GENESIS_ADDRESS(
+        ) && !TransactionPublishOption::spec_is_module_allowed(Signer::address_of(account));
+        aborts_if txn_payload_type == TXN_PAYLOAD_TYPE_SCRIPT && !TransactionPublishOption::spec_is_script_allowed(
+            Signer::address_of(account)
+        );
+        include PackageTxnManager::CheckPackageTxnAbortsIfWithType { is_package: (txn_payload_type == TXN_PAYLOAD_TYPE_PACKAGE), sender: txn_sender, package_address: txn_package_address, package_hash: txn_script_or_package_hash };
     }
 
     /// The epilogue is invoked at the end of transactions.
@@ -153,7 +162,19 @@ module TransactionManager {
         // txn execute success or fail.
         success: bool,
     ) {
-        epilogue_v2<TokenType>(account, txn_sender, txn_sequence_number, Vector::empty(), txn_gas_price, txn_max_gas_units, gas_units_remaining, txn_payload_type, _txn_script_or_package_hash, txn_package_address, success)
+        epilogue_v2<TokenType>(
+            account,
+            txn_sender,
+            txn_sequence_number,
+            Vector::empty(),
+            txn_gas_price,
+            txn_max_gas_units,
+            gas_units_remaining,
+            txn_payload_type,
+            _txn_script_or_package_hash,
+            txn_package_address,
+            success
+        )
     }
 
     /// The epilogue is invoked at the end of transactions.
@@ -220,6 +241,7 @@ module TransactionManager {
         number: u64,
         chain_id: u8,
         parent_gas_used: u64,
+        parents_hash: Option::Option<vector<u8>>,
     ) {
         // Can only be invoked by genesis account
         CoreAddresses::assert_genesis_address(&account);
@@ -239,6 +261,7 @@ module TransactionManager {
             timestamp,
             uncles,
             number,
+            parents_hash,
         );
         let reward = Epoch::adjust_epoch(&account, number, timestamp, uncles, parent_gas_used);
         // pass in previous block gas fees.
