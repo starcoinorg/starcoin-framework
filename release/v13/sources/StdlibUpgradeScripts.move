@@ -126,7 +126,6 @@ module StdlibUpgradeScripts {
         public fun do_upgrade_from_v12_to_v13(sender: &signer) {
             {
                 FlexiDagConfig::initialize(sender, u64_max());
-                Block::checkpoints_init(sender);
             };
         }
 }

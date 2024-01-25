@@ -402,7 +402,6 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 <pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v13">do_upgrade_from_v12_to_v13</a>(sender: &signer) {
     {
         <a href="FlexiDagConfig.md#0x1_FlexiDagConfig_initialize">FlexiDagConfig::initialize</a>(sender, u64_max());
-        <a href="Block.md#0x1_Block_checkpoints_init">Block::checkpoints_init</a>(sender);
     };
 }
 </code></pre>
