@@ -24,10 +24,8 @@ The module for init Genesis
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
 <b>use</b> <a href="DummyToken.md#0x1_DummyToken">0x1::DummyToken</a>;
 <b>use</b> <a href="Epoch.md#0x1_Epoch">0x1::Epoch</a>;
-<b>use</b> <a href="FlexiDagConfig.md#0x1_FlexiDagConfig">0x1::FlexiDagConfig</a>;
 <b>use</b> <a href="GenesisNFT.md#0x1_GenesisNFT">0x1::GenesisNFT</a>;
 <b>use</b> <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability">0x1::GenesisSignerCapability</a>;
-<b>use</b> <a href="Math.md#0x1_Math">0x1::Math</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
 <b>use</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager">0x1::PackageTxnManager</a>;
 <b>use</b> <a href="STC.md#0x1_STC">0x1::STC</a>;
@@ -466,7 +464,6 @@ The module for init Genesis
         <a href="Option.md#0x1_Option_some">Option::some</a>(0u64),
     );
     <a href="BlockReward.md#0x1_BlockReward_initialize">BlockReward::initialize</a>(&genesis_account, reward_delay);
-    <a href="FlexiDagConfig.md#0x1_FlexiDagConfig_initialize">FlexiDagConfig::initialize</a>(&genesis_account, u64_max());
 
     // stc should be initialized after genesis_account's <b>module</b> upgrade strategy set and all on chain config init.
     <b>let</b> withdraw_cap = <a href="STC.md#0x1_STC_initialize_v2">STC::initialize_v2</a>(&genesis_account, total_stc_amount, voting_delay, voting_period, voting_quorum_rate, min_action_delay);

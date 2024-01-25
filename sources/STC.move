@@ -2,7 +2,6 @@ address StarcoinFramework {
 /// STC is the token of Starcoin blockchain.
 /// It uses apis defined in the `Token` module.
 module STC {
-    use StarcoinFramework::FlexiDagConfig;
     use StarcoinFramework::Token::{Self, Token};
     use StarcoinFramework::Dao;
     use StarcoinFramework::ModifyDaoConfigProposal;
@@ -123,7 +122,6 @@ module STC {
         OnChainConfigDao::plugin<STC, ConsensusConfig::ConsensusConfig>(account);
         OnChainConfigDao::plugin<STC, RewardConfig::RewardConfig>(account);
         OnChainConfigDao::plugin<STC, TransactionTimeoutConfig::TransactionTimeoutConfig>(account);
-        OnChainConfigDao::plugin<STC, FlexiDagConfig::FlexiDagConfig>(account);
         withdraw_cap
     }
 

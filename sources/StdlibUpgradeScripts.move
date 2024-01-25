@@ -126,6 +126,7 @@ module StdlibUpgradeScripts {
         public fun do_upgrade_from_v12_to_v13(sender: &signer) {
             {
                 FlexiDagConfig::initialize(sender, u64_max());
+                OnChainConfigDao::plugin<STC, FlexiDagConfig::FlexiDagConfig>(sender);
             };
         }
 }
