@@ -33,7 +33,6 @@ Block module provide metadata for generated blocks.
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Event.md#0x1_Event">0x1::Event</a>;
-<b>use</b> <a href="FlexiDagConfig.md#0x1_FlexiDagConfig">0x1::FlexiDagConfig</a>;
 <b>use</b> <a href="Hash.md#0x1_Hash">0x1::Hash</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
 <b>use</b> <a href="Ring.md#0x1_Ring">0x1::Ring</a>;
@@ -85,10 +84,10 @@ Block metadata struct.
  number of uncles.
 </dd>
 <dt>
-<code>parents_hash: <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;</code>
+<code>parents_hash: vector&lt;u8&gt;</code>
 </dt>
 <dd>
- Hash of the parents hash for a Dag block.
+ An Array of the parents hash for a Dag block.
 </dd>
 <dt>
 <code>new_block_events: <a href="Event.md#0x1_Event_EventHandle">Event::EventHandle</a>&lt;<a href="Block.md#0x1_Block_NewBlockEvent">Block::NewBlockEvent</a>&gt;</code>
@@ -143,7 +142,7 @@ Events emitted when new block generated.
 
 </dd>
 <dt>
-<code>parents_hash: <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;</code>
+<code>parents_hash: vector&lt;u8&gt;</code>
 </dt>
 <dd>
 
@@ -326,7 +325,7 @@ This can only be invoked by the GENESIS_ACCOUNT at genesis
             parent_hash,
             author: <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>(),
             uncles: 0,
-            parents_hash: <a href="Option.md#0x1_Option_none">Option::none</a>&lt;vector&lt;u8&gt;&gt;(),
+            parents_hash: <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>(),
             new_block_events: <a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="Block.md#0x1_Block_NewBlockEvent">Self::NewBlockEvent</a>&gt;(account),
         });
 }
@@ -430,7 +429,7 @@ Get the hash of the parent block.
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_get_parents_hash">get_parents_hash</a>(): <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_get_parents_hash">get_parents_hash</a>(): vector&lt;u8&gt;
 </code></pre>
 
 
@@ -439,7 +438,7 @@ Get the hash of the parent block.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_get_parents_hash">get_parents_hash</a>(): <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt; <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_get_parents_hash">get_parents_hash</a>(): vector&lt;u8&gt; <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a> {
     *&<b>borrow_global</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).parents_hash
 }
 </code></pre>
@@ -504,7 +503,7 @@ Gets the address of the author of the current block
 Call at block prologue
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_process_block_metadata">process_block_metadata</a>(account: &signer, parent_hash: vector&lt;u8&gt;, author: <b>address</b>, timestamp: u64, uncles: u64, number: u64, parents_hash: <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;)
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_process_block_metadata">process_block_metadata</a>(account: &signer, parent_hash: vector&lt;u8&gt;, author: <b>address</b>, timestamp: u64, uncles: u64, number: u64, parents_hash: vector&lt;u8&gt;)
 </code></pre>
 
 
@@ -513,12 +512,11 @@ Call at block prologue
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_process_block_metadata">process_block_metadata</a>(account: &signer, parent_hash: vector&lt;u8&gt;,author: <b>address</b>, timestamp: u64, uncles:u64, number:u64, parents_hash: <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;) <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_process_block_metadata">process_block_metadata</a>(account: &signer, parent_hash: vector&lt;u8&gt;,author: <b>address</b>, timestamp: u64, uncles:u64, number:u64, parents_hash: vector&lt;u8&gt;) <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>{
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
 
     <b>let</b> block_metadata_ref = <b>borrow_global_mut</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
     <b>assert</b>!(number == (block_metadata_ref.number + 1), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Block.md#0x1_Block_EBLOCK_NUMBER_MISMATCH">EBLOCK_NUMBER_MISMATCH</a>));
-    <b>assert</b>!(number &gt; <a href="FlexiDagConfig.md#0x1_FlexiDagConfig_effective_height">FlexiDagConfig::effective_height</a>(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="Block.md#0x1_Block_EBLOCK_NUMBER_MISMATCH">EBLOCK_NUMBER_MISMATCH</a>));
     block_metadata_ref.number = number;
     block_metadata_ref.author= author;
     block_metadata_ref.parent_hash = parent_hash;

@@ -1,8 +1,7 @@
 address StarcoinFramework {
 /// Block module provide metadata for generated blocks.
 module Block {
-    use StarcoinFramework::Option;
-    use StarcoinFramework::FlexiDagConfig;
+    use StarcoinFramework::Vector;
     use StarcoinFramework::Event;
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::Signer;
@@ -15,6 +14,7 @@ module Block {
     }
 
     /// Block metadata struct.
+    // parents_hash is for FLexiDag block
     struct BlockMetadata has key {
         /// number of the current block
         number: u64,
@@ -24,19 +24,20 @@ module Block {
         author: address,
         /// number of uncles.
         uncles: u64,
-        /// Hash of the parents hash for a Dag block.
-        parents_hash: Option::Option<vector<u8>>,
+        /// An Array of the parents hash for a Dag block.
+        parents_hash: vector<u8>,
         /// Handle of events when new blocks are emitted
         new_block_events: Event::EventHandle<Self::NewBlockEvent>,
     }
 
     /// Events emitted when new block generated.
+    // parents_hash is for FLexiDag block
     struct NewBlockEvent has drop, store {
         number: u64,
         author: address,
         timestamp: u64,
         uncles: u64,
-        parents_hash: Option::Option<vector<u8>>,
+        parents_hash: vector<u8>,
     }
 
     const EBLOCK_NUMBER_MISMATCH: u64 = 17;
@@ -53,7 +54,7 @@ module Block {
                 parent_hash,
                 author: CoreAddresses::GENESIS_ADDRESS(),
                 uncles: 0,
-                parents_hash: Option::none<vector<u8>>(),
+                parents_hash: Vector::empty(),
                 new_block_events: Event::new_event_handle<Self::NewBlockEvent>(account),
             });
     }
@@ -82,7 +83,7 @@ module Block {
         aborts_if !exists<BlockMetadata>(CoreAddresses::SPEC_GENESIS_ADDRESS());
     }
 
-    public fun get_parents_hash(): Option::Option<vector<u8>> acquires BlockMetadata {
+    public fun get_parents_hash(): vector<u8> acquires BlockMetadata {
         *&borrow_global<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS()).parents_hash
     }
 
@@ -107,16 +108,12 @@ module Block {
         timestamp: u64,
         uncles: u64,
         number: u64,
-        parents_hash: Option::Option<vector<u8>>
+        parents_hash: vector<u8>
     ) acquires BlockMetadata {
         CoreAddresses::assert_genesis_address(account);
 
         let block_metadata_ref = borrow_global_mut<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
         assert!(number == (block_metadata_ref.number + 1), Errors::invalid_argument(EBLOCK_NUMBER_MISMATCH));
-        assert!(
-            number > FlexiDagConfig::effective_height(CoreAddresses::GENESIS_ADDRESS()),
-            Errors::invalid_state(EBLOCK_NUMBER_MISMATCH)
-        );
         block_metadata_ref.number = number;
         block_metadata_ref.author = author;
         block_metadata_ref.parent_hash = parent_hash;

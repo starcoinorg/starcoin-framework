@@ -4,7 +4,6 @@ address StarcoinFramework {
 /// 2. prologue of blocks.
 module TransactionManager {
     use StarcoinFramework::FrozenConfigStrategy;
-    use StarcoinFramework::Option;
     use StarcoinFramework::TransactionTimeout;
     use StarcoinFramework::Signer;
     use StarcoinFramework::CoreAddresses;
@@ -241,7 +240,7 @@ module TransactionManager {
         number: u64,
         chain_id: u8,
         parent_gas_used: u64,
-        parents_hash: Option::Option<vector<u8>>,
+        parents_hash: vector<u8>,
     ) {
         // Can only be invoked by genesis account
         CoreAddresses::assert_genesis_address(&account);
