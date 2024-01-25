@@ -28,7 +28,6 @@
 <b>use</b> <a href="Epoch.md#0x1_Epoch">0x1::Epoch</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Hash.md#0x1_Hash">0x1::Hash</a>;
-<b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
 <b>use</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager">0x1::PackageTxnManager</a>;
 <b>use</b> <a href="STC.md#0x1_STC">0x1::STC</a>;
 <b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
@@ -465,7 +464,7 @@ Set the metadata for the current block and distribute transaction fees and block
 The runtime always runs this before executing the transactions in a block.
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="TransactionManager.md#0x1_TransactionManager_block_prologue">block_prologue</a>(account: signer, parent_hash: vector&lt;u8&gt;, timestamp: u64, author: <b>address</b>, auth_key_vec: vector&lt;u8&gt;, uncles: u64, number: u64, chain_id: u8, parent_gas_used: u64, parents_hash: <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;)
+<pre><code><b>public</b> <b>fun</b> <a href="TransactionManager.md#0x1_TransactionManager_block_prologue">block_prologue</a>(account: signer, parent_hash: vector&lt;u8&gt;, timestamp: u64, author: <b>address</b>, auth_key_vec: vector&lt;u8&gt;, uncles: u64, number: u64, chain_id: u8, parent_gas_used: u64, parents_hash: vector&lt;u8&gt;)
 </code></pre>
 
 
@@ -484,7 +483,7 @@ The runtime always runs this before executing the transactions in a block.
     number: u64,
     chain_id: u8,
     parent_gas_used: u64,
-    parents_hash: <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;vector&lt;u8&gt;&gt;,
+    parents_hash: vector&lt;u8&gt;,
 ) {
     // Can only be invoked by genesis account
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(&account);

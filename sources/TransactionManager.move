@@ -3,7 +3,6 @@ address StarcoinFramework {
 /// 1. prologue and epilogue of transactions.
 /// 2. prologue of blocks.
 module TransactionManager {
-    use StarcoinFramework::Option;
     use StarcoinFramework::Authenticator;
     use StarcoinFramework::Account::{exists_at, is_signer_delegated, transaction_fee_simulate,
         balance, Account, Balance
@@ -226,7 +225,7 @@ module TransactionManager {
         number: u64,
         chain_id: u8,
         parent_gas_used: u64,
-        parents_hash: Option::Option<vector<u8>>,
+        parents_hash: vector<u8>,
     ) {
         // Can only be invoked by genesis account
         CoreAddresses::assert_genesis_address(&account);
