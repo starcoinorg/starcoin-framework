@@ -17,6 +17,7 @@ Block module provide metadata for generated blocks.
 -  [Function `get_parents_hash`](#0x1_Block_get_parents_hash)
 -  [Function `get_current_author`](#0x1_Block_get_current_author)
 -  [Function `process_block_metadata`](#0x1_Block_process_block_metadata)
+-  [Function `process_block_metadata_v2`](#0x1_Block_process_block_metadata_v2)
 -  [Function `checkpoints_init`](#0x1_Block_checkpoints_init)
 -  [Function `checkpoint_entry`](#0x1_Block_checkpoint_entry)
 -  [Function `checkpoint`](#0x1_Block_checkpoint)
@@ -503,7 +504,7 @@ Gets the address of the author of the current block
 Call at block prologue
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_process_block_metadata">process_block_metadata</a>(account: &signer, parent_hash: vector&lt;u8&gt;, author: <b>address</b>, timestamp: u64, uncles: u64, number: u64, parents_hash: vector&lt;u8&gt;)
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_process_block_metadata">process_block_metadata</a>(account: &signer, parent_hash: vector&lt;u8&gt;, author: <b>address</b>, timestamp: u64, uncles: u64, number: u64)
 </code></pre>
 
 
@@ -512,7 +513,47 @@ Call at block prologue
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_process_block_metadata">process_block_metadata</a>(account: &signer, parent_hash: vector&lt;u8&gt;,author: <b>address</b>, timestamp: u64, uncles:u64, number:u64, parents_hash: vector&lt;u8&gt;) <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_process_block_metadata">process_block_metadata</a>(account: &signer, parent_hash: vector&lt;u8&gt;,author: <b>address</b>, timestamp: u64, uncles:u64, number:u64) <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>{
+    <a href="Block.md#0x1_Block_process_block_metadata_v2">Self::process_block_metadata_v2</a>(account, parent_hash, author, timestamp, uncles, number, <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>&lt;u8&gt;())
+
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>();
+<b>aborts_if</b> !<b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+<b>aborts_if</b> number != <b>global</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).number + 1;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_Block_process_block_metadata_v2"></a>
+
+## Function `process_block_metadata_v2`
+
+Call at block prologue for flexidag
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_process_block_metadata_v2">process_block_metadata_v2</a>(account: &signer, parent_hash: vector&lt;u8&gt;, author: <b>address</b>, timestamp: u64, uncles: u64, number: u64, parents_hash: vector&lt;u8&gt;)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_process_block_metadata_v2">process_block_metadata_v2</a>(account: &signer, parent_hash: vector&lt;u8&gt;,author: <b>address</b>, timestamp: u64, uncles:u64, number:u64, parents_hash: vector&lt;u8&gt;) <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>{
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
 
     <b>let</b> block_metadata_ref = <b>borrow_global_mut</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());

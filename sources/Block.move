@@ -128,9 +128,20 @@ module Block {
     spec get_current_author {
         aborts_if !exists<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
     }
-
     /// Call at block prologue
-    public fun process_block_metadata(account: &signer, parent_hash: vector<u8>,author: address, timestamp: u64, uncles:u64, number:u64, parents_hash: vector<u8>) acquires BlockMetadata{
+    public fun process_block_metadata(account: &signer, parent_hash: vector<u8>,author: address, timestamp: u64, uncles:u64, number:u64) acquires BlockMetadata{
+        Self::process_block_metadata_v2(account, parent_hash, author, timestamp, uncles, number, Vector::empty<u8>())
+
+    }
+
+    spec process_block_metadata {
+        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
+        aborts_if !exists<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
+        aborts_if number != global<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS()).number + 1;
+    }
+
+    /// Call at block prologue for flexidag
+    public fun process_block_metadata_v2(account: &signer, parent_hash: vector<u8>,author: address, timestamp: u64, uncles:u64, number:u64, parents_hash: vector<u8>) acquires BlockMetadata{
         CoreAddresses::assert_genesis_address(account);
 
         let block_metadata_ref = borrow_global_mut<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
@@ -153,7 +164,7 @@ module Block {
         );
     }
 
-    spec process_block_metadata {
+    spec process_block_metadata_v2 {
         aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
         aborts_if !exists<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
         aborts_if number != global<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS()).number + 1;
