@@ -4,7 +4,6 @@ address StarcoinFramework {
 /// 2. prologue of blocks.
 module TransactionManager {
     use StarcoinFramework::FrozenConfigStrategy;
-    use StarcoinFramework::Option;
     use StarcoinFramework::TransactionTimeout;
     use StarcoinFramework::Signer;
     use StarcoinFramework::CoreAddresses;
@@ -241,7 +240,28 @@ module TransactionManager {
         number: u64,
         chain_id: u8,
         parent_gas_used: u64,
-        parents_hash: Option::Option<vector<u8>>,
+    ) {
+        Self::block_prologue_v2(account, parent_hash, timestamp, author, auth_key_vec, uncles, number, chain_id, parent_gas_used, Vector::empty<u8>())
+    }
+
+    spec block_prologue {
+        pragma verify = false;//fixme : timeout
+    }
+
+    /// Set the metadata for the current block and distribute transaction fees and block rewards.
+    /// The runtime always runs this before executing the transactions in a block.
+    /// For Flexidag block
+    public fun block_prologue_v2(
+        account: signer,
+        parent_hash: vector<u8>,
+        timestamp: u64,
+        author: address,
+        auth_key_vec: vector<u8>,
+        uncles: u64,
+        number: u64,
+        chain_id: u8,
+        parent_gas_used: u64,
+        parents_hash: vector<u8>,
     ) {
         // Can only be invoked by genesis account
         CoreAddresses::assert_genesis_address(&account);
@@ -254,7 +274,7 @@ module TransactionManager {
 
         // then deal with current block.
         Timestamp::update_global_time(&account, timestamp);
-        Block::process_block_metadata(
+        Block::process_block_metadata_v2(
             &account,
             parent_hash,
             author,
@@ -268,7 +288,7 @@ module TransactionManager {
         BlockReward::process_block_reward(&account, number, reward, author, auth_key_vec, txn_fee);
     }
 
-    spec block_prologue {
+    spec block_prologue_v2 {
         pragma verify = false;//fixme : timeout
     }
 }
