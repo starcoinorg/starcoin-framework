@@ -36,7 +36,7 @@ module TransactionTimeout {
   }
   spec is_valid_transaction_timestamp {
     aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS());
-    aborts_if !exists<Block::BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
+    aborts_if !exists<Block::BlockMetadataV2>(CoreAddresses::GENESIS_ADDRESS());
     include Timestamp::AbortsIfTimestampNotExists;
     aborts_if Block::get_current_block_number() != 0 && Timestamp::now_seconds() + TransactionTimeoutConfig::duration_seconds() > max_u64();
     aborts_if Block::get_current_block_number() != 0 && !exists<Config::Config<TransactionTimeoutConfig::TransactionTimeoutConfig>>(CoreAddresses::GENESIS_ADDRESS());
@@ -44,7 +44,7 @@ module TransactionTimeout {
 
     spec schema AbortsIfTimestampNotValid {
         aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS());
-        aborts_if !exists<Block::BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
+        aborts_if !exists<Block::BlockMetadataV2>(CoreAddresses::GENESIS_ADDRESS());
         include Timestamp::AbortsIfTimestampNotExists;
         aborts_if Block::get_current_block_number() != 0 && Timestamp::now_seconds() + TransactionTimeoutConfig::duration_seconds() > max_u64();
         aborts_if Block::get_current_block_number() != 0 && !exists<Config::Config<TransactionTimeoutConfig::TransactionTimeoutConfig>>(CoreAddresses::GENESIS_ADDRESS());

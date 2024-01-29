@@ -8,14 +8,17 @@ Block module provide metadata for generated blocks.
 
 -  [Resource `BlockMetadata`](#0x1_Block_BlockMetadata)
 -  [Struct `NewBlockEvent`](#0x1_Block_NewBlockEvent)
+-  [Resource `BlockMetadataV2`](#0x1_Block_BlockMetadataV2)
+-  [Struct `NewBlockEventV2`](#0x1_Block_NewBlockEventV2)
 -  [Struct `Checkpoint`](#0x1_Block_Checkpoint)
 -  [Resource `Checkpoints`](#0x1_Block_Checkpoints)
 -  [Constants](#@Constants_0)
 -  [Function `initialize`](#0x1_Block_initialize)
+-  [Function `initialize_blockmetadata_v2`](#0x1_Block_initialize_blockmetadata_v2)
 -  [Function `get_current_block_number`](#0x1_Block_get_current_block_number)
 -  [Function `get_parent_hash`](#0x1_Block_get_parent_hash)
--  [Function `get_parents_hash`](#0x1_Block_get_parents_hash)
 -  [Function `get_current_author`](#0x1_Block_get_current_author)
+-  [Function `get_parents_hash`](#0x1_Block_get_parents_hash)
 -  [Function `process_block_metadata`](#0x1_Block_process_block_metadata)
 -  [Function `process_block_metadata_v2`](#0x1_Block_process_block_metadata_v2)
 -  [Function `checkpoints_init`](#0x1_Block_checkpoints_init)
@@ -85,12 +88,6 @@ Block metadata struct.
  number of uncles.
 </dd>
 <dt>
-<code>parents_hash: vector&lt;u8&gt;</code>
-</dt>
-<dd>
- An Array of the parents hash for a Dag block.
-</dd>
-<dt>
 <code>new_block_events: <a href="Event.md#0x1_Event_EventHandle">Event::EventHandle</a>&lt;<a href="Block.md#0x1_Block_NewBlockEvent">Block::NewBlockEvent</a>&gt;</code>
 </dt>
 <dd>
@@ -109,6 +106,110 @@ Events emitted when new block generated.
 
 
 <pre><code><b>struct</b> <a href="Block.md#0x1_Block_NewBlockEvent">NewBlockEvent</a> <b>has</b> drop, store
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>number: u64</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>author: <b>address</b></code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>timestamp: u64</code>
+</dt>
+<dd>
+
+</dd>
+<dt>
+<code>uncles: u64</code>
+</dt>
+<dd>
+
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_Block_BlockMetadataV2"></a>
+
+## Resource `BlockMetadataV2`
+
+Block metadata struct.
+
+
+<pre><code><b>struct</b> <a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a> <b>has</b> key
+</code></pre>
+
+
+
+<details>
+<summary>Fields</summary>
+
+
+<dl>
+<dt>
+<code>number: u64</code>
+</dt>
+<dd>
+ number of the current block
+</dd>
+<dt>
+<code>parent_hash: vector&lt;u8&gt;</code>
+</dt>
+<dd>
+ Hash of the parent block.
+</dd>
+<dt>
+<code>author: <b>address</b></code>
+</dt>
+<dd>
+ Author of the current block.
+</dd>
+<dt>
+<code>uncles: u64</code>
+</dt>
+<dd>
+ number of uncles.
+</dd>
+<dt>
+<code>parents_hash: vector&lt;u8&gt;</code>
+</dt>
+<dd>
+ An Array of the parents hash for a Dag block.
+</dd>
+<dt>
+<code>new_block_events: <a href="Event.md#0x1_Event_EventHandle">Event::EventHandle</a>&lt;<a href="Block.md#0x1_Block_NewBlockEventV2">Block::NewBlockEventV2</a>&gt;</code>
+</dt>
+<dd>
+ Handle of events when new blocks are emitted
+</dd>
+</dl>
+
+
+</details>
+
+<a name="0x1_Block_NewBlockEventV2"></a>
+
+## Struct `NewBlockEventV2`
+
+Events emitted when new block generated.
+
+
+<pre><code><b>struct</b> <a href="Block.md#0x1_Block_NewBlockEventV2">NewBlockEventV2</a> <b>has</b> drop, store
 </code></pre>
 
 
@@ -326,7 +427,6 @@ This can only be invoked by the GENESIS_ACCOUNT at genesis
             parent_hash,
             author: <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>(),
             uncles: 0,
-            parents_hash: <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>(),
             new_block_events: <a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="Block.md#0x1_Block_NewBlockEvent">Self::NewBlockEvent</a>&gt;(account),
         });
 }
@@ -350,6 +450,58 @@ This can only be invoked by the GENESIS_ACCOUNT at genesis
 
 </details>
 
+<a name="0x1_Block_initialize_blockmetadata_v2"></a>
+
+## Function `initialize_blockmetadata_v2`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_initialize_blockmetadata_v2">initialize_blockmetadata_v2</a>(account: &signer)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_initialize_blockmetadata_v2">initialize_blockmetadata_v2</a>(account: &signer) <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a> {
+    <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
+
+    <b>let</b> block_meta_ref = <b>borrow_global</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+
+    // create new resource base on current block metadata
+    <b>move_to</b>&lt;<a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>&gt;(
+        account,
+        <a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a> {
+            number: block_meta_ref.number,
+            parent_hash: block_meta_ref.parent_hash,
+            author: block_meta_ref.author,
+            uncles: block_meta_ref.uncles,
+            parents_hash: <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>(),
+            new_block_events: <a href="Event.md#0x1_Event_new_event_handle">Event::new_event_handle</a>&lt;<a href="Block.md#0x1_Block_NewBlockEventV2">Self::NewBlockEventV2</a>&gt;(account),
+        });
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>();
+<b>aborts_if</b> <b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account));
+<b>ensures</b> <b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account));
+</code></pre>
+
+
+
+</details>
+
 <a name="0x1_Block_get_current_block_number"></a>
 
 ## Function `get_current_block_number`
@@ -366,8 +518,8 @@ Get the current block number
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_get_current_block_number">get_current_block_number</a>(): u64 <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a> {
-  <b>borrow_global</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).number
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_get_current_block_number">get_current_block_number</a>(): u64 <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a> {
+    <b>borrow_global</b>&lt;<a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).number
 }
 </code></pre>
 
@@ -380,7 +532,7 @@ Get the current block number
 
 
 
-<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 </code></pre>
 
 
@@ -403,8 +555,8 @@ Get the hash of the parent block.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_get_parent_hash">get_parent_hash</a>(): vector&lt;u8&gt; <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a> {
-  *&<b>borrow_global</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).parent_hash
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_get_parent_hash">get_parent_hash</a>(): vector&lt;u8&gt; <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a> {
+    *&<b>borrow_global</b>&lt;<a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).parent_hash
 }
 </code></pre>
 
@@ -417,43 +569,7 @@ Get the hash of the parent block.
 
 
 
-<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Block_get_parents_hash"></a>
-
-## Function `get_parents_hash`
-
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_get_parents_hash">get_parents_hash</a>(): vector&lt;u8&gt;
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_get_parents_hash">get_parents_hash</a>(): vector&lt;u8&gt; <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a> {
-    *&<b>borrow_global</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).parents_hash
-}
-</code></pre>
-
-
-
-</details>
-
-<details>
-<summary>Specification</summary>
-
-
-
-<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 </code></pre>
 
 
@@ -476,8 +592,8 @@ Gets the address of the author of the current block
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_get_current_author">get_current_author</a>(): <b>address</b> <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a> {
-  <b>borrow_global</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).author
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_get_current_author">get_current_author</a>(): <b>address</b> <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a> {
+    <b>borrow_global</b>&lt;<a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).author
 }
 </code></pre>
 
@@ -490,7 +606,43 @@ Gets the address of the author of the current block
 
 
 
-<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_Block_get_parents_hash"></a>
+
+## Function `get_parents_hash`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_get_parents_hash">get_parents_hash</a>(): vector&lt;u8&gt;
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_get_parents_hash">get_parents_hash</a>(): vector&lt;u8&gt; <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a> {
+    *&<b>borrow_global</b>&lt;<a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).parents_hash
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 </code></pre>
 
 
@@ -513,7 +665,12 @@ Call at block prologue
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_process_block_metadata">process_block_metadata</a>(account: &signer, parent_hash: vector&lt;u8&gt;,author: <b>address</b>, timestamp: u64, uncles:u64, number:u64) <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_process_block_metadata">process_block_metadata</a>(account: &signer,
+                                  parent_hash: vector&lt;u8&gt;,
+                                  author: <b>address</b>,
+                                  timestamp: u64,
+                                  uncles:u64,
+                                  number:u64) <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>{
     <a href="Block.md#0x1_Block_process_block_metadata_v2">Self::process_block_metadata_v2</a>(account, parent_hash, author, timestamp, uncles, number, <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>&lt;u8&gt;())
 
 }
@@ -529,8 +686,8 @@ Call at block prologue
 
 
 <pre><code><b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>();
-<b>aborts_if</b> !<b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
-<b>aborts_if</b> number != <b>global</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).number + 1;
+<b>aborts_if</b> !<b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+<b>aborts_if</b> number != <b>global</b>&lt;<a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).number + 1;
 </code></pre>
 
 
@@ -553,10 +710,16 @@ Call at block prologue for flexidag
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_process_block_metadata_v2">process_block_metadata_v2</a>(account: &signer, parent_hash: vector&lt;u8&gt;,author: <b>address</b>, timestamp: u64, uncles:u64, number:u64, parents_hash: vector&lt;u8&gt;) <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_process_block_metadata_v2">process_block_metadata_v2</a>(account: &signer,
+                                     parent_hash: vector&lt;u8&gt;,
+                                     author: <b>address</b>,
+                                     timestamp: u64,
+                                     uncles:u64,
+                                     number:u64,
+                                     parents_hash: vector&lt;u8&gt;) <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a> {
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
 
-    <b>let</b> block_metadata_ref = <b>borrow_global_mut</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+    <b>let</b> block_metadata_ref = <b>borrow_global_mut</b>&lt;<a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
     <b>assert</b>!(number == (block_metadata_ref.number + 1), <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Block.md#0x1_Block_EBLOCK_NUMBER_MISMATCH">EBLOCK_NUMBER_MISMATCH</a>));
     block_metadata_ref.number = number;
     block_metadata_ref.author= author;
@@ -564,9 +727,9 @@ Call at block prologue for flexidag
     block_metadata_ref.uncles = uncles;
     block_metadata_ref.parents_hash = parents_hash;
 
-    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>&lt;<a href="Block.md#0x1_Block_NewBlockEvent">NewBlockEvent</a>&gt;(
+    <a href="Event.md#0x1_Event_emit_event">Event::emit_event</a>&lt;<a href="Block.md#0x1_Block_NewBlockEventV2">NewBlockEventV2</a>&gt;(
       &<b>mut</b> block_metadata_ref.new_block_events,
-      <a href="Block.md#0x1_Block_NewBlockEvent">NewBlockEvent</a> {
+      <a href="Block.md#0x1_Block_NewBlockEventV2">NewBlockEventV2</a> {
           number,
           author,
           timestamp,
@@ -587,8 +750,8 @@ Call at block prologue for flexidag
 
 
 <pre><code><b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>();
-<b>aborts_if</b> !<b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
-<b>aborts_if</b> number != <b>global</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).number + 1;
+<b>aborts_if</b> !<b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+<b>aborts_if</b> number != <b>global</b>&lt;<a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>()).number + 1;
 </code></pre>
 
 
@@ -598,7 +761,7 @@ Call at block prologue for flexidag
 
 
 <pre><code><b>schema</b> <a href="Block.md#0x1_Block_AbortsIfBlockMetadataNotExist">AbortsIfBlockMetadataNotExist</a> {
-    <b>aborts_if</b> !<b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
+    <b>aborts_if</b> !<b>exists</b>&lt;<a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
 }
 </code></pre>
 
@@ -666,7 +829,7 @@ Call at block prologue for flexidag
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="Block.md#0x1_Block_checkpoint_entry">checkpoint_entry</a>(_account: signer) <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>, <a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a> {
+<pre><code><b>public</b> entry <b>fun</b> <a href="Block.md#0x1_Block_checkpoint_entry">checkpoint_entry</a>(_account: signer) <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>, <a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a> {
     <a href="Block.md#0x1_Block_checkpoint">checkpoint</a>();
 }
 </code></pre>
@@ -702,7 +865,7 @@ Call at block prologue for flexidag
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_checkpoint">checkpoint</a>() <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadata">BlockMetadata</a>, <a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a>{
+<pre><code><b>public</b> <b>fun</b> <a href="Block.md#0x1_Block_checkpoint">checkpoint</a>() <b>acquires</b> <a href="Block.md#0x1_Block_BlockMetadataV2">BlockMetadataV2</a>, <a href="Block.md#0x1_Block_Checkpoints">Checkpoints</a>{
     <b>let</b> parent_block_number = <a href="Block.md#0x1_Block_get_current_block_number">get_current_block_number</a>() - 1;
     <b>let</b> parent_block_hash   = <a href="Block.md#0x1_Block_get_parent_hash">get_parent_hash</a>();
 
