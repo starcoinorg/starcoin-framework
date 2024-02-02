@@ -402,6 +402,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 <pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v13">do_upgrade_from_v12_to_v13</a>(sender: &signer) {
     {
         <a href="FlexiDagConfig.md#0x1_FlexiDagConfig_initialize">FlexiDagConfig::initialize</a>(sender, u64_max());
+        <a href="OnChainConfigDao.md#0x1_OnChainConfigDao_plugin">OnChainConfigDao::plugin</a>&lt;<a href="STC.md#0x1_STC">STC</a>, <a href="FlexiDagConfig.md#0x1_FlexiDagConfig_FlexiDagConfig">FlexiDagConfig::FlexiDagConfig</a>&gt;(sender);
     };
 }
 </code></pre>

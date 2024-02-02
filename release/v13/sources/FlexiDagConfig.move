@@ -1,6 +1,7 @@
 address StarcoinFramework {
     module FlexiDagConfig {
 
+        use StarcoinFramework::Block;
         use StarcoinFramework::Config;
         use StarcoinFramework::CoreAddresses;
         use StarcoinFramework::Signer;
@@ -26,13 +27,14 @@ address StarcoinFramework {
 
         public fun initialize(account: &signer, effective_height: u64) {
             CoreAddresses::assert_genesis_address(account);
-            if (!Config::config_exist_by_address<FlexiDagConfig>(Signer::address_of(account))) {
-                Config::publish_new_config<FlexiDagConfig>(account, new_flexidag_config(effective_height))
-            }
+            Config::publish_new_config<FlexiDagConfig>(account, new_flexidag_config(effective_height));
+            Block::initialize_blockmetadata_v2(account);
         }
 
         spec initialize {
             aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
+            aborts_if exists<Config::Config<FlexiDagConfig>>(Signer::address_of(account));
+            aborts_if exists<Config::ModifyConfigCapabilityHolder<FlexiDagConfig>>(Signer::address_of(account));
             ensures exists<Config::Config<FlexiDagConfig>>(Signer::address_of(account));
             ensures
                 exists<Config::ModifyConfigCapabilityHolder<FlexiDagConfig>>(

@@ -22,7 +22,6 @@ It uses apis defined in the <code><a href="Token.md#0x1_Token">Token</a></code> 
 <pre><code><b>use</b> <a href="ConsensusConfig.md#0x1_ConsensusConfig">0x1::ConsensusConfig</a>;
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
 <b>use</b> <a href="Dao.md#0x1_Dao">0x1::Dao</a>;
-<b>use</b> <a href="FlexiDagConfig.md#0x1_FlexiDagConfig">0x1::FlexiDagConfig</a>;
 <b>use</b> <a href="ModifyDaoConfigProposal.md#0x1_ModifyDaoConfigProposal">0x1::ModifyDaoConfigProposal</a>;
 <b>use</b> <a href="OnChainConfigDao.md#0x1_OnChainConfigDao">0x1::OnChainConfigDao</a>;
 <b>use</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager">0x1::PackageTxnManager</a>;
@@ -269,7 +268,6 @@ STC initialization.
     <a href="OnChainConfigDao.md#0x1_OnChainConfigDao_plugin">OnChainConfigDao::plugin</a>&lt;<a href="STC.md#0x1_STC">STC</a>, <a href="ConsensusConfig.md#0x1_ConsensusConfig_ConsensusConfig">ConsensusConfig::ConsensusConfig</a>&gt;(account);
     <a href="OnChainConfigDao.md#0x1_OnChainConfigDao_plugin">OnChainConfigDao::plugin</a>&lt;<a href="STC.md#0x1_STC">STC</a>, <a href="RewardConfig.md#0x1_RewardConfig_RewardConfig">RewardConfig::RewardConfig</a>&gt;(account);
     <a href="OnChainConfigDao.md#0x1_OnChainConfigDao_plugin">OnChainConfigDao::plugin</a>&lt;<a href="STC.md#0x1_STC">STC</a>, <a href="TransactionTimeoutConfig.md#0x1_TransactionTimeoutConfig_TransactionTimeoutConfig">TransactionTimeoutConfig::TransactionTimeoutConfig</a>&gt;(account);
-    <a href="OnChainConfigDao.md#0x1_OnChainConfigDao_plugin">OnChainConfigDao::plugin</a>&lt;<a href="STC.md#0x1_STC">STC</a>, <a href="FlexiDagConfig.md#0x1_FlexiDagConfig_FlexiDagConfig">FlexiDagConfig::FlexiDagConfig</a>&gt;(account);
     withdraw_cap
 }
 </code></pre>

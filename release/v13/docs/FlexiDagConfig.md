@@ -12,9 +12,9 @@
 -  [Module Specification](#@Module_Specification_0)
 
 
-<pre><code><b>use</b> <a href="Config.md#0x1_Config">0x1::Config</a>;
+<pre><code><b>use</b> <a href="Block.md#0x1_Block">0x1::Block</a>;
+<b>use</b> <a href="Config.md#0x1_Config">0x1::Config</a>;
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
-<b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
 </code></pre>
 
 
@@ -91,9 +91,8 @@ Create a new configuration for flexidag, mainly used in DAO.
 
 <pre><code><b>public</b> <b>fun</b> <a href="FlexiDagConfig.md#0x1_FlexiDagConfig_initialize">initialize</a>(account: &signer, effective_height: u64) {
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
-    <b>if</b> (!<a href="Config.md#0x1_Config_config_exist_by_address">Config::config_exist_by_address</a>&lt;<a href="FlexiDagConfig.md#0x1_FlexiDagConfig">FlexiDagConfig</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account))) {
-        <a href="Config.md#0x1_Config_publish_new_config">Config::publish_new_config</a>&lt;<a href="FlexiDagConfig.md#0x1_FlexiDagConfig">FlexiDagConfig</a>&gt;(account, <a href="FlexiDagConfig.md#0x1_FlexiDagConfig_new_flexidag_config">new_flexidag_config</a>(effective_height))
-    }
+    <a href="Config.md#0x1_Config_publish_new_config">Config::publish_new_config</a>&lt;<a href="FlexiDagConfig.md#0x1_FlexiDagConfig">FlexiDagConfig</a>&gt;(account, <a href="FlexiDagConfig.md#0x1_FlexiDagConfig_new_flexidag_config">new_flexidag_config</a>(effective_height));
+    <a href="Block.md#0x1_Block_initialize_blockmetadata_v2">Block::initialize_blockmetadata_v2</a>(account);
 }
 </code></pre>
 
@@ -107,6 +106,8 @@ Create a new configuration for flexidag, mainly used in DAO.
 
 
 <pre><code><b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>();
+<b>aborts_if</b> <b>exists</b>&lt;<a href="Config.md#0x1_Config_Config">Config::Config</a>&lt;<a href="FlexiDagConfig.md#0x1_FlexiDagConfig">FlexiDagConfig</a>&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account));
+<b>aborts_if</b> <b>exists</b>&lt;<a href="Config.md#0x1_Config_ModifyConfigCapabilityHolder">Config::ModifyConfigCapabilityHolder</a>&lt;<a href="FlexiDagConfig.md#0x1_FlexiDagConfig">FlexiDagConfig</a>&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account));
 <b>ensures</b> <b>exists</b>&lt;<a href="Config.md#0x1_Config_Config">Config::Config</a>&lt;<a href="FlexiDagConfig.md#0x1_FlexiDagConfig">FlexiDagConfig</a>&gt;&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account));
 <b>ensures</b>
     <b>exists</b>&lt;<a href="Config.md#0x1_Config_ModifyConfigCapabilityHolder">Config::ModifyConfigCapabilityHolder</a>&lt;<a href="FlexiDagConfig.md#0x1_FlexiDagConfig">FlexiDagConfig</a>&gt;&gt;(
