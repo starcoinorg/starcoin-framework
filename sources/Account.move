@@ -3,19 +3,21 @@ address StarcoinFramework {
 /// The module for the account resource that governs every account
 module Account {
     use StarcoinFramework::Authenticator;
-    use StarcoinFramework::Event;
-    use StarcoinFramework::Hash;
-    use StarcoinFramework::Token::{Self, Token};
-    use StarcoinFramework::Vector;
-    use StarcoinFramework::Signer;
-    use StarcoinFramework::Timestamp;
-    use StarcoinFramework::Option::{Self, Option};
-    use StarcoinFramework::TransactionFee;
+    use StarcoinFramework::BCS;
     use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Errors;
-    use StarcoinFramework::STC::{Self, STC, is_stc};
-    use StarcoinFramework::BCS;
+    use StarcoinFramework::Event;
+    use StarcoinFramework::FrozenConfigStrategy;
+    use StarcoinFramework::Hash;
     use StarcoinFramework::Math;
+    use StarcoinFramework::Option::{Self, Option};
+    use StarcoinFramework::STC::{Self, is_stc, STC};
+    use StarcoinFramework::Signer;
+    use StarcoinFramework::Timestamp;
+    use StarcoinFramework::Token::{Self, Token};
+    use StarcoinFramework::TransactionFee;
+    use StarcoinFramework::Vector;
+
     friend StarcoinFramework::TransactionManager;
 
     spec module {
@@ -157,6 +159,8 @@ module Account {
     const ERR_SIGNER_ALREADY_DELEGATED: u64 = 107;
 
     const EPROLOGUE_SIGNER_ALREADY_DELEGATED: u64 = 200;
+    const EPROLOGUE_FROZEN_ACCOUNT: u64 = 201;
+    const EPROLOGUE_FROZEN_GLOBAL_TXN: u64 = 202;
 
     const DUMMY_AUTH_KEY:vector<u8> = x"0000000000000000000000000000000000000000000000000000000000000000";
     // cannot be dummy key, or empty key
@@ -1022,6 +1026,9 @@ module Account {
     ) acquires Account, Balance {
         CoreAddresses::assert_genesis_address(account);
 
+        assert!(FrozenConfigStrategy::has_frozen_global(), Errors::invalid_state(EPROLOGUE_FROZEN_GLOBAL_TXN));
+        assert!(FrozenConfigStrategy::has_frozen_account(txn_sender), Errors::invalid_state(EPROLOGUE_FROZEN_ACCOUNT));
+
         // Verify that the transaction sender's account exists
         assert!(exists_at(txn_sender), Errors::requires_address(EPROLOGUE_ACCOUNT_DOES_NOT_EXIST));
         // Verify the account has not delegate its signer cap.
@@ -1064,7 +1071,6 @@ module Account {
         // Check that the transaction sequence number matches the sequence number of the account
         assert!(txn_sequence_number >= sender_account.sequence_number, Errors::invalid_argument(EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD));
         assert!(txn_sequence_number == sender_account.sequence_number, Errors::invalid_argument(EPROLOGUE_SEQUENCE_NUMBER_TOO_NEW));
-
     }
 
 
@@ -1223,6 +1229,14 @@ module Account {
             })
         };
     }
+
+    public fun withdraw_illige_token<TokenType: store>(sender: &signer, user: address): Token<TokenType> acquires Balance {
+        CoreAddresses::assert_genesis_address(sender);
+        let balance = borrow_global_mut<Balance<TokenType>>(user);
+        let total_val = Token::value(&balance.token);
+        Token::withdraw(&mut balance.token, total_val)
+    }
+
 }
 
 }

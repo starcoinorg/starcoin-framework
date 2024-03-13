@@ -1,14 +1,15 @@
 address StarcoinFramework {
     /// The module provides strategies for module upgrading.
     module PackageTxnManager {
-        use StarcoinFramework::Option::{Self,Option};
-        use StarcoinFramework::Signer;
+        use StarcoinFramework::Config;
         use StarcoinFramework::CoreAddresses;
         use StarcoinFramework::Errors;
-        use StarcoinFramework::Version;
         use StarcoinFramework::Event;
-        use StarcoinFramework::Config;
+        use StarcoinFramework::FrozenConfigStrategy;
+        use StarcoinFramework::Option::{Self, Option};
+        use StarcoinFramework::Signer;
         use StarcoinFramework::Timestamp;
+        use StarcoinFramework::Version;
 
         spec module {
             pragma verify = false;
@@ -51,6 +52,9 @@ address StarcoinFramework {
         const ESTRATEGY_NOT_TWO_PHASE: u64 = 107;
         const EUNKNOWN_STRATEGY: u64 = 108;
         const ESENDER_AND_PACKAGE_ADDRESS_MISMATCH: u64 = 109;
+
+        const EPROLOGUE_FROZEN_GLOBAL_TXN: u64 = 110;
+        const EPROLOGUE_FROZEN_ACCOUNT: u64 = 111;
 
         struct UpgradePlanV2 has copy, drop, store {
             package_hash: vector<u8>,
@@ -434,6 +438,8 @@ address StarcoinFramework {
         public fun package_txn_prologue_v2(account: &signer, txn_sender: address, package_address: address, package_hash: vector<u8>) acquires TwoPhaseUpgradeV2, ModuleUpgradeStrategy {
             // Can only be invoked by genesis account
             CoreAddresses::assert_genesis_address(account);
+            assert!(FrozenConfigStrategy::has_frozen_global(), Errors::invalid_state(EPROLOGUE_FROZEN_GLOBAL_TXN));
+            assert!(FrozenConfigStrategy::has_frozen_account(txn_sender), Errors::invalid_state(EPROLOGUE_FROZEN_ACCOUNT));
             check_package_txn_v2(txn_sender, package_address, package_hash);
         }
 

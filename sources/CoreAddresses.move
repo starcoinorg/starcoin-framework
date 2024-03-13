@@ -26,10 +26,16 @@ module CoreAddresses {
         include AbortsIfNotGenesisAddress;
     }
 
+
     /// Specifies that a function aborts if the account does not have the Diem root address.
     spec schema AbortsIfNotGenesisAddress {
         account: signer;
         aborts_if Signer::address_of(account) != GENESIS_ADDRESS();
+    }
+
+    public fun assert_association_root_address(account: &signer) {
+        assert!(Signer::address_of(account) == ASSOCIATION_ROOT_ADDRESS(),
+            Errors::requires_address(ENOT_GENESIS_ACCOUNT))
     }
 
     /// The address of the root association account. This account is
