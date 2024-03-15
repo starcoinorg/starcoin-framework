@@ -7,7 +7,6 @@ module Account {
     use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Errors;
     use StarcoinFramework::Event;
-    use StarcoinFramework::FrozenConfigStrategy;
     use StarcoinFramework::Hash;
     use StarcoinFramework::Math;
     use StarcoinFramework::Option::{Self, Option};
@@ -159,8 +158,6 @@ module Account {
     const ERR_SIGNER_ALREADY_DELEGATED: u64 = 107;
 
     const EPROLOGUE_SIGNER_ALREADY_DELEGATED: u64 = 200;
-    const EPROLOGUE_FROZEN_ACCOUNT: u64 = 201;
-    const EPROLOGUE_FROZEN_GLOBAL_TXN: u64 = 202;
 
     const DUMMY_AUTH_KEY:vector<u8> = x"0000000000000000000000000000000000000000000000000000000000000000";
     // cannot be dummy key, or empty key
@@ -1025,9 +1022,6 @@ module Account {
         stc_price_scaling: u128
     ) acquires Account, Balance {
         CoreAddresses::assert_genesis_address(account);
-
-        assert!(FrozenConfigStrategy::has_frozen_global(), Errors::invalid_state(EPROLOGUE_FROZEN_GLOBAL_TXN));
-        assert!(FrozenConfigStrategy::has_frozen_account(txn_sender), Errors::invalid_state(EPROLOGUE_FROZEN_ACCOUNT));
 
         // Verify that the transaction sender's account exists
         assert!(exists_at(txn_sender), Errors::requires_address(EPROLOGUE_ACCOUNT_DOES_NOT_EXIST));
