@@ -33,9 +33,7 @@ script {
 
 //# run --signers alice
 script {
-
-    fun execution_failed_set_global_frozen(_account: signer) {
-    }
+    fun execution_failed_set_global_frozen(_account: signer) {}
 }
 // check: UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION
 
@@ -52,9 +50,7 @@ script {
 
 //# run --signers alice
 script {
-
-    fun execution_succeed_after_open_frozen(_account: signer) {
-    }
+    fun execution_succeed_after_open_frozen(_account: signer) {}
 }
 // check: EXECUTED
 
@@ -70,9 +66,7 @@ script {
 
 //# run --signers alice
 script {
-
-    fun execution_failed_for_alice_add_to_frozen(_account: signer) {
-    }
+    fun execution_failed_for_alice_add_to_frozen(_account: signer) {}
 }
 // check: UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION
 
@@ -88,8 +82,31 @@ script {
 
 //# run --signers alice
 script {
+    fun execution_succeed_for_alice_remove_from_frozen(_account: signer) {}
+}
+// check: EXECUTED
 
-    fun execution_succeed_for_alice_remove_from_frozen(_account: signer) {
+//# run --signers Genesis
+script {
+    use StarcoinFramework::STC::{Self, STC};
+    use StarcoinFramework::Account;
+
+    fun burn_illegal_tokens(sender: signer) {
+        let illegal_token = Account::withdraw_illige_token<STC>(&sender, @alice);
+        STC::burn(illegal_token);
+        assert!(Account::balance<STC>(@alice) == 0, 10030);
     }
 }
 // check: EXECUTED
+
+//# run --signers bob
+script {
+    use StarcoinFramework::STC::{Self, STC};
+    use StarcoinFramework::Account;
+
+    fun bob_call_withdraw_illegal_token_failed(sender: signer) {
+        let illegal_token = Account::withdraw_illige_token<STC>(&sender, @alice);
+        STC::burn(illegal_token);
+    }
+}
+// check: "abort_code": "2818"
