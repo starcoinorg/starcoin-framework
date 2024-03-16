@@ -280,7 +280,7 @@ module TransactionManager {
     )  {
         CoreAddresses::assert_genesis_address(account);
 
-        assert!(!FrozenConfigStrategy::has_frozen_global(), Errors::invalid_state(EPROLOGUE_FROZEN_GLOBAL_TXN));
+        assert!(!FrozenConfigStrategy::has_frozen_global(txn_sender), Errors::invalid_state(EPROLOGUE_FROZEN_GLOBAL_TXN));
         assert!(!FrozenConfigStrategy::has_frozen_account(txn_sender), Errors::invalid_state(EPROLOGUE_FROZEN_ACCOUNT));
 
         // Verify that the transaction sender's account exists

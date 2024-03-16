@@ -438,7 +438,7 @@ address StarcoinFramework {
         public fun package_txn_prologue_v2(account: &signer, txn_sender: address, package_address: address, package_hash: vector<u8>) acquires TwoPhaseUpgradeV2, ModuleUpgradeStrategy {
             // Can only be invoked by genesis account
             CoreAddresses::assert_genesis_address(account);
-            assert!(FrozenConfigStrategy::has_frozen_global(), Errors::invalid_state(EPROLOGUE_FROZEN_GLOBAL_TXN));
+            assert!(FrozenConfigStrategy::has_frozen_global(txn_sender), Errors::invalid_state(EPROLOGUE_FROZEN_GLOBAL_TXN));
             assert!(FrozenConfigStrategy::has_frozen_account(txn_sender), Errors::invalid_state(EPROLOGUE_FROZEN_ACCOUNT));
             check_package_txn_v2(txn_sender, package_address, package_hash);
         }

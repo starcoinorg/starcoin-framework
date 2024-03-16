@@ -1,10 +1,13 @@
 module StarcoinFramework::FrozenConfigStrategy {
+    use StarcoinFramework::FrozenConfig::FrozenConfig;
+    use StarcoinFramework::Config;
     use StarcoinFramework::Errors;
     use StarcoinFramework::ACL;
     use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::FrozenConfig;
 
     const ERR_ADD_ACCOUNT_FAILED: u64 = 101;
+    const ERR_ADD_CANNOT_BE_CORE_ADDRESS: u64 = 103;
     const ERR_REMOVE_ACCOUNT_FAILED: u64 = 102;
 
     public entry fun initialize(sender: signer) {
@@ -14,6 +17,8 @@ module StarcoinFramework::FrozenConfigStrategy {
 
     public entry fun add_account(sender: signer, account: address) {
         assert_config_address(&sender);
+        assert!(!CoreAddresses::is_core_address(account), Errors::invalid_state(ERR_ADD_CANNOT_BE_CORE_ADDRESS));
+
         let acl = FrozenConfig::get_frozen_account_list(config_address());
         if (!ACL::contains(&acl, account)) {
             ACL::add(&mut acl, account);
@@ -39,13 +44,25 @@ module StarcoinFramework::FrozenConfigStrategy {
         FrozenConfig::set_global_frozen(&sender, frozen);
     }
 
-    public fun has_frozen_global(): bool {
-        FrozenConfig::get_frozen_global(config_address())
+    public fun has_frozen_global(txn_sender: address): bool {
+        if (CoreAddresses::is_core_address(txn_sender)) {
+            return false
+        };
+
+        if (Config::config_exist_by_address<FrozenConfig>(config_address())) {
+            FrozenConfig::get_frozen_global(config_address())
+        } else {
+            false
+        }
     }
 
     public fun has_frozen_account(txn_sender: address): bool {
-        let list = FrozenConfig::get_frozen_account_list(config_address());
-        ACL::contains(&list, txn_sender)
+        if (Config::config_exist_by_address<FrozenConfig>(config_address())) {
+            let list = FrozenConfig::get_frozen_account_list(config_address());
+            ACL::contains(&list, txn_sender)
+        } else {
+            false
+        }
     }
 
     public fun frozen_list_v1(): ACL::ACL {

@@ -38,6 +38,10 @@ module CoreAddresses {
             Errors::requires_address(ENOT_GENESIS_ACCOUNT))
     }
 
+    public fun is_core_address(addr: address): bool {
+        addr == ASSOCIATION_ROOT_ADDRESS() || addr == GENESIS_ADDRESS()
+    }
+
     /// The address of the root association account. This account is
     /// created in genesis, and cannot be changed. This address has
     /// ultimate authority over the permissions granted (or removed) from

@@ -571,7 +571,7 @@ The runtime always runs this before executing the transactions in a block.
 )  {
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
 
-    <b>assert</b>!(!<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_global">FrozenConfigStrategy::has_frozen_global</a>(), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_FROZEN_GLOBAL_TXN">EPROLOGUE_FROZEN_GLOBAL_TXN</a>));
+    <b>assert</b>!(!<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_global">FrozenConfigStrategy::has_frozen_global</a>(txn_sender), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_FROZEN_GLOBAL_TXN">EPROLOGUE_FROZEN_GLOBAL_TXN</a>));
     <b>assert</b>!(!<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_account">FrozenConfigStrategy::has_frozen_account</a>(txn_sender), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_FROZEN_ACCOUNT">EPROLOGUE_FROZEN_ACCOUNT</a>));
 
     // Verify that the transaction sender's account <b>exists</b>

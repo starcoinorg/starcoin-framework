@@ -18,6 +18,7 @@
 
 
 <pre><code><b>use</b> <a href="ACL.md#0x1_ACL">0x1::ACL</a>;
+<b>use</b> <a href="Config.md#0x1_Config">0x1::Config</a>;
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="FrozenConfig.md#0x1_FrozenConfig">0x1::FrozenConfig</a>;
@@ -35,6 +36,15 @@
 
 
 <pre><code><b>const</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_ERR_ADD_ACCOUNT_FAILED">ERR_ADD_ACCOUNT_FAILED</a>: u64 = 101;
+</code></pre>
+
+
+
+<a name="0x1_FrozenConfigStrategy_ERR_ADD_CANNOT_BE_CORE_ADDRESS"></a>
+
+
+
+<pre><code><b>const</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_ERR_ADD_CANNOT_BE_CORE_ADDRESS">ERR_ADD_CANNOT_BE_CORE_ADDRESS</a>: u64 = 103;
 </code></pre>
 
 
@@ -90,6 +100,8 @@
 
 <pre><code><b>public</b> entry <b>fun</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_add_account">add_account</a>(sender: signer, account: <b>address</b>) {
     <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_assert_config_address">assert_config_address</a>(&sender);
+    <b>assert</b>!(!<a href="CoreAddresses.md#0x1_CoreAddresses_is_core_address">CoreAddresses::is_core_address</a>(account), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_ERR_ADD_CANNOT_BE_CORE_ADDRESS">ERR_ADD_CANNOT_BE_CORE_ADDRESS</a>));
+
     <b>let</b> acl = <a href="FrozenConfig.md#0x1_FrozenConfig_get_frozen_account_list">FrozenConfig::get_frozen_account_list</a>(<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_config_address">config_address</a>());
     <b>if</b> (!<a href="ACL.md#0x1_ACL_contains">ACL::contains</a>(&acl, account)) {
         <a href="ACL.md#0x1_ACL_add">ACL::add</a>(&<b>mut</b> acl, account);
@@ -166,7 +178,7 @@
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_global">has_frozen_global</a>(): bool
+<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_global">has_frozen_global</a>(txn_sender: <b>address</b>): bool
 </code></pre>
 
 
@@ -175,8 +187,16 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_global">has_frozen_global</a>(): bool {
-    <a href="FrozenConfig.md#0x1_FrozenConfig_get_frozen_global">FrozenConfig::get_frozen_global</a>(<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_config_address">config_address</a>())
+<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_global">has_frozen_global</a>(txn_sender: <b>address</b>): bool {
+    <b>if</b> (<a href="CoreAddresses.md#0x1_CoreAddresses_is_core_address">CoreAddresses::is_core_address</a>(txn_sender)) {
+        <b>return</b> <b>false</b>
+    };
+
+    <b>if</b> (<a href="Config.md#0x1_Config_config_exist_by_address">Config::config_exist_by_address</a>&lt;<a href="FrozenConfig.md#0x1_FrozenConfig">FrozenConfig</a>&gt;(<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_config_address">config_address</a>())) {
+        <a href="FrozenConfig.md#0x1_FrozenConfig_get_frozen_global">FrozenConfig::get_frozen_global</a>(<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_config_address">config_address</a>())
+    } <b>else</b> {
+        <b>false</b>
+    }
 }
 </code></pre>
 
@@ -200,8 +220,12 @@
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_account">has_frozen_account</a>(txn_sender: <b>address</b>): bool {
-    <b>let</b> list = <a href="FrozenConfig.md#0x1_FrozenConfig_get_frozen_account_list">FrozenConfig::get_frozen_account_list</a>(<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_config_address">config_address</a>());
-    <a href="ACL.md#0x1_ACL_contains">ACL::contains</a>(&list, txn_sender)
+    <b>if</b> (<a href="Config.md#0x1_Config_config_exist_by_address">Config::config_exist_by_address</a>&lt;<a href="FrozenConfig.md#0x1_FrozenConfig">FrozenConfig</a>&gt;(<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_config_address">config_address</a>())) {
+        <b>let</b> list = <a href="FrozenConfig.md#0x1_FrozenConfig_get_frozen_account_list">FrozenConfig::get_frozen_account_list</a>(<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_config_address">config_address</a>());
+        <a href="ACL.md#0x1_ACL_contains">ACL::contains</a>(&list, txn_sender)
+    } <b>else</b> {
+        <b>false</b>
+    }
 }
 </code></pre>
 

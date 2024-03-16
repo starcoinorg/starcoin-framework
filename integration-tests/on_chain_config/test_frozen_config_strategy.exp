@@ -1,0 +1,65 @@
+processed 13 tasks
+
+task 4 'run'. lines 31-39:
+{
+  "gas_used": 3102420,
+  "status": "Executed"
+}
+
+task 5 'run'. lines 42-51:
+{
+  "gas_used": 190191,
+  "status": "Executed"
+}
+
+task 6 'run'. lines 54-60:
+{
+  "gas_used": 0,
+  "status": {
+    "Discard": {
+      "status_code": "2015",
+      "status_code_name": "UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION"
+    }
+  }
+}
+
+task 7 'run'. lines 62-71:
+{
+  "gas_used": 190193,
+  "status": "Executed"
+}
+
+task 8 'run'. lines 73-79:
+{
+  "gas_used": 8439,
+  "status": "Executed"
+}
+
+task 9 'run'. lines 81-89:
+{
+  "gas_used": 500823,
+  "status": "Executed"
+}
+
+task 10 'run'. lines 91-97:
+{
+  "gas_used": 0,
+  "status": {
+    "Discard": {
+      "status_code": "2015",
+      "status_code_name": "UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION"
+    }
+  }
+}
+
+task 11 'run'. lines 99-107:
+{
+  "gas_used": 497130,
+  "status": "Executed"
+}
+
+task 12 'run'. lines 109-164:
+{
+  "gas_used": 8439,
+  "status": "Executed"
+}
