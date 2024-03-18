@@ -1,28 +1,30 @@
-// The module for StdlibUpgrade init scripts
-module StarcoinFramework::StdlibUpgradeScripts {
+address StarcoinFramework {
+/// The module for StdlibUpgrade init scripts
+module StdlibUpgradeScripts {
+
     use StarcoinFramework::Vector;
     use StarcoinFramework::ACL;
     use StarcoinFramework::FrozenConfigStrategy;
+    use StarcoinFramework::EasyGas;
+    use StarcoinFramework::CoreAddresses;
+    use StarcoinFramework::STC::{Self, STC};
+    use StarcoinFramework::Token::{Self, LinearTimeMintKey};
+    use StarcoinFramework::TreasuryWithdrawDaoProposal;
+    use StarcoinFramework::Treasury::{Self, LinearWithdrawCapability};
+    use StarcoinFramework::Offer;
+    use StarcoinFramework::Timestamp;
+    use StarcoinFramework::Collection;
+    use StarcoinFramework::Oracle;
+    use StarcoinFramework::STCUSDOracle;
+    use StarcoinFramework::NFT;
+    use StarcoinFramework::GenesisNFT;
+    use StarcoinFramework::LanguageVersion;
+    use StarcoinFramework::OnChainConfigDao;
+    use StarcoinFramework::Config;
+    use StarcoinFramework::GenesisSignerCapability;
     use StarcoinFramework::Account;
     use StarcoinFramework::Block;
-    use StarcoinFramework::Collection;
-    use StarcoinFramework::Config;
-    use StarcoinFramework::CoreAddresses;
-    use StarcoinFramework::EasyGas;
     use StarcoinFramework::GasSchedule;
-    use StarcoinFramework::GenesisNFT;
-    use StarcoinFramework::GenesisSignerCapability;
-    use StarcoinFramework::LanguageVersion;
-    use StarcoinFramework::NFT;
-    use StarcoinFramework::Offer;
-    use StarcoinFramework::OnChainConfigDao;
-    use StarcoinFramework::Oracle;
-    use StarcoinFramework::STC::{Self, STC};
-    use StarcoinFramework::STCUSDOracle;
-    use StarcoinFramework::Timestamp;
-    use StarcoinFramework::Token::{Self, LinearTimeMintKey};
-    use StarcoinFramework::Treasury::{Self, LinearWithdrawCapability};
-    use StarcoinFramework::TreasuryWithdrawDaoProposal;
 
     spec module {
         pragma verify = false;
@@ -30,24 +32,18 @@ module StarcoinFramework::StdlibUpgradeScripts {
     }
 
     /// Stdlib upgrade script from v2 to v3
-    public entry fun upgrade_from_v2_to_v3(account: signer, total_stc_amount: u128) {
+    public entry fun upgrade_from_v2_to_v3(account: signer, total_stc_amount: u128 ) {
         CoreAddresses::assert_genesis_address(&account);
 
         let withdraw_cap = STC::upgrade_from_v1_to_v2(&account, total_stc_amount);
 
-        let mint_keys = Collection::borrow_collection<LinearTimeMintKey<STC>>(
-            CoreAddresses::ASSOCIATION_ROOT_ADDRESS()
-        );
+        let mint_keys = Collection::borrow_collection<LinearTimeMintKey<STC>>(CoreAddresses::ASSOCIATION_ROOT_ADDRESS());
         let mint_key = Collection::borrow(&mint_keys, 0);
         let (total, minted, start_time, period) = Token::read_linear_time_key(mint_key);
         Collection::return_collection(mint_keys);
 
         let now = Timestamp::now_seconds();
-        let linear_withdraw_cap = Treasury::issue_linear_withdraw_capability(
-            &mut withdraw_cap,
-            total - minted,
-            period - (now - start_time)
-        );
+        let linear_withdraw_cap = Treasury::issue_linear_withdraw_capability(&mut withdraw_cap, total-minted, period - (now - start_time));
         // Lock the TreasuryWithdrawCapability to Dao
         TreasuryWithdrawDaoProposal::plugin(&account, withdraw_cap);
         // Give a LinearWithdrawCapability Offer to association, association need to take the offer, and destroy old LinearTimeMintKey.
@@ -55,7 +51,7 @@ module StarcoinFramework::StdlibUpgradeScripts {
     }
 
     /// association account should call this script after upgrade from v2 to v3.
-    public entry fun take_linear_withdraw_capability(signer: signer) {
+    public entry fun take_linear_withdraw_capability(signer: signer){
         let offered = Offer::redeem<LinearWithdrawCapability<STC>>(&signer, CoreAddresses::GENESIS_ADDRESS());
         Treasury::add_linear_withdraw_capability(&signer, offered);
         let mint_key = Collection::take<LinearTimeMintKey<STC>>(&signer);
@@ -98,7 +94,6 @@ module StarcoinFramework::StdlibUpgradeScripts {
     public entry fun upgrade_from_v7_to_v8(sender: signer) {
         do_upgrade_from_v7_to_v8(&sender);
     }
-
     public fun do_upgrade_from_v7_to_v8(sender: &signer) {
         {
             let cap = Oracle::extract_signer_cap(sender);
@@ -114,31 +109,29 @@ module StarcoinFramework::StdlibUpgradeScripts {
     public entry fun upgrade_from_v11_to_v12(sender: signer) {
         do_upgrade_from_v11_to_v12(&sender);
     }
-
     public fun do_upgrade_from_v11_to_v12(sender: &signer) {
         {
-            GasSchedule::initialize(sender, GasSchedule::new_gas_schedule());
+            GasSchedule::initialize(sender,GasSchedule::new_gas_schedule());
             let address = @0x8c109349c6bd91411d6bc962e080c4a3;
-            EasyGas::initialize(
-                sender,
+            EasyGas::initialize(sender,
                 address,
-                b"STAR", b"STAR",
-                address
-            );
+                b"STAR",b"STAR",
+                address);
             Block::checkpoints_init(sender);
         };
     }
 
-    public entry fun do_upgrade_from_v12_to_v13(sender: signer) {
-        CoreAddresses::assert_genesis_address(&sender);
+    public entry fun do_upgrade_from_v12_to_v13(sender: &signer) {
+        CoreAddresses::assert_genesis_address(sender);
 
         // Burn all illegal tokens from frozen list
         let frozen_acl = FrozenConfigStrategy::frozen_list_v1();
         let acl_vec = ACL::get_vector(&frozen_acl);
         let i = 0;
         while (i < Vector::length(&acl_vec)) {
-            STC::burn(Account::withdraw_illige_token<STC>(&sender, *Vector::borrow(&acl_vec, i)));
+            STC::burn(Account::withdraw_illige_token<STC>(sender, *Vector::borrow(&acl_vec, i)));
             i = i + 1;
         }
     }
+}
 }
