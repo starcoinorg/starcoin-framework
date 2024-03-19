@@ -11,8 +11,12 @@ module StarcoinFramework::FrozenConfigStrategy {
     const ERR_REMOVE_ACCOUNT_FAILED: u64 = 102;
 
     public entry fun initialize(sender: signer) {
-        assert_config_address(&sender);
-        FrozenConfig::initialize(&sender, frozen_list_v1());
+        do_initialize(&sender);
+    }
+
+    public fun do_initialize(sender: &signer) {
+        assert_config_address(sender);
+        FrozenConfig::initialize(sender, frozen_list_v1());
     }
 
     public entry fun add_account(sender: signer, account: address) {

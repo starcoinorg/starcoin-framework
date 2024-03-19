@@ -121,15 +121,18 @@ module StdlibUpgradeScripts {
         };
     }
 
-    public entry fun do_upgrade_from_v12_to_v13(sender: signer) {
-        CoreAddresses::assert_genesis_address(&sender);
+    public entry fun upgrade_from_v12_to_v13(sender: signer) {
+        do_upgrade_from_v12_to_v13(&sender);
+    }
+    public fun do_upgrade_from_v12_to_v13(sender: &signer) {
+        CoreAddresses::assert_genesis_address(sender);
 
         // Burn all illegal tokens from frozen list
         let frozen_acl = FrozenConfigStrategy::frozen_list_v1();
         let acl_vec = ACL::get_vector(&frozen_acl);
         let i = 0;
         while (i < Vector::length(&acl_vec)) {
-            STC::burn(Account::withdraw_illegal_token<STC>(&sender, *Vector::borrow(&acl_vec, i)));
+            STC::burn(Account::withdraw_illegal_token<STC>(sender, *Vector::borrow(&acl_vec, i)));
             i = i + 1;
         }
     }
