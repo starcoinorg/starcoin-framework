@@ -45,7 +45,6 @@ The module provides strategies for module upgrading.
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Event.md#0x1_Event">0x1::Event</a>;
-<b>use</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy">0x1::FrozenConfigStrategy</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
 <b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
 <b>use</b> <a href="Timestamp.md#0x1_Timestamp">0x1::Timestamp</a>;
@@ -1405,8 +1404,6 @@ Prologue of package transaction.
 <pre><code><b>public</b> <b>fun</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_package_txn_prologue_v2">package_txn_prologue_v2</a>(account: &signer, txn_sender: <b>address</b>, package_address: <b>address</b>, package_hash: vector&lt;u8&gt;) <b>acquires</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_TwoPhaseUpgradeV2">TwoPhaseUpgradeV2</a>, <a href="PackageTxnManager.md#0x1_PackageTxnManager_ModuleUpgradeStrategy">ModuleUpgradeStrategy</a> {
     // Can only be invoked by genesis account
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
-    <b>assert</b>!(!<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_global">FrozenConfigStrategy::has_frozen_global</a>(txn_sender), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="PackageTxnManager.md#0x1_PackageTxnManager_EPROLOGUE_FROZEN_GLOBAL_TXN">EPROLOGUE_FROZEN_GLOBAL_TXN</a>));
-    <b>assert</b>!(!<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_account">FrozenConfigStrategy::has_frozen_account</a>(txn_sender), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="PackageTxnManager.md#0x1_PackageTxnManager_EPROLOGUE_FROZEN_ACCOUNT">EPROLOGUE_FROZEN_ACCOUNT</a>));
     <a href="PackageTxnManager.md#0x1_PackageTxnManager_check_package_txn_v2">check_package_txn_v2</a>(txn_sender, package_address, package_hash);
 }
 </code></pre>
