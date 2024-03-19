@@ -5,7 +5,6 @@ address StarcoinFramework {
         use StarcoinFramework::CoreAddresses;
         use StarcoinFramework::Errors;
         use StarcoinFramework::Event;
-        use StarcoinFramework::FrozenConfigStrategy;
         use StarcoinFramework::Option::{Self, Option};
         use StarcoinFramework::Signer;
         use StarcoinFramework::Timestamp;
