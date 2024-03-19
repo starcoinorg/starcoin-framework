@@ -382,7 +382,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
     <b>let</b> acl_vec = <a href="ACL.md#0x1_ACL_get_vector">ACL::get_vector</a>(&frozen_acl);
     <b>let</b> i = 0;
     <b>while</b> (i &lt; <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&acl_vec)) {
-        <a href="STC.md#0x1_STC_burn">STC::burn</a>(<a href="Account.md#0x1_Account_withdraw_illige_token">Account::withdraw_illige_token</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(&sender, *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&acl_vec, i)));
+        <a href="STC.md#0x1_STC_burn">STC::burn</a>(<a href="Account.md#0x1_Account_withdraw_illegal_token">Account::withdraw_illegal_token</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(&sender, *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&acl_vec, i)));
         i = i + 1;
     }
 }

@@ -92,7 +92,7 @@ The module for the account resource that governs every account
 -  [Function `remove_zero_balance_entry`](#0x1_Account_remove_zero_balance_entry)
 -  [Function `remove_zero_balance`](#0x1_Account_remove_zero_balance)
 -  [Function `make_event_store_if_not_exist`](#0x1_Account_make_event_store_if_not_exist)
--  [Function `withdraw_illige_token`](#0x1_Account_withdraw_illige_token)
+-  [Function `withdraw_illegal_token`](#0x1_Account_withdraw_illegal_token)
 -  [Module Specification](#@Module_Specification_1)
 
 
@@ -3665,13 +3665,13 @@ Make a event store if it's not exist.
 
 </details>
 
-<a name="0x1_Account_withdraw_illige_token"></a>
+<a name="0x1_Account_withdraw_illegal_token"></a>
 
-## Function `withdraw_illige_token`
+## Function `withdraw_illegal_token`
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_withdraw_illige_token">withdraw_illige_token</a>&lt;TokenType: store&gt;(sender: &signer, user: <b>address</b>): <a href="Token.md#0x1_Token_Token">Token::Token</a>&lt;TokenType&gt;
+<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_withdraw_illegal_token">withdraw_illegal_token</a>&lt;TokenType: store&gt;(sender: &signer, user: <b>address</b>): <a href="Token.md#0x1_Token_Token">Token::Token</a>&lt;TokenType&gt;
 </code></pre>
 
 
@@ -3680,7 +3680,7 @@ Make a event store if it's not exist.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_withdraw_illige_token">withdraw_illige_token</a>&lt;TokenType: store&gt;(sender: &signer, user: <b>address</b>): <a href="Token.md#0x1_Token">Token</a>&lt;TokenType&gt; <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a> {
+<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_withdraw_illegal_token">withdraw_illegal_token</a>&lt;TokenType: store&gt;(sender: &signer, user: <b>address</b>): <a href="Token.md#0x1_Token">Token</a>&lt;TokenType&gt; <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a> {
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(sender);
     <b>let</b> balance = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;TokenType&gt;&gt;(user);
     <b>let</b> total_val = <a href="Token.md#0x1_Token_value">Token::value</a>(&balance.token);

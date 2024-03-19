@@ -220,6 +220,10 @@
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_account">has_frozen_account</a>(txn_sender: <b>address</b>): bool {
+    <b>if</b> (<a href="CoreAddresses.md#0x1_CoreAddresses_is_core_address">CoreAddresses::is_core_address</a>(txn_sender)) {
+        <b>return</b> <b>false</b>
+    };
+
     <b>if</b> (<a href="Config.md#0x1_Config_config_exist_by_address">Config::config_exist_by_address</a>&lt;<a href="FrozenConfig.md#0x1_FrozenConfig">FrozenConfig</a>&gt;(<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_config_address">config_address</a>())) {
         <b>let</b> list = <a href="FrozenConfig.md#0x1_FrozenConfig_get_frozen_account_list">FrozenConfig::get_frozen_account_list</a>(<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_config_address">config_address</a>());
         <a href="ACL.md#0x1_ACL_contains">ACL::contains</a>(&list, txn_sender)
