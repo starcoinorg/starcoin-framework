@@ -389,6 +389,24 @@ module upgrade event.
 
 
 
+<a name="0x1_PackageTxnManager_EPROLOGUE_FROZEN_ACCOUNT"></a>
+
+
+
+<pre><code><b>const</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_EPROLOGUE_FROZEN_ACCOUNT">EPROLOGUE_FROZEN_ACCOUNT</a>: u64 = 111;
+</code></pre>
+
+
+
+<a name="0x1_PackageTxnManager_EPROLOGUE_FROZEN_GLOBAL_TXN"></a>
+
+
+
+<pre><code><b>const</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager_EPROLOGUE_FROZEN_GLOBAL_TXN">EPROLOGUE_FROZEN_GLOBAL_TXN</a>: u64 = 110;
+</code></pre>
+
+
+
 <a name="0x1_PackageTxnManager_ESENDER_AND_PACKAGE_ADDRESS_MISMATCH"></a>
 
 

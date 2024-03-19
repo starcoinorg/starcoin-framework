@@ -3,8 +3,9 @@ address StarcoinFramework {
 module ConsensusStrategy {
     use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Timestamp;
-    use StarcoinFramework::Signer;
     use StarcoinFramework::Config;
+    use StarcoinFramework::Signer;
+
 
     /// ConsensusStrategy data.
     struct ConsensusStrategy has copy, drop, store {

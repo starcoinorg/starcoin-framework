@@ -1,14 +1,14 @@
 address StarcoinFramework {
     /// The module provides strategies for module upgrading.
     module PackageTxnManager {
-        use StarcoinFramework::Option::{Self,Option};
-        use StarcoinFramework::Signer;
+        use StarcoinFramework::Config;
         use StarcoinFramework::CoreAddresses;
         use StarcoinFramework::Errors;
-        use StarcoinFramework::Version;
         use StarcoinFramework::Event;
-        use StarcoinFramework::Config;
+        use StarcoinFramework::Option::{Self, Option};
+        use StarcoinFramework::Signer;
         use StarcoinFramework::Timestamp;
+        use StarcoinFramework::Version;
 
         spec module {
             pragma verify = false;
@@ -51,6 +51,9 @@ address StarcoinFramework {
         const ESTRATEGY_NOT_TWO_PHASE: u64 = 107;
         const EUNKNOWN_STRATEGY: u64 = 108;
         const ESENDER_AND_PACKAGE_ADDRESS_MISMATCH: u64 = 109;
+
+        const EPROLOGUE_FROZEN_GLOBAL_TXN: u64 = 110;
+        const EPROLOGUE_FROZEN_ACCOUNT: u64 = 111;
 
         struct UpgradePlanV2 has copy, drop, store {
             package_hash: vector<u8>,

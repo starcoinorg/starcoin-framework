@@ -27,6 +27,7 @@
 <b>use</b> <a href="EasyGas.md#0x1_EasyGas">0x1::EasyGas</a>;
 <b>use</b> <a href="Epoch.md#0x1_Epoch">0x1::Epoch</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
+<b>use</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy">0x1::FrozenConfigStrategy</a>;
 <b>use</b> <a href="Hash.md#0x1_Hash">0x1::Hash</a>;
 <b>use</b> <a href="PackageTxnManager.md#0x1_PackageTxnManager">0x1::PackageTxnManager</a>;
 <b>use</b> <a href="STC.md#0x1_STC">0x1::STC</a>;
@@ -60,6 +61,24 @@
 
 
 <pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EDEPRECATED_FUNCTION">EDEPRECATED_FUNCTION</a>: u64 = 19;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EPROLOGUE_FROZEN_ACCOUNT"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_FROZEN_ACCOUNT">EPROLOGUE_FROZEN_ACCOUNT</a>: u64 = 202;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EPROLOGUE_FROZEN_GLOBAL_TXN"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_FROZEN_GLOBAL_TXN">EPROLOGUE_FROZEN_GLOBAL_TXN</a>: u64 = 201;
 </code></pre>
 
 
@@ -551,6 +570,9 @@ The runtime always runs this before executing the transactions in a block.
     stc_price_scaling: u128
 )  {
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
+
+    <b>assert</b>!(!<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_global">FrozenConfigStrategy::has_frozen_global</a>(txn_sender), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_FROZEN_GLOBAL_TXN">EPROLOGUE_FROZEN_GLOBAL_TXN</a>));
+    <b>assert</b>!(!<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_account">FrozenConfigStrategy::has_frozen_account</a>(txn_sender), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_FROZEN_ACCOUNT">EPROLOGUE_FROZEN_ACCOUNT</a>));
 
     // Verify that the transaction sender's account <b>exists</b>
     <b>assert</b>!(exists_at(txn_sender), <a href="Errors.md#0x1_Errors_requires_address">Errors::requires_address</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_ACCOUNT_DOES_NOT_EXIST">EPROLOGUE_ACCOUNT_DOES_NOT_EXIST</a>));

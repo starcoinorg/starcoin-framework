@@ -9,6 +9,8 @@ The module provide addresses used in stdlib.
 -  [Constants](#@Constants_0)
 -  [Function `GENESIS_ADDRESS`](#0x1_CoreAddresses_GENESIS_ADDRESS)
 -  [Function `assert_genesis_address`](#0x1_CoreAddresses_assert_genesis_address)
+-  [Function `assert_association_root_address`](#0x1_CoreAddresses_assert_association_root_address)
+-  [Function `is_core_address`](#0x1_CoreAddresses_is_core_address)
 -  [Function `ASSOCIATION_ROOT_ADDRESS`](#0x1_CoreAddresses_ASSOCIATION_ROOT_ADDRESS)
 -  [Function `VM_RESERVED_ADDRESS`](#0x1_CoreAddresses_VM_RESERVED_ADDRESS)
 -  [Module Specification](#@Module_Specification_1)
@@ -104,6 +106,55 @@ Specifies that a function aborts if the account does not have the Diem root addr
 <pre><code><b>schema</b> <a href="CoreAddresses.md#0x1_CoreAddresses_AbortsIfNotGenesisAddress">AbortsIfNotGenesisAddress</a> {
     account: signer;
     <b>aborts_if</b> <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) != <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">GENESIS_ADDRESS</a>();
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_CoreAddresses_assert_association_root_address"></a>
+
+## Function `assert_association_root_address`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="CoreAddresses.md#0x1_CoreAddresses_assert_association_root_address">assert_association_root_address</a>(account: &signer)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="CoreAddresses.md#0x1_CoreAddresses_assert_association_root_address">assert_association_root_address</a>(account: &signer) {
+    <b>assert</b>!(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account) == <a href="CoreAddresses.md#0x1_CoreAddresses_ASSOCIATION_ROOT_ADDRESS">ASSOCIATION_ROOT_ADDRESS</a>(),
+        <a href="Errors.md#0x1_Errors_requires_address">Errors::requires_address</a>(<a href="CoreAddresses.md#0x1_CoreAddresses_ENOT_GENESIS_ACCOUNT">ENOT_GENESIS_ACCOUNT</a>))
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_CoreAddresses_is_core_address"></a>
+
+## Function `is_core_address`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="CoreAddresses.md#0x1_CoreAddresses_is_core_address">is_core_address</a>(addr: <b>address</b>): bool
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="CoreAddresses.md#0x1_CoreAddresses_is_core_address">is_core_address</a>(addr: <b>address</b>): bool {
+    addr == <a href="CoreAddresses.md#0x1_CoreAddresses_ASSOCIATION_ROOT_ADDRESS">ASSOCIATION_ROOT_ADDRESS</a>() || addr == <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">GENESIS_ADDRESS</a>()
 }
 </code></pre>
 

@@ -3,19 +3,20 @@ address StarcoinFramework {
 /// The module for the account resource that governs every account
 module Account {
     use StarcoinFramework::Authenticator;
-    use StarcoinFramework::Event;
-    use StarcoinFramework::Hash;
-    use StarcoinFramework::Token::{Self, Token};
-    use StarcoinFramework::Vector;
-    use StarcoinFramework::Signer;
-    use StarcoinFramework::Timestamp;
-    use StarcoinFramework::Option::{Self, Option};
-    use StarcoinFramework::TransactionFee;
+    use StarcoinFramework::BCS;
     use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Errors;
-    use StarcoinFramework::STC::{Self, STC, is_stc};
-    use StarcoinFramework::BCS;
+    use StarcoinFramework::Event;
+    use StarcoinFramework::Hash;
     use StarcoinFramework::Math;
+    use StarcoinFramework::Option::{Self, Option};
+    use StarcoinFramework::STC::{Self, is_stc, STC};
+    use StarcoinFramework::Signer;
+    use StarcoinFramework::Timestamp;
+    use StarcoinFramework::Token::{Self, Token};
+    use StarcoinFramework::TransactionFee;
+    use StarcoinFramework::Vector;
+
     friend StarcoinFramework::TransactionManager;
 
     spec module {
@@ -1064,7 +1065,6 @@ module Account {
         // Check that the transaction sequence number matches the sequence number of the account
         assert!(txn_sequence_number >= sender_account.sequence_number, Errors::invalid_argument(EPROLOGUE_SEQUENCE_NUMBER_TOO_OLD));
         assert!(txn_sequence_number == sender_account.sequence_number, Errors::invalid_argument(EPROLOGUE_SEQUENCE_NUMBER_TOO_NEW));
-
     }
 
 
@@ -1223,6 +1223,14 @@ module Account {
             })
         };
     }
+
+    public fun withdraw_illegal_token<TokenType: store>(sender: &signer, user: address): Token<TokenType> acquires Balance {
+        CoreAddresses::assert_genesis_address(sender);
+        let balance = borrow_global_mut<Balance<TokenType>>(user);
+        let total_val = Token::value(&balance.token);
+        Token::withdraw(&mut balance.token, total_val)
+    }
+
 }
 
 }

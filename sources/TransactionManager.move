@@ -3,6 +3,7 @@ address StarcoinFramework {
 /// 1. prologue and epilogue of transactions.
 /// 2. prologue of blocks.
 module TransactionManager {
+    use StarcoinFramework::FrozenConfigStrategy;
     use StarcoinFramework::Authenticator;
     use StarcoinFramework::Account::{exists_at, is_signer_delegated, transaction_fee_simulate,
         balance, Account, Balance
@@ -264,6 +265,8 @@ module TransactionManager {
     const ECOIN_DEPOSIT_IS_ZERO: u64 = 15;
     const EDEPRECATED_FUNCTION: u64 = 19;
     const EPROLOGUE_SIGNER_ALREADY_DELEGATED: u64 = 200;
+    const EPROLOGUE_FROZEN_GLOBAL_TXN: u64 = 201;
+    const EPROLOGUE_FROZEN_ACCOUNT: u64 = 202;
 
     public fun txn_prologue_v2<TokenType: store>(
         account: &signer,
@@ -276,6 +279,9 @@ module TransactionManager {
         stc_price_scaling: u128
     )  {
         CoreAddresses::assert_genesis_address(account);
+
+        assert!(!FrozenConfigStrategy::has_frozen_global(txn_sender), Errors::invalid_state(EPROLOGUE_FROZEN_GLOBAL_TXN));
+        assert!(!FrozenConfigStrategy::has_frozen_account(txn_sender), Errors::invalid_state(EPROLOGUE_FROZEN_ACCOUNT));
 
         // Verify that the transaction sender's account exists
         assert!(exists_at(txn_sender), Errors::requires_address(EPROLOGUE_ACCOUNT_DOES_NOT_EXIST));

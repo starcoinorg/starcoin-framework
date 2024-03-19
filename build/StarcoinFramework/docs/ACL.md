@@ -15,6 +15,7 @@ use a "set" instead when it's available in the language in the future.
 -  [Function `add`](#0x1_ACL_add)
 -  [Function `remove`](#0x1_ACL_remove)
 -  [Function `contains`](#0x1_ACL_contains)
+-  [Function `get_vector`](#0x1_ACL_get_vector)
 -  [Function `assert_contains`](#0x1_ACL_assert_contains)
 
 
@@ -172,6 +173,31 @@ Return true iff the ACL contains the address.
 
 <pre><code><b>public</b> <b>fun</b> <a href="ACL.md#0x1_ACL_contains">contains</a>(acl: &<a href="ACL.md#0x1_ACL">ACL</a>, addr: <b>address</b>): bool {
     <a href="Vector.md#0x1_Vector_contains">Vector::contains</a>(&acl.list, &addr)
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_ACL_get_vector"></a>
+
+## Function `get_vector`
+
+Return vector of ACL
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="ACL.md#0x1_ACL_get_vector">get_vector</a>(acl: &<a href="ACL.md#0x1_ACL_ACL">ACL::ACL</a>): vector&lt;<b>address</b>&gt;
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="ACL.md#0x1_ACL_get_vector">get_vector</a>(acl: &<a href="ACL.md#0x1_ACL">ACL</a>): vector&lt;<b>address</b>&gt; {
+    *&acl.list
 }
 </code></pre>
 
