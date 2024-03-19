@@ -17,6 +17,7 @@ The module for StdlibUpgrade init scripts
 -  [Function `do_upgrade_from_v7_to_v8`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v7_to_v8)
 -  [Function `upgrade_from_v11_to_v12`](#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12)
 -  [Function `do_upgrade_from_v11_to_v12`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12)
+-  [Function `upgrade_from_v12_to_v13`](#0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v13)
 -  [Function `do_upgrade_from_v12_to_v13`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v13)
 -  [Module Specification](#@Module_Specification_0)
 
@@ -359,13 +360,13 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 
 </details>
 
-<a name="0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v13"></a>
+<a name="0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v13"></a>
 
-## Function `do_upgrade_from_v12_to_v13`
+## Function `upgrade_from_v12_to_v13`
 
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v13">do_upgrade_from_v12_to_v13</a>(sender: signer)
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v13">upgrade_from_v12_to_v13</a>(sender: signer)
 </code></pre>
 
 
@@ -374,15 +375,39 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v13">do_upgrade_from_v12_to_v13</a>(sender: signer) {
-    <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(&sender);
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v12_to_v13">upgrade_from_v12_to_v13</a>(sender: signer) {
+    <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v13">do_upgrade_from_v12_to_v13</a>(&sender);
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v13"></a>
+
+## Function `do_upgrade_from_v12_to_v13`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v13">do_upgrade_from_v12_to_v13</a>(sender: &signer)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v12_to_v13">do_upgrade_from_v12_to_v13</a>(sender: &signer) {
+    <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(sender);
 
     // Burn all illegal tokens from frozen list
     <b>let</b> frozen_acl = <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_frozen_list_v1">FrozenConfigStrategy::frozen_list_v1</a>();
     <b>let</b> acl_vec = <a href="ACL.md#0x1_ACL_get_vector">ACL::get_vector</a>(&frozen_acl);
     <b>let</b> i = 0;
     <b>while</b> (i &lt; <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&acl_vec)) {
-        <a href="STC.md#0x1_STC_burn">STC::burn</a>(<a href="Account.md#0x1_Account_withdraw_illegal_token">Account::withdraw_illegal_token</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(&sender, *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&acl_vec, i)));
+        <a href="STC.md#0x1_STC_burn">STC::burn</a>(<a href="Account.md#0x1_Account_withdraw_illegal_token">Account::withdraw_illegal_token</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(sender, *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&acl_vec, i)));
         i = i + 1;
     }
 }

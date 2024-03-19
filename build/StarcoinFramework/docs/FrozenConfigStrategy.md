@@ -7,6 +7,7 @@
 
 -  [Constants](#@Constants_0)
 -  [Function `initialize`](#0x1_FrozenConfigStrategy_initialize)
+-  [Function `do_initialize`](#0x1_FrozenConfigStrategy_do_initialize)
 -  [Function `add_account`](#0x1_FrozenConfigStrategy_add_account)
 -  [Function `remove_account`](#0x1_FrozenConfigStrategy_remove_account)
 -  [Function `set_global_frozen`](#0x1_FrozenConfigStrategy_set_global_frozen)
@@ -74,8 +75,32 @@
 
 
 <pre><code><b>public</b> entry <b>fun</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_initialize">initialize</a>(sender: signer) {
-    <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_assert_config_address">assert_config_address</a>(&sender);
-    <a href="FrozenConfig.md#0x1_FrozenConfig_initialize">FrozenConfig::initialize</a>(&sender, <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_frozen_list_v1">frozen_list_v1</a>());
+    <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_do_initialize">do_initialize</a>(&sender);
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_FrozenConfigStrategy_do_initialize"></a>
+
+## Function `do_initialize`
+
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_do_initialize">do_initialize</a>(sender: &signer)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_do_initialize">do_initialize</a>(sender: &signer) {
+    <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_assert_config_address">assert_config_address</a>(sender);
+    <a href="FrozenConfig.md#0x1_FrozenConfig_initialize">FrozenConfig::initialize</a>(sender, <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_frozen_list_v1">frozen_list_v1</a>());
 }
 </code></pre>
 
