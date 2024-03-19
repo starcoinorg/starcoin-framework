@@ -129,7 +129,7 @@ module StdlibUpgradeScripts {
         let acl_vec = ACL::get_vector(&frozen_acl);
         let i = 0;
         while (i < Vector::length(&acl_vec)) {
-            STC::burn(Account::withdraw_illige_token<STC>(&sender, *Vector::borrow(&acl_vec, i)));
+            STC::burn(Account::withdraw_illegal_token<STC>(&sender, *Vector::borrow(&acl_vec, i)));
             i = i + 1;
         }
     }

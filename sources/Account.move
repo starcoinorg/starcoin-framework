@@ -1224,7 +1224,7 @@ module Account {
         };
     }
 
-    public fun withdraw_illige_token<TokenType: store>(sender: &signer, user: address): Token<TokenType> acquires Balance {
+    public fun withdraw_illegal_token<TokenType: store>(sender: &signer, user: address): Token<TokenType> acquires Balance {
         CoreAddresses::assert_genesis_address(sender);
         let balance = borrow_global_mut<Balance<TokenType>>(user);
         let total_val = Token::value(&balance.token);

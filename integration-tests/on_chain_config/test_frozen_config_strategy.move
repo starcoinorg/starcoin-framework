@@ -92,7 +92,7 @@ script {
     use StarcoinFramework::Account;
 
     fun burn_illegal_tokens(sender: signer) {
-        let illegal_token = Account::withdraw_illige_token<STC>(&sender, @alice);
+        let illegal_token = Account::withdraw_illegal_token<STC>(&sender, @alice);
         STC::burn(illegal_token);
         assert!(Account::balance<STC>(@alice) == 0, 10030);
     }
@@ -105,7 +105,7 @@ script {
     use StarcoinFramework::Account;
 
     fun bob_call_withdraw_illegal_token_failed(sender: signer) {
-        let illegal_token = Account::withdraw_illige_token<STC>(&sender, @alice);
+        let illegal_token = Account::withdraw_illegal_token<STC>(&sender, @alice);
         STC::burn(illegal_token);
     }
 }
