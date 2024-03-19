@@ -57,6 +57,10 @@ module StarcoinFramework::FrozenConfigStrategy {
     }
 
     public fun has_frozen_account(txn_sender: address): bool {
+        if (CoreAddresses::is_core_address(txn_sender)) {
+            return false
+        };
+
         if (Config::config_exist_by_address<FrozenConfig>(config_address())) {
             let list = FrozenConfig::get_frozen_account_list(config_address());
             ACL::contains(&list, txn_sender)
