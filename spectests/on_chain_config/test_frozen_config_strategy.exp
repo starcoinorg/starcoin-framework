@@ -14,8 +14,13 @@ task 5 'run'. lines 22-31:
 
 task 6 'run'. lines 34-38:
 {
-  "gas_used": 8439,
-  "status": "Executed"
+  "gas_used": 0,
+  "status": {
+    "Discard": {
+      "status_code": "2015",
+      "status_code_name": "UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION"
+    }
+  }
 }
 
 task 7 'run'. lines 40-49:
@@ -38,8 +43,13 @@ task 9 'run'. lines 57-65:
 
 task 10 'run'. lines 67-71:
 {
-  "gas_used": 8439,
-  "status": "Executed"
+  "gas_used": 0,
+  "status": {
+    "Discard": {
+      "status_code": "2015",
+      "status_code_name": "UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION"
+    }
+  }
 }
 
 task 11 'run'. lines 73-81:
