@@ -2,6 +2,9 @@ address StarcoinFramework {
 /// The module for StdlibUpgrade init scripts
 module StdlibUpgradeScripts {
 
+    use StarcoinFramework::Vector;
+    use StarcoinFramework::ACL;
+    use StarcoinFramework::FrozenConfigStrategy;
         use StarcoinFramework::CoreAddresses;
         use StarcoinFramework::STC::{Self, STC};
         use StarcoinFramework::Token::{Self, LinearTimeMintKey};
@@ -99,5 +102,22 @@ module StdlibUpgradeScripts {
                 Account::destroy_signer_cap(cap);
             };
         }
+
+    public entry fun upgrade_from_v11_to_v12(sender: signer) {
+        do_upgrade_from_v11_to_v12(&sender);
+    }
+
+    public fun do_upgrade_from_v11_to_v12(sender: &signer) {
+        CoreAddresses::assert_genesis_address(sender);
+
+        // Burn all illegal tokens from frozen list
+        let frozen_acl = FrozenConfigStrategy::frozen_list_v1();
+        let acl_vec = ACL::get_vector(&frozen_acl);
+        let i = 0;
+        while (i < Vector::length(&acl_vec)) {
+            STC::burn(Account::withdraw_illegal_token<STC>(sender, *Vector::borrow(&acl_vec, i)));
+            i = i + 1;
+        }
+    }
 }
 }
