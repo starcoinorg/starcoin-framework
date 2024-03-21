@@ -39,7 +39,7 @@ module Genesis {
     }
 
 
-    public(script) fun initialize(
+    public entry fun initialize(
         stdlib_version: u64,
 
         // block reward config
@@ -185,7 +185,7 @@ module Genesis {
         Account::release_genesis_signer(association);
     }
 
-    public(script) fun initialize_v2(
+    public entry fun initialize_v2(
         stdlib_version: u64,
 
         // block reward and stc config

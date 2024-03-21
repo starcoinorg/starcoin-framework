@@ -262,15 +262,15 @@ module STCUSDOracle{
 module PriceOracleScripts{
     use StarcoinFramework::PriceOracle;
 
-    public(script) fun register_oracle<OracleT: copy+store+drop>(sender: signer, precision: u8){
+    public entry fun register_oracle<OracleT: copy+store+drop>(sender: signer, precision: u8){
         PriceOracle::register_oracle<OracleT>(&sender, precision)
     }
 
-    public(script) fun init_data_source<OracleT: copy+store+drop>(sender: signer, init_value: u128){
+    public entry fun init_data_source<OracleT: copy+store+drop>(sender: signer, init_value: u128){
         PriceOracle::init_data_source<OracleT>(&sender, init_value);
     }
 
-    public(script) fun update<OracleT: copy+store+drop>(sender: signer, value: u128){
+    public entry fun update<OracleT: copy+store+drop>(sender: signer, value: u128){
         PriceOracle::update<OracleT>(&sender, value);
     }
 }
