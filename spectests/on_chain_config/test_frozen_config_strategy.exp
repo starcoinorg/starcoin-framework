@@ -66,13 +66,13 @@ task 12 'run'. lines 83-87:
 
 task 13 'run'. lines 89-100:
 {
-  "gas_used": 74486,
+  "gas_used": 75426,
   "status": "Executed"
 }
 
 task 14 'run'. lines 102-112:
 {
-  "gas_used": 20908,
+  "gas_used": 21493,
   "status": {
     "MoveAbort": {
       "location": {
