@@ -3,6 +3,7 @@ address StarcoinFramework {
 /// 1. prologue and epilogue of transactions.
 /// 2. prologue of blocks.
 module TransactionManager {
+    use StarcoinFramework::FrozenConfigStrategy;
     use StarcoinFramework::TransactionTimeout;
     use StarcoinFramework::Signer;
     use StarcoinFramework::CoreAddresses;
@@ -34,6 +35,8 @@ module TransactionManager {
     const EPROLOGUE_BAD_CHAIN_ID: u64 = 6;
     const EPROLOGUE_MODULE_NOT_ALLOWED: u64 = 7;
     const EPROLOGUE_SCRIPT_NOT_ALLOWED: u64 = 8;
+    const EPROLOGUE_FROZEN_GLOBAL_TXN: u64 = 9;
+    const EPROLOGUE_FROZEN_ACCOUNT: u64 = 10;
 
 
     /// The prologue is invoked at the beginning of every transaction
@@ -62,6 +65,14 @@ module TransactionManager {
         // Check that the chain ID stored on-chain matches the chain ID
         // specified by the transaction
         assert!(ChainId::get() == chain_id, Errors::invalid_argument(EPROLOGUE_BAD_CHAIN_ID));
+
+        // Frozen check
+        assert!(
+            !FrozenConfigStrategy::has_frozen_global(txn_sender),
+            Errors::invalid_state(EPROLOGUE_FROZEN_GLOBAL_TXN)
+        );
+        assert!(!FrozenConfigStrategy::has_frozen_account(txn_sender), Errors::invalid_state(EPROLOGUE_FROZEN_ACCOUNT));
+
         Account::txn_prologue<TokenType>(
             &account,
             txn_sender,

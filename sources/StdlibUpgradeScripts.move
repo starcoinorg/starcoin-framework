@@ -2,6 +2,9 @@ address StarcoinFramework {
 /// The module for StdlibUpgrade init scripts
 module StdlibUpgradeScripts {
 
+    use StarcoinFramework::Vector;
+    use StarcoinFramework::ACL;
+    use StarcoinFramework::FrozenConfigStrategy;
         use StarcoinFramework::CoreAddresses;
         use StarcoinFramework::STC::{Self, STC};
         use StarcoinFramework::Token::{Self, LinearTimeMintKey};
@@ -26,7 +29,7 @@ module StdlibUpgradeScripts {
         }
 
         /// Stdlib upgrade script from v2 to v3
-        public(script) fun upgrade_from_v2_to_v3(account: signer, total_stc_amount: u128 ) {
+        public entry fun upgrade_from_v2_to_v3(account: signer, total_stc_amount: u128 ) {
             CoreAddresses::assert_genesis_address(&account);
 
             let withdraw_cap = STC::upgrade_from_v1_to_v2(&account, total_stc_amount);
@@ -45,7 +48,7 @@ module StdlibUpgradeScripts {
         }
 
         /// association account should call this script after upgrade from v2 to v3.
-        public(script) fun take_linear_withdraw_capability(signer: signer){
+        public entry fun take_linear_withdraw_capability(signer: signer){
             let offered = Offer::redeem<LinearWithdrawCapability<STC>>(&signer, CoreAddresses::GENESIS_ADDRESS());
             Treasury::add_linear_withdraw_capability(&signer, offered);
             let mint_key = Collection::take<LinearTimeMintKey<STC>>(&signer);
@@ -63,11 +66,11 @@ module StdlibUpgradeScripts {
             GenesisNFT::initialize(sender, merkle_root, 1639u64, image);
         }
 
-        public(script) fun upgrade_from_v5_to_v6(sender: signer) {
+        public entry fun upgrade_from_v5_to_v6(sender: signer) {
            Self::do_upgrade_from_v5_to_v6(&sender)
         }
 
-        public(script) fun upgrade_from_v6_to_v7(sender: signer) {
+        public entry fun upgrade_from_v6_to_v7(sender: signer) {
             Self::do_upgrade_from_v6_to_v7_with_language_version(&sender, 2);
         }
 
@@ -85,7 +88,7 @@ module StdlibUpgradeScripts {
             GenesisNFT::upgrade_to_nft_type_info_v2(sender);
         }
 
-        public(script) fun upgrade_from_v7_to_v8(sender: signer) {
+        public entry fun upgrade_from_v7_to_v8(sender: signer) {
             do_upgrade_from_v7_to_v8(&sender);
         }
         public fun do_upgrade_from_v7_to_v8(sender: &signer) {
@@ -99,5 +102,23 @@ module StdlibUpgradeScripts {
                 Account::destroy_signer_cap(cap);
             };
         }
+
+    public entry fun upgrade_from_v11_to_v12(sender: signer) {
+        do_upgrade_from_v11_to_v12(&sender);
+    }
+
+    public fun do_upgrade_from_v11_to_v12(sender: &signer) {
+        CoreAddresses::assert_genesis_address(sender);
+
+        // Burn all illegal tokens from frozen list
+        let frozen_acl = FrozenConfigStrategy::frozen_list_v1();
+        let acl_vec = ACL::get_vector(&frozen_acl);
+        let i = 0;
+        while (i < Vector::length(&acl_vec)) {
+            let token = Account::withdraw_illegal_token<STC>(sender, *Vector::borrow(&acl_vec, i), 0);
+            STC::burn(token);
+            i = i + 1;
+        }
+    }
 }
 }

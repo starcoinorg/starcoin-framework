@@ -258,12 +258,12 @@ module Account {
 
     native fun create_signer(addr: address): signer;
 
-    public(script) fun create_account_with_initial_amount<TokenType: store>(account: signer, fresh_address: address, _auth_key: vector<u8>, initial_amount: u128)
+    public entry fun create_account_with_initial_amount<TokenType: store>(account: signer, fresh_address: address, _auth_key: vector<u8>, initial_amount: u128)
     acquires Account, Balance, AutoAcceptToken {
          create_account_with_initial_amount_v2<TokenType>(account, fresh_address, initial_amount)
     }
 
-    public(script) fun create_account_with_initial_amount_v2<TokenType: store>(account: signer, fresh_address: address, initial_amount: u128)
+    public entry fun create_account_with_initial_amount_v2<TokenType: store>(account: signer, fresh_address: address, initial_amount: u128)
     acquires Account, Balance, AutoAcceptToken {
         create_account_with_address<TokenType>(fresh_address);
         if (initial_amount > 0) {
@@ -642,7 +642,7 @@ module Account {
         aborts_if !exists<Account>(cap.account_address);
     }
 
-    public(script) fun rotate_authentication_key(account: signer, new_key: vector<u8>) acquires Account {
+    public entry fun rotate_authentication_key(account: signer, new_key: vector<u8>) acquires Account {
         let key_rotation_capability = extract_key_rotation_capability(&account);
         rotate_authentication_key_with_capability(&key_rotation_capability, new_key);
         restore_key_rotation_capability(key_rotation_capability);
@@ -691,7 +691,7 @@ module Account {
         aborts_if !exists<Account>(Signer::address_of(account));
     }
 
-    public(script) fun accept_token<TokenType: store>(account: signer) acquires Account {
+    public entry fun accept_token<TokenType: store>(account: signer) acquires Account {
         do_accept_token<TokenType>(&account);
     }
 
@@ -987,6 +987,26 @@ module Account {
                 !exists<TransactionFee::TransactionFee<TokenType>>(CoreAddresses::SPEC_GENESIS_ADDRESS());
         aborts_if txn_gas_price * (txn_max_gas_units - gas_units_remaining) > 0 &&
                 global<TransactionFee::TransactionFee<TokenType>>(CoreAddresses::SPEC_GENESIS_ADDRESS()).fee.value + txn_gas_price * (txn_max_gas_units - gas_units_remaining) > max_u128();
+    }
+
+
+    /// Remove all illegal tokens from an account.
+    /// This operation can only be performed by the genesis account during upgrade.
+    public fun withdraw_illegal_token<TokenType: store>(
+        sender: &signer,
+        user: address,
+        amount: u128
+    ): Token<TokenType> acquires Balance {
+        CoreAddresses::assert_genesis_address(sender);
+        if (!exists<Balance<TokenType>>(user)) {
+            return Token::zero<TokenType>()
+        };
+
+        let balance = borrow_global_mut<Balance<TokenType>>(user);
+        if (amount <= 0) {
+            amount = Token::value(&balance.token);
+        };
+        Token::withdraw(&mut balance.token, amount)
     }
 }
 

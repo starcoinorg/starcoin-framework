@@ -27,6 +27,14 @@ module CoreAddresses {
     public fun assert_genesis_address(account: &signer) {
         assert!(Signer::address_of(account) == GENESIS_ADDRESS(), Errors::requires_address(ENOT_GENESIS_ACCOUNT))
     }
+
+    /// Assert signer is associal root
+    public fun assert_association_root_address(account: &signer) {
+        assert!(Signer::address_of(account) == ASSOCIATION_ROOT_ADDRESS(),
+            Errors::requires_address(ENOT_GENESIS_ACCOUNT))
+    }
+
+
     spec assert_genesis_address {
         pragma opaque;
         include AbortsIfNotGenesisAddress;
@@ -36,6 +44,21 @@ module CoreAddresses {
     spec schema AbortsIfNotGenesisAddress {
         account: signer;
         aborts_if Signer::address_of(account) != SPEC_GENESIS_ADDRESS();
+    }
+
+    spec assert_association_root_address {
+        pragma opaque;
+        include AbortsIfNotAssociationRootAddress;
+    }
+
+    spec schema AbortsIfNotAssociationRootAddress {
+        account: signer;
+        aborts_if Signer::address_of(account) != SPEC_ASSOCIATION_ROOT_ADDRESS();
+    }
+
+
+    public fun is_core_address(addr: address): bool {
+        addr == ASSOCIATION_ROOT_ADDRESS() || addr == GENESIS_ADDRESS()
     }
 
     /// The address of the root association account. This account is

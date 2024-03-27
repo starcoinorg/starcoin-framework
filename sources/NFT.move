@@ -569,11 +569,11 @@ module IdentifierNFTScripts {
     }
 
     /// Init IdentifierNFT for accept NFT<NFTMeta, NFTBody> as Identifier.
-    public(script) fun accept<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer) {
+    public entry fun accept<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer) {
         IdentifierNFT::accept<NFTMeta, NFTBody>(&sender);
     }
     /// Destroy empty IdentifierNFT
-    public(script) fun destroy_empty<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer) {
+    public entry fun destroy_empty<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer) {
         IdentifierNFT::destroy_empty<NFTMeta, NFTBody>(&sender);
     }
 }
@@ -757,12 +757,12 @@ module NFTGalleryScripts {
     }
 
     /// Init a  NFTGallery for accept NFT<NFTMeta, NFTBody>
-    public(script) fun accept<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer) {
+    public entry fun accept<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer) {
         NFTGallery::accept<NFTMeta, NFTBody>(&sender);
     }
 
     /// Transfer NFT<NFTMeta, NFTBody> with `id` from `sender` to `receiver`
-    public(script) fun transfer<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer, id: u64, receiver: address) {
+    public entry fun transfer<NFTMeta: copy + store + drop, NFTBody: store>(sender: signer, id: u64, receiver: address) {
         NFTGallery::transfer<NFTMeta, NFTBody>(&sender, id, receiver);
     }
 }

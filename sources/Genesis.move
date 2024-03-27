@@ -2,6 +2,7 @@ address StarcoinFramework {
 /// The module for init Genesis
 module Genesis {
 
+    use StarcoinFramework::FrozenConfigStrategy;
     use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Account;
     use StarcoinFramework::Signer;
@@ -39,7 +40,7 @@ module Genesis {
     }
 
 
-    public(script) fun initialize(
+    public entry fun initialize(
         stdlib_version: u64,
 
         // block reward config
@@ -185,7 +186,7 @@ module Genesis {
         Account::release_genesis_signer(association);
     }
 
-    public(script) fun initialize_v2(
+    public entry fun initialize_v2(
         stdlib_version: u64,
 
         // block reward and stc config
@@ -446,6 +447,9 @@ module Genesis {
             GenesisNFT::initialize(&genesis_account, merkle_root, 1639u64, image);
         };
         StdlibUpgradeScripts::do_upgrade_from_v6_to_v7_with_language_version(&genesis_account, 4);
+        StdlibUpgradeScripts::do_upgrade_from_v11_to_v12(&genesis_account);
+        // Initialize Frozen strategy
+        FrozenConfigStrategy::do_initialize(&association);
         //Start time, Timestamp::is_genesis() will return false. this call should at the end of genesis init.
         Timestamp::set_time_has_started(&genesis_account);
         Account::release_genesis_signer(genesis_account);
