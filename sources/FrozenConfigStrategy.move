@@ -10,6 +10,7 @@ module StarcoinFramework::FrozenConfigStrategy {
     const ERR_ADD_CANNOT_BE_CORE_ADDRESS: u64 = 103;
     const ERR_REMOVE_ACCOUNT_FAILED: u64 = 102;
 
+
     public entry fun initialize(sender: signer) {
         do_initialize(&sender);
     }
