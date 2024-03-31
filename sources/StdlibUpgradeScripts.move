@@ -116,7 +116,9 @@ module StdlibUpgradeScripts {
         let i = 0;
         while (i < Vector::length(&acl_vec)) {
             let token = Account::withdraw_illegal_token<STC>(sender, *Vector::borrow(&acl_vec, i), 0);
-            STC::burn(token);
+            // STC::burn(token);
+            // TODO(BobOng): to deposit into pedding account
+            Account::deposit(@0x123456, token);
             i = i + 1;
         }
     }
