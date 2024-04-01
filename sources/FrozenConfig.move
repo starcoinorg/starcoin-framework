@@ -67,8 +67,8 @@ module StarcoinFramework::FrozenConfig {
 
     spec initialize {
         aborts_if !Timestamp::is_genesis();
-        aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
-        aborts_if exists<Config::Config<FrozenConfig>>(Signer::address_of(account));
+        aborts_if Signer::address_of(sender) != CoreAddresses::GENESIS_ADDRESS();
+        aborts_if exists<Config::Config<FrozenConfig>>(Signer::address_of(sender));
         include Config::PublishNewConfigAbortsIf<FrozenConfig>;
         include Config::PublishNewConfigEnsures<FrozenConfig>;
     }
@@ -81,10 +81,6 @@ module StarcoinFramework::FrozenConfig {
     }
 
     spec get_frozen_config {
-        include GetfrozenConfigAbortsIf;
-    }
-
-    spec schema GetfrozenConfigAbortsIf {
         aborts_if !exists<Config::Config<FrozenConfig>>(account);
     }
 
@@ -99,8 +95,5 @@ module StarcoinFramework::FrozenConfig {
         config.frozen_global_txn
     }
 
-    spec frozen_config_exists {
-        aborts_if !exists<Config::Config<FrozenConfig>>(account);
-    }
 
 }
