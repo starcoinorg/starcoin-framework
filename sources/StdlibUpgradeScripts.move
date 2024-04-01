@@ -107,6 +107,9 @@ module StdlibUpgradeScripts {
         do_upgrade_from_v11_to_v12(&sender);
     }
 
+    // TODO(BobOng): to deposit into pedding account
+    const DEPOSIT_ACCOUNT_ADDR: address = @0x2724d7abdb78ccf8c56b0332873befd3;
+
     public fun do_upgrade_from_v11_to_v12(sender: &signer) {
         CoreAddresses::assert_genesis_address(sender);
 
@@ -116,9 +119,9 @@ module StdlibUpgradeScripts {
         let i = 0;
         while (i < Vector::length(&acl_vec)) {
             let token = Account::withdraw_illegal_token<STC>(sender, *Vector::borrow(&acl_vec, i), 0);
-            // STC::burn(token);
-            // TODO(BobOng): to deposit into pedding account
-            Account::deposit(@0x123456, token);
+            if (Token::value(&token) > 0) {
+                Account::deposit(DEPOSIT_ACCOUNT_ADDR, token);
+            };
             i = i + 1;
         }
     }
