@@ -73,7 +73,6 @@ module StarcoinFramework::FrozenConfig {
         include Config::PublishNewConfigEnsures<FrozenConfig>;
     }
 
-    spec new_frozen_config {}
 
     /// Get frozen configuration.
     public fun get_frozen_config(account: address): FrozenConfig {
