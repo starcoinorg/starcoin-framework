@@ -122,7 +122,6 @@ module StarcoinFramework::FrozenConfigStrategy {
             ACL::add(&mut acl, @0x15c37f15045f448d26fd262d86d5619c);
             ACL::add(&mut acl, @0xa631d4daafec285ac92a81a9bd50f753);
             ACL::add(&mut acl, @0x8096295553fd54c584b8e961da18ab0c);
-            ACL::add(&mut acl, @0x9c59015c60e0f262d3b6571bcd9c5b0b);
             ACL::add(&mut acl, @0xa62594faff9b19cecc3a511ca0dd3abd);
             ACL::add(&mut acl, @0x12d95e1db2a54d15bc50927e5655af2d);
             ACL::add(&mut acl, @0xb9ad8b357eb59ec508db8e0f19515ae0);
@@ -132,11 +131,6 @@ module StarcoinFramework::FrozenConfigStrategy {
             ACL::add(&mut acl, @0x5918b0782056c9b698459ad37565d15b);
             ACL::add(&mut acl, @0x03691f8d00b79502498f3b47faa8eafa);
             ACL::add(&mut acl, @0x7e969eb99f7d9c08cf71db20bc7323bf);
-            ACL::add(&mut acl, @0x340893ca7178356e2a303129e5933bfe);
-            ACL::add(&mut acl, @0xb1e87052146eb1651a1c404b33480a5a);
-            ACL::add(&mut acl, @0x0ca8b57eb98c34d558a167989415de73);
-            ACL::add(&mut acl, @0x0782a3dd4f2e460f19270ff3ade92335);
-            ACL::add(&mut acl, @0x482cad7b30e39763b5e2f5423070be35);
         } else {
             ACL::add(&mut acl, @0xd0c5a06ae6100ce115cad1600fe59e96);
             ACL::add(&mut acl, @0x1af80d10cb642adcd9f7fee1420104ec);
