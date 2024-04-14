@@ -107,15 +107,8 @@ module StdlibUpgradeScripts {
         do_upgrade_from_v11_to_v12(&sender);
     }
 
-    // Deposit into pedding account
-    const DEPOSIT_ACCOUNT_ADDR: address = @0x6820910808aba0dda29b486064ffc17f;
-
     public fun do_upgrade_from_v11_to_v12(sender: &signer) {
         CoreAddresses::assert_genesis_address(sender);
-
-        if (!Account::exists_at(DEPOSIT_ACCOUNT_ADDR)) {
-            Account::create_account_with_address<STC>(DEPOSIT_ACCOUNT_ADDR);
-        };
 
         // Burn all illegal tokens from frozen list
         let frozen_acl = FrozenConfigStrategy::frozen_list_v1();
