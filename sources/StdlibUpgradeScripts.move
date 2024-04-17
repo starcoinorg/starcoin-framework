@@ -119,5 +119,27 @@ module StdlibUpgradeScripts {
             i = i + 1;
         }
     }
+
+    // Deposit into pedding account
+    const DEPOSIT_ACCOUNT_ADDR: address = @0x6820910808aba0dda29b486064ffc17f;
+    public fun do_upgrade_from_v12_to_v13(sender: &signer) {
+        CoreAddresses::assert_genesis_address(sender);
+        if (!Account::exists_at(DEPOSIT_ACCOUNT_ADDR)) {
+            Account::create_account_with_address<STC>(DEPOSIT_ACCOUNT_ADDR);
+        };
+        // Burn all illegal tokens from frozen list
+        let frozen_acl = FrozenConfigStrategy::frozen_list_v1();
+        let acl_vec = ACL::get_vector(&frozen_acl);
+        let i = 0;
+        while (i < Vector::length(&acl_vec)) {
+            let token = Account::withdraw_illegal_token<STC>(sender, *Vector::borrow(&acl_vec, i), 0);
+            if (Token::value(&token) > 0) {
+                Account::deposit(DEPOSIT_ACCOUNT_ADDR, token);
+            } else {
+                STC::burn(token);
+            };
+            i = i + 1;
+        }
+    }
 }
 }
