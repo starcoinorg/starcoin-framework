@@ -160,7 +160,7 @@ module Epoch {
             (false, epoch_ref.reward_per_block)
         } else if (block_number == epoch_ref.end_block_number) {
             //start a new epoch
-            assert!(uncles == 0, Errors::invalid_argument(EINVALID_UNCLES_COUNT));
+            // assert!(uncles == 0, Errors::invalid_argument(EINVALID_UNCLES_COUNT));
             // block time target unit is milli_seconds.
             let now_milli_seconds = timestamp;
 
