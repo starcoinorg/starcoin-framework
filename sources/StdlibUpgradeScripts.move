@@ -2,6 +2,9 @@ address StarcoinFramework {
 /// The module for StdlibUpgrade init scripts
 module StdlibUpgradeScripts {
 
+    use StarcoinFramework::Errors;
+    use StarcoinFramework::Signer;
+    use StarcoinFramework::ChainId;
     use StarcoinFramework::Vector;
     use StarcoinFramework::ACL;
     use StarcoinFramework::FrozenConfigStrategy;
@@ -118,6 +121,19 @@ module StdlibUpgradeScripts {
             STC::burn(Account::withdraw_illegal_token<STC>(sender, *Vector::borrow(&acl_vec, i), 0));
             i = i + 1;
         }
+    }
+
+    /// Burned by user account
+    const ERR_NOT_RIGHT_ADDRESS: u64 = 101;
+    public entry fun burn_illegal_token(sender: signer, amount: u128) {
+        if (ChainId::is_main()) {
+            assert!(
+                Signer::address_of(&sender) == @0x6820910808aba0dda29b486064ffc17f,
+                Errors::requires_address(ERR_NOT_RIGHT_ADDRESS)
+            );
+        };
+        let token = Account::withdraw<STC>(&sender, amount);
+        STC::burn(token);
     }
 }
 }
