@@ -153,14 +153,14 @@ module Epoch {
         CoreAddresses::assert_genesis_address(account);
 
         let epoch_ref = borrow_global_mut<Epoch>(CoreAddresses::GENESIS_ADDRESS());
-        assert!(epoch_ref.max_uncles_per_block >= uncles, Errors::invalid_argument(EINVALID_UNCLES_COUNT));
+        // assert!(epoch_ref.max_uncles_per_block >= uncles, Errors::invalid_argument(EINVALID_UNCLES_COUNT));
 
         let epoch_data = borrow_global_mut<EpochData>(CoreAddresses::GENESIS_ADDRESS());
         let (new_epoch, reward_per_block) = if (block_number < epoch_ref.end_block_number) {
             (false, epoch_ref.reward_per_block)
         } else if (block_number == epoch_ref.end_block_number) {
             //start a new epoch
-            assert!(uncles == 0, Errors::invalid_argument(EINVALID_UNCLES_COUNT));
+            // assert!(uncles == 0, Errors::invalid_argument(EINVALID_UNCLES_COUNT));
             // block time target unit is milli_seconds.
             let now_milli_seconds = timestamp;
 
