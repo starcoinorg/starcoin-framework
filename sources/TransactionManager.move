@@ -69,11 +69,11 @@ module TransactionManager {
         // Frozen check
         assert!(
             !FrozenConfigStrategy::has_frozen_global(txn_sender),
-            Errors::invalid_argument(EPROLOGUE_SENDING_ACCOUNT_FROZEN)
+            Errors::invalid_argument(EPROLOGUE_SENDING_TXN_GLOBAL_FROZEN)
         );
         assert!(
             !FrozenConfigStrategy::has_frozen_account(txn_sender),
-            Errors::invalid_argument(EPROLOGUE_SENDING_TXN_GLOBAL_FROZEN)
+            Errors::invalid_argument(EPROLOGUE_SENDING_ACCOUNT_FROZEN)
         );
 
         Account::txn_prologue<TokenType>(
