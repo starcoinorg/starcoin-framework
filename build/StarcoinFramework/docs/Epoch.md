@@ -31,7 +31,6 @@ The module provide epoch functionality for starcoin.
 
 <pre><code><b>use</b> <a href="ConsensusConfig.md#0x1_ConsensusConfig">0x1::ConsensusConfig</a>;
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
-<b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Event.md#0x1_Event">0x1::Event</a>;
 <b>use</b> <a href="Math.md#0x1_Math">0x1::Math</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
@@ -369,13 +368,21 @@ compute next block time_target.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Epoch.md#0x1_Epoch_compute_next_block_time_target">compute_next_block_time_target</a>(config: &<a href="ConsensusConfig.md#0x1_ConsensusConfig">ConsensusConfig</a>, last_epoch_time_target: u64, epoch_start_time: u64, now_milli_second: u64, start_block_number: u64, end_block_number: u64, total_uncles: u64): u64 {
+<pre><code><b>public</b> <b>fun</b> <a href="Epoch.md#0x1_Epoch_compute_next_block_time_target">compute_next_block_time_target</a>(
+    config: &<a href="ConsensusConfig.md#0x1_ConsensusConfig">ConsensusConfig</a>,
+    last_epoch_time_target: u64,
+    epoch_start_time: u64,
+    now_milli_second: u64,
+    start_block_number: u64,
+    end_block_number: u64,
+    total_uncles: u64
+): u64 {
     <b>let</b> total_time = now_milli_second - epoch_start_time;
     <b>let</b> blocks = end_block_number - start_block_number;
     <b>let</b> avg_block_time = total_time / blocks;
     <b>let</b> uncles_rate = total_uncles * <a href="Epoch.md#0x1_Epoch_THOUSAND">THOUSAND</a> / blocks;
     <b>let</b> new_epoch_block_time_target = (<a href="Epoch.md#0x1_Epoch_THOUSAND">THOUSAND</a> + uncles_rate) * avg_block_time /
-            (<a href="ConsensusConfig.md#0x1_ConsensusConfig_uncle_rate_target">ConsensusConfig::uncle_rate_target</a>(config) + <a href="Epoch.md#0x1_Epoch_THOUSAND">THOUSAND</a>);
+        (<a href="ConsensusConfig.md#0x1_ConsensusConfig_uncle_rate_target">ConsensusConfig::uncle_rate_target</a>(config) + <a href="Epoch.md#0x1_Epoch_THOUSAND">THOUSAND</a>);
     <b>if</b> (new_epoch_block_time_target &gt; last_epoch_time_target * 2) {
         new_epoch_block_time_target = last_epoch_time_target * 2;
     };
@@ -426,26 +433,43 @@ adjust_epoch try to advance to next epoch if current epoch ends.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Epoch.md#0x1_Epoch_adjust_epoch">adjust_epoch</a>(account: &signer, block_number: u64, timestamp: u64, uncles: u64, parent_gas_used:u64): u128
+<pre><code><b>public</b> <b>fun</b> <a href="Epoch.md#0x1_Epoch_adjust_epoch">adjust_epoch</a>(
+    account: &signer,
+    block_number: u64,
+    timestamp: u64,
+    uncles: u64,
+    parent_gas_used: u64
+): u128
 <b>acquires</b> <a href="Epoch.md#0x1_Epoch">Epoch</a>, <a href="Epoch.md#0x1_Epoch_EpochData">EpochData</a> {
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
 
     <b>let</b> epoch_ref = <b>borrow_global_mut</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
-    <b>assert</b>!(epoch_ref.max_uncles_per_block &gt;= uncles, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Epoch.md#0x1_Epoch_EINVALID_UNCLES_COUNT">EINVALID_UNCLES_COUNT</a>));
+    // <b>assert</b>!(epoch_ref.max_uncles_per_block &gt;= uncles, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Epoch.md#0x1_Epoch_EINVALID_UNCLES_COUNT">EINVALID_UNCLES_COUNT</a>));
 
     <b>let</b> epoch_data = <b>borrow_global_mut</b>&lt;<a href="Epoch.md#0x1_Epoch_EpochData">EpochData</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
     <b>let</b> (new_epoch, reward_per_block) = <b>if</b> (block_number &lt; epoch_ref.end_block_number) {
         (<b>false</b>, epoch_ref.reward_per_block)
     } <b>else</b> <b>if</b> (block_number == epoch_ref.end_block_number) {
         //start a new epoch
-        <b>assert</b>!(uncles == 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Epoch.md#0x1_Epoch_EINVALID_UNCLES_COUNT">EINVALID_UNCLES_COUNT</a>));
+        // <b>assert</b>!(uncles == 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Epoch.md#0x1_Epoch_EINVALID_UNCLES_COUNT">EINVALID_UNCLES_COUNT</a>));
         // block time target unit is milli_seconds.
         <b>let</b> now_milli_seconds = timestamp;
 
         <b>let</b> config = <a href="ConsensusConfig.md#0x1_ConsensusConfig_get_config">ConsensusConfig::get_config</a>();
         <b>let</b> last_epoch_time_target = epoch_ref.block_time_target;
-        <b>let</b> new_epoch_block_time_target = <a href="Epoch.md#0x1_Epoch_compute_next_block_time_target">compute_next_block_time_target</a>(&config, last_epoch_time_target, epoch_ref.start_time, now_milli_seconds, epoch_ref.start_block_number, epoch_ref.end_block_number, epoch_data.uncles);
-        <b>let</b> new_reward_per_block = <a href="ConsensusConfig.md#0x1_ConsensusConfig_do_compute_reward_per_block">ConsensusConfig::do_compute_reward_per_block</a>(&config, new_epoch_block_time_target);
+        <b>let</b> new_epoch_block_time_target = <a href="Epoch.md#0x1_Epoch_compute_next_block_time_target">compute_next_block_time_target</a>(
+            &config,
+            last_epoch_time_target,
+            epoch_ref.start_time,
+            now_milli_seconds,
+            epoch_ref.start_block_number,
+            epoch_ref.end_block_number,
+            epoch_data.uncles
+        );
+        <b>let</b> new_reward_per_block = <a href="ConsensusConfig.md#0x1_ConsensusConfig_do_compute_reward_per_block">ConsensusConfig::do_compute_reward_per_block</a>(
+            &config,
+            new_epoch_block_time_target
+        );
 
         //<b>update</b> epoch by adjust result or config, because <a href="ConsensusConfig.md#0x1_ConsensusConfig">ConsensusConfig</a> may be updated.
         epoch_ref.number = epoch_ref.number + 1;
@@ -461,7 +485,13 @@ adjust_epoch try to advance to next epoch if current epoch ends.
 
         epoch_data.uncles = 0;
         <b>let</b> last_epoch_total_gas = epoch_data.total_gas + (parent_gas_used <b>as</b> u128);
-        <a href="Epoch.md#0x1_Epoch_adjust_gas_limit">adjust_gas_limit</a>(&config, epoch_ref, last_epoch_time_target, new_epoch_block_time_target, last_epoch_total_gas);
+        <a href="Epoch.md#0x1_Epoch_adjust_gas_limit">adjust_gas_limit</a>(
+            &config,
+            epoch_ref,
+            last_epoch_time_target,
+            new_epoch_block_time_target,
+            last_epoch_total_gas
+        );
         <a href="Epoch.md#0x1_Epoch_emit_epoch_event">emit_epoch_event</a>(epoch_ref, epoch_data.total_reward);
         (<b>true</b>, new_reward_per_block)
     } <b>else</b> {
@@ -469,7 +499,7 @@ adjust_epoch try to advance to next epoch if current epoch ends.
         <b>abort</b> <a href="Epoch.md#0x1_Epoch_EUNREACHABLE">EUNREACHABLE</a>
     };
     <b>let</b> reward = reward_per_block +
-            reward_per_block * (epoch_ref.reward_per_uncle_percent <b>as</b> u128) * (uncles <b>as</b> u128) / (<a href="Epoch.md#0x1_Epoch_HUNDRED">HUNDRED</a> <b>as</b> u128);
+        reward_per_block * (epoch_ref.reward_per_uncle_percent <b>as</b> u128) * (uncles <b>as</b> u128) / (<a href="Epoch.md#0x1_Epoch_HUNDRED">HUNDRED</a> <b>as</b> u128);
     <a href="Epoch.md#0x1_Epoch_update_epoch_data">update_epoch_data</a>(epoch_data, new_epoch, reward, uncles, parent_gas_used);
     reward
 }
@@ -511,8 +541,20 @@ adjust_epoch try to advance to next epoch if current epoch ends.
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="Epoch.md#0x1_Epoch_adjust_gas_limit">adjust_gas_limit</a>(config: &<a href="ConsensusConfig.md#0x1_ConsensusConfig">ConsensusConfig</a>, epoch_ref: &<b>mut</b> <a href="Epoch.md#0x1_Epoch">Epoch</a>, last_epoch_time_target: u64, new_epoch_time_target: u64, last_epoch_total_gas:u128) {
-    <b>let</b> new_gas_limit = <a href="Epoch.md#0x1_Epoch_compute_gas_limit">compute_gas_limit</a>(config, last_epoch_time_target, new_epoch_time_target, epoch_ref.block_gas_limit, last_epoch_total_gas);
+<pre><code><b>fun</b> <a href="Epoch.md#0x1_Epoch_adjust_gas_limit">adjust_gas_limit</a>(
+    config: &<a href="ConsensusConfig.md#0x1_ConsensusConfig">ConsensusConfig</a>,
+    epoch_ref: &<b>mut</b> <a href="Epoch.md#0x1_Epoch">Epoch</a>,
+    last_epoch_time_target: u64,
+    new_epoch_time_target: u64,
+    last_epoch_total_gas: u128
+) {
+    <b>let</b> new_gas_limit = <a href="Epoch.md#0x1_Epoch_compute_gas_limit">compute_gas_limit</a>(
+        config,
+        last_epoch_time_target,
+        new_epoch_time_target,
+        epoch_ref.block_gas_limit,
+        last_epoch_total_gas
+    );
     <b>if</b> (<a href="Option.md#0x1_Option_is_some">Option::is_some</a>(&new_gas_limit)) {
         epoch_ref.block_gas_limit = <a href="Option.md#0x1_Option_destroy_some">Option::destroy_some</a>(new_gas_limit);
     }
@@ -551,17 +593,31 @@ Compute block's gas limit of next epoch.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Epoch.md#0x1_Epoch_compute_gas_limit">compute_gas_limit</a>(config: &<a href="ConsensusConfig.md#0x1_ConsensusConfig">ConsensusConfig</a>, last_epoch_time_target: u64, new_epoch_time_target: u64, last_epoch_block_gas_limit: u64, last_epoch_total_gas: u128) : <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;u64&gt; {
+<pre><code><b>public</b> <b>fun</b> <a href="Epoch.md#0x1_Epoch_compute_gas_limit">compute_gas_limit</a>(
+    config: &<a href="ConsensusConfig.md#0x1_ConsensusConfig">ConsensusConfig</a>,
+    last_epoch_time_target: u64,
+    new_epoch_time_target: u64,
+    last_epoch_block_gas_limit: u64,
+    last_epoch_total_gas: u128
+): <a href="Option.md#0x1_Option_Option">Option::Option</a>&lt;u64&gt; {
     <b>let</b> epoch_block_count = (<a href="ConsensusConfig.md#0x1_ConsensusConfig_epoch_block_count">ConsensusConfig::epoch_block_count</a>(config) <b>as</b> u128);
-    <b>let</b> gas_limit_threshold = (last_epoch_total_gas &gt;= <a href="Math.md#0x1_Math_mul_div">Math::mul_div</a>((last_epoch_block_gas_limit <b>as</b> u128) * epoch_block_count, (80 <b>as</b> u128), (<a href="Epoch.md#0x1_Epoch_HUNDRED">HUNDRED</a> <b>as</b> u128)));
+    <b>let</b> gas_limit_threshold = (last_epoch_total_gas &gt;= <a href="Math.md#0x1_Math_mul_div">Math::mul_div</a>(
+        (last_epoch_block_gas_limit <b>as</b> u128) * epoch_block_count,
+        (80 <b>as</b> u128),
+        (<a href="Epoch.md#0x1_Epoch_HUNDRED">HUNDRED</a> <b>as</b> u128)
+    ));
     <b>let</b> new_gas_limit = <a href="Option.md#0x1_Option_none">Option::none</a>&lt;u64&gt;();
 
     <b>let</b> min_block_time_target = <a href="ConsensusConfig.md#0x1_ConsensusConfig_min_block_time_target">ConsensusConfig::min_block_time_target</a>(config);
     <b>let</b> max_block_time_target = <a href="ConsensusConfig.md#0x1_ConsensusConfig_max_block_time_target">ConsensusConfig::max_block_time_target</a>(config);
-    <b>let</b> base_block_gas_limit =  <a href="ConsensusConfig.md#0x1_ConsensusConfig_base_block_gas_limit">ConsensusConfig::base_block_gas_limit</a>(config);
+    <b>let</b> base_block_gas_limit = <a href="ConsensusConfig.md#0x1_ConsensusConfig_base_block_gas_limit">ConsensusConfig::base_block_gas_limit</a>(config);
     <b>if</b> (last_epoch_time_target == new_epoch_time_target) {
         <b>if</b> (new_epoch_time_target == min_block_time_target && gas_limit_threshold) {
-            <b>let</b> increase_gas_limit = <a href="Epoch.md#0x1_Epoch_in_or_decrease_gas_limit">in_or_decrease_gas_limit</a>(last_epoch_block_gas_limit, 110, base_block_gas_limit);
+            <b>let</b> increase_gas_limit = <a href="Epoch.md#0x1_Epoch_in_or_decrease_gas_limit">in_or_decrease_gas_limit</a>(
+                last_epoch_block_gas_limit,
+                110,
+                base_block_gas_limit
+            );
             new_gas_limit = <a href="Option.md#0x1_Option_some">Option::some</a>(increase_gas_limit);
         } <b>else</b> <b>if</b> (new_epoch_time_target == max_block_time_target && !gas_limit_threshold) {
             <b>let</b> decrease_gas_limit = <a href="Epoch.md#0x1_Epoch_in_or_decrease_gas_limit">in_or_decrease_gas_limit</a>(last_epoch_block_gas_limit, 90, base_block_gas_limit);
@@ -606,7 +662,7 @@ Compute block's gas limit of next epoch.
 
 <pre><code><b>fun</b> <a href="Epoch.md#0x1_Epoch_in_or_decrease_gas_limit">in_or_decrease_gas_limit</a>(last_epoch_block_gas_limit: u64, percent: u64, min_block_gas_limit: u64): u64 {
     <b>let</b> tmp_gas_limit = <a href="Math.md#0x1_Math_mul_div">Math::mul_div</a>((last_epoch_block_gas_limit <b>as</b> u128), (percent <b>as</b> u128), (<a href="Epoch.md#0x1_Epoch_HUNDRED">HUNDRED</a> <b>as</b> u128));
-    <b>let</b> new_gas_limit = <b>if</b> (tmp_gas_limit &gt; (min_block_gas_limit  <b>as</b> u128)) {
+    <b>let</b> new_gas_limit = <b>if</b> (tmp_gas_limit &gt; (min_block_gas_limit <b>as</b> u128)) {
         (tmp_gas_limit <b>as</b> u64)
     } <b>else</b> {
         min_block_gas_limit
@@ -625,7 +681,7 @@ Compute block's gas limit of next epoch.
 
 
 
-<pre><code><b>include</b> <a href="Math.md#0x1_Math_MulDivAbortsIf">Math::MulDivAbortsIf</a>{x: last_epoch_block_gas_limit, y: percent, z: <a href="Epoch.md#0x1_Epoch_HUNDRED">HUNDRED</a>};
+<pre><code><b>include</b> <a href="Math.md#0x1_Math_MulDivAbortsIf">Math::MulDivAbortsIf</a> { x: last_epoch_block_gas_limit, y: percent, z: <a href="Epoch.md#0x1_Epoch_HUNDRED">HUNDRED</a> };
 <b>aborts_if</b> <a href="Math.md#0x1_Math_spec_mul_div">Math::spec_mul_div</a>() &gt; MAX_U64;
 </code></pre>
 
@@ -648,7 +704,13 @@ Compute block's gas limit of next epoch.
 <summary>Implementation</summary>
 
 
-<pre><code><b>fun</b> <a href="Epoch.md#0x1_Epoch_update_epoch_data">update_epoch_data</a>(epoch_data: &<b>mut</b> <a href="Epoch.md#0x1_Epoch_EpochData">EpochData</a>, new_epoch: bool, reward: u128, uncles: u64, parent_gas_used:u64) {
+<pre><code><b>fun</b> <a href="Epoch.md#0x1_Epoch_update_epoch_data">update_epoch_data</a>(
+    epoch_data: &<b>mut</b> <a href="Epoch.md#0x1_Epoch_EpochData">EpochData</a>,
+    new_epoch: bool,
+    reward: u128,
+    uncles: u64,
+    parent_gas_used: u64
+) {
     <b>if</b> (new_epoch) {
         epoch_data.total_reward = reward;
         epoch_data.uncles = uncles;

@@ -6,7 +6,6 @@ module Epoch {
     use StarcoinFramework::CoreAddresses;
 
     use StarcoinFramework::Event;
-    use StarcoinFramework::Errors;
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::Math;
     use StarcoinFramework::Option;
@@ -119,13 +118,21 @@ module Epoch {
     }
 
     /// compute next block time_target.
-    public fun compute_next_block_time_target(config: &ConsensusConfig, last_epoch_time_target: u64, epoch_start_time: u64, now_milli_second: u64, start_block_number: u64, end_block_number: u64, total_uncles: u64): u64 {
+    public fun compute_next_block_time_target(
+        config: &ConsensusConfig,
+        last_epoch_time_target: u64,
+        epoch_start_time: u64,
+        now_milli_second: u64,
+        start_block_number: u64,
+        end_block_number: u64,
+        total_uncles: u64
+    ): u64 {
         let total_time = now_milli_second - epoch_start_time;
         let blocks = end_block_number - start_block_number;
         let avg_block_time = total_time / blocks;
         let uncles_rate = total_uncles * THOUSAND / blocks;
         let new_epoch_block_time_target = (THOUSAND + uncles_rate) * avg_block_time /
-                (ConsensusConfig::uncle_rate_target(config) + THOUSAND);
+            (ConsensusConfig::uncle_rate_target(config) + THOUSAND);
         if (new_epoch_block_time_target > last_epoch_time_target * 2) {
             new_epoch_block_time_target = last_epoch_time_target * 2;
         };
@@ -148,7 +155,13 @@ module Epoch {
     }
 
     /// adjust_epoch try to advance to next epoch if current epoch ends.
-    public fun adjust_epoch(account: &signer, block_number: u64, timestamp: u64, uncles: u64, parent_gas_used:u64): u128
+    public fun adjust_epoch(
+        account: &signer,
+        block_number: u64,
+        timestamp: u64,
+        uncles: u64,
+        parent_gas_used: u64
+    ): u128
     acquires Epoch, EpochData {
         CoreAddresses::assert_genesis_address(account);
 
@@ -166,8 +179,19 @@ module Epoch {
 
             let config = ConsensusConfig::get_config();
             let last_epoch_time_target = epoch_ref.block_time_target;
-            let new_epoch_block_time_target = compute_next_block_time_target(&config, last_epoch_time_target, epoch_ref.start_time, now_milli_seconds, epoch_ref.start_block_number, epoch_ref.end_block_number, epoch_data.uncles);
-            let new_reward_per_block = ConsensusConfig::do_compute_reward_per_block(&config, new_epoch_block_time_target);
+            let new_epoch_block_time_target = compute_next_block_time_target(
+                &config,
+                last_epoch_time_target,
+                epoch_ref.start_time,
+                now_milli_seconds,
+                epoch_ref.start_block_number,
+                epoch_ref.end_block_number,
+                epoch_data.uncles
+            );
+            let new_reward_per_block = ConsensusConfig::do_compute_reward_per_block(
+                &config,
+                new_epoch_block_time_target
+            );
 
             //update epoch by adjust result or config, because ConsensusConfig may be updated.
             epoch_ref.number = epoch_ref.number + 1;
@@ -183,7 +207,13 @@ module Epoch {
 
             epoch_data.uncles = 0;
             let last_epoch_total_gas = epoch_data.total_gas + (parent_gas_used as u128);
-            adjust_gas_limit(&config, epoch_ref, last_epoch_time_target, new_epoch_block_time_target, last_epoch_total_gas);
+            adjust_gas_limit(
+                &config,
+                epoch_ref,
+                last_epoch_time_target,
+                new_epoch_block_time_target,
+                last_epoch_total_gas
+            );
             emit_epoch_event(epoch_ref, epoch_data.total_reward);
             (true, new_reward_per_block)
         } else {
@@ -191,7 +221,7 @@ module Epoch {
             abort EUNREACHABLE
         };
         let reward = reward_per_block +
-                reward_per_block * (epoch_ref.reward_per_uncle_percent as u128) * (uncles as u128) / (HUNDRED as u128);
+            reward_per_block * (epoch_ref.reward_per_uncle_percent as u128) * (uncles as u128) / (HUNDRED as u128);
         update_epoch_data(epoch_data, new_epoch, reward, uncles, parent_gas_used);
         reward
     }
@@ -206,8 +236,20 @@ module Epoch {
         // ...
     }
 
-    fun adjust_gas_limit(config: &ConsensusConfig, epoch_ref: &mut Epoch, last_epoch_time_target: u64, new_epoch_time_target: u64, last_epoch_total_gas:u128) {
-        let new_gas_limit = compute_gas_limit(config, last_epoch_time_target, new_epoch_time_target, epoch_ref.block_gas_limit, last_epoch_total_gas);
+    fun adjust_gas_limit(
+        config: &ConsensusConfig,
+        epoch_ref: &mut Epoch,
+        last_epoch_time_target: u64,
+        new_epoch_time_target: u64,
+        last_epoch_total_gas: u128
+    ) {
+        let new_gas_limit = compute_gas_limit(
+            config,
+            last_epoch_time_target,
+            new_epoch_time_target,
+            epoch_ref.block_gas_limit,
+            last_epoch_total_gas
+        );
         if (Option::is_some(&new_gas_limit)) {
             epoch_ref.block_gas_limit = Option::destroy_some(new_gas_limit);
         }
@@ -218,17 +260,31 @@ module Epoch {
     }
 
     /// Compute block's gas limit of next epoch.
-    public fun compute_gas_limit(config: &ConsensusConfig, last_epoch_time_target: u64, new_epoch_time_target: u64, last_epoch_block_gas_limit: u64, last_epoch_total_gas: u128) : Option::Option<u64> {
+    public fun compute_gas_limit(
+        config: &ConsensusConfig,
+        last_epoch_time_target: u64,
+        new_epoch_time_target: u64,
+        last_epoch_block_gas_limit: u64,
+        last_epoch_total_gas: u128
+    ): Option::Option<u64> {
         let epoch_block_count = (ConsensusConfig::epoch_block_count(config) as u128);
-        let gas_limit_threshold = (last_epoch_total_gas >= Math::mul_div((last_epoch_block_gas_limit as u128) * epoch_block_count, (80 as u128), (HUNDRED as u128)));
+        let gas_limit_threshold = (last_epoch_total_gas >= Math::mul_div(
+            (last_epoch_block_gas_limit as u128) * epoch_block_count,
+            (80 as u128),
+            (HUNDRED as u128)
+        ));
         let new_gas_limit = Option::none<u64>();
 
         let min_block_time_target = ConsensusConfig::min_block_time_target(config);
         let max_block_time_target = ConsensusConfig::max_block_time_target(config);
-        let base_block_gas_limit =  ConsensusConfig::base_block_gas_limit(config);
+        let base_block_gas_limit = ConsensusConfig::base_block_gas_limit(config);
         if (last_epoch_time_target == new_epoch_time_target) {
             if (new_epoch_time_target == min_block_time_target && gas_limit_threshold) {
-                let increase_gas_limit = in_or_decrease_gas_limit(last_epoch_block_gas_limit, 110, base_block_gas_limit);
+                let increase_gas_limit = in_or_decrease_gas_limit(
+                    last_epoch_block_gas_limit,
+                    110,
+                    base_block_gas_limit
+                );
                 new_gas_limit = Option::some(increase_gas_limit);
             } else if (new_epoch_time_target == max_block_time_target && !gas_limit_threshold) {
                 let decrease_gas_limit = in_or_decrease_gas_limit(last_epoch_block_gas_limit, 90, base_block_gas_limit);
@@ -245,7 +301,7 @@ module Epoch {
 
     fun in_or_decrease_gas_limit(last_epoch_block_gas_limit: u64, percent: u64, min_block_gas_limit: u64): u64 {
         let tmp_gas_limit = Math::mul_div((last_epoch_block_gas_limit as u128), (percent as u128), (HUNDRED as u128));
-        let new_gas_limit = if (tmp_gas_limit > (min_block_gas_limit  as u128)) {
+        let new_gas_limit = if (tmp_gas_limit > (min_block_gas_limit as u128)) {
             (tmp_gas_limit as u64)
         } else {
             min_block_gas_limit
@@ -255,11 +311,17 @@ module Epoch {
     }
 
     spec in_or_decrease_gas_limit {
-        include Math::MulDivAbortsIf{x: last_epoch_block_gas_limit, y: percent, z: HUNDRED};
+        include Math::MulDivAbortsIf { x: last_epoch_block_gas_limit, y: percent, z: HUNDRED };
         aborts_if Math::spec_mul_div() > MAX_U64;
     }
 
-    fun update_epoch_data(epoch_data: &mut EpochData, new_epoch: bool, reward: u128, uncles: u64, parent_gas_used:u64) {
+    fun update_epoch_data(
+        epoch_data: &mut EpochData,
+        new_epoch: bool,
+        reward: u128,
+        uncles: u64,
+        parent_gas_used: u64
+    ) {
         if (new_epoch) {
             epoch_data.total_reward = reward;
             epoch_data.uncles = uncles;
@@ -375,6 +437,5 @@ module Epoch {
     spec block_time_target {
         aborts_if !exists<Epoch>(CoreAddresses::GENESIS_ADDRESS());
     }
-
 }
 }
