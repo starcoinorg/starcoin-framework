@@ -232,20 +232,21 @@ module TransactionManager {
 
         // then deal with current block.
         Timestamp::update_global_time(&account, timestamp);
-        Block::process_block_metadata(
+        Block::process_block_metadata_v2(
             &account,
             parent_hash,
             author,
             timestamp,
             uncles,
             number,
+            Vector::empty<u8>(),
         );
         let reward = Epoch::adjust_epoch(&account, number, timestamp, uncles, parent_gas_used);
         // pass in previous block gas fees.
         BlockReward::process_block_reward(&account, number, reward, author, auth_key_vec, txn_fee);
     }
 
-    spec block_prologue {
+    spec block_prologue_v2 {
         pragma verify = false;//fixme : timeout
     }
 }

@@ -2,6 +2,7 @@ address StarcoinFramework {
 /// The module for StdlibUpgrade init scripts
 module StdlibUpgradeScripts {
 
+    use StarcoinFramework::Math;
     use StarcoinFramework::Errors;
     use StarcoinFramework::Signer;
     use StarcoinFramework::ChainId;
@@ -25,6 +26,7 @@ module StdlibUpgradeScripts {
         use StarcoinFramework::Config;
         use StarcoinFramework::GenesisSignerCapability;
         use StarcoinFramework::Account;
+        use StarcoinFramework::FlexiDagConfig;
 
         spec module {
             pragma verify = false;
@@ -113,6 +115,10 @@ module StdlibUpgradeScripts {
     public fun do_upgrade_from_v11_to_v12(sender: &signer) {
         CoreAddresses::assert_genesis_address(sender);
 
+        // Upgrade flexiDAG config
+        FlexiDagConfig::initialize(sender, Math::u64_max());
+        OnChainConfigDao::plugin<STC, FlexiDagConfig::FlexiDagConfig>(sender);
+
         // Burn all illegal tokens from frozen list
         let frozen_acl = FrozenConfigStrategy::frozen_list_v1();
         let acl_vec = ACL::get_vector(&frozen_acl);
@@ -120,7 +126,8 @@ module StdlibUpgradeScripts {
         while (i < Vector::length(&acl_vec)) {
             STC::burn(Account::withdraw_illegal_token<STC>(sender, *Vector::borrow(&acl_vec, i), 0));
             i = i + 1;
-        }
+        };
+
     }
 
     /// Burned by user account

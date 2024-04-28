@@ -217,6 +217,7 @@ module TransactionManager {
         number: u64,
         chain_id: u8,
         parent_gas_used: u64,
+        parents_hash: vector<u8>,
     ) {
         // Can only be invoked by genesis account
         CoreAddresses::assert_genesis_address(&account);
@@ -229,13 +230,14 @@ module TransactionManager {
 
         // then deal with current block.
         Timestamp::update_global_time(&account, timestamp);
-        Block::process_block_metadata(
+        Block::process_block_metadata_v2(
             &account,
             parent_hash,
             author,
             timestamp,
             uncles,
             number,
+            parents_hash,
         );
         let reward = Epoch::adjust_epoch(&account, number, timestamp, uncles, parent_gas_used);
         // pass in previous block gas fees.
