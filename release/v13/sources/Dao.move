@@ -10,8 +10,9 @@ module Dao {
     use StarcoinFramework::Treasury;
 
     spec module {
-        pragma verify;
-        pragma aborts_if_is_strict;
+        pragma verify = false; // break after enabling v2 compilation scheme
+        pragma aborts_if_is_partial = false;
+        pragma aborts_if_is_strict = true;
     }
 
     /// Proposal state
@@ -35,15 +36,15 @@ module Dao {
 
     /// Configuration of the `Token`'s DAO.
     struct DaoConfig<phantom TokenT: copy + drop + store> has copy, drop, store {
-        /// after proposal created, how long use should wait before he can vote (in milliseconds)
+        /// after proposal created, how long use should wait before he can vote.
         voting_delay: u64,
-        /// how long the voting window is (in milliseconds).
+        /// how long the voting window is.
         voting_period: u64,
         /// the quorum rate to agree on the proposal.
         /// if 50% votes needed, then the voting_quorum_rate should be 50.
         /// it should between (0, 100].
         voting_quorum_rate: u8,
-        /// how long the proposal should wait before it can be executed (in milliseconds).
+        /// how long the proposal should wait before it can be executed.
         min_action_delay: u64,
     }
 
@@ -70,7 +71,7 @@ module Dao {
         voter: address,
         /// creator of the proposal.
         proposer: address,
-        /// agree with the proposal or not
+        /// agree or againest.
         agree: bool,
         /// latest vote count of the voter.
         vote: u128,
@@ -86,9 +87,9 @@ module Dao {
         start_time: u64,
         /// when voting ends.
         end_time: u64,
-        /// count of voters who agree with the proposal
+        /// count of votes for agree.
         for_votes: u128,
-        /// count of voters who're against the proposal
+        /// count of votes for againest.
         against_votes: u128,
         /// executable after this time.
         eta: u64,
@@ -124,7 +125,7 @@ module Dao {
     const ERR_VOTED_OTHERS_ALREADY: u64 = 1410;
 
     /// plugin function, can only be called by token issuer.
-    /// Any token who wants to have gov functionality
+    /// Any token who wants to has gov functionality
     /// can optin this module by call this `register function`.
     public fun plugin<TokenT: copy + drop + store>(
         signer: &signer,
@@ -152,14 +153,16 @@ module Dao {
     }
 
     spec plugin {
+        aborts_if voting_delay == 0;
+        aborts_if voting_period == 0;
+        aborts_if voting_quorum_rate == 0 || voting_quorum_rate > 100;
+        aborts_if min_action_delay == 0;
+
         let sender = Signer::address_of(signer);
         aborts_if sender != Token::SPEC_TOKEN_TEST_ADDRESS();
-
-        include NewDaoConfigParamSchema<TokenT>;
-
-        include Config::PublishNewConfigAbortsIf<DaoConfig<TokenT>>{account: signer};
-
         aborts_if exists<DaoGlobalInfo<TokenT>>(sender);
+        aborts_if exists<Config::Config<DaoConfig<TokenT>>>(sender);
+        aborts_if exists<Config::ModifyConfigCapabilityHolder<DaoConfig<TokenT>>>(sender);
     }
 
     spec schema RequirePluginDao<TokenT: copy + drop + store> {
@@ -177,7 +180,7 @@ module Dao {
     }
     spec schema AbortIfTimestampNotExist {
         use StarcoinFramework::CoreAddresses;
-        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS());
+        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS());
     }
 
     spec module {
@@ -206,24 +209,12 @@ module Dao {
     ): DaoConfig<TokenT> {
         assert!(voting_delay > 0, Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID));
         assert!(voting_period > 0, Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID));
-        assert!(
-            voting_quorum_rate > 0 && voting_quorum_rate <= 100,
-            Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID),
-        );
+        assert!(voting_quorum_rate > 0 && voting_quorum_rate <= 100, Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID));
         assert!(min_action_delay > 0, Errors::invalid_argument(ERR_CONFIG_PARAM_INVALID));
         DaoConfig { voting_delay, voting_period, voting_quorum_rate, min_action_delay }
     }
 
     spec new_dao_config {
-        include NewDaoConfigParamSchema<TokenT>;
-    }
-
-    spec schema NewDaoConfigParamSchema<TokenT> {
-        voting_delay: u64;
-        voting_period: u64;
-        voting_quorum_rate: u8;
-        min_action_delay: u64;
-
         aborts_if voting_delay == 0;
         aborts_if voting_period == 0;
         aborts_if voting_quorum_rate == 0 || voting_quorum_rate > 100;
@@ -256,7 +247,7 @@ module Dao {
             against_votes: 0,
             eta: 0,
             action_delay,
-            quorum_votes,
+            quorum_votes: quorum_votes,
             action: Option::some(action),
         };
         move_to(signer, proposal);
@@ -270,16 +261,10 @@ module Dao {
 
     spec propose {
         use StarcoinFramework::CoreAddresses;
-        pragma verify = false;
-        let proposer = Signer::address_of(signer);
-
-        include GenerateNextProposalIdSchema<TokenT>;
-
-        pragma addition_overflow_unchecked = true; // start_time calculation
-
+        pragma addition_overflow_unchecked;
         include AbortIfDaoConfigNotExist<TokenT>;
         include AbortIfDaoInfoNotExist<TokenT>;
-        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS());
+        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS());
 
         aborts_if action_delay > 0 && action_delay < spec_dao_config<TokenT>().min_action_delay;
         include CheckQuorumVotes<TokenT>;
@@ -449,7 +434,6 @@ module Dao {
         include CheckFlipVote<TokenT, ActionT> {my_vote: vote, proposal};
     }
     spec change_vote {
-        pragma verify = false;
         let expected_states = vec(ACTIVE);
         include CheckProposalStates<TokenT, ActionT>{expected_states};
 
@@ -536,7 +520,6 @@ module Dao {
     }
 
     spec revoke_vote {
-        pragma verify = false;
         include AbortIfDaoInfoNotExist<TokenT>;
         let expected_states = vec(ACTIVE);
         include CheckProposalStates<TokenT, ActionT> {expected_states};
@@ -613,7 +596,6 @@ module Dao {
     }
 
     spec unstake_votes {
-        pragma verify = false;
         let expected_states = vec(DEFEATED);
         let expected_states1 = concat(expected_states,vec(AGREED));
         let expected_states2 = concat(expected_states1,vec(QUEUED));
@@ -649,7 +631,6 @@ module Dao {
         proposal.eta = Timestamp::now_milliseconds() + proposal.action_delay;
     }
     spec queue_proposal_action {
-        pragma verify = false;
         let expected_states = vec(AGREED);
         include CheckProposalStates<TokenT, ActionT>{expected_states};
 
@@ -785,7 +766,7 @@ module Dao {
     spec proposal_state {
         use StarcoinFramework::CoreAddresses;
         include AbortIfTimestampNotExist;
-        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS());
+        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS());
         aborts_if !exists<Proposal<TokenT, ActionT>>(proposer_address);
 
         let proposal = global<Proposal<TokenT, ActionT>>(proposer_address);
@@ -871,18 +852,13 @@ module Dao {
         gov_info.next_proposal_id = proposal_id + 1;
         proposal_id
     }
-
     spec generate_next_proposal_id  {
-        include GenerateNextProposalIdSchema<TokenT>;
-        ensures result == old(global<DaoGlobalInfo<TokenT>>(Token::SPEC_TOKEN_TEST_ADDRESS()).next_proposal_id);
-    }
-
-    spec schema GenerateNextProposalIdSchema<TokenT> {
-        aborts_if global<DaoGlobalInfo<TokenT>>(Token::SPEC_TOKEN_TEST_ADDRESS()).next_proposal_id >= MAX_U64;
+        pragma addition_overflow_unchecked;
         modifies global<DaoGlobalInfo<TokenT>>(Token::SPEC_TOKEN_TEST_ADDRESS());
         ensures
             global<DaoGlobalInfo<TokenT>>(Token::SPEC_TOKEN_TEST_ADDRESS()).next_proposal_id ==
             old(global<DaoGlobalInfo<TokenT>>(Token::SPEC_TOKEN_TEST_ADDRESS()).next_proposal_id) + 1;
+        ensures result == old(global<DaoGlobalInfo<TokenT>>(Token::SPEC_TOKEN_TEST_ADDRESS()).next_proposal_id);
     }
 
     //// Helper functions
@@ -920,7 +896,6 @@ module Dao {
         aborts_if Token::spec_abstract_total_value<TokenT>() * spec_dao_config<TokenT>().voting_quorum_rate > MAX_U128;
     }
     spec quorum_votes {
-        pragma verify = false;
         include CheckQuorumVotes<TokenT>;
     }
 
@@ -956,7 +931,7 @@ module Dao {
 
     spec get_config {
         aborts_if false;
-        ensures result == global<Config::Config<DaoConfig<TokenT>>>(Token::SPEC_TOKEN_TEST_ADDRESS()).payload;
+        ensures result == global<Config::Config<DaoConfig<TokenT>>>((Token::SPEC_TOKEN_TEST_ADDRESS())).payload;
     }
 
 

@@ -16,11 +16,25 @@ module CoreAddresses {
         @0x1
     }
 
+    /// Specification version of `Self::GENESIS_ACCOUNT`.
+
+    spec fun SPEC_GENESIS_ADDRESS(): address {
+        @0x1
+    }
+
+
     /// Assert signer is genesis.
     public fun assert_genesis_address(account: &signer) {
-        assert!(Signer::address_of(account) == GENESIS_ADDRESS(), 
-                Errors::requires_address(ENOT_GENESIS_ACCOUNT))
+        assert!(Signer::address_of(account) == GENESIS_ADDRESS(), Errors::requires_address(ENOT_GENESIS_ACCOUNT))
     }
+
+    /// Assert signer is associal root
+    public fun assert_association_root_address(account: &signer) {
+        assert!(Signer::address_of(account) == ASSOCIATION_ROOT_ADDRESS(),
+            Errors::requires_address(ENOT_GENESIS_ACCOUNT))
+    }
+
+
     spec assert_genesis_address {
         pragma opaque;
         include AbortsIfNotGenesisAddress;
@@ -29,7 +43,22 @@ module CoreAddresses {
     /// Specifies that a function aborts if the account does not have the Diem root address.
     spec schema AbortsIfNotGenesisAddress {
         account: signer;
-        aborts_if Signer::address_of(account) != GENESIS_ADDRESS();
+        aborts_if Signer::address_of(account) != SPEC_GENESIS_ADDRESS();
+    }
+
+    spec assert_association_root_address {
+        pragma opaque;
+        include AbortsIfNotAssociationRootAddress;
+    }
+
+    spec schema AbortsIfNotAssociationRootAddress {
+        account: signer;
+        aborts_if Signer::address_of(account) != SPEC_ASSOCIATION_ROOT_ADDRESS();
+    }
+
+
+    public fun is_core_address(addr: address): bool {
+        addr == ASSOCIATION_ROOT_ADDRESS() || addr == GENESIS_ADDRESS()
     }
 
     /// The address of the root association account. This account is
@@ -40,6 +69,13 @@ module CoreAddresses {
         @0xA550C18
     }
 
+    /// Specification version of `Self::ASSOCIATION_ROOT_ADDRESS`.
+
+    spec fun SPEC_ASSOCIATION_ROOT_ADDRESS(): address {
+        @0xA550C18
+    }
+
+
     /// The reserved address for transactions inserted by the VM into blocks (e.g.
     /// block metadata transactions). Because the transaction is sent from
     /// the VM, an account _cannot_ exist at the `0x0` address since there
@@ -47,5 +83,12 @@ module CoreAddresses {
     public fun VM_RESERVED_ADDRESS(): address {
         @0x0
     }
+
+    /// Specification version of `Self::VM_RESERVED_ADDRESS`.
+
+    spec fun SPEC_VM_RESERVED_ADDRESS(): address {
+        @0x0
+    }
+
 }
 }

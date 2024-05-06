@@ -10,7 +10,6 @@ Contains functions for [ed25519](https://en.wikipedia.org/wiki/EdDSA) digital si
 -  [Function `ed25519_verify`](#0x1_Signature_ed25519_verify)
 -  [Function `native_ecrecover`](#0x1_Signature_native_ecrecover)
 -  [Function `ecrecover`](#0x1_Signature_ecrecover)
--  [Function `secp256k1_verify`](#0x1_Signature_secp256k1_verify)
 -  [Module Specification](#@Module_Specification_0)
 
 
@@ -111,32 +110,6 @@ recover address from ECDSA signature, if recover fail, return None
     }<b>else</b>{
         <a href="Option.md#0x1_Option_some">Option::some</a>(<a href="Signature.md#0x1_EVMAddress_new">EVMAddress::new</a>(bytes))
     }
-}
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Signature_secp256k1_verify"></a>
-
-## Function `secp256k1_verify`
-
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="Signature.md#0x1_Signature_secp256k1_verify">secp256k1_verify</a>(signature: vector&lt;u8&gt;, addr: vector&lt;u8&gt;, message: vector&lt;u8&gt;): bool
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="Signature.md#0x1_Signature_secp256k1_verify">secp256k1_verify</a>(signature: vector&lt;u8&gt;, addr: vector&lt;u8&gt;, message: vector&lt;u8&gt;) : bool{
-  <b>let</b> receover_address_opt:<a href="Option.md#0x1_Option">Option</a>&lt;<a href="Signature.md#0x1_EVMAddress">EVMAddress</a>&gt;  = <a href="Signature.md#0x1_Signature_ecrecover">ecrecover</a>(message, signature);
-  <b>let</b> expect_address =  <a href="Signature.md#0x1_EVMAddress_new">EVMAddress::new</a>(addr);
-  &<a href="Option.md#0x1_Option_destroy_some">Option::destroy_some</a>&lt;<a href="Signature.md#0x1_EVMAddress">EVMAddress</a>&gt;(receover_address_opt) == &expect_address
 }
 </code></pre>
 

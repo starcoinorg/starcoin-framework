@@ -39,6 +39,11 @@ module StarcoinFramework::ACL {
         Vector::contains(&acl.list, &addr)
     }
 
+    /// Return vector of ACL
+    public fun get_vector(acl: &ACL): vector<address> {
+        *&acl.list
+    }
+
     /// assert! that the ACL has the address.
     public fun assert_contains(acl: &ACL, addr: address) {
         assert!(contains(acl, addr), Errors::invalid_argument(ENOT_CONTAIN));

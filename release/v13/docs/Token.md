@@ -45,7 +45,6 @@ Token implementation of Starcoin.
 -  [Function `is_same_token`](#0x1_Token_is_same_token)
 -  [Function `token_address`](#0x1_Token_token_address)
 -  [Function `token_code`](#0x1_Token_token_code)
--  [Function `type_of`](#0x1_Token_type_of)
 -  [Function `name_of`](#0x1_Token_name_of)
 -  [Function `name_of_token`](#0x1_Token_name_of_token)
 -  [Module Specification](#@Module_Specification_1)
@@ -121,7 +120,7 @@ Token Code which identify a unique Token.
 <code>name: vector&lt;u8&gt;</code>
 </dt>
 <dd>
- name of the token. may nested if the token is an instantiated generic token type.
+ name of the token. may nested if the token is a instantiated generic token type.
 </dd>
 </dl>
 
@@ -685,7 +684,7 @@ Destroy the given mint capability.
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="Token.md#0x1_Token_destroy_mint_capability">destroy_mint_capability</a>&lt;TokenType: store&gt;(cap: <a href="Token.md#0x1_Token_MintCapability">MintCapability</a>&lt;TokenType&gt;) {
-    <b>let</b> <a href="Token.md#0x1_Token_MintCapability">MintCapability</a>&lt;TokenType&gt; {} = cap;
+    <b>let</b> <a href="Token.md#0x1_Token_MintCapability">MintCapability</a>&lt;TokenType&gt; { } = cap;
 }
 </code></pre>
 
@@ -794,7 +793,7 @@ Destroy the given burn capability.
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="Token.md#0x1_Token_destroy_burn_capability">destroy_burn_capability</a>&lt;TokenType: store&gt;(cap: <a href="Token.md#0x1_Token_BurnCapability">BurnCapability</a>&lt;TokenType&gt;) {
-    <b>let</b> <a href="Token.md#0x1_Token_BurnCapability">BurnCapability</a>&lt;TokenType&gt; {} = cap;
+    <b>let</b> <a href="Token.md#0x1_Token_BurnCapability">BurnCapability</a>&lt;TokenType&gt; { } = cap;
 }
 </code></pre>
 
@@ -962,11 +961,8 @@ Issue a <code><a href="Token.md#0x1_Token_FixedTimeMintKey">FixedTimeMintKey</a>
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Token.md#0x1_Token_issue_fixed_mint_key">issue_fixed_mint_key</a>&lt;TokenType: store&gt;(
-    _capability: &<a href="Token.md#0x1_Token_MintCapability">MintCapability</a>&lt;TokenType&gt;,
-    _amount: u128,
-    _period: u64,
-): <a href="Token.md#0x1_Token_FixedTimeMintKey">FixedTimeMintKey</a>&lt;TokenType&gt; {
+<pre><code><b>public</b> <b>fun</b> <a href="Token.md#0x1_Token_issue_fixed_mint_key">issue_fixed_mint_key</a>&lt;TokenType: store&gt;( _capability: &<a href="Token.md#0x1_Token_MintCapability">MintCapability</a>&lt;TokenType&gt;,
+                                 _amount: u128, _period: u64): <a href="Token.md#0x1_Token_FixedTimeMintKey">FixedTimeMintKey</a>&lt;TokenType&gt;{
     <b>abort</b> <a href="Errors.md#0x1_Errors_deprecated">Errors::deprecated</a>(<a href="Token.md#0x1_Token_EDEPRECATED_FUNCTION">EDEPRECATED_FUNCTION</a>)
 }
 </code></pre>
@@ -977,11 +973,6 @@ Issue a <code><a href="Token.md#0x1_Token_FixedTimeMintKey">FixedTimeMintKey</a>
 
 <details>
 <summary>Specification</summary>
-
-
-
-<pre><code><b>aborts_if</b> <b>true</b>;
-</code></pre>
 
 
 
@@ -1004,11 +995,8 @@ Issue a <code><a href="Token.md#0x1_Token_LinearTimeMintKey">LinearTimeMintKey</
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="Token.md#0x1_Token_issue_linear_mint_key">issue_linear_mint_key</a>&lt;TokenType: store&gt;(
-    _capability: &<a href="Token.md#0x1_Token_MintCapability">MintCapability</a>&lt;TokenType&gt;,
-    _amount: u128,
-    _period: u64,
-): <a href="Token.md#0x1_Token_LinearTimeMintKey">LinearTimeMintKey</a>&lt;TokenType&gt; {
+<pre><code><b>public</b> <b>fun</b> <a href="Token.md#0x1_Token_issue_linear_mint_key">issue_linear_mint_key</a>&lt;TokenType: store&gt;( _capability: &<a href="Token.md#0x1_Token_MintCapability">MintCapability</a>&lt;TokenType&gt;,
+                                            _amount: u128, _period: u64): <a href="Token.md#0x1_Token_LinearTimeMintKey">LinearTimeMintKey</a>&lt;TokenType&gt;{
     <b>abort</b> <a href="Errors.md#0x1_Errors_deprecated">Errors::deprecated</a>(<a href="Token.md#0x1_Token_EDEPRECATED_FUNCTION">EDEPRECATED_FUNCTION</a>)
 }
 </code></pre>
@@ -1019,11 +1007,6 @@ Issue a <code><a href="Token.md#0x1_Token_LinearTimeMintKey">LinearTimeMintKey</
 
 <details>
 <summary>Specification</summary>
-
-
-
-<pre><code><b>aborts_if</b> <b>true</b>;
-</code></pre>
 
 
 
@@ -1046,7 +1029,7 @@ Destroy <code><a href="Token.md#0x1_Token_LinearTimeMintKey">LinearTimeMintKey</
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="Token.md#0x1_Token_destroy_linear_time_key">destroy_linear_time_key</a>&lt;TokenType: store&gt;(key: <a href="Token.md#0x1_Token_LinearTimeMintKey">LinearTimeMintKey</a>&lt;TokenType&gt;): (u128, u128, u64, u64) {
-    <b>let</b> <a href="Token.md#0x1_Token_LinearTimeMintKey">LinearTimeMintKey</a>&lt;TokenType&gt; { total, minted, start_time, period } = key;
+    <b>let</b> <a href="Token.md#0x1_Token_LinearTimeMintKey">LinearTimeMintKey</a>&lt;TokenType&gt; { total, minted, start_time, period} = key;
     (total, minted, start_time, period)
 }
 </code></pre>
@@ -1203,11 +1186,6 @@ Create a new Token::Token<TokenType> with a value of 0
 
 
 
-<pre><code><b>ensures</b> result.value == 0;
-</code></pre>
-
-
-
 </details>
 
 <a name="0x1_Token_value"></a>
@@ -1241,7 +1219,6 @@ Public accessor for the value of a token
 
 
 <pre><code><b>aborts_if</b> <b>false</b>;
-<b>ensures</b> result == token.value;
 </code></pre>
 
 
@@ -1268,8 +1245,8 @@ Splits the given token into two and returns them both
     token: <a href="Token.md#0x1_Token">Token</a>&lt;TokenType&gt;,
     value: u128,
 ): (<a href="Token.md#0x1_Token">Token</a>&lt;TokenType&gt;, <a href="Token.md#0x1_Token">Token</a>&lt;TokenType&gt;) {
-    <b>let</b> rest = <a href="Token.md#0x1_Token_withdraw">withdraw</a>(&<b>mut</b> token, value);
-    (token, rest)
+    <b>let</b> other = <a href="Token.md#0x1_Token_withdraw">withdraw</a>(&<b>mut</b> token, value);
+    (token, other)
 }
 </code></pre>
 
@@ -1283,7 +1260,7 @@ Splits the given token into two and returns them both
 
 
 <pre><code><b>aborts_if</b> token.<a href="Token.md#0x1_Token_value">value</a> &lt; value;
-<b>ensures</b> token.value == result_1.value + result_2.value;
+<b>ensures</b> <b>old</b>(token.value) == result_1.value + result_2.value;
 </code></pre>
 
 
@@ -1374,6 +1351,7 @@ value is equal to the sum of the two inputs
 
 
 <pre><code><b>aborts_if</b> token1.value + token2.value &gt; max_u128();
+<b>ensures</b> <b>old</b>(token1).value + <b>old</b>(token2).value == result.value;
 <b>ensures</b> token1.value + token2.value == result.value;
 </code></pre>
 
@@ -1495,7 +1473,6 @@ Returns the scaling_factor for the <code>TokenType</code> token.
 
 
 <pre><code><b>aborts_if</b> <b>false</b>;
-<b>ensures</b> result == <b>global</b>&lt;<a href="Token.md#0x1_Token_TokenInfo">TokenInfo</a>&lt;TokenType&gt;&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">SPEC_TOKEN_TEST_ADDRESS</a>()).scaling_factor;
 </code></pre>
 
 
@@ -1534,7 +1511,6 @@ Return the total amount of token of type <code>TokenType</code>.
 
 
 <pre><code><b>aborts_if</b> <b>false</b>;
-<b>ensures</b> result == <b>global</b>&lt;<a href="Token.md#0x1_Token_TokenInfo">TokenInfo</a>&lt;TokenType&gt;&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">SPEC_TOKEN_TEST_ADDRESS</a>()).total_value;
 </code></pre>
 
 
@@ -1572,7 +1548,6 @@ Return true if the type <code>TokenType</code> is a registered in <code>token_ad
 
 
 <pre><code><b>aborts_if</b> <b>false</b>;
-<b>ensures</b> result == <b>exists</b>&lt;<a href="Token.md#0x1_Token_TokenInfo">TokenInfo</a>&lt;TokenType&gt;&gt;(token_address);
 </code></pre>
 
 
@@ -1712,30 +1687,6 @@ does not matter for the verification of callers.
 
 </details>
 
-<a name="0x1_Token_type_of"></a>
-
-## Function `type_of`
-
-
-
-<pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="Token.md#0x1_Token_type_of">type_of</a>&lt;T&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> (<b>friend</b>) <b>fun</b> <a href="Token.md#0x1_Token_type_of">type_of</a>&lt;T&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;){
-    <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;T&gt;()
-}
-</code></pre>
-
-
-
-</details>
-
 <a name="0x1_Token_name_of"></a>
 
 ## Function `name_of`
@@ -1743,7 +1694,7 @@ does not matter for the verification of callers.
 Return Token's module address, module name, and type name of <code>TokenType</code>.
 
 
-<pre><code><b>fun</b> <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;TokenType&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;)
+<pre><code><b>fun</b> <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;TokenType: store&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;)
 </code></pre>
 
 
@@ -1752,7 +1703,7 @@ Return Token's module address, module name, and type name of <code>TokenType</co
 <summary>Implementation</summary>
 
 
-<pre><code><b>native</b> <b>fun</b> <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;TokenType&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;);
+<pre><code><b>native</b> <b>fun</b> <a href="Token.md#0x1_Token_name_of">name_of</a>&lt;TokenType: store&gt;(): (<b>address</b>, vector&lt;u8&gt;, vector&lt;u8&gt;);
 </code></pre>
 
 
@@ -1825,7 +1776,7 @@ Return Token's module address, module name, and type name of <code>TokenType</co
 <a name="0x1_Token_spec_abstract_total_value"></a>
 
 
-<pre><code><b>fun</b> <a href="Token.md#0x1_Token_spec_abstract_total_value">spec_abstract_total_value</a>&lt;TokenType&gt;(): num {
+<pre><code><b>fun</b> <a href="Token.md#0x1_Token_spec_abstract_total_value">spec_abstract_total_value</a>&lt;TokenType&gt;(): u128 {
    <b>global</b>&lt;<a href="Token.md#0x1_Token_TokenInfo">TokenInfo</a>&lt;TokenType&gt;&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">SPEC_TOKEN_TEST_ADDRESS</a>()).total_value
 }
 </code></pre>
@@ -1840,6 +1791,6 @@ Return Token's module address, module name, and type name of <code>TokenType</co
 
 
 
-<pre><code><b>pragma</b> verify;
-<b>pragma</b> aborts_if_is_strict;
+<pre><code><b>pragma</b> verify = <b>false</b>;
+<b>pragma</b> aborts_if_is_strict = <b>true</b>;
 </code></pre>

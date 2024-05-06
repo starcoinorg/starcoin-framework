@@ -350,7 +350,7 @@ address StarcoinFramework {
             }else if(strategy == STRATEGY_NEW_MODULE){
                 //do check at VM runtime.
             }else if(strategy == STRATEGY_FREEZE){
-                Errors::invalid_argument(ESTRATEGY_FREEZED);
+                abort(ESTRATEGY_FREEZED)
             };
         }
 
@@ -373,7 +373,7 @@ address StarcoinFramework {
                 //do check at VM runtime.
                 assert!(txn_sender == package_address, Errors::requires_address(ESENDER_AND_PACKAGE_ADDRESS_MISMATCH));
             }else if(strategy == STRATEGY_FREEZE){
-                Errors::invalid_argument(ESTRATEGY_FREEZED);
+                abort(ESTRATEGY_FREEZED)
             };
         }
 
@@ -427,7 +427,7 @@ address StarcoinFramework {
         }
 
         spec package_txn_prologue {
-            aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
+            aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
             include CheckPackageTxnAbortsIf{};
         }
 
@@ -457,7 +457,7 @@ address StarcoinFramework {
         }
 
         spec package_txn_epilogue {
-            aborts_if Signer::address_of(account) != CoreAddresses::GENESIS_ADDRESS();
+            aborts_if Signer::address_of(account) != CoreAddresses::SPEC_GENESIS_ADDRESS();
             aborts_if spec_get_module_upgrade_strategy(package_address) == 1
                 && success && !exists<TwoPhaseUpgrade>(package_address);
             aborts_if spec_get_module_upgrade_strategy(package_address) == 1

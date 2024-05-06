@@ -193,20 +193,11 @@ module PriceOracle{
         scaling_factor: u128,
     }
 
-    public entry fun register_oracle_entry<OracleT: copy+store+drop>(sender: signer, precision: u8){
-        register_oracle<OracleT>(&sender, precision);
-    }
-
     public fun register_oracle<OracleT: copy+store+drop>(sender: &signer, precision: u8){
         let scaling_factor = Math::pow(10, (precision as u64));
         Oracle::register_oracle<OracleT, PriceOracleInfo>(sender, PriceOracleInfo{
             scaling_factor,
         });
-    }
-
-
-    public entry fun init_data_source_entry<OracleT: copy+store+drop>(sender: signer, init_value: u128){
-        init_data_source<OracleT>(&sender, init_value);
     }
 
     public fun init_data_source<OracleT: copy+store+drop>(sender: &signer, init_value: u128){
@@ -220,10 +211,6 @@ module PriceOracle{
     public fun get_scaling_factor<OracleT: copy + store + drop>() : u128 {
         let info = Oracle::get_oracle_info<OracleT, PriceOracleInfo>();
         info.scaling_factor
-    }
-
-    public entry fun update_entry<OracleT: copy+store+drop>(sender: signer, value: u128){
-        update<OracleT>(&sender, value);
     }
 
     public fun update<OracleT: copy+store+drop>(sender: &signer, value: u128){
@@ -276,15 +263,15 @@ module PriceOracleScripts{
     use StarcoinFramework::PriceOracle;
 
     public entry fun register_oracle<OracleT: copy+store+drop>(sender: signer, precision: u8){
-        PriceOracle::register_oracle_entry<OracleT>(sender, precision);
+        PriceOracle::register_oracle<OracleT>(&sender, precision)
     }
 
     public entry fun init_data_source<OracleT: copy+store+drop>(sender: signer, init_value: u128){
-        PriceOracle::init_data_source_entry<OracleT>(sender, init_value);
+        PriceOracle::init_data_source<OracleT>(&sender, init_value);
     }
 
     public entry fun update<OracleT: copy+store+drop>(sender: signer, value: u128){
-        PriceOracle::update_entry<OracleT>(sender, value);
+        PriceOracle::update<OracleT>(&sender, value);
     }
 }
 

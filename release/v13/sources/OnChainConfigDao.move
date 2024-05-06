@@ -38,7 +38,7 @@ module OnChainConfigDao {
         pragma aborts_if_is_partial = false;
         let sender = Signer::address_of(signer);
         aborts_if sender != Token::SPEC_TOKEN_TEST_ADDRESS();
-        include Config::AbortsIfCapNotExist<ConfigT>{address: sender};
+        include Config::AbortsIfCapNotExist<ConfigT>{account: sender};
         aborts_if exists<WrappedConfigModifyCapability<TokenT, ConfigT>>(sender);
         ensures exists<WrappedConfigModifyCapability<TokenT, ConfigT>>(sender);
     }
@@ -64,7 +64,7 @@ module OnChainConfigDao {
         // copy from Dao::propose spec.
         include Dao::AbortIfDaoConfigNotExist<TokenT>;
         include Dao::AbortIfDaoInfoNotExist<TokenT>;
-        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS());
+        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS());
         aborts_if exec_delay > 0 && exec_delay < Dao::spec_dao_config<TokenT>().min_action_delay;
         include Dao::CheckQuorumVotes<TokenT>;
         let sender = Signer::address_of(signer);

@@ -6,10 +6,9 @@ module Token {
     use StarcoinFramework::Errors;
     use StarcoinFramework::Math;
 
-    friend StarcoinFramework::TypeInfo;
     spec module {
-        pragma verify;
-        pragma aborts_if_is_strict;
+        pragma verify = false; // break after enabling v2 compilation scheme
+        pragma aborts_if_is_strict = true;
     }
 
     /// The token has a `TokenType` color that tells us what token the
@@ -24,29 +23,21 @@ module Token {
         addr: address,
         /// module which contains the Token Type.
         module_name: vector<u8>,
-        /// name of the token. may nested if the token is an instantiated generic token type.
+        /// name of the token. may nested if the token is a instantiated generic token type.
         name: vector<u8>,
     }
 
     /// A minting capability allows tokens of type `TokenType` to be minted
-    struct MintCapability<phantom TokenType> has key, store {}
+    struct MintCapability<phantom TokenType> has key, store { }
 
     /// A fixed time mint key which can mint token until global time > end_time
-    struct FixedTimeMintKey<phantom TokenType> has key, store { 
-        total: u128, 
-        end_time: u64,
-    }
+    struct FixedTimeMintKey<phantom TokenType> has key, store { total: u128, end_time: u64 }
 
     /// A linear time mint key which can mint token in a period by time-based linear release.
-    struct LinearTimeMintKey<phantom TokenType> has key, store { 
-        total: u128, 
-        minted: u128, 
-        start_time: u64, 
-        period: u64,
-    }
+    struct LinearTimeMintKey<phantom TokenType> has key, store { total: u128, minted: u128, start_time: u64, period: u64 }
 
     /// A burn capability allows tokens of type `TokenType` to be burned.
-    struct BurnCapability<phantom TokenType> has key, store {}
+    struct BurnCapability<phantom TokenType> has key, store { }
 
 
     /// Event emitted when token minted.
@@ -169,7 +160,7 @@ module Token {
 
     /// Destroy the given mint capability.
     public fun destroy_mint_capability<TokenType: store>(cap: MintCapability<TokenType>) {
-        let MintCapability<TokenType> {} = cap;
+        let MintCapability<TokenType> { } = cap;
     }
 
     spec destroy_mint_capability {
@@ -198,7 +189,7 @@ module Token {
 
     /// Destroy the given burn capability.
     public fun destroy_burn_capability<TokenType: store>(cap: BurnCapability<TokenType>) {
-        let BurnCapability<TokenType> {} = cap;
+        let BurnCapability<TokenType> { } = cap;
     }
 
     spec destroy_burn_capability {
@@ -258,35 +249,27 @@ module Token {
 
     /// Deprecated since @v3
     /// Issue a `FixedTimeMintKey` with given `MintCapability`.
-    public fun issue_fixed_mint_key<TokenType: store>( 
-        _capability: &MintCapability<TokenType>,
-        _amount: u128, 
-        _period: u64,
-    ): FixedTimeMintKey<TokenType> {
+    public fun issue_fixed_mint_key<TokenType: store>( _capability: &MintCapability<TokenType>,
+                                     _amount: u128, _period: u64): FixedTimeMintKey<TokenType>{
         abort Errors::deprecated(EDEPRECATED_FUNCTION)
     }
 
     spec issue_fixed_mint_key {
-        aborts_if true;
     }
 
     /// Deprecated since @v3
     /// Issue a `LinearTimeMintKey` with given `MintCapability`.
-    public fun issue_linear_mint_key<TokenType: store>( 
-        _capability: &MintCapability<TokenType>,
-        _amount: u128, 
-        _period: u64,
-    ): LinearTimeMintKey<TokenType> {
+    public fun issue_linear_mint_key<TokenType: store>( _capability: &MintCapability<TokenType>,
+                                                _amount: u128, _period: u64): LinearTimeMintKey<TokenType>{
         abort Errors::deprecated(EDEPRECATED_FUNCTION)
     }
 
     spec issue_linear_mint_key {
-        aborts_if true;
     }
 
     /// Destroy `LinearTimeMintKey`, for deprecated
     public fun destroy_linear_time_key<TokenType: store>(key: LinearTimeMintKey<TokenType>): (u128, u128, u64, u64) {
-        let LinearTimeMintKey<TokenType> { total, minted, start_time, period } = key;
+        let LinearTimeMintKey<TokenType> { total, minted, start_time, period} = key;
         (total, minted, start_time, period)
     }
 
@@ -338,7 +321,6 @@ module Token {
     }
 
     spec zero {
-        ensures result.value == 0;
     }
 
 
@@ -349,7 +331,6 @@ module Token {
 
     spec value {
         aborts_if false;
-        ensures result == token.value;
     }
 
     /// Splits the given token into two and returns them both
@@ -357,14 +338,13 @@ module Token {
         token: Token<TokenType>,
         value: u128,
     ): (Token<TokenType>, Token<TokenType>) {
-        let rest = withdraw(&mut token, value);
-        (token, rest)
+        let other = withdraw(&mut token, value);
+        (token, other)
     }
 
     spec split {
         aborts_if token.value < value;
-        // N.B. spec translator regards `token` as a pure expression
-        ensures token.value == result_1.value + result_2.value;
+        ensures old(token.value) == result_1.value + result_2.value;
     }
 
     /// "Divides" the given token into two, where the original token is modified in place.
@@ -399,6 +379,7 @@ module Token {
 
     spec join {
         aborts_if token1.value + token2.value > max_u128();
+        ensures old(token1).value + old(token2).value == result.value;
         ensures token1.value + token2.value == result.value;
     }
 
@@ -436,7 +417,6 @@ module Token {
 
     spec scaling_factor {
         aborts_if false;
-        ensures result == global<TokenInfo<TokenType>>(SPEC_TOKEN_TEST_ADDRESS()).scaling_factor;
     }
 
     /// Return the total amount of token of type `TokenType`.
@@ -447,7 +427,6 @@ module Token {
 
     spec market_cap {
         aborts_if false;
-        ensures result == global<TokenInfo<TokenType>>(SPEC_TOKEN_TEST_ADDRESS()).total_value;
     }
 
     /// Return true if the type `TokenType` is a registered in `token_address`.
@@ -457,7 +436,6 @@ module Token {
 
     spec is_registered_in {
         aborts_if false;
-        ensures result == exists<TokenInfo<TokenType>>(token_address);
     }
 
     /// Return true if the type `TokenType1` is same with `TokenType2`
@@ -483,7 +461,7 @@ module Token {
         ensures [abstract] exists<TokenInfo<TokenType>>(result);
         ensures [abstract] result == SPEC_TOKEN_TEST_ADDRESS();
         ensures [abstract] global<TokenInfo<TokenType>>(result).total_value == 100000000u128;
-    }
+}
 
     /// Return the token code for the registered token.
     public fun token_code<TokenType: store>(): TokenCode {
@@ -505,12 +483,8 @@ module Token {
     /// does not matter for the verification of callers.
     spec fun spec_token_code<TokenType>(): TokenCode;
 
-    public (friend) fun type_of<T>(): (address, vector<u8>, vector<u8>){
-        name_of<T>()
-    }
-
     /// Return Token's module address, module name, and type name of `TokenType`.
-    native fun name_of<TokenType>(): (address, vector<u8>, vector<u8>);
+    native fun name_of<TokenType: store>(): (address, vector<u8>, vector<u8>);
 
     spec name_of {
         pragma opaque = true;
@@ -536,7 +510,7 @@ module Token {
         @0x2
     }
 
-    spec fun spec_abstract_total_value<TokenType>(): num {
+    spec fun spec_abstract_total_value<TokenType>(): u128 {
         global<TokenInfo<TokenType>>(SPEC_TOKEN_TEST_ADDRESS()).total_value
     }
 

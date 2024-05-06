@@ -7,7 +7,6 @@
 
 -  [Function `accept`](#0x1_NFTGalleryScripts_accept)
 -  [Function `transfer`](#0x1_NFTGalleryScripts_transfer)
--  [Function `remove_empty_gallery`](#0x1_NFTGalleryScripts_remove_empty_gallery)
 -  [Module Specification](#@Module_Specification_0)
 
 
@@ -33,7 +32,7 @@ Init a  NFTGallery for accept NFT<NFTMeta, NFTBody>
 
 
 <pre><code><b>public</b> entry <b>fun</b> <a href="NFT.md#0x1_NFTGalleryScripts_accept">accept</a>&lt;NFTMeta: <b>copy</b> + store + drop, NFTBody: store&gt;(sender: signer) {
-    <a href="NFT.md#0x1_NFTGallery_accept_entry">NFTGallery::accept_entry</a>&lt;NFTMeta, NFTBody&gt;(sender);
+    <a href="NFT.md#0x1_NFTGallery_accept">NFTGallery::accept</a>&lt;NFTMeta, NFTBody&gt;(&sender);
 }
 </code></pre>
 
@@ -57,36 +56,8 @@ Transfer NFT<NFTMeta, NFTBody> with <code>id</code> from <code>sender</code> to 
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="NFT.md#0x1_NFTGalleryScripts_transfer">transfer</a>&lt;NFTMeta: <b>copy</b> + store + drop, NFTBody: store&gt;(
-    sender: signer,
-    id: u64, receiver: <b>address</b>
-) {
-    <a href="NFT.md#0x1_NFTGallery_transfer_entry">NFTGallery::transfer_entry</a>&lt;NFTMeta, NFTBody&gt;(sender, id, receiver);
-}
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_NFTGalleryScripts_remove_empty_gallery"></a>
-
-## Function `remove_empty_gallery`
-
-Remove empty NFTGallery<Meta,Body>.
-
-
-<pre><code><b>public</b> entry <b>fun</b> <a href="NFT.md#0x1_NFTGalleryScripts_remove_empty_gallery">remove_empty_gallery</a>&lt;NFTMeta: <b>copy</b>, drop, store, NFTBody: store&gt;(sender: signer)
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> entry <b>fun</b> <a href="NFT.md#0x1_NFTGalleryScripts_remove_empty_gallery">remove_empty_gallery</a>&lt;NFTMeta: <b>copy</b> + store + drop, NFTBody: store&gt;(sender: signer) {
-    <a href="NFT.md#0x1_NFTGallery_remove_empty_gallery_entry">NFTGallery::remove_empty_gallery_entry</a>&lt;NFTMeta, NFTBody&gt;(sender);
+<pre><code><b>public</b> entry <b>fun</b> <a href="NFT.md#0x1_NFTGalleryScripts_transfer">transfer</a>&lt;NFTMeta: <b>copy</b> + store + drop, NFTBody: store&gt;(sender: signer, id: u64, receiver: <b>address</b>) {
+    <a href="NFT.md#0x1_NFTGallery_transfer">NFTGallery::transfer</a>&lt;NFTMeta, NFTBody&gt;(&sender, id, receiver);
 }
 </code></pre>
 

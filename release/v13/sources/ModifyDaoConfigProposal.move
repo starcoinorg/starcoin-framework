@@ -53,7 +53,7 @@ module ModifyDaoConfigProposal {
         pragma aborts_if_is_partial = false;
         let sender = Signer::address_of(signer);
         aborts_if sender != Token::SPEC_TOKEN_TEST_ADDRESS();
-        include Config::AbortsIfCapNotExist<Dao::DaoConfig<TokenT>>{address: sender};
+        include Config::AbortsIfCapNotExist<Dao::DaoConfig<TokenT>>{account: sender};
         let config_cap = Config::spec_cap<Dao::DaoConfig<TokenT>>(sender);
         aborts_if Option::is_none(config_cap);
         aborts_if Option::borrow(config_cap).account_address != sender;
@@ -88,7 +88,7 @@ module ModifyDaoConfigProposal {
         // copy from Dao::propose spec.
         include Dao::AbortIfDaoConfigNotExist<TokenT>;
         include Dao::AbortIfDaoInfoNotExist<TokenT>;
-        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::GENESIS_ADDRESS());
+        aborts_if !exists<Timestamp::CurrentTimeMilliseconds>(CoreAddresses::SPEC_GENESIS_ADDRESS());
         aborts_if exec_delay > 0 && exec_delay < Dao::spec_dao_config<TokenT>().min_action_delay;
         include Dao::CheckQuorumVotes<TokenT>;
         let sender = Signer::address_of(signer);
