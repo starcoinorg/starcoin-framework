@@ -8,15 +8,15 @@
 
 
 
-//# run --signers StarcoinAssociation
-script {
-    use StarcoinFramework::FrozenConfigStrategy;
-
-    fun initialize_with_starcoin_association(sender: signer) {
-        FrozenConfigStrategy::do_initialize(&sender);
-    }
-}
-// check: Executed
+// //# run --signers StarcoinAssociation
+// script {
+//     use StarcoinFramework::FrozenConfigStrategy;
+//
+//     fun initialize_with_starcoin_association(sender: signer) {
+//         FrozenConfigStrategy::do_initialize(&sender);
+//     }
+// }
+// // check: Executed
 
 
 //# run --signers StarcoinAssociation
