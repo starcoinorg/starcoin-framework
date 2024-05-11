@@ -35,7 +35,7 @@ script {
 script {
     fun execution_failed_set_global_frozen(_account: signer) {}
 }
-// check: UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION
+// check: "status_code": "40", "status_code_name": "SEND_TXN_GLOBAL_FROZEN"
 
 //# run --signers StarcoinAssociation
 script {
@@ -68,7 +68,7 @@ script {
 script {
     fun execution_failed_for_alice_add_to_frozen(_account: signer) {}
 }
-// check: UNEXPECTED_ERROR_FROM_KNOWN_MOVE_FUNCTION
+// check: "status_code": "18", "status_code_name": "SENDING_ACCOUNT_FROZEN"
 
 //# run --signers StarcoinAssociation
 script {
