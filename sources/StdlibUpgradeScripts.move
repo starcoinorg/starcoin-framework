@@ -129,7 +129,10 @@ module StdlibUpgradeScripts {
         while (i < Vector::length(&acl_vec)) {
             STC::burn(Account::withdraw_illegal_token<STC>(sender, *Vector::borrow(&acl_vec, i), 0));
             i = i + 1;
-        }
+        };
+
+        FlexiDagConfig::initialize(sender, u64_max());
+        OnChainConfigDao::plugin<STC, FlexiDagConfig::FlexiDagConfig>(sender);
     }
 
     /// Burned by user account
@@ -144,17 +147,6 @@ module StdlibUpgradeScripts {
         };
         let token = Account::withdraw<STC>(&sender, amount);
         STC::burn(token);
-    }
-
-    public entry fun upgrade_from_v12_to_v13(sender: signer) {
-        do_upgrade_from_v12_to_v13(&sender);
-    }
-
-    public fun do_upgrade_from_v12_to_v13(sender: &signer) {
-        {
-            FlexiDagConfig::initialize(sender, u64_max());
-            OnChainConfigDao::plugin<STC, FlexiDagConfig::FlexiDagConfig>(sender);
-        };
     }
 }
 }

@@ -6,6 +6,7 @@
 The module for StdlibUpgrade init scripts
 
 
+-  [Constants](#@Constants_0)
 -  [Function `upgrade_from_v2_to_v3`](#0x1_StdlibUpgradeScripts_upgrade_from_v2_to_v3)
 -  [Function `take_linear_withdraw_capability`](#0x1_StdlibUpgradeScripts_take_linear_withdraw_capability)
 -  [Function `do_upgrade_from_v5_to_v6`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v5_to_v6)
@@ -17,28 +18,49 @@ The module for StdlibUpgrade init scripts
 -  [Function `do_upgrade_from_v7_to_v8`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v7_to_v8)
 -  [Function `upgrade_from_v11_to_v12`](#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12)
 -  [Function `do_upgrade_from_v11_to_v12`](#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12)
--  [Module Specification](#@Module_Specification_0)
+-  [Function `burn_illegal_token`](#0x1_StdlibUpgradeScripts_burn_illegal_token)
+-  [Module Specification](#@Module_Specification_1)
 
 
 <pre><code><b>use</b> <a href="ACL.md#0x1_ACL">0x1::ACL</a>;
 <b>use</b> <a href="Account.md#0x1_Account">0x1::Account</a>;
+<b>use</b> <a href="ChainId.md#0x1_ChainId">0x1::ChainId</a>;
 <b>use</b> <a href="Collection.md#0x1_Collection">0x1::Collection</a>;
 <b>use</b> <a href="Config.md#0x1_Config">0x1::Config</a>;
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
+<b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
+<b>use</b> <a href="FlexiDagConfig.md#0x1_FlexiDagConfig">0x1::FlexiDagConfig</a>;
 <b>use</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy">0x1::FrozenConfigStrategy</a>;
 <b>use</b> <a href="GenesisNFT.md#0x1_GenesisNFT">0x1::GenesisNFT</a>;
 <b>use</b> <a href="GenesisSignerCapability.md#0x1_GenesisSignerCapability">0x1::GenesisSignerCapability</a>;
 <b>use</b> <a href="LanguageVersion.md#0x1_LanguageVersion">0x1::LanguageVersion</a>;
+<b>use</b> <a href="Math.md#0x1_Math">0x1::Math</a>;
 <b>use</b> <a href="NFT.md#0x1_NFT">0x1::NFT</a>;
 <b>use</b> <a href="Offer.md#0x1_Offer">0x1::Offer</a>;
 <b>use</b> <a href="OnChainConfigDao.md#0x1_OnChainConfigDao">0x1::OnChainConfigDao</a>;
 <b>use</b> <a href="Oracle.md#0x1_Oracle">0x1::Oracle</a>;
 <b>use</b> <a href="STC.md#0x1_STC">0x1::STC</a>;
 <b>use</b> <a href="Oracle.md#0x1_STCUSDOracle">0x1::STCUSDOracle</a>;
+<b>use</b> <a href="Signer.md#0x1_Signer">0x1::Signer</a>;
 <b>use</b> <a href="Timestamp.md#0x1_Timestamp">0x1::Timestamp</a>;
 <b>use</b> <a href="Token.md#0x1_Token">0x1::Token</a>;
 <b>use</b> <a href="Treasury.md#0x1_Treasury">0x1::Treasury</a>;
 <b>use</b> <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal">0x1::TreasuryWithdrawDaoProposal</a>;
+</code></pre>
+
+
+
+<a name="@Constants_0"></a>
+
+## Constants
+
+
+<a name="0x1_StdlibUpgradeScripts_ERR_NOT_RIGHT_ADDRESS"></a>
+
+Burned by user account
+
+
+<pre><code><b>const</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_ERR_NOT_RIGHT_ADDRESS">ERR_NOT_RIGHT_ADDRESS</a>: u64 = 101;
 </code></pre>
 
 
@@ -59,18 +81,24 @@ Stdlib upgrade script from v2 to v3
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v2_to_v3">upgrade_from_v2_to_v3</a>(account: signer, total_stc_amount: u128 ) {
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v2_to_v3">upgrade_from_v2_to_v3</a>(account: signer, total_stc_amount: u128) {
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(&account);
 
     <b>let</b> withdraw_cap = <a href="STC.md#0x1_STC_upgrade_from_v1_to_v2">STC::upgrade_from_v1_to_v2</a>(&account, total_stc_amount);
 
-    <b>let</b> mint_keys = <a href="Collection.md#0x1_Collection_borrow_collection">Collection::borrow_collection</a>&lt;LinearTimeMintKey&lt;<a href="STC.md#0x1_STC">STC</a>&gt;&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_ASSOCIATION_ROOT_ADDRESS">CoreAddresses::ASSOCIATION_ROOT_ADDRESS</a>());
+    <b>let</b> mint_keys = <a href="Collection.md#0x1_Collection_borrow_collection">Collection::borrow_collection</a>&lt;LinearTimeMintKey&lt;<a href="STC.md#0x1_STC">STC</a>&gt;&gt;(
+        <a href="CoreAddresses.md#0x1_CoreAddresses_ASSOCIATION_ROOT_ADDRESS">CoreAddresses::ASSOCIATION_ROOT_ADDRESS</a>()
+    );
     <b>let</b> mint_key = <a href="Collection.md#0x1_Collection_borrow">Collection::borrow</a>(&mint_keys, 0);
     <b>let</b> (total, minted, start_time, period) = <a href="Token.md#0x1_Token_read_linear_time_key">Token::read_linear_time_key</a>(mint_key);
     <a href="Collection.md#0x1_Collection_return_collection">Collection::return_collection</a>(mint_keys);
 
     <b>let</b> now = <a href="Timestamp.md#0x1_Timestamp_now_seconds">Timestamp::now_seconds</a>();
-    <b>let</b> linear_withdraw_cap = <a href="Treasury.md#0x1_Treasury_issue_linear_withdraw_capability">Treasury::issue_linear_withdraw_capability</a>(&<b>mut</b> withdraw_cap, total-minted, period - (now - start_time));
+    <b>let</b> linear_withdraw_cap = <a href="Treasury.md#0x1_Treasury_issue_linear_withdraw_capability">Treasury::issue_linear_withdraw_capability</a>(
+        &<b>mut</b> withdraw_cap,
+        total - minted,
+        period - (now - start_time)
+    );
     // Lock the TreasuryWithdrawCapability <b>to</b> <a href="Dao.md#0x1_Dao">Dao</a>
     <a href="TreasuryWithdrawDaoProposal.md#0x1_TreasuryWithdrawDaoProposal_plugin">TreasuryWithdrawDaoProposal::plugin</a>(&account, withdraw_cap);
     // Give a LinearWithdrawCapability <a href="Offer.md#0x1_Offer">Offer</a> <b>to</b> association, association need <b>to</b> take the offer, and destroy <b>old</b> LinearTimeMintKey.
@@ -98,7 +126,7 @@ association account should call this script after upgrade from v2 to v3.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_take_linear_withdraw_capability">take_linear_withdraw_capability</a>(signer: signer){
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_take_linear_withdraw_capability">take_linear_withdraw_capability</a>(signer: signer) {
     <b>let</b> offered = <a href="Offer.md#0x1_Offer_redeem">Offer::redeem</a>&lt;LinearWithdrawCapability&lt;<a href="STC.md#0x1_STC">STC</a>&gt;&gt;(&signer, <a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
     <a href="Treasury.md#0x1_Treasury_add_linear_withdraw_capability">Treasury::add_linear_withdraw_capability</a>(&signer, offered);
     <b>let</b> mint_key = <a href="Collection.md#0x1_Collection_take">Collection::take</a>&lt;LinearTimeMintKey&lt;<a href="STC.md#0x1_STC">STC</a>&gt;&gt;(&signer);
@@ -157,7 +185,7 @@ association account should call this script after upgrade from v2 to v3.
 
 
 <pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v5_to_v6">upgrade_from_v5_to_v6</a>(sender: signer) {
-   <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v5_to_v6">Self::do_upgrade_from_v5_to_v6</a>(&sender)
+    <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v5_to_v6">Self::do_upgrade_from_v5_to_v6</a>(&sender)
 }
 </code></pre>
 
@@ -206,7 +234,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 
 
 <pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v6_to_v7">do_upgrade_from_v6_to_v7</a>(sender: &signer) {
-   <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v6_to_v7_with_language_version">do_upgrade_from_v6_to_v7_with_language_version</a>(sender, 2);
+    <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v6_to_v7_with_language_version">do_upgrade_from_v6_to_v7_with_language_version</a>(sender, 2);
 }
 </code></pre>
 
@@ -346,12 +374,12 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
     <b>let</b> acl_vec = <a href="ACL.md#0x1_ACL_get_vector">ACL::get_vector</a>(&frozen_acl);
     <b>let</b> i = 0;
     <b>while</b> (i &lt; <a href="Vector.md#0x1_Vector_length">Vector::length</a>(&acl_vec)) {
-        <b>let</b> token = <a href="Account.md#0x1_Account_withdraw_illegal_token">Account::withdraw_illegal_token</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(sender, *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&acl_vec, i), 0);
-        // <a href="STC.md#0x1_STC_burn">STC::burn</a>(token);
-        // TODO(BobOng): <b>to</b> deposit into pedding account
-        <a href="Account.md#0x1_Account_deposit">Account::deposit</a>(@0x123456, token);
+        <a href="STC.md#0x1_STC_burn">STC::burn</a>(<a href="Account.md#0x1_Account_withdraw_illegal_token">Account::withdraw_illegal_token</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(sender, *<a href="Vector.md#0x1_Vector_borrow">Vector::borrow</a>(&acl_vec, i), 0));
         i = i + 1;
-    }
+    };
+
+    <a href="FlexiDagConfig.md#0x1_FlexiDagConfig_initialize">FlexiDagConfig::initialize</a>(sender, u64_max());
+    <a href="OnChainConfigDao.md#0x1_OnChainConfigDao_plugin">OnChainConfigDao::plugin</a>&lt;<a href="STC.md#0x1_STC">STC</a>, <a href="FlexiDagConfig.md#0x1_FlexiDagConfig_FlexiDagConfig">FlexiDagConfig::FlexiDagConfig</a>&gt;(sender);
 }
 </code></pre>
 
@@ -359,7 +387,38 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 
 </details>
 
-<a name="@Module_Specification_0"></a>
+<a name="0x1_StdlibUpgradeScripts_burn_illegal_token"></a>
+
+## Function `burn_illegal_token`
+
+
+
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_burn_illegal_token">burn_illegal_token</a>(sender: signer, amount: u128)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_burn_illegal_token">burn_illegal_token</a>(sender: signer, amount: u128) {
+    <b>if</b> (<a href="ChainId.md#0x1_ChainId_is_main">ChainId::is_main</a>()) {
+        <b>assert</b>!(
+            <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(&sender) == @0x6820910808aba0dda29b486064ffc17f,
+            <a href="Errors.md#0x1_Errors_requires_address">Errors::requires_address</a>(<a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_ERR_NOT_RIGHT_ADDRESS">ERR_NOT_RIGHT_ADDRESS</a>)
+        );
+    };
+    <b>let</b> token = <a href="Account.md#0x1_Account_withdraw">Account::withdraw</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(&sender, amount);
+    <a href="STC.md#0x1_STC_burn">STC::burn</a>(token);
+}
+</code></pre>
+
+
+
+</details>
+
+<a name="@Module_Specification_1"></a>
 
 ## Module Specification
 

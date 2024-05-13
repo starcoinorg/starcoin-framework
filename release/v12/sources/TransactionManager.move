@@ -35,8 +35,8 @@ module TransactionManager {
     const EPROLOGUE_BAD_CHAIN_ID: u64 = 6;
     const EPROLOGUE_MODULE_NOT_ALLOWED: u64 = 7;
     const EPROLOGUE_SCRIPT_NOT_ALLOWED: u64 = 8;
-    const EPROLOGUE_FROZEN_GLOBAL_TXN: u64 = 9;
-    const EPROLOGUE_FROZEN_ACCOUNT: u64 = 10;
+    const EPROLOGUE_SENDING_ACCOUNT_FROZEN: u64 = 10;
+    const EPROLOGUE_SENDING_TXN_GLOBAL_FROZEN: u64 = 11;
 
 
     /// The prologue is invoked at the beginning of every transaction
@@ -69,9 +69,12 @@ module TransactionManager {
         // Frozen check
         assert!(
             !FrozenConfigStrategy::has_frozen_global(txn_sender),
-            Errors::invalid_state(EPROLOGUE_FROZEN_GLOBAL_TXN)
+            Errors::invalid_argument(EPROLOGUE_SENDING_TXN_GLOBAL_FROZEN)
         );
-        assert!(!FrozenConfigStrategy::has_frozen_account(txn_sender), Errors::invalid_state(EPROLOGUE_FROZEN_ACCOUNT));
+        assert!(
+            !FrozenConfigStrategy::has_frozen_account(txn_sender),
+            Errors::invalid_argument(EPROLOGUE_SENDING_ACCOUNT_FROZEN)
+        );
 
         Account::txn_prologue<TokenType>(
             &account,
@@ -115,13 +118,18 @@ module TransactionManager {
         aborts_if !exists<ChainId::ChainId>(CoreAddresses::GENESIS_ADDRESS());
         aborts_if ChainId::get() != chain_id;
         aborts_if !exists<Account::Account>(txn_sender);
-        aborts_if Hash::sha3_256(txn_authentication_key_preimage) != global<Account::Account>(txn_sender).authentication_key;
+        aborts_if Hash::sha3_256(txn_authentication_key_preimage) != global<Account::Account>(
+            txn_sender
+        ).authentication_key;
         aborts_if txn_gas_price * txn_max_gas_units > max_u64();
         include Timestamp::AbortsIfTimestampNotExists;
         include Block::AbortsIfBlockMetadataNotExist;
         aborts_if txn_gas_price * txn_max_gas_units > 0 && !exists<Account::Balance<TokenType>>(txn_sender);
-        aborts_if txn_gas_price * txn_max_gas_units > 0 && StarcoinFramework::Token::spec_token_code<TokenType>() != StarcoinFramework::Token::spec_token_code<STC>();
-        aborts_if txn_gas_price * txn_max_gas_units > 0 && global<Account::Balance<TokenType>>(txn_sender).token.value < txn_gas_price * txn_max_gas_units;
+        aborts_if txn_gas_price * txn_max_gas_units > 0 && StarcoinFramework::Token::spec_token_code<TokenType>(
+        ) != StarcoinFramework::Token::spec_token_code<STC>();
+        aborts_if txn_gas_price * txn_max_gas_units > 0 && global<Account::Balance<TokenType>>(
+            txn_sender
+        ).token.value < txn_gas_price * txn_max_gas_units;
         aborts_if txn_gas_price * txn_max_gas_units > 0 && txn_sequence_number >= max_u64();
         aborts_if txn_sequence_number < global<Account::Account>(txn_sender).sequence_number;
         aborts_if txn_sequence_number != global<Account::Account>(txn_sender).sequence_number;
@@ -130,9 +138,12 @@ module TransactionManager {
         include TransactionPublishOption::AbortsIfTxnPublishOptionNotExistWithBool {
             is_script_or_package: (txn_payload_type == TXN_PAYLOAD_TYPE_PACKAGE || txn_payload_type == TXN_PAYLOAD_TYPE_SCRIPT),
         };
-        aborts_if txn_payload_type == TXN_PAYLOAD_TYPE_PACKAGE && txn_package_address != CoreAddresses::GENESIS_ADDRESS() && !TransactionPublishOption::spec_is_module_allowed(Signer::address_of(account));
-        aborts_if txn_payload_type == TXN_PAYLOAD_TYPE_SCRIPT && !TransactionPublishOption::spec_is_script_allowed(Signer::address_of(account));
-        include PackageTxnManager::CheckPackageTxnAbortsIfWithType{is_package: (txn_payload_type == TXN_PAYLOAD_TYPE_PACKAGE), sender:txn_sender, package_address: txn_package_address, package_hash: txn_script_or_package_hash};
+        aborts_if txn_payload_type == TXN_PAYLOAD_TYPE_PACKAGE && txn_package_address != CoreAddresses::GENESIS_ADDRESS(
+        ) && !TransactionPublishOption::spec_is_module_allowed(Signer::address_of(account));
+        aborts_if txn_payload_type == TXN_PAYLOAD_TYPE_SCRIPT && !TransactionPublishOption::spec_is_script_allowed(
+            Signer::address_of(account)
+        );
+        include PackageTxnManager::CheckPackageTxnAbortsIfWithType { is_package: (txn_payload_type == TXN_PAYLOAD_TYPE_PACKAGE), sender: txn_sender, package_address: txn_package_address, package_hash: txn_script_or_package_hash };
     }
 
     /// The epilogue is invoked at the end of transactions.
@@ -150,7 +161,19 @@ module TransactionManager {
         // txn execute success or fail.
         success: bool,
     ) {
-        epilogue_v2<TokenType>(account, txn_sender, txn_sequence_number, Vector::empty(), txn_gas_price, txn_max_gas_units, gas_units_remaining, txn_payload_type, _txn_script_or_package_hash, txn_package_address, success)
+        epilogue_v2<TokenType>(
+            account,
+            txn_sender,
+            txn_sequence_number,
+            Vector::empty(),
+            txn_gas_price,
+            txn_max_gas_units,
+            gas_units_remaining,
+            txn_payload_type,
+            _txn_script_or_package_hash,
+            txn_package_address,
+            success
+        )
     }
 
     /// The epilogue is invoked at the end of transactions.
@@ -218,6 +241,28 @@ module TransactionManager {
         chain_id: u8,
         parent_gas_used: u64,
     ) {
+        Self::block_prologue_v2(account, parent_hash, timestamp, author, auth_key_vec, uncles, number, chain_id, parent_gas_used, Vector::empty<u8>())
+    }
+
+    spec block_prologue {
+        pragma verify = false;//fixme : timeout
+    }
+
+    /// Set the metadata for the current block and distribute transaction fees and block rewards.
+    /// The runtime always runs this before executing the transactions in a block.
+    /// For Flexidag block
+    public fun block_prologue_v2(
+        account: signer,
+        parent_hash: vector<u8>,
+        timestamp: u64,
+        author: address,
+        auth_key_vec: vector<u8>,
+        uncles: u64,
+        number: u64,
+        chain_id: u8,
+        parent_gas_used: u64,
+        parents_hash: vector<u8>,
+    ) {
         // Can only be invoked by genesis account
         CoreAddresses::assert_genesis_address(&account);
         // Check that the chain ID stored on-chain matches the chain ID
@@ -229,20 +274,21 @@ module TransactionManager {
 
         // then deal with current block.
         Timestamp::update_global_time(&account, timestamp);
-        Block::process_block_metadata(
+        Block::process_block_metadata_v2(
             &account,
             parent_hash,
             author,
             timestamp,
             uncles,
             number,
+            parents_hash,
         );
         let reward = Epoch::adjust_epoch(&account, number, timestamp, uncles, parent_gas_used);
         // pass in previous block gas fees.
         BlockReward::process_block_reward(&account, number, reward, author, auth_key_vec, txn_fee);
     }
 
-    spec block_prologue {
+    spec block_prologue_v2 {
         pragma verify = false;//fixme : timeout
     }
 }
