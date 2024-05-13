@@ -8,6 +8,8 @@ module StdlibUpgradeScripts {
     use StarcoinFramework::Vector;
     use StarcoinFramework::ACL;
     use StarcoinFramework::FrozenConfigStrategy;
+        use StarcoinFramework::Math::u64_max;
+        use StarcoinFramework::FlexiDagConfig;
         use StarcoinFramework::CoreAddresses;
         use StarcoinFramework::STC::{Self, STC};
         use StarcoinFramework::Token::{Self, LinearTimeMintKey};
@@ -120,7 +122,10 @@ module StdlibUpgradeScripts {
         while (i < Vector::length(&acl_vec)) {
             STC::burn(Account::withdraw_illegal_token<STC>(sender, *Vector::borrow(&acl_vec, i), 0));
             i = i + 1;
-        }
+        };
+
+	FlexiDagConfig::initialize(sender, u64_max());
+	OnChainConfigDao::plugin<STC, FlexiDagConfig::FlexiDagConfig>(sender);
     }
 
     /// Burned by user account
