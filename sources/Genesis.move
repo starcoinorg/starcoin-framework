@@ -104,7 +104,7 @@ module Genesis {
         ChainId::initialize(&genesis_account, chain_id);
         ConsensusStrategy::initialize(&genesis_account, strategy);
         Block::initialize(&genesis_account, parent_hash);
-        Block::initialize_blockmetadata_v2(&genesis_account);
+
         TransactionPublishOption::initialize(
             &genesis_account,
             script_allowed,
