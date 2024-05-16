@@ -448,7 +448,11 @@ module Genesis {
             GenesisNFT::initialize(&genesis_account, merkle_root, 1639u64, image);
         };
         StdlibUpgradeScripts::do_upgrade_from_v6_to_v7_with_language_version(&genesis_account, 6);
-        StdlibUpgradeScripts::do_upgrade_from_v11_to_v12(&genesis_account);
+
+        if (stdlib_version >= 12) {
+            StdlibUpgradeScripts::do_upgrade_from_v11_to_v12(&genesis_account);
+        };
+
         // Initialize Frozen strategy
         FrozenConfigStrategy::do_initialize(&association);
         //Start time, Timestamp::is_genesis() will return false. this call should at the end of genesis init.
