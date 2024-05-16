@@ -2,6 +2,7 @@ address StarcoinFramework {
 /// The module for StdlibUpgrade init scripts
 module StdlibUpgradeScripts {
 
+    use StarcoinFramework::Block;
     use StarcoinFramework::Errors;
     use StarcoinFramework::Signer;
     use StarcoinFramework::ChainId;
@@ -124,8 +125,9 @@ module StdlibUpgradeScripts {
             i = i + 1;
         };
 
-	FlexiDagConfig::initialize(sender, u64_max());
-	OnChainConfigDao::plugin<STC, FlexiDagConfig::FlexiDagConfig>(sender);
+        FlexiDagConfig::initialize(sender, u64_max());
+        Block::initialize_blockmetadata_v2(sender);
+        OnChainConfigDao::plugin<STC, FlexiDagConfig::FlexiDagConfig>(sender);
     }
 
     /// Burned by user account

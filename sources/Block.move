@@ -118,48 +118,87 @@ module Block {
     }
 
     /// Get the current block number
-    public fun get_current_block_number(): u64 acquires BlockMetadataV2 {
-        borrow_global<BlockMetadataV2>(CoreAddresses::GENESIS_ADDRESS()).number
+    public fun get_current_block_number(): u64 acquires BlockMetadataV2, BlockMetadata {
+        let addr = CoreAddresses::GENESIS_ADDRESS();
+        if (exists<BlockMetadataV2>(addr)) {
+            borrow_global<BlockMetadataV2>(addr).number
+        } else {
+            borrow_global<BlockMetadata>(addr).number
+        }
     }
 
     spec get_current_block_number {
-        aborts_if !exists<BlockMetadataV2>(CoreAddresses::GENESIS_ADDRESS());
+        aborts_if !exists<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
     }
 
     /// Get the hash of the parent block.
-    public fun get_parent_hash(): vector<u8> acquires BlockMetadataV2 {
-        *&borrow_global<BlockMetadataV2>(CoreAddresses::GENESIS_ADDRESS()).parent_hash
+    public fun get_parent_hash(): vector<u8> acquires BlockMetadataV2, BlockMetadata {
+        let addr = CoreAddresses::GENESIS_ADDRESS();
+        if (exists<BlockMetadataV2>(addr)) {
+            *&borrow_global<BlockMetadataV2>(CoreAddresses::GENESIS_ADDRESS()).parent_hash
+        } else {
+            *&borrow_global<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS()).parent_hash
+        }
     }
 
     spec get_parent_hash {
-        aborts_if !exists<BlockMetadataV2>(CoreAddresses::GENESIS_ADDRESS());
+        aborts_if !exists<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
     }
 
     /// Gets the address of the author of the current block
-    public fun get_current_author(): address acquires BlockMetadataV2 {
-        borrow_global<BlockMetadataV2>(CoreAddresses::GENESIS_ADDRESS()).author
+    public fun get_current_author(): address acquires BlockMetadataV2, BlockMetadata {
+        let addr = CoreAddresses::GENESIS_ADDRESS();
+        if (exists<BlockMetadataV2>(addr)) {
+            *&borrow_global<BlockMetadataV2>(addr).author
+        } else {
+            *&borrow_global<BlockMetadata>(addr).author
+        }
     }
 
     spec get_current_author {
-        aborts_if !exists<BlockMetadataV2>(CoreAddresses::GENESIS_ADDRESS());
+        aborts_if !exists<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
     }
 
     public fun get_parents_hash(): vector<u8> acquires BlockMetadataV2 {
-        *&borrow_global<BlockMetadataV2>(CoreAddresses::GENESIS_ADDRESS()).parents_hash
+        let addr = CoreAddresses::GENESIS_ADDRESS();
+        if (exists<BlockMetadataV2>(addr)) {
+            *&borrow_global<BlockMetadataV2>(addr).parents_hash
+        } else {
+            Vector::empty()
+        }
     }
 
     spec get_parents_hash {
-        aborts_if !exists<BlockMetadataV2>(CoreAddresses::GENESIS_ADDRESS());
+        aborts_if !exists<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
     }
 
     /// Call at block prologue
-    public fun process_block_metadata(account: &signer,
-                                      parent_hash: vector<u8>,
-                                      author: address,
-                                      timestamp: u64,
-                                      uncles: u64,
-                                      number: u64) acquires BlockMetadataV2 {
-        Self::process_block_metadata_v2(account, parent_hash, author, timestamp, uncles, number, Vector::empty<u8>())
+    public fun process_block_metadata(
+        account: &signer,
+        parent_hash: vector<u8>,
+        author: address,
+        timestamp: u64,
+        uncles: u64,
+        number: u64,
+    ) acquires BlockMetadata {
+        CoreAddresses::assert_genesis_address(account);
+
+        let block_metadata_ref = borrow_global_mut<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
+        assert!(number == (block_metadata_ref.number + 1), Errors::invalid_argument(EBLOCK_NUMBER_MISMATCH));
+        block_metadata_ref.number = number;
+        block_metadata_ref.author= author;
+        block_metadata_ref.parent_hash = parent_hash;
+        block_metadata_ref.uncles = uncles;
+
+        Event::emit_event<NewBlockEvent>(
+            &mut block_metadata_ref.new_block_events,
+            NewBlockEvent {
+                number: number,
+                author: author,
+                timestamp: timestamp,
+                uncles: uncles,
+            }
+        );
     }
 
     spec process_block_metadata {
@@ -169,33 +208,48 @@ module Block {
     }
 
     /// Call at block prologue for flexidag
-    public fun process_block_metadata_v2(account: &signer,
-                                         parent_hash: vector<u8>,
-                                         author: address,
-                                         timestamp: u64,
-                                         uncles: u64,
-                                         number: u64,
-                                         parents_hash: vector<u8>) acquires BlockMetadataV2 {
+    public fun process_block_metadata_v2(
+        account: &signer,
+        parent_hash: vector<u8>,
+        author: address,
+        timestamp: u64,
+        uncles: u64,
+        number: u64,
+        parents_hash: vector<u8>
+    ) acquires BlockMetadataV2, BlockMetadata {
         CoreAddresses::assert_genesis_address(account);
 
-        let block_metadata_ref = borrow_global_mut<BlockMetadataV2>(CoreAddresses::GENESIS_ADDRESS());
-        assert!(number == (block_metadata_ref.number + 1), Errors::invalid_argument(EBLOCK_NUMBER_MISMATCH));
-        block_metadata_ref.number = number;
-        block_metadata_ref.author = author;
-        block_metadata_ref.parent_hash = parent_hash;
-        block_metadata_ref.uncles = uncles;
-        block_metadata_ref.parents_hash = parents_hash;
+        let account_addr = Signer::address_of(account);
+        if (exists<BlockMetadataV2>(account_addr)) {
+            let block_metadata_ref = borrow_global_mut<BlockMetadataV2>(CoreAddresses::GENESIS_ADDRESS());
+            assert!(number == (block_metadata_ref.number + 1), Errors::invalid_argument(EBLOCK_NUMBER_MISMATCH));
+            block_metadata_ref.number = number;
+            block_metadata_ref.author = author;
+            block_metadata_ref.parent_hash = parent_hash;
+            block_metadata_ref.uncles = uncles;
+            block_metadata_ref.parents_hash = parents_hash;
 
-        Event::emit_event<NewBlockEventV2>(
-            &mut block_metadata_ref.new_block_events,
-            NewBlockEventV2 {
-                number,
+            Event::emit_event<NewBlockEventV2>(
+                &mut block_metadata_ref.new_block_events,
+                NewBlockEventV2 {
+                    number,
+                    author,
+                    timestamp,
+                    uncles,
+                    parents_hash,
+                }
+            );
+        } else {
+            Self::process_block_metadata(
+                account,
+                parent_hash,
                 author,
                 timestamp,
                 uncles,
-                parents_hash,
-            }
-        );
+                number
+            )
+        }
+
     }
 
     spec process_block_metadata_v2 {
