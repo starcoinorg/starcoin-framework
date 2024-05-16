@@ -1,5 +1,6 @@
 address StarcoinFramework {
 module OnChainConfigScripts {
+    use StarcoinFramework::FlexiDagConfig;
     use StarcoinFramework::ConsensusConfig;
     use StarcoinFramework::OnChainConfigDao;
     use StarcoinFramework::STC;
@@ -116,6 +117,15 @@ module OnChainConfigScripts {
     }
 
     spec propose_update_move_language_version {
+        pragma verify = false;
+    }
+
+    public entry fun propose_update_flexi_dag_effective_height(account: signer, new_height: u64, exec_delay: u64) {
+        let config = FlexiDagConfig::new_flexidag_config(new_height);
+        OnChainConfigDao::propose_update<STC::STC, FlexiDagConfig::FlexiDagConfig>(&account, config, exec_delay);
+    }
+
+    spec propose_update_flexi_dag_effective_height {
         pragma verify = false;
     }
 

@@ -1,12 +1,16 @@
 address StarcoinFramework {
 /// The module provide epoch functionality for starcoin.
 module Epoch {
+    use StarcoinFramework::FlexiDagConfig::FlexiDagConfig;
+    use StarcoinFramework::Math::u64_max;
+    use StarcoinFramework::Config::config_exist_by_address;
+    use StarcoinFramework::Errors;
+    use StarcoinFramework::FlexiDagConfig;
     use StarcoinFramework::Config;
     use StarcoinFramework::Signer;
     use StarcoinFramework::CoreAddresses;
 
     use StarcoinFramework::Event;
-    use StarcoinFramework::Errors;
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::Math;
     use StarcoinFramework::Option;
@@ -153,14 +157,25 @@ module Epoch {
         CoreAddresses::assert_genesis_address(account);
 
         let epoch_ref = borrow_global_mut<Epoch>(CoreAddresses::GENESIS_ADDRESS());
-        assert!(epoch_ref.max_uncles_per_block >= uncles, Errors::invalid_argument(EINVALID_UNCLES_COUNT));
+        let flexidag_fork_height = if (config_exist_by_address<FlexiDagConfig>(CoreAddresses::GENESIS_ADDRESS())) {
+            FlexiDagConfig::effective_height(CoreAddresses::GENESIS_ADDRESS())
+        } else {
+            u64_max()
+        };
+        assert!(
+            block_number > flexidag_fork_height || epoch_ref.max_uncles_per_block >= uncles,
+            Errors::invalid_argument(EINVALID_UNCLES_COUNT)
+        );
 
         let epoch_data = borrow_global_mut<EpochData>(CoreAddresses::GENESIS_ADDRESS());
         let (new_epoch, reward_per_block) = if (block_number < epoch_ref.end_block_number) {
             (false, epoch_ref.reward_per_block)
         } else if (block_number == epoch_ref.end_block_number) {
             //start a new epoch
-            assert!(uncles == 0, Errors::invalid_argument(EINVALID_UNCLES_COUNT));
+            assert!(
+                block_number > flexidag_fork_height || uncles == 0,
+                Errors::invalid_argument(EINVALID_UNCLES_COUNT)
+            );
             // block time target unit is milli_seconds.
             let now_milli_seconds = timestamp;
 

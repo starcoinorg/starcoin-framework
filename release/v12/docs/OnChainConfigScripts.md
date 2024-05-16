@@ -11,11 +11,13 @@
 -  [Function `propose_update_txn_timeout_config`](#0x1_OnChainConfigScripts_propose_update_txn_timeout_config)
 -  [Function `propose_update_vm_config`](#0x1_OnChainConfigScripts_propose_update_vm_config)
 -  [Function `propose_update_move_language_version`](#0x1_OnChainConfigScripts_propose_update_move_language_version)
+-  [Function `propose_update_flexi_dag_effective_height`](#0x1_OnChainConfigScripts_propose_update_flexi_dag_effective_height)
 -  [Function `execute_on_chain_config_proposal`](#0x1_OnChainConfigScripts_execute_on_chain_config_proposal)
 -  [Function `execute_on_chain_config_proposal_v2`](#0x1_OnChainConfigScripts_execute_on_chain_config_proposal_v2)
 
 
 <pre><code><b>use</b> <a href="ConsensusConfig.md#0x1_ConsensusConfig">0x1::ConsensusConfig</a>;
+<b>use</b> <a href="FlexiDagConfig.md#0x1_FlexiDagConfig">0x1::FlexiDagConfig</a>;
 <b>use</b> <a href="LanguageVersion.md#0x1_LanguageVersion">0x1::LanguageVersion</a>;
 <b>use</b> <a href="OnChainConfigDao.md#0x1_OnChainConfigDao">0x1::OnChainConfigDao</a>;
 <b>use</b> <a href="RewardConfig.md#0x1_RewardConfig">0x1::RewardConfig</a>;
@@ -286,6 +288,43 @@
 <pre><code><b>public</b> entry <b>fun</b> <a href="OnChainConfigScripts.md#0x1_OnChainConfigScripts_propose_update_move_language_version">propose_update_move_language_version</a>(account: signer, new_version: u64, exec_delay: u64) {
     <b>let</b> lang_version = <a href="LanguageVersion.md#0x1_LanguageVersion_new">LanguageVersion::new</a>(new_version);
     <a href="OnChainConfigDao.md#0x1_OnChainConfigDao_propose_update">OnChainConfigDao::propose_update</a>&lt;<a href="STC.md#0x1_STC_STC">STC::STC</a>, <a href="LanguageVersion.md#0x1_LanguageVersion_LanguageVersion">LanguageVersion::LanguageVersion</a>&gt;(&account, lang_version, exec_delay);
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_OnChainConfigScripts_propose_update_flexi_dag_effective_height"></a>
+
+## Function `propose_update_flexi_dag_effective_height`
+
+
+
+<pre><code><b>public</b> entry <b>fun</b> <a href="OnChainConfigScripts.md#0x1_OnChainConfigScripts_propose_update_flexi_dag_effective_height">propose_update_flexi_dag_effective_height</a>(account: signer, new_height: u64, exec_delay: u64)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> entry <b>fun</b> <a href="OnChainConfigScripts.md#0x1_OnChainConfigScripts_propose_update_flexi_dag_effective_height">propose_update_flexi_dag_effective_height</a>(account: signer, new_height: u64, exec_delay: u64) {
+    <b>let</b> config = <a href="FlexiDagConfig.md#0x1_FlexiDagConfig_new_flexidag_config">FlexiDagConfig::new_flexidag_config</a>(new_height);
+    <a href="OnChainConfigDao.md#0x1_OnChainConfigDao_propose_update">OnChainConfigDao::propose_update</a>&lt;<a href="STC.md#0x1_STC_STC">STC::STC</a>, <a href="FlexiDagConfig.md#0x1_FlexiDagConfig_FlexiDagConfig">FlexiDagConfig::FlexiDagConfig</a>&gt;(&account, config, exec_delay);
 }
 </code></pre>
 
