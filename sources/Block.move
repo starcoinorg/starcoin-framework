@@ -98,16 +98,18 @@ module Block {
         let block_meta_ref = borrow_global<BlockMetadata>(CoreAddresses::GENESIS_ADDRESS());
 
         // create new resource base on current block metadata
-        move_to<BlockMetadataV2>(
-            account,
-            BlockMetadataV2 {
-                number: block_meta_ref.number,
-                parent_hash: block_meta_ref.parent_hash,
-                author: block_meta_ref.author,
-                uncles: block_meta_ref.uncles,
-                parents_hash: Vector::empty(),
-                new_block_events: Event::new_event_handle<Self::NewBlockEventV2>(account),
-            });
+        if (!exists<BlockMetadataV2>(CoreAddresses::GENESIS_ADDRESS())) {
+            move_to<BlockMetadataV2>(
+                account,
+                BlockMetadataV2 {
+                    number: block_meta_ref.number,
+                    parent_hash: block_meta_ref.parent_hash,
+                    author: block_meta_ref.author,
+                    uncles: block_meta_ref.uncles,
+                    parents_hash: Vector::empty(),
+                    new_block_events: Event::new_event_handle<Self::NewBlockEventV2>(account),
+                });
+        }
     }
 
     spec initialize_blockmetadata_v2 {

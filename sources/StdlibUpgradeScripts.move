@@ -124,8 +124,8 @@ module StdlibUpgradeScripts {
             i = i + 1;
         };
 
-	FlexiDagConfig::initialize(sender, u64_max());
-	OnChainConfigDao::plugin<STC, FlexiDagConfig::FlexiDagConfig>(sender);
+        FlexiDagConfig::initialize(sender, u64_max());
+        OnChainConfigDao::plugin<STC, FlexiDagConfig::FlexiDagConfig>(sender);
     }
 
     /// Burned by user account
