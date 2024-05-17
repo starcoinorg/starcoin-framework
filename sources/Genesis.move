@@ -448,7 +448,9 @@ module Genesis {
             GenesisNFT::initialize(&genesis_account, merkle_root, 1639u64, image);
         };
         StdlibUpgradeScripts::do_upgrade_from_v6_to_v7_with_language_version(&genesis_account, 6);
-        if (stdlib_version >= 12) {
+
+        // stdlib_version == 0 is StdlibVersion::Latest
+        if (stdlib_version >= 12 || stdlib_version == 0) {
             StdlibUpgradeScripts::do_upgrade_from_v11_to_v12(&genesis_account);
         };
 
