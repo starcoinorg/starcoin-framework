@@ -229,7 +229,7 @@ module TransactionManager {
 
         // then deal with current block.
         Timestamp::update_global_time(&account, timestamp);
-        Block::process_block_metadata(
+        Block::process_block_metadata_v2(
             &account,
             parent_hash,
             author,
