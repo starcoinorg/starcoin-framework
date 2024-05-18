@@ -2,6 +2,7 @@ address StarcoinFramework {
 /// The module for init Genesis
 module Genesis {
 
+    use StarcoinFramework::Math::u64_max;
     use StarcoinFramework::FrozenConfigStrategy;
     use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Account;
@@ -42,10 +43,8 @@ module Genesis {
 
     public entry fun initialize(
         stdlib_version: u64,
-
         // block reward config
         reward_delay: u64,
-
         pre_mine_stc_amount: u128,
         time_mint_stc_amount: u128,
         time_mint_stc_period: u64,
@@ -54,7 +53,6 @@ module Genesis {
         genesis_auth_key: vector<u8>,
         chain_id: u8,
         genesis_timestamp: u64,
-
         //consensus config
         uncle_rate_target: u64,
         epoch_block_count: u64,
@@ -67,13 +65,11 @@ module Genesis {
         base_max_uncles_per_block: u64,
         base_block_gas_limit: u64,
         strategy: u8,
-
         //vm config
         script_allowed: bool,
         module_publishing_allowed: bool,
         instruction_schedule: vector<u8>,
         native_schedule: vector<u8>,
-
         //gas constants
         global_memory_per_byte_cost: u64,
         global_memory_per_byte_write_cost: u64,
@@ -86,13 +82,11 @@ module Genesis {
         max_transaction_size_in_bytes: u64,
         gas_unit_scaling_factor: u64,
         default_account_size: u64,
-
         // dao config
         voting_delay: u64,
         voting_period: u64,
         voting_quorum_rate: u8,
         min_action_delay: u64,
-
         // transaction timeout config
         transaction_timeout: u64,
     ) {
@@ -189,20 +183,17 @@ module Genesis {
 
     public entry fun initialize_v2(
         stdlib_version: u64,
-
         // block reward and stc config
         reward_delay: u64,
         total_stc_amount: u128,
         pre_mine_stc_amount: u128,
         time_mint_stc_amount: u128,
         time_mint_stc_period: u64,
-
         parent_hash: vector<u8>,
         association_auth_key: vector<u8>,
         genesis_auth_key: vector<u8>,
         chain_id: u8,
         genesis_timestamp: u64,
-
         //consensus config
         uncle_rate_target: u64,
         epoch_block_count: u64,
@@ -215,13 +206,11 @@ module Genesis {
         base_max_uncles_per_block: u64,
         base_block_gas_limit: u64,
         strategy: u8,
-
         //vm config
         script_allowed: bool,
         module_publishing_allowed: bool,
         instruction_schedule: vector<u8>,
         native_schedule: vector<u8>,
-
         //gas constants
         global_memory_per_byte_cost: u64,
         global_memory_per_byte_write_cost: u64,
@@ -234,78 +223,173 @@ module Genesis {
         max_transaction_size_in_bytes: u64,
         gas_unit_scaling_factor: u64,
         default_account_size: u64,
-
         // dao config
         voting_delay: u64,
         voting_period: u64,
         voting_quorum_rate: u8,
         min_action_delay: u64,
-
         // transaction timeout config
         transaction_timeout: u64,
     ) {
         Self::do_initialize(
-        stdlib_version,
-        reward_delay,
-        total_stc_amount,
-        pre_mine_stc_amount,
-        time_mint_stc_amount,
-        time_mint_stc_period,
-        parent_hash,
-        association_auth_key,
-        genesis_auth_key,
-        chain_id,
-        genesis_timestamp,
-        uncle_rate_target,
-        epoch_block_count,
-        base_block_time_target,
-        base_block_difficulty_window,
-        base_reward_per_block,
-        base_reward_per_uncle_percent,
-        min_block_time_target,
-        max_block_time_target,
-        base_max_uncles_per_block,
-        base_block_gas_limit,
-        strategy,
-        script_allowed,
-        module_publishing_allowed,
-        instruction_schedule,
-        native_schedule,
-        global_memory_per_byte_cost,
-        global_memory_per_byte_write_cost,
-        min_transaction_gas_units,
-        large_transaction_cutoff,
-        instrinsic_gas_per_byte,
-        maximum_number_of_gas_units,
-        min_price_per_gas_unit,
-        max_price_per_gas_unit,
-        max_transaction_size_in_bytes,
-        gas_unit_scaling_factor,
-        default_account_size,
-        voting_delay,
-        voting_period,
-        voting_quorum_rate,
-        min_action_delay,
-        transaction_timeout,
+            stdlib_version,
+            reward_delay,
+            total_stc_amount,
+            pre_mine_stc_amount,
+            time_mint_stc_amount,
+            time_mint_stc_period,
+            parent_hash,
+            association_auth_key,
+            genesis_auth_key,
+            chain_id,
+            genesis_timestamp,
+            uncle_rate_target,
+            epoch_block_count,
+            base_block_time_target,
+            base_block_difficulty_window,
+            base_reward_per_block,
+            base_reward_per_uncle_percent,
+            min_block_time_target,
+            max_block_time_target,
+            base_max_uncles_per_block,
+            base_block_gas_limit,
+            strategy,
+            script_allowed,
+            module_publishing_allowed,
+            instruction_schedule,
+            native_schedule,
+            global_memory_per_byte_cost,
+            global_memory_per_byte_write_cost,
+            min_transaction_gas_units,
+            large_transaction_cutoff,
+            instrinsic_gas_per_byte,
+            maximum_number_of_gas_units,
+            min_price_per_gas_unit,
+            max_price_per_gas_unit,
+            max_transaction_size_in_bytes,
+            gas_unit_scaling_factor,
+            default_account_size,
+            voting_delay,
+            voting_period,
+            voting_quorum_rate,
+            min_action_delay,
+            transaction_timeout,
+            u64_max(),
+        );
+    }
+
+    public entry fun initialize_v3(
+        stdlib_version: u64,
+        // block reward and stc config
+        reward_delay: u64,
+        total_stc_amount: u128,
+        pre_mine_stc_amount: u128,
+        time_mint_stc_amount: u128,
+        time_mint_stc_period: u64,
+        parent_hash: vector<u8>,
+        association_auth_key: vector<u8>,
+        genesis_auth_key: vector<u8>,
+        chain_id: u8,
+        genesis_timestamp: u64,
+        //consensus config
+        uncle_rate_target: u64,
+        epoch_block_count: u64,
+        base_block_time_target: u64,
+        base_block_difficulty_window: u64,
+        base_reward_per_block: u128,
+        base_reward_per_uncle_percent: u64,
+        min_block_time_target: u64,
+        max_block_time_target: u64,
+        base_max_uncles_per_block: u64,
+        base_block_gas_limit: u64,
+        strategy: u8,
+        //vm config
+        script_allowed: bool,
+        module_publishing_allowed: bool,
+        instruction_schedule: vector<u8>,
+        native_schedule: vector<u8>,
+        //gas constants
+        global_memory_per_byte_cost: u64,
+        global_memory_per_byte_write_cost: u64,
+        min_transaction_gas_units: u64,
+        large_transaction_cutoff: u64,
+        instrinsic_gas_per_byte: u64,
+        maximum_number_of_gas_units: u64,
+        min_price_per_gas_unit: u64,
+        max_price_per_gas_unit: u64,
+        max_transaction_size_in_bytes: u64,
+        gas_unit_scaling_factor: u64,
+        default_account_size: u64,
+        // dao config
+        voting_delay: u64,
+        voting_period: u64,
+        voting_quorum_rate: u8,
+        min_action_delay: u64,
+        // transaction timeout config
+        transaction_timeout: u64,
+        // flexidag effective height
+        dag_effective_height: u64,
+    ) {
+        Self::do_initialize(
+            stdlib_version,
+            reward_delay,
+            total_stc_amount,
+            pre_mine_stc_amount,
+            time_mint_stc_amount,
+            time_mint_stc_period,
+            parent_hash,
+            association_auth_key,
+            genesis_auth_key,
+            chain_id,
+            genesis_timestamp,
+            uncle_rate_target,
+            epoch_block_count,
+            base_block_time_target,
+            base_block_difficulty_window,
+            base_reward_per_block,
+            base_reward_per_uncle_percent,
+            min_block_time_target,
+            max_block_time_target,
+            base_max_uncles_per_block,
+            base_block_gas_limit,
+            strategy,
+            script_allowed,
+            module_publishing_allowed,
+            instruction_schedule,
+            native_schedule,
+            global_memory_per_byte_cost,
+            global_memory_per_byte_write_cost,
+            min_transaction_gas_units,
+            large_transaction_cutoff,
+            instrinsic_gas_per_byte,
+            maximum_number_of_gas_units,
+            min_price_per_gas_unit,
+            max_price_per_gas_unit,
+            max_transaction_size_in_bytes,
+            gas_unit_scaling_factor,
+            default_account_size,
+            voting_delay,
+            voting_period,
+            voting_quorum_rate,
+            min_action_delay,
+            transaction_timeout,
+            dag_effective_height,
         );
     }
 
     fun do_initialize(
         stdlib_version: u64,
-
         // block reward and stc config
         reward_delay: u64,
         total_stc_amount: u128,
         pre_mine_stc_amount: u128,
         time_mint_stc_amount: u128,
         time_mint_stc_period: u64,
-
         parent_hash: vector<u8>,
         association_auth_key: vector<u8>,
         genesis_auth_key: vector<u8>,
         chain_id: u8,
         genesis_timestamp: u64,
-
         //consensus config
         uncle_rate_target: u64,
         epoch_block_count: u64,
@@ -318,13 +402,11 @@ module Genesis {
         base_max_uncles_per_block: u64,
         base_block_gas_limit: u64,
         strategy: u8,
-
         //vm config
         script_allowed: bool,
         module_publishing_allowed: bool,
         instruction_schedule: vector<u8>,
         native_schedule: vector<u8>,
-
         //gas constants
         global_memory_per_byte_cost: u64,
         global_memory_per_byte_write_cost: u64,
@@ -337,16 +419,16 @@ module Genesis {
         max_transaction_size_in_bytes: u64,
         gas_unit_scaling_factor: u64,
         default_account_size: u64,
-
         // dao config
         voting_delay: u64,
         voting_period: u64,
         voting_quorum_rate: u8,
         min_action_delay: u64,
-
         // transaction timeout config
         transaction_timeout: u64,
-    ){
+        // flexidag effective height
+        dag_effective_height: u64,
+    ) {
         Timestamp::assert_genesis();
         // create genesis account
         let genesis_account = Account::create_genesis_account(CoreAddresses::GENESIS_ADDRESS());
@@ -406,7 +488,14 @@ module Genesis {
         BlockReward::initialize(&genesis_account, reward_delay);
 
         // stc should be initialized after genesis_account's module upgrade strategy set and all on chain config init.
-        let withdraw_cap = STC::initialize_v2(&genesis_account, total_stc_amount, voting_delay, voting_period, voting_quorum_rate, min_action_delay);
+        let withdraw_cap = STC::initialize_v2(
+            &genesis_account,
+            total_stc_amount,
+            voting_delay,
+            voting_period,
+            voting_quorum_rate,
+            min_action_delay
+        );
         Account::do_accept_token<STC>(&genesis_account);
         Account::do_accept_token<STC>(&association);
 
@@ -417,7 +506,11 @@ module Genesis {
             Account::deposit(Signer::address_of(&association), stc);
         };
         if (time_mint_stc_amount > 0) {
-            let liner_withdraw_cap = Treasury::issue_linear_withdraw_capability<STC>(&mut withdraw_cap, time_mint_stc_amount, time_mint_stc_period);
+            let liner_withdraw_cap = Treasury::issue_linear_withdraw_capability<STC>(
+                &mut withdraw_cap,
+                time_mint_stc_amount,
+                time_mint_stc_period
+            );
             Treasury::add_linear_withdraw_capability(&association, liner_withdraw_cap);
         };
 
@@ -451,7 +544,7 @@ module Genesis {
 
         // stdlib_version == 0 is StdlibVersion::Latest
         if (stdlib_version >= 12 || stdlib_version == 0) {
-            StdlibUpgradeScripts::do_upgrade_from_v11_to_v12(&genesis_account);
+            StdlibUpgradeScripts::do_upgrade_from_v11_to_v12(&genesis_account, dag_effective_height);
         };
 
         // Initialize Frozen strategy
@@ -463,19 +556,19 @@ module Genesis {
     }
 
     /// Init the genesis for unit tests
-    public fun initialize_for_unit_tests(){
+    public fun initialize_for_unit_tests() {
         let stdlib_version: u64 = 6;
         let reward_delay: u64 = 7;
         let total_stc_amount: u128 = 3185136000000000000u128;
         let pre_mine_stc_amount: u128 = 159256800000000000u128;
-        let time_mint_stc_amount: u128 = (85043130u128 * 3u128 + 74213670u128 * 3u128)*1000000000u128;
+        let time_mint_stc_amount: u128 = (85043130u128 * 3u128 + 74213670u128 * 3u128) * 1000000000u128;
         let time_mint_stc_period: u64 = 1000000000;
 
         let parent_hash: vector<u8> = x"0000000000000000000000000000000000000000000000000000000000000000";
         let association_auth_key: vector<u8> = x"0000000000000000000000000000000000000000000000000000000000000000";
         let genesis_auth_key: vector<u8> = x"0000000000000000000000000000000000000000000000000000000000000000";
         let chain_id: u8 = 255;
-        let genesis_timestamp: u64 =0;
+        let genesis_timestamp: u64 = 0;
 
         //consensus config
         let uncle_rate_target: u64 = 80;
@@ -506,13 +599,13 @@ module Genesis {
         let maximum_number_of_gas_units: u64 = 1;
         let min_price_per_gas_unit: u64 = 1;
         let max_price_per_gas_unit: u64 = 10000;
-        let max_transaction_size_in_bytes: u64 = 1024*1024;
+        let max_transaction_size_in_bytes: u64 = 1024 * 1024;
         let gas_unit_scaling_factor: u64 = 1;
         let default_account_size: u64 = 600;
 
         // dao config
         let voting_delay: u64 = 1000;
-        let voting_period: u64 =  6000;
+        let voting_period: u64 = 6000;
         let voting_quorum_rate: u8 = 4;
         let min_action_delay: u64 = 1000;
 
@@ -562,6 +655,7 @@ module Genesis {
             voting_quorum_rate,
             min_action_delay,
             transaction_timeout,
+            u64_max()
         );
     }
 }

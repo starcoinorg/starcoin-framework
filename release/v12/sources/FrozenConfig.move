@@ -21,9 +21,9 @@ module StarcoinFramework::FrozenConfig {
 
     const ERR_CONFIG_NOT_EXISTS: u64 = 101;
 
-    public fun initialize(sender: &signer, frozen_account_list: ACL::ACL) {
+    public fun initialize(account: &signer, frozen_account_list: ACL::ACL) {
         Config::publish_new_config<Self::FrozenConfig>(
-            sender,
+            account,
             FrozenConfig {
                 frozen_global_txn: false,
                 frozen_account_list,
@@ -31,8 +31,8 @@ module StarcoinFramework::FrozenConfig {
         );
     }
 
-    public fun set_account_list(sender: &signer, frozen_account_list: ACL::ACL) {
-        let addr = Signer::address_of(sender);
+    public fun set_account_list(account: &signer, frozen_account_list: ACL::ACL) {
+        let addr = Signer::address_of(account);
         assert!(
             Config::config_exist_by_address<FrozenConfig>(addr),
             Errors::invalid_state(ERR_CONFIG_NOT_EXISTS)
@@ -40,7 +40,7 @@ module StarcoinFramework::FrozenConfig {
 
         let config= Config::get_by_address<FrozenConfig>(addr);
         Config::set<FrozenConfig>(
-            sender,
+            account,
             FrozenConfig {
                 frozen_global_txn: config.frozen_global_txn,
                 frozen_account_list,
@@ -48,8 +48,8 @@ module StarcoinFramework::FrozenConfig {
         );
     }
 
-    public fun set_global_frozen(sender: &signer, frozen: bool) {
-        let addr = Signer::address_of(sender);
+    public fun set_global_frozen(account: &signer, frozen: bool) {
+        let addr = Signer::address_of(account);
         assert!(
             Config::config_exist_by_address<FrozenConfig>(addr),
             Errors::invalid_state(ERR_CONFIG_NOT_EXISTS)
@@ -57,7 +57,7 @@ module StarcoinFramework::FrozenConfig {
 
         let config = Config::get_by_address<FrozenConfig>(addr);
         Config::set<FrozenConfig>(
-            sender,
+            account,
             FrozenConfig {
                 frozen_global_txn: frozen,
                 frozen_account_list: config.frozen_account_list,
@@ -73,17 +73,12 @@ module StarcoinFramework::FrozenConfig {
         include Config::PublishNewConfigEnsures<FrozenConfig>;
     }
 
-
     /// Get frozen configuration.
     public fun get_frozen_config(account: address): FrozenConfig {
         Config::get_by_address<FrozenConfig>(account)
     }
 
     spec get_frozen_config {
-        include GetfrozenConfigAbortsIf;
-    }
-
-    spec schema GetfrozenConfigAbortsIf {
         aborts_if !exists<Config::Config<FrozenConfig>>(account);
     }
 
@@ -98,8 +93,5 @@ module StarcoinFramework::FrozenConfig {
         config.frozen_global_txn
     }
 
-    spec frozen_config_exists {
-        aborts_if !exists<Config::Config<FrozenConfig>>(account);
-    }
 
 }

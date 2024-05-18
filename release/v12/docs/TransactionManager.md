@@ -13,6 +13,7 @@
 -  [Function `epilogue`](#0x1_TransactionManager_epilogue)
 -  [Function `epilogue_v2`](#0x1_TransactionManager_epilogue_v2)
 -  [Function `block_prologue`](#0x1_TransactionManager_block_prologue)
+-  [Function `block_prologue_v2`](#0x1_TransactionManager_block_prologue_v2)
 -  [Module Specification](#@Module_Specification_1)
 
 
@@ -59,24 +60,6 @@
 
 
 
-<a name="0x1_TransactionManager_EPROLOGUE_FROZEN_ACCOUNT"></a>
-
-
-
-<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_FROZEN_ACCOUNT">EPROLOGUE_FROZEN_ACCOUNT</a>: u64 = 10;
-</code></pre>
-
-
-
-<a name="0x1_TransactionManager_EPROLOGUE_FROZEN_GLOBAL_TXN"></a>
-
-
-
-<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_FROZEN_GLOBAL_TXN">EPROLOGUE_FROZEN_GLOBAL_TXN</a>: u64 = 9;
-</code></pre>
-
-
-
 <a name="0x1_TransactionManager_EPROLOGUE_MODULE_NOT_ALLOWED"></a>
 
 
@@ -91,6 +74,24 @@
 
 
 <pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SCRIPT_NOT_ALLOWED">EPROLOGUE_SCRIPT_NOT_ALLOWED</a>: u64 = 8;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EPROLOGUE_SENDING_ACCOUNT_FROZEN"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SENDING_ACCOUNT_FROZEN">EPROLOGUE_SENDING_ACCOUNT_FROZEN</a>: u64 = 10;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EPROLOGUE_SENDING_TXN_GLOBAL_FROZEN"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SENDING_TXN_GLOBAL_FROZEN">EPROLOGUE_SENDING_TXN_GLOBAL_FROZEN</a>: u64 = 11;
 </code></pre>
 
 
@@ -176,9 +177,12 @@ It verifies:
     // Frozen check
     <b>assert</b>!(
         !<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_global">FrozenConfigStrategy::has_frozen_global</a>(txn_sender),
-        <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_FROZEN_GLOBAL_TXN">EPROLOGUE_FROZEN_GLOBAL_TXN</a>)
+        <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SENDING_TXN_GLOBAL_FROZEN">EPROLOGUE_SENDING_TXN_GLOBAL_FROZEN</a>)
     );
-    <b>assert</b>!(!<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_account">FrozenConfigStrategy::has_frozen_account</a>(txn_sender), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_FROZEN_ACCOUNT">EPROLOGUE_FROZEN_ACCOUNT</a>));
+    <b>assert</b>!(
+        !<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_account">FrozenConfigStrategy::has_frozen_account</a>(txn_sender),
+        <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SENDING_ACCOUNT_FROZEN">EPROLOGUE_SENDING_ACCOUNT_FROZEN</a>)
+    );
 
     <a href="Account.md#0x1_Account_txn_prologue">Account::txn_prologue</a>&lt;TokenType&gt;(
         &account,
@@ -401,6 +405,56 @@ The runtime always runs this before executing the transactions in a block.
     chain_id: u8,
     parent_gas_used: u64,
 ) {
+    <a href="TransactionManager.md#0x1_TransactionManager_block_prologue_v2">Self::block_prologue_v2</a>(account, parent_hash, timestamp, author, auth_key_vec, uncles, number, chain_id, parent_gas_used, <a href="Vector.md#0x1_Vector_empty">Vector::empty</a>&lt;u8&gt;())
+}
+</code></pre>
+
+
+
+</details>
+
+<details>
+<summary>Specification</summary>
+
+
+
+<pre><code><b>pragma</b> verify = <b>false</b>;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_TransactionManager_block_prologue_v2"></a>
+
+## Function `block_prologue_v2`
+
+Set the metadata for the current block and distribute transaction fees and block rewards.
+The runtime always runs this before executing the transactions in a block.
+For Flexidag block
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="TransactionManager.md#0x1_TransactionManager_block_prologue_v2">block_prologue_v2</a>(account: signer, parent_hash: vector&lt;u8&gt;, timestamp: u64, author: <b>address</b>, auth_key_vec: vector&lt;u8&gt;, uncles: u64, number: u64, chain_id: u8, parent_gas_used: u64, parents_hash: vector&lt;u8&gt;)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b> <b>fun</b> <a href="TransactionManager.md#0x1_TransactionManager_block_prologue_v2">block_prologue_v2</a>(
+    account: signer,
+    parent_hash: vector&lt;u8&gt;,
+    timestamp: u64,
+    author: <b>address</b>,
+    auth_key_vec: vector&lt;u8&gt;,
+    uncles: u64,
+    number: u64,
+    chain_id: u8,
+    parent_gas_used: u64,
+    parents_hash: vector&lt;u8&gt;,
+) {
     // Can only be invoked by genesis account
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(&account);
     // Check that the chain ID stored on-chain matches the chain ID
@@ -412,13 +466,14 @@ The runtime always runs this before executing the transactions in a block.
 
     // then deal <b>with</b> current block.
     <a href="Timestamp.md#0x1_Timestamp_update_global_time">Timestamp::update_global_time</a>(&account, timestamp);
-    <a href="Block.md#0x1_Block_process_block_metadata">Block::process_block_metadata</a>(
+    <a href="Block.md#0x1_Block_process_block_metadata_v2">Block::process_block_metadata_v2</a>(
         &account,
         parent_hash,
         author,
         timestamp,
         uncles,
         number,
+        parents_hash,
     );
     <b>let</b> reward = <a href="Epoch.md#0x1_Epoch_adjust_epoch">Epoch::adjust_epoch</a>(&account, number, timestamp, uncles, parent_gas_used);
     // pass in previous block gas fees.

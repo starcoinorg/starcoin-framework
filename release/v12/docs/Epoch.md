@@ -29,10 +29,12 @@ The module provide epoch functionality for starcoin.
 -  [Module Specification](#@Module_Specification_1)
 
 
-<pre><code><b>use</b> <a href="ConsensusConfig.md#0x1_ConsensusConfig">0x1::ConsensusConfig</a>;
+<pre><code><b>use</b> <a href="Config.md#0x1_Config">0x1::Config</a>;
+<b>use</b> <a href="ConsensusConfig.md#0x1_ConsensusConfig">0x1::ConsensusConfig</a>;
 <b>use</b> <a href="CoreAddresses.md#0x1_CoreAddresses">0x1::CoreAddresses</a>;
 <b>use</b> <a href="Errors.md#0x1_Errors">0x1::Errors</a>;
 <b>use</b> <a href="Event.md#0x1_Event">0x1::Event</a>;
+<b>use</b> <a href="FlexiDagConfig.md#0x1_FlexiDagConfig">0x1::FlexiDagConfig</a>;
 <b>use</b> <a href="Math.md#0x1_Math">0x1::Math</a>;
 <b>use</b> <a href="Option.md#0x1_Option">0x1::Option</a>;
 <b>use</b> <a href="Timestamp.md#0x1_Timestamp">0x1::Timestamp</a>;
@@ -431,14 +433,25 @@ adjust_epoch try to advance to next epoch if current epoch ends.
     <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(account);
 
     <b>let</b> epoch_ref = <b>borrow_global_mut</b>&lt;<a href="Epoch.md#0x1_Epoch">Epoch</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
-    <b>assert</b>!(epoch_ref.max_uncles_per_block &gt;= uncles, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Epoch.md#0x1_Epoch_EINVALID_UNCLES_COUNT">EINVALID_UNCLES_COUNT</a>));
+    <b>let</b> flexidag_fork_height = <b>if</b> (config_exist_by_address&lt;<a href="FlexiDagConfig.md#0x1_FlexiDagConfig">FlexiDagConfig</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>())) {
+        <a href="FlexiDagConfig.md#0x1_FlexiDagConfig_effective_height">FlexiDagConfig::effective_height</a>(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>())
+    } <b>else</b> {
+        u64_max()
+    };
+    <b>assert</b>!(
+        block_number &gt; flexidag_fork_height || epoch_ref.max_uncles_per_block &gt;= uncles,
+        <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Epoch.md#0x1_Epoch_EINVALID_UNCLES_COUNT">EINVALID_UNCLES_COUNT</a>)
+    );
 
     <b>let</b> epoch_data = <b>borrow_global_mut</b>&lt;<a href="Epoch.md#0x1_Epoch_EpochData">EpochData</a>&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_GENESIS_ADDRESS">CoreAddresses::GENESIS_ADDRESS</a>());
     <b>let</b> (new_epoch, reward_per_block) = <b>if</b> (block_number &lt; epoch_ref.end_block_number) {
         (<b>false</b>, epoch_ref.reward_per_block)
     } <b>else</b> <b>if</b> (block_number == epoch_ref.end_block_number) {
         //start a new epoch
-        <b>assert</b>!(uncles == 0, <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Epoch.md#0x1_Epoch_EINVALID_UNCLES_COUNT">EINVALID_UNCLES_COUNT</a>));
+        <b>assert</b>!(
+            block_number &gt; flexidag_fork_height || uncles == 0,
+            <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="Epoch.md#0x1_Epoch_EINVALID_UNCLES_COUNT">EINVALID_UNCLES_COUNT</a>)
+        );
         // block time target unit is milli_seconds.
         <b>let</b> now_milli_seconds = timestamp;
 
