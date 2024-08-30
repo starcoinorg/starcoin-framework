@@ -12,37 +12,55 @@ address StarcoinFramework {
 /// the return on investment didn't seem worth it for these simple functions.
 module Vector {
 
+    use std::vector;
+
     /// The index into the vector is out of bounds
     const EINDEX_OUT_OF_BOUNDS: u64 = 0;
 
     /// Create an empty vector.
-    native public fun empty<Element>(): vector<Element>;
+    public fun empty<Element>(): vector<Element> {
+        vector::empty()
+    }
 
     /// Return the length of the vector.
-    native public fun length<Element>(v: &vector<Element>): u64;
+    public fun length<Element>(v: &vector<Element>): u64 {
+        vector::length(v)
+    }
 
     /// Acquire an immutable reference to the `i`th element of the vector `v`.
     /// Aborts if `i` is out of bounds.
-    native public fun borrow<Element>(v: &vector<Element>, i: u64): &Element;
+    public fun borrow<Element>(v: &vector<Element>, i: u64): &Element {
+        vector::borrow(v, i)
+    }
 
     /// Add element `e` to the end of the vector `v`.
-    native public fun push_back<Element>(v: &mut vector<Element>, e: Element);
+    public fun push_back<Element>(v: &mut vector<Element>, e: Element) {
+        vector::push_back(v, e)
+    }
 
     /// Return a mutable reference to the `i`th element in the vector `v`.
     /// Aborts if `i` is out of bounds.
-    native public fun borrow_mut<Element>(v: &mut vector<Element>, i: u64): &mut Element;
+    public fun borrow_mut<Element>(v: &mut vector<Element>, i: u64): &mut Element {
+        vector::borrow_mut(v, i)
+    }
 
     /// Pop an element from the end of vector `v`.
     /// Aborts if `v` is empty.
-    native public fun pop_back<Element>(v: &mut vector<Element>): Element;
+    public fun pop_back<Element>(v: &mut vector<Element>): Element {
+        vector::pop_back(v)
+    }
 
     /// Destroy the vector `v`.
     /// Aborts if `v` is not empty.
-    native public fun destroy_empty<Element>(v: vector<Element>);
+    public fun destroy_empty<Element>(v: vector<Element>) {
+        vector::destroy_empty(v)
+    }
 
     /// Swaps the elements at the `i`th and `j`th indices in the vector `v`.
     /// Aborts if `i`or `j` is out of bounds.
-    native public fun swap<Element>(v: &mut vector<Element>, i: u64, j: u64);
+    public fun swap<Element>(v: &mut vector<Element>, i: u64, j: u64) {
+        vector::swap(v, i, j)
+    }
 
     /// Return an vector of size one containing element `e`.
     public fun singleton<Element>(e: Element): vector<Element> {
@@ -63,26 +81,13 @@ module Vector {
 
     /// Reverses the order of the elements in the vector `v` in place.
     public fun reverse<Element>(v: &mut vector<Element>) {
-        native_reverse(v)
+        vector::reverse(v)
     }
-    spec reverse {
-        pragma intrinsic = true;
-    }
-    native fun native_reverse<Element>(this: &mut vector<Element>);
 
     /// Pushes all of the elements of the `other` vector into the `lhs` vector.
     public fun append<Element>(lhs: &mut vector<Element>, other: vector<Element>) {
-        native_append(lhs, other);
+        vector::append(lhs, other)
     }
-    native fun native_append<Element>(lhs: &mut vector<Element>, other: vector<Element>);
-
-    spec append {
-        pragma intrinsic = true;
-    }
-    spec is_empty {
-        pragma intrinsic = true;
-    }
-
 
     /// Return `true` if the vector `v` has no elements and `false` otherwise.
     public fun is_empty<Element>(v: &vector<Element>): bool {
@@ -99,9 +104,6 @@ module Vector {
         };
         false
     }
-    spec contains {
-        pragma intrinsic = true;
-    }
 
     /// Return `(true, i)` if `e` is in the vector `v` at index `i`.
     /// Otherwise, returns `(false, 0)`.
@@ -114,35 +116,19 @@ module Vector {
         };
         (false, 0)
     }
-    spec index_of {
-        pragma intrinsic = true;
-    }
 
     /// Remove the `i`th element of the vector `v`, shifting all subsequent elements.
     /// This is O(n) and preserves ordering of elements in the vector.
     /// Aborts if `i` is out of bounds.
     public fun remove<Element>(v: &mut vector<Element>, i: u64): Element {
-        let len = length(v);
-        // i out of bounds; abort
-        if (i >= len) abort EINDEX_OUT_OF_BOUNDS;
-
-        native_remove(v, i)
+        vector::remove(v, i)
     }
-    spec remove {
-        pragma intrinsic = true;
-    }
-    native fun native_remove<Element>(this: &mut vector<Element>, i: u64): Element;
 
     /// Swap the `i`th element of the vector `v` with the last element and then pop the vector.
     /// This is O(1), but does not preserve ordering of elements in the vector.
     /// Aborts if `i` is out of bounds.
     public fun swap_remove<Element>(v: &mut vector<Element>, i: u64): Element {
-        let last_idx = length(v) - 1;
-        swap(v, i, last_idx);
-        pop_back(v)
-    }
-    spec swap_remove {
-        pragma intrinsic = true;
+        vector::swap_remove(v, i)
     }
 
     /// Split a vector into sub-vectors of size sub_len,
@@ -184,7 +170,7 @@ module Vector {
         pragma verify = false; // timeout, skip
         aborts_if sub_len == 0;
     }
-     // =================================================================
+    // =================================================================
     // Module Specification
 
     spec module {} // Switch to module documentation context
@@ -200,30 +186,28 @@ module Vector {
     /// Check if `v1` is equal to the result of adding `e` at the end of `v2`
     spec fun eq_push_back<Element>(v1: vector<Element>, v2: vector<Element>, e: Element): bool {
         len(v1) == len(v2) + 1 &&
-        v1[len(v1)-1] == e &&
-        v1[0..len(v1)-1] == v2[0..len(v2)]
+            v1[len(v1) - 1] == e &&
+            v1[0..len(v1) - 1] == v2[0..len(v2)]
     }
 
     /// Check if `v` is equal to the result of concatenating `v1` and `v2`
     spec fun eq_append<Element>(v: vector<Element>, v1: vector<Element>, v2: vector<Element>): bool {
         len(v) == len(v1) + len(v2) &&
-        v[0..len(v1)] == v1 &&
-        v[len(v1)..len(v)] == v2
+            v[0..len(v1)] == v1 &&
+            v[len(v1)..len(v)] == v2
     }
 
     /// Check `v1` is equal to the result of removing the first element of `v2`
     spec fun eq_pop_front<Element>(v1: vector<Element>, v2: vector<Element>): bool {
         len(v1) + 1 == len(v2) &&
-        v1 == v2[1..len(v2)]
+            v1 == v2[1..len(v2)]
     }
 
     /// Check that `v1` is equal to the result of removing the element at index `i` from `v2`.
     spec fun eq_remove_elem_at_index<Element>(i: u64, v1: vector<Element>, v2: vector<Element>): bool {
         len(v1) + 1 == len(v2) &&
-        v1[0..i] == v2[0..i] &&
-        v1[i..len(v1)] == v2[i + 1..len(v2)]
+            v1[0..i] == v2[0..i] &&
+            v1[i..len(v1)] == v2[i + 1..len(v2)]
     }
-
 }
-
 }
