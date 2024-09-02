@@ -7,6 +7,7 @@ use once_cell::sync::Lazy;
 use tempfile::TempDir;
 
 pub const SOURCES_DIR: Dir = include_dir!("sources");
+pub const MOVE_STDLIB_DIR: Dir = include_dir!("move-stdlib/sources");
 
 #[derive(Debug)]
 pub struct SourceFiles {
@@ -24,9 +25,11 @@ fn restore_sources() -> anyhow::Result<SourceFiles> {
     info!("restore starcoin-framework sources in: {:?}", sources_dir);
     std::fs::create_dir_all(sources_dir.as_path())?;
     SOURCES_DIR.extract(sources_dir.as_path())?;
+    MOVE_STDLIB_DIR.extract(sources_dir.as_path())?;
     let files = SOURCES_DIR
         .files()
         .iter()
+        .chain(MOVE_STDLIB_DIR.files().iter())
         .filter_map(|file| {
             let ext = file.path().extension();
             if let Some(ext) = ext {
