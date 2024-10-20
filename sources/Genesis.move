@@ -545,6 +545,7 @@ module Genesis {
         // stdlib_version == 0 is StdlibVersion::Latest
         if (stdlib_version >= 12 || stdlib_version == 0) {
             StdlibUpgradeScripts::do_upgrade_from_v11_to_v12(&genesis_account, dag_effective_height);
+            StdlibUpgradeScripts::do_upgrade_from_v12_to_v13(&genesis_account, 185798, 86400);
         };
 
         // Initialize Frozen strategy

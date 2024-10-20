@@ -137,6 +137,15 @@ module StdlibUpgradeScripts {
         OnChainConfigDao::plugin<STC, FlexiDagConfig::FlexiDagConfig>(sender);
     }
 
+    public entry fun upgrade_from_v12_to_v13(sender: signer, pruning_depth: u64, pruning_finality: u64) {
+        do_upgrade_from_v12_to_v13(&sender, pruning_depth, pruning_finality);
+    }
+
+    public fun do_upgrade_from_v12_to_v13(sender: &signer,pruning_depth: u64, pruning_finality: u64) {
+        CoreAddresses::assert_genesis_address(sender);
+        FlexiDagConfig::upgrade_to_v2(sender, pruning_depth, pruning_finality);
+    }
+    
     /// Burned by user account
     const ERR_NOT_RIGHT_ADDRESS: u64 = 101;
 

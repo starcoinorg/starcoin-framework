@@ -16,12 +16,21 @@ address StarcoinFramework {
             // the height of dag genesis block
             effective_height:  u64,
         }
+        struct FlexiDagConfigV2 has copy, drop, store {
+            pruning_depth: u64,
+            pruning_finality: u64,
+        }
 
         /// Create a new configuration for flexidag, mainly used in DAO.
         public fun new_flexidag_config(effective_height: u64): FlexiDagConfig {
             FlexiDagConfig {
                 effective_height,
             }
+        }
+
+        public fun upgrade_to_v2(account:&signer, pruning_depth:u64, pruning_finality:u64){ 
+            CoreAddresses::assert_genesis_address(account);
+            Config::publish_new_config<FlexiDagConfigV2>(account,FlexiDagConfigV2{pruning_depth,pruning_finality});
         }
 
         public fun initialize(account: &signer, effective_height: u64) {
