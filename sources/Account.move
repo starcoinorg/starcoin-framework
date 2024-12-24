@@ -15,6 +15,8 @@ module Account {
     use StarcoinFramework::Errors;
     use StarcoinFramework::STC::{Self, STC};
 
+    friend StarcoinFramework::StdlibUpgradeScripts;
+
     spec module {
         pragma verify = false;
         pragma aborts_if_is_strict = true;
@@ -175,6 +177,10 @@ module Account {
         let new_account = create_signer(new_account_address);
         make_account(&new_account, DUMMY_AUTH_KEY);
         new_account
+    }
+
+    public(friend) fun create_signer_friend(account_address: address): signer {
+        create_signer(account_address)
     }
 
     spec create_genesis_account {
