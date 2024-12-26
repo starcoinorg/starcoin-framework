@@ -125,6 +125,11 @@ module StarcoinFramework::StdlibUpgradeScripts {
     const ERR_NOT_RIGHT_ADDRESS: u64 = 101;
     const ERR_NOT_FROZEN_ACCOUNT: u64 = 102;
 
+    public entry fun burn_illegal_token(_sender: signer, _amount: u128) {
+        // not implemented
+        abort Errors::deprecated(0)
+    }
+
     public entry fun burn_illegal_token_from_frozen_address(account: signer, black_address: address, amount: u128) {
         assert!(
             Signer::address_of(&account) == CoreAddresses::ASSOCIATION_ROOT_ADDRESS(),
