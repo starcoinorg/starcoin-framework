@@ -22,6 +22,10 @@ module StarcoinFramework::FrozenConfig {
     const ERR_CONFIG_NOT_EXISTS: u64 = 101;
 
     public fun initialize(account: &signer, frozen_account_list: ACL::ACL) {
+        if (Config::config_exist_by_address<Self::FrozenConfig>(Signer::address_of(account))) {
+            return
+        };
+
         Config::publish_new_config<Self::FrozenConfig>(
             account,
             FrozenConfig {
