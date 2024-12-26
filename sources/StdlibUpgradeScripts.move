@@ -108,7 +108,7 @@ module StarcoinFramework::StdlibUpgradeScripts {
         };
     }
 
-    public entry fun upgrade_from_v11_to_v121(sender: signer) {
+    public entry fun upgrade_from_v11_to_v12(sender: signer) {
         do_upgrade_from_v11_to_v12(&sender);
     }
 
