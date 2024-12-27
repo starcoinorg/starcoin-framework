@@ -38,7 +38,7 @@ script {
         let balance_1 = Account::balance<STC>(@alice);
         Debug::print(&2222);
         Debug::print(&balance_1);
-        assert!(balance_1 <= 1000000, 10010);
+        assert!(balance_1 == 1000000, 10010);
     }
 }
 // check: EXECUTED
