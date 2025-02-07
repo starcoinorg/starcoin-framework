@@ -16,6 +16,7 @@ module Account {
     use StarcoinFramework::STC::{Self, STC};
 
     friend StarcoinFramework::StdlibUpgradeScripts;
+    friend StarcoinFramework::FrozenConfigStrategy;
 
     spec module {
         pragma verify = false;

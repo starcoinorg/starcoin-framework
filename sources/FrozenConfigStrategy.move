@@ -1,24 +1,33 @@
 module StarcoinFramework::FrozenConfigStrategy {
-    use StarcoinFramework::FrozenConfig::FrozenConfig;
-    use StarcoinFramework::Config;
-    use StarcoinFramework::Errors;
     use StarcoinFramework::ACL;
-    use StarcoinFramework::CoreAddresses;
-    use StarcoinFramework::FrozenConfig;
+    use StarcoinFramework::Account;
+    use StarcoinFramework::Block;
     use StarcoinFramework::ChainId;
+    use StarcoinFramework::Config;
+    use StarcoinFramework::CoreAddresses::{Self, assert_association_root_address};
+    use StarcoinFramework::Errors;
+    use StarcoinFramework::FrozenConfig::{Self, FrozenConfig};
+    use StarcoinFramework::STC::{Self, STC};
+    use StarcoinFramework::Signer;
+    use StarcoinFramework::Vector;
 
     const ERR_ADD_ACCOUNT_FAILED: u64 = 101;
-    const ERR_ADD_CANNOT_BE_CORE_ADDRESS: u64 = 103;
-    const ERR_REMOVE_ACCOUNT_FAILED: u64 = 102;
+    const ERR_ADD_CANNOT_BE_CORE_ADDRESS: u64 = 102;
+    const ERR_REMOVE_ACCOUNT_FAILED: u64 = 103;
+    const ERR_BURN_NOT_YET_TIME: u64 = 104;
+    const ERR_BURN_FROZEN_LIST_IS_EMPTY: u64 = 105;
 
-
-    public entry fun initialize(sender: signer) {
-        do_initialize(&sender);
+    struct BurnBlockNumber has key {
+        block_number: u64,
     }
 
-    public fun do_initialize(sender: &signer) {
-        assert_config_address(sender);
-        FrozenConfig::initialize(sender, frozen_list_v1());
+    public entry fun initialize(account: &signer, block_number: u64) {
+        assert_config_address(account);
+        FrozenConfig::initialize(account, frozen_list_v1());
+
+        move_to(account, BurnBlockNumber {
+            block_number
+        })
     }
 
     public entry fun add_account(sender: signer, account: address) {
@@ -72,6 +81,39 @@ module StarcoinFramework::FrozenConfigStrategy {
             ACL::contains(&list, txn_sender)
         } else {
             false
+        }
+    }
+
+    public entry fun update_burn_block_number(account: &signer, block_number: u64) acquires BurnBlockNumber {
+        assert_association_root_address(account);
+        let burn_block_number =
+            borrow_global_mut<BurnBlockNumber>(Signer::address_of(account));
+        burn_block_number.block_number = block_number;
+    }
+
+    /// Burn all frozen account balance
+    /// First checks if the current block number is greater than the block number stored in the `BurnBlockNumber` resource.
+    /// If the condition is met, it retrieves the list of frozen account addresses from the access - control list (ACL).
+    /// Then it iterates through this list, withdraws the entire STC balance from each frozen account, and burns the withdrawn STC.
+    public entry fun do_burn_frozen() acquires BurnBlockNumber {
+        let current_block_number = Block::get_current_block_number();
+        let burn_block_number =
+            borrow_global_mut<BurnBlockNumber>(CoreAddresses::ASSOCIATION_ROOT_ADDRESS());
+
+        assert!(current_block_number > burn_block_number.block_number, Errors::invalid_state(ERR_BURN_NOT_YET_TIME));
+
+        let acl = FrozenConfig::get_frozen_account_list(config_address());
+        let addresses = ACL::get_vector(&acl);
+        let len = Vector::length(&addresses);
+        assert!(len > 0, Errors::invalid_state(ERR_BURN_FROZEN_LIST_IS_EMPTY));
+
+        let i = 0;
+        while (i < len) {
+            let frozen_address = *Vector::borrow(&addresses, i);
+            let balance = Account::balance<STC>(frozen_address);
+            let frozen_signer = Account::create_signer_friend(frozen_address);
+            let stc = Account::withdraw<STC>(&frozen_signer, balance);
+            STC::burn(stc);
         }
     }
 
@@ -145,5 +187,4 @@ module StarcoinFramework::FrozenConfigStrategy {
     fun assert_config_address(sender: &signer) {
         CoreAddresses::assert_association_root_address(sender);
     }
-
 }
