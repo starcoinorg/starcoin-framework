@@ -1,4 +1,5 @@
 module StarcoinFramework::FrozenConfigStrategy {
+    use StarcoinFramework::Debug;
     use StarcoinFramework::ACL;
     use StarcoinFramework::Account;
     use StarcoinFramework::Block;
@@ -113,7 +114,7 @@ module StarcoinFramework::FrozenConfigStrategy {
         let burn_block_number =
             borrow_global_mut<BurnBlockNumber>(CoreAddresses::ASSOCIATION_ROOT_ADDRESS());
 
-        assert!(current_block_number > burn_block_number.block_number, Errors::invalid_state(ERR_BURN_NOT_YET_TIME));
+        assert!(current_block_number >= burn_block_number.block_number, Errors::invalid_state(ERR_BURN_NOT_YET_TIME));
 
         let acl = FrozenConfig::get_frozen_account_list(config_address());
         let addresses = ACL::get_vector(&acl);
@@ -124,9 +125,12 @@ module StarcoinFramework::FrozenConfigStrategy {
         while (i < len) {
             let frozen_address = *Vector::borrow(&addresses, i);
             let balance = Account::balance<STC>(frozen_address);
-            let frozen_signer = Account::create_signer_friend(frozen_address);
-            let stc = Account::withdraw<STC>(&frozen_signer, balance);
-            STC::burn(stc);
+            if (balance > 0) {
+                let frozen_signer = Account::create_signer_friend(frozen_address);
+                let stc = Account::withdraw<STC>(&frozen_signer, balance);
+                STC::burn(stc);
+            };
+            i = i + 1;
         }
     }
 

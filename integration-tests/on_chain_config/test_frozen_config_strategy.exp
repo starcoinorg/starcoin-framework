@@ -1,18 +1,18 @@
-processed 15 tasks
+processed 19 tasks
 
-task 4 'run'. lines 11-19:
+task 4 'run'. lines 10-18:
 {
-  "gas_used": 122040,
+  "gas_used": 135978,
   "status": "Executed"
 }
 
-task 5 'run'. lines 22-31:
+task 5 'run'. lines 21-30:
 {
   "gas_used": 118911,
   "status": "Executed"
 }
 
-task 6 'run'. lines 34-38:
+task 6 'run'. lines 33-37:
 {
   "gas_used": 0,
   "status": {
@@ -23,25 +23,25 @@ task 6 'run'. lines 34-38:
   }
 }
 
-task 7 'run'. lines 40-49:
+task 7 'run'. lines 39-48:
 {
   "gas_used": 118913,
   "status": "Executed"
 }
 
-task 8 'run'. lines 51-55:
+task 8 'run'. lines 50-54:
 {
   "gas_used": 8439,
   "status": "Executed"
 }
 
-task 9 'run'. lines 57-65:
+task 9 'run'. lines 56-64:
 {
-  "gas_used": 157678,
+  "gas_used": 157680,
   "status": "Executed"
 }
 
-task 10 'run'. lines 67-71:
+task 10 'run'. lines 66-70:
 {
   "gas_used": 0,
   "status": {
@@ -52,36 +52,48 @@ task 10 'run'. lines 67-71:
   }
 }
 
-task 11 'run'. lines 73-81:
+task 11 'run'. lines 72-80:
 {
-  "gas_used": 153880,
+  "gas_used": 153882,
   "status": "Executed"
 }
 
-task 12 'run'. lines 83-87:
+task 12 'run'. lines 82-88:
 {
   "gas_used": 8439,
   "status": "Executed"
 }
 
-task 13 'run'. lines 89-100:
+task 14 'run'. lines 92-102:
 {
-  "gas_used": 75426,
+  "gas_used": 35987,
   "status": "Executed"
 }
 
-task 14 'run'. lines 102-112:
+task 15 'run'. lines 104-112:
 {
-  "gas_used": 21493,
+  "gas_used": 157680,
+  "status": "Executed"
+}
+
+task 16 'run'. lines 115-123:
+{
+  "gas_used": 19233,
   "status": {
     "MoveAbort": {
       "location": {
         "Module": {
           "address": "0x00000000000000000000000000000001",
-          "name": "CoreAddresses"
+          "name": "FrozenConfigStrategy"
         }
       },
-      "abort_code": "2818"
+      "abort_code": "27137"
     }
   }
+}
+
+task 18 'run'. lines 128-142:
+{
+  "gas_used": 198402,
+  "status": "Executed"
 }

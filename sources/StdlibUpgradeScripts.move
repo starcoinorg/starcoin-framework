@@ -111,8 +111,6 @@ module StarcoinFramework::StdlibUpgradeScripts {
     }
 
     public fun do_upgrade_from_v11_to_v12(sender: &signer, burn_block_num: u64) {
-        CoreAddresses::assert_genesis_address(sender);
-
         // Initialize frozen strategy config data
         FrozenConfigStrategy::initialize(sender, burn_block_num);
     }
