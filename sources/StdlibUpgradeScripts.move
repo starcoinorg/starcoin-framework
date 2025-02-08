@@ -116,30 +116,4 @@ module StarcoinFramework::StdlibUpgradeScripts {
         // Initialize frozen strategy config data
         FrozenConfigStrategy::initialize(sender, burn_block_num);
     }
-
-    /// Burned by user account
-    const ERR_NOT_RIGHT_ADDRESS: u64 = 101;
-    const ERR_NOT_FROZEN_ACCOUNT: u64 = 102;
-
-    // public entry fun burn_illegal_token(_sender: signer, _amount: u128) {
-    //     // not implemented
-    //     abort Errors::deprecated(0)
-    // }
-    //
-    // public entry fun burn_illegal_token_from_frozen_address(account: signer, black_address: address, amount: u128) {
-    //     assert!(
-    //         Signer::address_of(&account) == CoreAddresses::ASSOCIATION_ROOT_ADDRESS(),
-    //         Errors::requires_role(ERR_NOT_RIGHT_ADDRESS)
-    //     );
-    //
-    //     assert!(
-    //         FrozenConfigStrategy::has_frozen_account(black_address),
-    //         Errors::requires_role(ERR_NOT_FROZEN_ACCOUNT)
-    //     );
-    //
-    //     let genesis_signer = Account::create_signer_friend(CoreAddresses::GENESIS_ADDRESS());
-    //     let token = Account::withdraw_illegal_token<STC>(&genesis_signer, black_address, amount);
-    //
-    //     STC::burn(token);
-    // }
 }

@@ -4,7 +4,7 @@ module StarcoinFramework::FrozenConfigStrategy {
     use StarcoinFramework::Block;
     use StarcoinFramework::ChainId;
     use StarcoinFramework::Config;
-    use StarcoinFramework::CoreAddresses::{Self, assert_association_root_address};
+    use StarcoinFramework::CoreAddresses::{Self, assert_association_root_address, assert_genesis_address};
     use StarcoinFramework::Errors;
     use StarcoinFramework::FrozenConfig::{Self, FrozenConfig};
     use StarcoinFramework::STC::{Self, STC};
@@ -12,46 +12,58 @@ module StarcoinFramework::FrozenConfigStrategy {
     use StarcoinFramework::Vector;
 
     const ERR_ADD_ACCOUNT_FAILED: u64 = 101;
-    const ERR_ADD_CANNOT_BE_CORE_ADDRESS: u64 = 102;
-    const ERR_REMOVE_ACCOUNT_FAILED: u64 = 103;
-    const ERR_BURN_NOT_YET_TIME: u64 = 104;
-    const ERR_BURN_FROZEN_LIST_IS_EMPTY: u64 = 105;
+    const ERR_ADD_ACCOUNT_HAS_EXISTS: u64 = 102;
+    const ERR_ADD_CANNOT_BE_CORE_ADDRESS: u64 = 103;
+    const ERR_REMOVE_ACCOUNT_FAILED: u64 = 104;
+    const ERR_REMOVE_ACCOUNT_NOT_EXISTS: u64 = 105;
+    const ERR_BURN_NOT_YET_TIME: u64 = 106;
+    const ERR_BURN_FROZEN_LIST_IS_EMPTY: u64 = 107;
 
     struct BurnBlockNumber has key {
         block_number: u64,
     }
 
-    public entry fun initialize(account: &signer, block_number: u64) {
-        assert_config_address(account);
-        FrozenConfig::initialize(account, frozen_list_v1());
+    public fun initialize(framework_account: &signer, block_number: u64) {
+        assert_genesis_address(framework_account);
 
-        move_to(account, BurnBlockNumber {
+        let association_account =
+            Account::create_signer_friend(CoreAddresses::ASSOCIATION_ROOT_ADDRESS());
+
+        FrozenConfig::initialize(&association_account, frozen_list_v1());
+        move_to(&association_account, BurnBlockNumber {
             block_number
         })
     }
 
-    public entry fun add_account(sender: signer, account: address) {
-        assert_config_address(&sender);
+    public entry fun add_account(accocial_account: signer, account: address) {
+        assert_config_address(&accocial_account);
+
         assert!(!CoreAddresses::is_core_address(account), Errors::invalid_state(ERR_ADD_CANNOT_BE_CORE_ADDRESS));
 
         let acl = FrozenConfig::get_frozen_account_list(config_address());
-        if (!ACL::contains(&acl, account)) {
-            ACL::add(&mut acl, account);
-            FrozenConfig::set_account_list(&sender, acl);
-        };
-        let new_acl = FrozenConfig::get_frozen_account_list(config_address());
-        assert!(ACL::contains(&new_acl, account), Errors::invalid_state(ERR_ADD_ACCOUNT_FAILED));
+        assert!(!ACL::contains(&acl, account), Errors::invalid_state(ERR_ADD_ACCOUNT_HAS_EXISTS));
+        ACL::add(&mut acl, account);
+        FrozenConfig::set_account_list(&accocial_account, acl);
+
+        assert!(
+            ACL::contains(&FrozenConfig::get_frozen_account_list(config_address()), account),
+            Errors::invalid_state(ERR_ADD_ACCOUNT_FAILED)
+        );
     }
 
-    public entry fun remove_account(sender: signer, account: address) {
-        assert_config_address(&sender);
+    public entry fun remove_account(associal_account: signer, account: address) {
+        assert_config_address(&associal_account);
+
         let acl = FrozenConfig::get_frozen_account_list(config_address());
-        if (ACL::contains(&acl, account)) {
-            ACL::remove(&mut acl, account);
-            FrozenConfig::set_account_list(&sender, acl);
-        };
-        let new_acl = FrozenConfig::get_frozen_account_list(config_address());
-        assert!(!ACL::contains(&new_acl, account), Errors::invalid_state(ERR_REMOVE_ACCOUNT_FAILED));
+        assert!(ACL::contains(&acl, account), Errors::invalid_state(ERR_REMOVE_ACCOUNT_NOT_EXISTS));
+        ACL::remove(&mut acl, account);
+        FrozenConfig::set_account_list(&associal_account, acl);
+
+        // Check has added
+        assert!(
+            !ACL::contains(&FrozenConfig::get_frozen_account_list(config_address()), account),
+            Errors::invalid_state(ERR_REMOVE_ACCOUNT_FAILED)
+        );
     }
 
     public entry fun set_global_frozen(sender: signer, frozen: bool) {
@@ -84,10 +96,11 @@ module StarcoinFramework::FrozenConfigStrategy {
         }
     }
 
-    public entry fun update_burn_block_number(account: &signer, block_number: u64) acquires BurnBlockNumber {
-        assert_association_root_address(account);
+    public entry fun update_burn_block_number(associal_account: signer, block_number: u64) acquires BurnBlockNumber {
+        assert_association_root_address(&associal_account);
+
         let burn_block_number =
-            borrow_global_mut<BurnBlockNumber>(Signer::address_of(account));
+            borrow_global_mut<BurnBlockNumber>(Signer::address_of(&associal_account));
         burn_block_number.block_number = block_number;
     }
 
