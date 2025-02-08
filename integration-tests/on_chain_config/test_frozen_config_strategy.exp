@@ -94,6 +94,6 @@ task 16 'run'. lines 115-123:
 
 task 18 'run'. lines 128-142:
 {
-  "gas_used": 198402,
+  "gas_used": 175316,
   "status": "Executed"
 }
