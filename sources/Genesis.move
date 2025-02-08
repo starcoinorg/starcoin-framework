@@ -435,7 +435,7 @@ module Genesis {
             GenesisNFT::initialize(&genesis_account, merkle_root, 1639u64, image);
         };
         StdlibUpgradeScripts::do_upgrade_from_v6_to_v7_with_language_version(&genesis_account, 6);
-        StdlibUpgradeScripts::do_upgrade_from_v11_to_v12(&genesis_account, 0);
+        StdlibUpgradeScripts::do_upgrade_from_v11_to_v12(&genesis_account, 0, 0, 5, 0);
 
         //Start time, Timestamp::is_genesis() will return false. this call should at the end of genesis init.
         Timestamp::set_time_has_started(&genesis_account);

@@ -106,12 +106,24 @@ module StarcoinFramework::StdlibUpgradeScripts {
         };
     }
 
-    public entry fun upgrade_from_v11_to_v12(sender: signer, burn_block_num: u64) {
-        do_upgrade_from_v11_to_v12(&sender, burn_block_num);
+    public entry fun upgrade_from_v11_to_v12(
+        sender: signer,
+        main_bnum: u64,
+        barnard_bnum: u64,
+        test_bnum: u64,
+        other_bnum: u64
+    ) {
+        do_upgrade_from_v11_to_v12(&sender, main_bnum, barnard_bnum, test_bnum, other_bnum);
     }
 
-    public fun do_upgrade_from_v11_to_v12(sender: &signer, burn_block_num: u64) {
+    public fun do_upgrade_from_v11_to_v12(
+        sender: &signer,
+        main_bnum: u64,
+        barnard_bnum: u64,
+        test_bnum: u64,
+        other_bnum: u64
+    ) {
         // Initialize frozen strategy config data
-        FrozenConfigStrategy::initialize(sender, burn_block_num);
+        FrozenConfigStrategy::initialize(sender, main_bnum, barnard_bnum, test_bnum, other_bnum);
     }
 }

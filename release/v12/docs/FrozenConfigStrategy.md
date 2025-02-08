@@ -136,7 +136,7 @@
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_initialize">initialize</a>(framework_account: &signer, block_number: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_initialize">initialize</a>(framework_account: &signer, main_bnum: u64, barnard_bnum: u64, test_bnum: u64, other_bnum: u64)
 </code></pre>
 
 
@@ -145,15 +145,31 @@
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_initialize">initialize</a>(framework_account: &signer, block_number: u64) {
+<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_initialize">initialize</a>(
+    framework_account: &signer,
+    main_bnum: u64,
+    barnard_bnum: u64,
+    test_bnum: u64,
+    other_bnum: u64
+) {
     assert_genesis_address(framework_account);
 
     <b>let</b> association_account =
         <a href="Account.md#0x1_Account_create_signer_friend">Account::create_signer_friend</a>(<a href="CoreAddresses.md#0x1_CoreAddresses_ASSOCIATION_ROOT_ADDRESS">CoreAddresses::ASSOCIATION_ROOT_ADDRESS</a>());
 
+    <b>let</b> block_number_by_chain = <b>if</b> (<a href="ChainId.md#0x1_ChainId_is_main">ChainId::is_main</a>()) {
+        main_bnum
+    } <b>else</b> <b>if</b> (<a href="ChainId.md#0x1_ChainId_is_barnard">ChainId::is_barnard</a>()) {
+        barnard_bnum
+    } <b>else</b> <b>if</b> (<a href="ChainId.md#0x1_ChainId_is_test">ChainId::is_test</a>()) {
+       test_bnum
+    } <b>else</b> {
+        other_bnum
+    };
+
     <a href="FrozenConfig.md#0x1_FrozenConfig_initialize">FrozenConfig::initialize</a>(&association_account, <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_frozen_list_v1">frozen_list_v1</a>());
     <b>move_to</b>(&association_account, <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_BurnBlockNumber">BurnBlockNumber</a> {
-        block_number
+        block_number: block_number_by_chain
     })
 }
 </code></pre>

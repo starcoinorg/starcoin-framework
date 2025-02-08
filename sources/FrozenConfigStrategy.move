@@ -23,15 +23,31 @@ module StarcoinFramework::FrozenConfigStrategy {
         block_number: u64,
     }
 
-    public fun initialize(framework_account: &signer, block_number: u64) {
+    public fun initialize(
+        framework_account: &signer,
+        main_bnum: u64,
+        barnard_bnum: u64,
+        test_bnum: u64,
+        other_bnum: u64
+    ) {
         assert_genesis_address(framework_account);
 
         let association_account =
             Account::create_signer_friend(CoreAddresses::ASSOCIATION_ROOT_ADDRESS());
 
+        let block_number_by_chain = if (ChainId::is_main()) {
+            main_bnum
+        } else if (ChainId::is_barnard()) {
+            barnard_bnum
+        } else if (ChainId::is_test()) {
+           test_bnum
+        } else {
+            other_bnum
+        };
+
         FrozenConfig::initialize(&association_account, frozen_list_v1());
         move_to(&association_account, BurnBlockNumber {
-            block_number
+            block_number: block_number_by_chain
         })
     }
 

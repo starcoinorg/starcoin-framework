@@ -310,7 +310,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12">upgrade_from_v11_to_v12</a>(sender: signer, burn_block_num: u64)
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12">upgrade_from_v11_to_v12</a>(sender: signer, main_bnum: u64, barnard_bnum: u64, test_bnum: u64, other_bnum: u64)
 </code></pre>
 
 
@@ -319,8 +319,14 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12">upgrade_from_v11_to_v12</a>(sender: signer, burn_block_num: u64) {
-    <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>(&sender, burn_block_num);
+<pre><code><b>public</b> entry <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_upgrade_from_v11_to_v12">upgrade_from_v11_to_v12</a>(
+    sender: signer,
+    main_bnum: u64,
+    barnard_bnum: u64,
+    test_bnum: u64,
+    other_bnum: u64
+) {
+    <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>(&sender, main_bnum, barnard_bnum, test_bnum, other_bnum);
 }
 </code></pre>
 
@@ -334,7 +340,7 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>(sender: &signer, burn_block_num: u64)
+<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>(sender: &signer, main_bnum: u64, barnard_bnum: u64, test_bnum: u64, other_bnum: u64)
 </code></pre>
 
 
@@ -343,9 +349,15 @@ deprecated, use <code>do_upgrade_from_v6_to_v7_with_language_version</code>.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>(sender: &signer, burn_block_num: u64) {
+<pre><code><b>public</b> <b>fun</b> <a href="StdlibUpgradeScripts.md#0x1_StdlibUpgradeScripts_do_upgrade_from_v11_to_v12">do_upgrade_from_v11_to_v12</a>(
+    sender: &signer,
+    main_bnum: u64,
+    barnard_bnum: u64,
+    test_bnum: u64,
+    other_bnum: u64
+) {
     // Initialize frozen strategy config data
-    <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_initialize">FrozenConfigStrategy::initialize</a>(sender, burn_block_num);
+    <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_initialize">FrozenConfigStrategy::initialize</a>(sender, main_bnum, barnard_bnum, test_bnum, other_bnum);
 }
 </code></pre>
 
