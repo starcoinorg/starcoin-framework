@@ -1,5 +1,4 @@
 module StarcoinFramework::FrozenConfigStrategy {
-    use StarcoinFramework::Debug;
     use StarcoinFramework::ACL;
     use StarcoinFramework::Account;
     use StarcoinFramework::Block;
