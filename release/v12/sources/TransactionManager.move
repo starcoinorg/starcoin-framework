@@ -35,8 +35,8 @@ module TransactionManager {
     const EPROLOGUE_BAD_CHAIN_ID: u64 = 6;
     const EPROLOGUE_MODULE_NOT_ALLOWED: u64 = 7;
     const EPROLOGUE_SCRIPT_NOT_ALLOWED: u64 = 8;
-    const EPROLOGUE_FROZEN_GLOBAL_TXN: u64 = 9;
-    const EPROLOGUE_FROZEN_ACCOUNT: u64 = 10;
+    const EPROLOGUE_SENDING_ACCOUNT_FROZEN: u64 = 10;
+    const EPROLOGUE_SENDING_TXN_GLOBAL_FROZEN: u64 = 11;
 
 
     /// The prologue is invoked at the beginning of every transaction
@@ -69,9 +69,12 @@ module TransactionManager {
         // Frozen check
         assert!(
             !FrozenConfigStrategy::has_frozen_global(txn_sender),
-            Errors::invalid_state(EPROLOGUE_FROZEN_GLOBAL_TXN)
+            Errors::invalid_argument(EPROLOGUE_SENDING_TXN_GLOBAL_FROZEN)
         );
-        assert!(!FrozenConfigStrategy::has_frozen_account(txn_sender), Errors::invalid_state(EPROLOGUE_FROZEN_ACCOUNT));
+        assert!(
+            !FrozenConfigStrategy::has_frozen_account(txn_sender),
+            Errors::invalid_argument(EPROLOGUE_SENDING_ACCOUNT_FROZEN)
+        );
 
         Account::txn_prologue<TokenType>(
             &account,

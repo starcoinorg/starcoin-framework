@@ -78,7 +78,7 @@ The module provide configuration for frozen configuration.
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfig.md#0x1_FrozenConfig_initialize">initialize</a>(sender: &signer, frozen_account_list: <a href="ACL.md#0x1_ACL_ACL">ACL::ACL</a>)
+<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfig.md#0x1_FrozenConfig_initialize">initialize</a>(account: &signer, frozen_account_list: <a href="ACL.md#0x1_ACL_ACL">ACL::ACL</a>)
 </code></pre>
 
 
@@ -87,9 +87,13 @@ The module provide configuration for frozen configuration.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfig.md#0x1_FrozenConfig_initialize">initialize</a>(sender: &signer, frozen_account_list: <a href="ACL.md#0x1_ACL_ACL">ACL::ACL</a>) {
+<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfig.md#0x1_FrozenConfig_initialize">initialize</a>(account: &signer, frozen_account_list: <a href="ACL.md#0x1_ACL_ACL">ACL::ACL</a>) {
+    <b>if</b> (<a href="Config.md#0x1_Config_config_exist_by_address">Config::config_exist_by_address</a>&lt;<a href="FrozenConfig.md#0x1_FrozenConfig_FrozenConfig">Self::FrozenConfig</a>&gt;(<a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account))) {
+        <b>return</b>
+    };
+
     <a href="Config.md#0x1_Config_publish_new_config">Config::publish_new_config</a>&lt;<a href="FrozenConfig.md#0x1_FrozenConfig_FrozenConfig">Self::FrozenConfig</a>&gt;(
-        sender,
+        account,
         <a href="FrozenConfig.md#0x1_FrozenConfig">FrozenConfig</a> {
             frozen_global_txn: <b>false</b>,
             frozen_account_list,
@@ -124,7 +128,7 @@ The module provide configuration for frozen configuration.
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfig.md#0x1_FrozenConfig_set_account_list">set_account_list</a>(sender: &signer, frozen_account_list: <a href="ACL.md#0x1_ACL_ACL">ACL::ACL</a>)
+<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfig.md#0x1_FrozenConfig_set_account_list">set_account_list</a>(account: &signer, frozen_account_list: <a href="ACL.md#0x1_ACL_ACL">ACL::ACL</a>)
 </code></pre>
 
 
@@ -133,8 +137,8 @@ The module provide configuration for frozen configuration.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfig.md#0x1_FrozenConfig_set_account_list">set_account_list</a>(sender: &signer, frozen_account_list: <a href="ACL.md#0x1_ACL_ACL">ACL::ACL</a>) {
-    <b>let</b> addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
+<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfig.md#0x1_FrozenConfig_set_account_list">set_account_list</a>(account: &signer, frozen_account_list: <a href="ACL.md#0x1_ACL_ACL">ACL::ACL</a>) {
+    <b>let</b> addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account);
     <b>assert</b>!(
         <a href="Config.md#0x1_Config_config_exist_by_address">Config::config_exist_by_address</a>&lt;<a href="FrozenConfig.md#0x1_FrozenConfig">FrozenConfig</a>&gt;(addr),
         <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="FrozenConfig.md#0x1_FrozenConfig_ERR_CONFIG_NOT_EXISTS">ERR_CONFIG_NOT_EXISTS</a>)
@@ -142,7 +146,7 @@ The module provide configuration for frozen configuration.
 
     <b>let</b> config= <a href="Config.md#0x1_Config_get_by_address">Config::get_by_address</a>&lt;<a href="FrozenConfig.md#0x1_FrozenConfig">FrozenConfig</a>&gt;(addr);
     <a href="Config.md#0x1_Config_set">Config::set</a>&lt;<a href="FrozenConfig.md#0x1_FrozenConfig">FrozenConfig</a>&gt;(
-        sender,
+        account,
         <a href="FrozenConfig.md#0x1_FrozenConfig">FrozenConfig</a> {
             frozen_global_txn: config.frozen_global_txn,
             frozen_account_list,
@@ -161,7 +165,7 @@ The module provide configuration for frozen configuration.
 
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfig.md#0x1_FrozenConfig_set_global_frozen">set_global_frozen</a>(sender: &signer, frozen: bool)
+<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfig.md#0x1_FrozenConfig_set_global_frozen">set_global_frozen</a>(account: &signer, frozen: bool)
 </code></pre>
 
 
@@ -170,8 +174,8 @@ The module provide configuration for frozen configuration.
 <summary>Implementation</summary>
 
 
-<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfig.md#0x1_FrozenConfig_set_global_frozen">set_global_frozen</a>(sender: &signer, frozen: bool) {
-    <b>let</b> addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(sender);
+<pre><code><b>public</b> <b>fun</b> <a href="FrozenConfig.md#0x1_FrozenConfig_set_global_frozen">set_global_frozen</a>(account: &signer, frozen: bool) {
+    <b>let</b> addr = <a href="Signer.md#0x1_Signer_address_of">Signer::address_of</a>(account);
     <b>assert</b>!(
         <a href="Config.md#0x1_Config_config_exist_by_address">Config::config_exist_by_address</a>&lt;<a href="FrozenConfig.md#0x1_FrozenConfig">FrozenConfig</a>&gt;(addr),
         <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="FrozenConfig.md#0x1_FrozenConfig_ERR_CONFIG_NOT_EXISTS">ERR_CONFIG_NOT_EXISTS</a>)
@@ -179,7 +183,7 @@ The module provide configuration for frozen configuration.
 
     <b>let</b> config = <a href="Config.md#0x1_Config_get_by_address">Config::get_by_address</a>&lt;<a href="FrozenConfig.md#0x1_FrozenConfig">FrozenConfig</a>&gt;(addr);
     <a href="Config.md#0x1_Config_set">Config::set</a>&lt;<a href="FrozenConfig.md#0x1_FrozenConfig">FrozenConfig</a>&gt;(
-        sender,
+        account,
         <a href="FrozenConfig.md#0x1_FrozenConfig">FrozenConfig</a> {
             frozen_global_txn: frozen,
             frozen_account_list: config.frozen_account_list,
@@ -222,18 +226,7 @@ Get frozen configuration.
 
 
 
-<pre><code><b>include</b> <a href="FrozenConfig.md#0x1_FrozenConfig_GetfrozenConfigAbortsIf">GetfrozenConfigAbortsIf</a>;
-</code></pre>
-
-
-
-
-<a name="0x1_FrozenConfig_GetfrozenConfigAbortsIf"></a>
-
-
-<pre><code><b>schema</b> <a href="FrozenConfig.md#0x1_FrozenConfig_GetfrozenConfigAbortsIf">GetfrozenConfigAbortsIf</a> {
-    <b>aborts_if</b> !<b>exists</b>&lt;<a href="Config.md#0x1_Config_Config">Config::Config</a>&lt;<a href="FrozenConfig.md#0x1_FrozenConfig">FrozenConfig</a>&gt;&gt;(account);
-}
+<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Config.md#0x1_Config_Config">Config::Config</a>&lt;<a href="FrozenConfig.md#0x1_FrozenConfig">FrozenConfig</a>&gt;&gt;(account);
 </code></pre>
 
 
@@ -299,11 +292,4 @@ Get global frozen
 
 <pre><code><b>pragma</b> verify = <b>false</b>;
 <b>pragma</b> aborts_if_is_strict = <b>true</b>;
-</code></pre>
-
-
-
-
-
-<pre><code><b>aborts_if</b> !<b>exists</b>&lt;<a href="Config.md#0x1_Config_Config">Config::Config</a>&lt;<a href="FrozenConfig.md#0x1_FrozenConfig">FrozenConfig</a>&gt;&gt;(account);
 </code></pre>
