@@ -46,7 +46,7 @@ module StarcoinFramework::FrozenConfigStrategy {
         };
 
         FrozenConfig::initialize(&association_account, Self::frozen_list_v1());
-        if (exists<BurnBlockNumber>(CoreAddresses::ASSOCIATION_ROOT_ADDRESS())) {
+        if (!exists<BurnBlockNumber>(CoreAddresses::ASSOCIATION_ROOT_ADDRESS())) {
             move_to(&association_account, BurnBlockNumber {
                 block_number: block_number_by_chain
             })
