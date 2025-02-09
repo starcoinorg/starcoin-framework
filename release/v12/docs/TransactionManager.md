@@ -59,24 +59,6 @@
 
 
 
-<a name="0x1_TransactionManager_EPROLOGUE_FROZEN_ACCOUNT"></a>
-
-
-
-<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_FROZEN_ACCOUNT">EPROLOGUE_FROZEN_ACCOUNT</a>: u64 = 10;
-</code></pre>
-
-
-
-<a name="0x1_TransactionManager_EPROLOGUE_FROZEN_GLOBAL_TXN"></a>
-
-
-
-<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_FROZEN_GLOBAL_TXN">EPROLOGUE_FROZEN_GLOBAL_TXN</a>: u64 = 9;
-</code></pre>
-
-
-
 <a name="0x1_TransactionManager_EPROLOGUE_MODULE_NOT_ALLOWED"></a>
 
 
@@ -91,6 +73,24 @@
 
 
 <pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SCRIPT_NOT_ALLOWED">EPROLOGUE_SCRIPT_NOT_ALLOWED</a>: u64 = 8;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EPROLOGUE_SENDING_ACCOUNT_FROZEN"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SENDING_ACCOUNT_FROZEN">EPROLOGUE_SENDING_ACCOUNT_FROZEN</a>: u64 = 10;
+</code></pre>
+
+
+
+<a name="0x1_TransactionManager_EPROLOGUE_SENDING_TXN_GLOBAL_FROZEN"></a>
+
+
+
+<pre><code><b>const</b> <a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SENDING_TXN_GLOBAL_FROZEN">EPROLOGUE_SENDING_TXN_GLOBAL_FROZEN</a>: u64 = 11;
 </code></pre>
 
 
@@ -176,9 +176,12 @@ It verifies:
     // Frozen check
     <b>assert</b>!(
         !<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_global">FrozenConfigStrategy::has_frozen_global</a>(txn_sender),
-        <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_FROZEN_GLOBAL_TXN">EPROLOGUE_FROZEN_GLOBAL_TXN</a>)
+        <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SENDING_TXN_GLOBAL_FROZEN">EPROLOGUE_SENDING_TXN_GLOBAL_FROZEN</a>)
     );
-    <b>assert</b>!(!<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_account">FrozenConfigStrategy::has_frozen_account</a>(txn_sender), <a href="Errors.md#0x1_Errors_invalid_state">Errors::invalid_state</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_FROZEN_ACCOUNT">EPROLOGUE_FROZEN_ACCOUNT</a>));
+    <b>assert</b>!(
+        !<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_has_frozen_account">FrozenConfigStrategy::has_frozen_account</a>(txn_sender),
+        <a href="Errors.md#0x1_Errors_invalid_argument">Errors::invalid_argument</a>(<a href="TransactionManager.md#0x1_TransactionManager_EPROLOGUE_SENDING_ACCOUNT_FROZEN">EPROLOGUE_SENDING_ACCOUNT_FROZEN</a>)
+    );
 
     <a href="Account.md#0x1_Account_txn_prologue">Account::txn_prologue</a>&lt;TokenType&gt;(
         &account,

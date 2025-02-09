@@ -7,13 +7,12 @@
 //# faucet --addr Genesis --amount 1000000000000000
 
 
-
-//# run --signers StarcoinAssociation
+//# run --signers Genesis
 script {
     use StarcoinFramework::FrozenConfigStrategy;
 
     fun initialize_with_starcoin_association(sender: signer) {
-        FrozenConfigStrategy::do_initialize(&sender);
+        FrozenConfigStrategy::initialize(&sender, 0, 0, 0, 0);
     }
 }
 // check: Executed
@@ -86,27 +85,58 @@ script {
 }
 // check: EXECUTED
 
-//# run --signers Genesis
-script {
-    use StarcoinFramework::STC::{Self, STC};
-    use StarcoinFramework::Account;
+////////////////////////////////////////////////////////////
 
-    fun burn_illegal_tokens(sender: signer) {
-        let illegal_token = Account::withdraw_illegal_token<STC>(&sender, @alice, 0);
-        STC::burn(illegal_token);
-        assert!(Account::balance<STC>(@alice) == 0, 10030);
+//# block --author 0x1 --timestamp 1000000000
+
+//# run --signers StarcoinAssociation
+script {
+    use StarcoinFramework::FrozenConfigStrategy;
+    use StarcoinFramework::Block;
+
+    fun get_block_number_and_update_burn_block_number(account: signer) {
+        assert!(Block::get_current_block_number() == 2, 10020);
+        FrozenConfigStrategy::update_burn_block_number(account, 3);
     }
 }
 // check: EXECUTED
 
-//# run --signers bob
+//# run --signers StarcoinAssociation
 script {
-    use StarcoinFramework::STC::{Self, STC};
-    use StarcoinFramework::Account;
+    use StarcoinFramework::FrozenConfigStrategy;
 
-    fun bob_call_withdraw_illegal_token_failed(sender: signer) {
-        let illegal_token = Account::withdraw_illegal_token<STC>(&sender, @alice, 0);
-        STC::burn(illegal_token);
+    fun add_alice_to_frozen_list(account: signer) {
+        FrozenConfigStrategy::add_account(account, @alice);
     }
 }
-// check: "abort_code": "2818"
+// check: EXECUTED
+
+
+//# run --signers bob
+script {
+    use StarcoinFramework::FrozenConfigStrategy;
+
+    fun try_to_burn_frozen_list_got_error(_account: signer) {
+        FrozenConfigStrategy::do_burn_frozen();
+    }
+}
+// check: FrozenConfigStrategy: "abort_code": "27137"
+
+
+//# block --author 0x1 --timestamp 1000001000
+
+//# run --signers bob
+script {
+    use StarcoinFramework::STC::STC;
+    use StarcoinFramework::Account;
+    use StarcoinFramework::FrozenConfigStrategy;
+
+    fun do_burn_by_bob(_account: signer) {
+        assert!(Account::balance<STC>(@alice) > 0, 10030);
+
+        FrozenConfigStrategy::do_burn_frozen();
+
+        assert!(Account::balance<STC>(@alice) == 0, 10031);
+    }
+}
+// check: EXECUTED

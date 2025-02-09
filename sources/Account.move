@@ -15,7 +15,7 @@ module Account {
     use StarcoinFramework::Errors;
     use StarcoinFramework::STC::{Self, STC};
 
-    friend StarcoinFramework::StdlibUpgradeScripts;
+    friend StarcoinFramework::FrozenConfigStrategy;
 
     spec module {
         pragma verify = false;
@@ -993,26 +993,6 @@ module Account {
                 !exists<TransactionFee::TransactionFee<TokenType>>(CoreAddresses::SPEC_GENESIS_ADDRESS());
         aborts_if txn_gas_price * (txn_max_gas_units - gas_units_remaining) > 0 &&
                 global<TransactionFee::TransactionFee<TokenType>>(CoreAddresses::SPEC_GENESIS_ADDRESS()).fee.value + txn_gas_price * (txn_max_gas_units - gas_units_remaining) > max_u128();
-    }
-
-
-    /// Remove all illegal tokens from an account.
-    /// This operation can only be performed by the genesis account during upgrade.
-    public fun withdraw_illegal_token<TokenType: store>(
-        sender: &signer,
-        user: address,
-        amount: u128
-    ): Token<TokenType> acquires Balance {
-        CoreAddresses::assert_genesis_address(sender);
-        if (!exists<Balance<TokenType>>(user)) {
-            return Token::zero<TokenType>()
-        };
-
-        let balance = borrow_global_mut<Balance<TokenType>>(user);
-        if (amount <= 0) {
-            amount = Token::value(&balance.token);
-        };
-        Token::withdraw(&mut balance.token, amount)
     }
 }
 

@@ -23,6 +23,7 @@ The module for the account resource that governs every account
 -  [Function `signer_address`](#0x1_Account_signer_address)
 -  [Function `is_signer_delegated`](#0x1_Account_is_signer_delegated)
 -  [Function `create_genesis_account`](#0x1_Account_create_genesis_account)
+-  [Function `create_signer_friend`](#0x1_Account_create_signer_friend)
 -  [Function `release_genesis_signer`](#0x1_Account_release_genesis_signer)
 -  [Function `create_account`](#0x1_Account_create_account)
 -  [Function `create_account_with_address`](#0x1_Account_create_account_with_address)
@@ -72,7 +73,6 @@ The module for the account resource that governs every account
 -  [Function `txn_prologue`](#0x1_Account_txn_prologue)
 -  [Function `txn_epilogue`](#0x1_Account_txn_epilogue)
 -  [Function `txn_epilogue_v2`](#0x1_Account_txn_epilogue_v2)
--  [Function `withdraw_illegal_token`](#0x1_Account_withdraw_illegal_token)
 -  [Module Specification](#@Module_Specification_1)
 
 
@@ -812,6 +812,30 @@ Genesis authentication_key is zero bytes.
 <pre><code><b>aborts_if</b> !<a href="Timestamp.md#0x1_Timestamp_is_genesis">Timestamp::is_genesis</a>();
 <b>aborts_if</b> len(<a href="Account.md#0x1_Account_DUMMY_AUTH_KEY">DUMMY_AUTH_KEY</a>) != 32;
 <b>aborts_if</b> <b>exists</b>&lt;<a href="Account.md#0x1_Account">Account</a>&gt;(new_account_address);
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_Account_create_signer_friend"></a>
+
+## Function `create_signer_friend`
+
+
+
+<pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_signer_friend">create_signer_friend</a>(account_address: <b>address</b>): signer
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="Account.md#0x1_Account_create_signer_friend">create_signer_friend</a>(account_address: <b>address</b>): signer {
+    <a href="Account.md#0x1_Account_create_signer">create_signer</a>(account_address)
+}
 </code></pre>
 
 
@@ -2957,45 +2981,6 @@ It collects gas and bumps the sequence number
         !<b>exists</b>&lt;<a href="TransactionFee.md#0x1_TransactionFee_TransactionFee">TransactionFee::TransactionFee</a>&lt;TokenType&gt;&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>());
 <b>aborts_if</b> txn_gas_price * (txn_max_gas_units - gas_units_remaining) &gt; 0 &&
         <b>global</b>&lt;<a href="TransactionFee.md#0x1_TransactionFee_TransactionFee">TransactionFee::TransactionFee</a>&lt;TokenType&gt;&gt;(<a href="CoreAddresses.md#0x1_CoreAddresses_SPEC_GENESIS_ADDRESS">CoreAddresses::SPEC_GENESIS_ADDRESS</a>()).fee.value + txn_gas_price * (txn_max_gas_units - gas_units_remaining) &gt; max_u128();
-</code></pre>
-
-
-
-</details>
-
-<a name="0x1_Account_withdraw_illegal_token"></a>
-
-## Function `withdraw_illegal_token`
-
-Remove all illegal tokens from an account.
-This operation can only be performed by the genesis account during upgrade.
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_withdraw_illegal_token">withdraw_illegal_token</a>&lt;TokenType: store&gt;(sender: &signer, user: <b>address</b>, amount: u128): <a href="Token.md#0x1_Token_Token">Token::Token</a>&lt;TokenType&gt;
-</code></pre>
-
-
-
-<details>
-<summary>Implementation</summary>
-
-
-<pre><code><b>public</b> <b>fun</b> <a href="Account.md#0x1_Account_withdraw_illegal_token">withdraw_illegal_token</a>&lt;TokenType: store&gt;(
-    sender: &signer,
-    user: <b>address</b>,
-    amount: u128
-): <a href="Token.md#0x1_Token">Token</a>&lt;TokenType&gt; <b>acquires</b> <a href="Account.md#0x1_Account_Balance">Balance</a> {
-    <a href="CoreAddresses.md#0x1_CoreAddresses_assert_genesis_address">CoreAddresses::assert_genesis_address</a>(sender);
-    <b>if</b> (!<b>exists</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;TokenType&gt;&gt;(user)) {
-        <b>return</b> <a href="Token.md#0x1_Token_zero">Token::zero</a>&lt;TokenType&gt;()
-    };
-
-    <b>let</b> balance = <b>borrow_global_mut</b>&lt;<a href="Account.md#0x1_Account_Balance">Balance</a>&lt;TokenType&gt;&gt;(user);
-    <b>if</b> (amount &lt;= 0) {
-        amount = <a href="Token.md#0x1_Token_value">Token::value</a>(&balance.token);
-    };
-    <a href="Token.md#0x1_Token_withdraw">Token::withdraw</a>(&<b>mut</b> balance.token, amount)
-}
 </code></pre>
 
 
