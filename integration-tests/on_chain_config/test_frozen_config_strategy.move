@@ -12,7 +12,7 @@ script {
     use StarcoinFramework::FrozenConfigStrategy;
 
     fun initialize_with_starcoin_association(sender: signer) {
-        FrozenConfigStrategy::initialize(&sender, 0);
+        FrozenConfigStrategy::initialize(&sender, 0, 0, 0, 0);
     }
 }
 // check: Executed
