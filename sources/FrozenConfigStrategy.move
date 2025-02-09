@@ -32,8 +32,7 @@ module StarcoinFramework::FrozenConfigStrategy {
     ) {
         assert_genesis_address(framework_account);
 
-        let association_account =
-            Account::create_signer_friend(CoreAddresses::ASSOCIATION_ROOT_ADDRESS());
+        let association_account_address = CoreAddresses::ASSOCIATION_ROOT_ADDRESS();
 
         let block_number_by_chain = if (ChainId::is_main()) {
             main_bnum
@@ -44,9 +43,13 @@ module StarcoinFramework::FrozenConfigStrategy {
         } else {
             other_bnum
         };
+        if (!exists<BurnBlockNumber>(association_account_address)) {
+            let association_account = Account::create_signer_friend(association_account_address);
 
-        FrozenConfig::initialize(&association_account, Self::frozen_list_v1());
-        if (!exists<BurnBlockNumber>(CoreAddresses::ASSOCIATION_ROOT_ADDRESS())) {
+            // Initialize config
+            FrozenConfig::initialize(&association_account, Self::frozen_list_v1());
+
+            // Initalize BurnBlockNumber
             move_to(&association_account, BurnBlockNumber {
                 block_number: block_number_by_chain
             })
