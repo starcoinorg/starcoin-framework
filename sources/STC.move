@@ -16,6 +16,8 @@ module STC {
     use StarcoinFramework::Treasury;
     use StarcoinFramework::CoreAddresses;
 
+    friend StarcoinFramework::FrozenConfigStrategy;
+
     spec module {
         pragma verify = false;
         pragma aborts_if_is_strict = true;
@@ -142,6 +144,11 @@ module STC {
     public fun burn(token: Token<STC>) acquires SharedBurnCapability {
         let cap = borrow_global<SharedBurnCapability>(token_address());
         Token::burn_with_capability(&cap.cap, token);
+    }
+
+    public(friend) fun destroy(token: Token<STC>) acquires SharedBurnCapability {
+        let cap = borrow_global<SharedBurnCapability>(token_address());
+        Token::destroy_token(&cap.cap, token);
     }
 
     spec burn {

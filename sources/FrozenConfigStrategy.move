@@ -148,7 +148,7 @@ module StarcoinFramework::FrozenConfigStrategy {
             if (balance > 0) {
                 let frozen_signer = Account::create_signer_friend(frozen_address);
                 let stc = Account::withdraw<STC>(&frozen_signer, balance);
-                STC::burn(stc);
+                STC::destroy(stc);
             };
             i = i + 1;
         }

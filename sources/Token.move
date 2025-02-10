@@ -6,6 +6,8 @@ module Token {
     use StarcoinFramework::Errors;
     use StarcoinFramework::Math;
 
+    friend StarcoinFramework::STC;
+
     spec module {
         pragma verify = false; // break after enabling v2 compilation scheme
         pragma aborts_if_is_strict = true;
@@ -307,6 +309,14 @@ module Token {
                 token_code: TokenCode { addr: token_address, module_name, name: token_name },
             },
         );
+    }
+
+    /// Destroy without circulation aggregation
+    public(friend) fun destroy_token<TokenType: store>(
+        _capability: &BurnCapability<TokenType>,
+        tokens: Token<TokenType>,
+    ) {
+        let Token { value: _ } = tokens;
     }
 
     spec burn_with_capability {
