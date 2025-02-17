@@ -27,7 +27,7 @@ module StdlibUpgradeScripts {
     use StarcoinFramework::Config;
     use StarcoinFramework::GenesisSignerCapability;
     use StarcoinFramework::Account;
-
+    use StarcoinFramework::ConsensusConfig;
     spec module {
         pragma verify = false;
         pragma aborts_if_is_strict = true;
@@ -137,13 +137,28 @@ module StdlibUpgradeScripts {
         OnChainConfigDao::plugin<STC, FlexiDagConfig::FlexiDagConfig>(sender);
     }
 
-    public entry fun upgrade_from_v12_to_v13(sender: signer, pruning_depth: u64, pruning_finality: u64) {
-        do_upgrade_from_v12_to_v13(&sender, pruning_depth, pruning_finality);
+    public entry fun upgrade_from_v12_to_v13(sender: signer) {
+        do_upgrade_from_v12_to_v13(&sender);
     }
 
-    public fun do_upgrade_from_v12_to_v13(sender: &signer,pruning_depth: u64, pruning_finality: u64) {
+    public fun do_upgrade_from_v12_to_v13(sender: &signer) {
         CoreAddresses::assert_genesis_address(sender);
-        FlexiDagConfig::upgrade_to_v2(sender, pruning_depth, pruning_finality);
+        FlexiDagConfig::upgrade_to_v2(sender, 185798, 86400);
+        let current_consensus_config = ConsensusConfig::get_config();
+        let updated_consensus_config = ConsensusConfig::new_consensus_config(
+                ConsensusConfig::uncle_rate_target(&current_consensus_config),
+                ConsensusConfig::base_block_time_target(&current_consensus_config),
+                ConsensusConfig::base_reward_per_block(&current_consensus_config),
+                ConsensusConfig::base_reward_per_uncle_percent(&current_consensus_config),
+                ConsensusConfig::epoch_block_count(&current_consensus_config),
+                ConsensusConfig::base_block_difficulty_window(&current_consensus_config),
+                ConsensusConfig::min_block_time_target(&current_consensus_config),
+                ConsensusConfig::max_block_time_target(&current_consensus_config),
+                16,
+                ConsensusConfig::base_block_gas_limit(&current_consensus_config),
+                ConsensusConfig::strategy(&current_consensus_config)
+            );
+        Config::set(sender, updated_consensus_config);
     }
     
     /// Burned by user account
