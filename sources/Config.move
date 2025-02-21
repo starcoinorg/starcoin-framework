@@ -218,5 +218,26 @@ module Config {
     spec emit_config_change_event {
         aborts_if false;
     }
+    
+    public fun update_config_with_genesis<ConfigValue: copy + drop + store>(sender: &signer, new_config: ConfigValue) acquires Config {
+        StarcoinFramework::CoreAddresses::assert_genesis_address(sender);
+        let temp_cap = ModifyConfigCapability<ConfigValue> {
+            account_address: Signer::address_of(sender),
+            events: Event::new_event_handle<ConfigChangeEvent<ConfigValue>>(sender)
+        };
+        set_with_capability(&mut temp_cap, new_config);
+        destroy_modify_config_capability(temp_cap);
+    }
+
+    spec update_config_with_genesis {
+        aborts_if Signer::address_of(sender) != StarcoinFramework::CoreAddresses::SPEC_GENESIS_ADDRESS();
+        aborts_if !exists<Config<ConfigValue>>(Signer::address_of(sender));
+        ensures exists<ModifyConfigCapabilityHolder<ConfigValue>>(Signer::address_of(sender)) == old(exists<ModifyConfigCapabilityHolder<ConfigValue>>(Signer::address_of(sender)));
+        ensures exists<Config<ConfigValue>>(Signer::address_of(sender));
+        ensures borrow_global<Config<ConfigValue>>(Signer::address_of(sender)).payload == new_config;
+        ensures !exists<ModifyConfigCapability<ConfigValue>>(Signer::address_of(sender));
+    }
+
+
 }
 }

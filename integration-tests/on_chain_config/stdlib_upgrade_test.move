@@ -2,6 +2,8 @@
 
 //# faucet --addr alice --amount 10000000000
 
+//# faucet --addr Genesis
+
 
 //# run --signers alice
 script {
@@ -23,3 +25,20 @@ script {
     }
 }
 // check: EXECUTED
+
+//# run --signers Genesis
+script {
+    use StarcoinFramework::Debug;
+    use StarcoinFramework::Signer;
+    use StarcoinFramework::StdlibUpgradeScripts;
+    use StarcoinFramework::ConsensusConfig;
+    fun upgrade_from_v12_to_v13(sender: signer) {
+        let sender_addr = Signer::address_of(&sender);
+        Debug::print(&sender_addr);
+        StdlibUpgradeScripts::upgrade_from_v12_to_v13(sender);
+        let consensus_config = ConsensusConfig::get_config();
+        assert!(ConsensusConfig::base_max_uncles_per_block(&consensus_config) == 16, 10011);
+    }
+}
+// check: EXECUTED
+

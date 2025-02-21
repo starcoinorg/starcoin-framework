@@ -144,7 +144,6 @@ module StdlibUpgradeScripts {
     public fun do_upgrade_from_v12_to_v13(sender: &signer) {
         CoreAddresses::assert_genesis_address(sender);
         FlexiDagConfig::upgrade_to_v2(sender, 185798, 86400);
-        /*
         let current_consensus_config = ConsensusConfig::get_config();
         let updated_consensus_config = ConsensusConfig::new_consensus_config(
                 ConsensusConfig::uncle_rate_target(&current_consensus_config),
@@ -159,9 +158,8 @@ module StdlibUpgradeScripts {
                 ConsensusConfig::base_block_gas_limit(&current_consensus_config),
                 ConsensusConfig::strategy(&current_consensus_config)
             );
-        Config::set(sender, updated_consensus_config);
-        */
-    }
+        Config::update_config_with_genesis(sender, updated_consensus_config);
+    }   
     
     /// Burned by user account
     const ERR_NOT_RIGHT_ADDRESS: u64 = 101;
