@@ -30,7 +30,9 @@ address StarcoinFramework {
 
         public fun upgrade_to_v2(account:&signer, pruning_depth:u64, pruning_finality:u64){ 
             CoreAddresses::assert_genesis_address(account);
-            Config::publish_new_config<FlexiDagConfigV2>(account,FlexiDagConfigV2{pruning_depth,pruning_finality});
+            if (!Config::config_exist_by_address<FlexiDagConfigV2>(Signer::address_of(account))){
+                Config::publish_new_config<FlexiDagConfigV2>(account,FlexiDagConfigV2{pruning_depth,pruning_finality});
+            }
         }
 
         public fun initialize(account: &signer, effective_height: u64) {

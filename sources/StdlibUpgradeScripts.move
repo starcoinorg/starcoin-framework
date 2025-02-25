@@ -145,6 +145,7 @@ module StdlibUpgradeScripts {
         CoreAddresses::assert_genesis_address(sender);
         FlexiDagConfig::upgrade_to_v2(sender, 185798, 86400);
         let current_consensus_config = ConsensusConfig::get_config();
+        
         let updated_consensus_config = ConsensusConfig::new_consensus_config(
                 ConsensusConfig::uncle_rate_target(&current_consensus_config),
                 ConsensusConfig::base_block_time_target(&current_consensus_config),

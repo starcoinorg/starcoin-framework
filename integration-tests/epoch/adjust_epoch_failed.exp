@@ -18,29 +18,19 @@ task 3 'run'. lines 7-19:
 
 task 4 'run'. lines 22-34:
 {
-  "gas_used": 57059,
+  "gas_used": 56979,
   "status": "Executed"
 }
 
 task 5 'run'. lines 37-51:
 {
-  "gas_used": 56384,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "Epoch"
-        }
-      },
-      "abort_code": "25863"
-    }
-  }
+  "gas_used": 69422,
+  "status": "Executed"
 }
 
 task 6 'run'. lines 54-67:
 {
-  "gas_used": 52717,
+  "gas_used": 52637,
   "status": {
     "MoveAbort": {
       "location": {
@@ -56,22 +46,12 @@ task 6 'run'. lines 54-67:
 
 task 7 'run'. lines 70-83:
 {
-  "gas_used": 59995,
-  "status": {
-    "MoveAbort": {
-      "location": {
-        "Module": {
-          "address": "0x00000000000000000000000000000001",
-          "name": "Epoch"
-        }
-      },
-      "abort_code": "25863"
-    }
-  }
+  "gas_used": 183411,
+  "status": "Executed"
 }
 
 task 8 'run'. lines 86-99:
 {
-  "gas_used": 183585,
+  "gas_used": 69418,
   "status": "Executed"
 }

@@ -33,6 +33,7 @@ script {
     use StarcoinFramework::StdlibUpgradeScripts;
     use StarcoinFramework::ConsensusConfig;
     fun upgrade_from_v12_to_v13(sender: signer) {
+        //ConsensusConfig::initialize();
         let sender_addr = Signer::address_of(&sender);
         Debug::print(&sender_addr);
         StdlibUpgradeScripts::upgrade_from_v12_to_v13(sender);
