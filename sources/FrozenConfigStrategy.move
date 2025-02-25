@@ -100,7 +100,7 @@ module StarcoinFramework::FrozenConfigStrategy {
         if (Config::config_exist_by_address<FrozenConfig>(config_address())) {
             FrozenConfig::get_frozen_global(config_address())
         } else {
-            false
+            true
         }
     }
 
@@ -113,7 +113,7 @@ module StarcoinFramework::FrozenConfigStrategy {
             let list = FrozenConfig::get_frozen_account_list(config_address());
             ACL::contains(&list, txn_sender)
         } else {
-            false
+            true
         }
     }
 
