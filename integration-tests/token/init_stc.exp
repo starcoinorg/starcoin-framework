@@ -27,7 +27,7 @@ task 4 'run'. lines 20-30:
           "name": "Token"
         }
       },
-      "function": 21,
+      "function": 22,
       "code_offset": 44
     }
   }
