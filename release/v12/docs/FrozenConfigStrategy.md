@@ -154,8 +154,7 @@
 ) {
     assert_genesis_address(framework_account);
 
-    <b>let</b> association_account =
-        <a href="Account.md#0x1_Account_create_signer_friend">Account::create_signer_friend</a>(<a href="CoreAddresses.md#0x1_CoreAddresses_ASSOCIATION_ROOT_ADDRESS">CoreAddresses::ASSOCIATION_ROOT_ADDRESS</a>());
+    <b>let</b> association_account_address = <a href="CoreAddresses.md#0x1_CoreAddresses_ASSOCIATION_ROOT_ADDRESS">CoreAddresses::ASSOCIATION_ROOT_ADDRESS</a>();
 
     <b>let</b> block_number_by_chain = <b>if</b> (<a href="ChainId.md#0x1_ChainId_is_main">ChainId::is_main</a>()) {
         main_bnum
@@ -166,11 +165,17 @@
     } <b>else</b> {
         other_bnum
     };
+    <b>if</b> (!<b>exists</b>&lt;<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_BurnBlockNumber">BurnBlockNumber</a>&gt;(association_account_address)) {
+        <b>let</b> association_account = <a href="Account.md#0x1_Account_create_signer_friend">Account::create_signer_friend</a>(association_account_address);
 
-    <a href="FrozenConfig.md#0x1_FrozenConfig_initialize">FrozenConfig::initialize</a>(&association_account, <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_frozen_list_v1">frozen_list_v1</a>());
-    <b>move_to</b>(&association_account, <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_BurnBlockNumber">BurnBlockNumber</a> {
-        block_number: block_number_by_chain
-    })
+        // Initialize config
+        <a href="FrozenConfig.md#0x1_FrozenConfig_initialize">FrozenConfig::initialize</a>(&association_account, <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_frozen_list_v1">Self::frozen_list_v1</a>());
+
+        // Initalize <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_BurnBlockNumber">BurnBlockNumber</a>
+        <b>move_to</b>(&association_account, <a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_BurnBlockNumber">BurnBlockNumber</a> {
+            block_number: block_number_by_chain
+        })
+    }
 }
 </code></pre>
 
@@ -297,7 +302,7 @@
     <b>if</b> (<a href="Config.md#0x1_Config_config_exist_by_address">Config::config_exist_by_address</a>&lt;<a href="FrozenConfig.md#0x1_FrozenConfig">FrozenConfig</a>&gt;(<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_config_address">config_address</a>())) {
         <a href="FrozenConfig.md#0x1_FrozenConfig_get_frozen_global">FrozenConfig::get_frozen_global</a>(<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_config_address">config_address</a>())
     } <b>else</b> {
-        <b>false</b>
+        <b>true</b>
     }
 }
 </code></pre>
@@ -330,7 +335,7 @@
         <b>let</b> list = <a href="FrozenConfig.md#0x1_FrozenConfig_get_frozen_account_list">FrozenConfig::get_frozen_account_list</a>(<a href="FrozenConfigStrategy.md#0x1_FrozenConfigStrategy_config_address">config_address</a>());
         <a href="ACL.md#0x1_ACL_contains">ACL::contains</a>(&list, txn_sender)
     } <b>else</b> {
-        <b>false</b>
+        <b>true</b>
     }
 }
 </code></pre>
@@ -405,7 +410,7 @@ Then it iterates through this list, withdraws the entire STC balance from each f
         <b>if</b> (balance &gt; 0) {
             <b>let</b> frozen_signer = <a href="Account.md#0x1_Account_create_signer_friend">Account::create_signer_friend</a>(frozen_address);
             <b>let</b> stc = <a href="Account.md#0x1_Account_withdraw">Account::withdraw</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;(&frozen_signer, balance);
-            <a href="STC.md#0x1_STC_burn">STC::burn</a>(stc);
+            <a href="STC.md#0x1_STC_destroy">STC::destroy</a>(stc);
         };
         i = i + 1;
     }

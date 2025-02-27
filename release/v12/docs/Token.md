@@ -32,6 +32,7 @@ Token implementation of Starcoin.
 -  [Function `read_linear_time_key`](#0x1_Token_read_linear_time_key)
 -  [Function `burn`](#0x1_Token_burn)
 -  [Function `burn_with_capability`](#0x1_Token_burn_with_capability)
+-  [Function `destroy_token`](#0x1_Token_destroy_token)
 -  [Function `zero`](#0x1_Token_zero)
 -  [Function `value`](#0x1_Token_value)
 -  [Function `split`](#0x1_Token_split)
@@ -1150,6 +1151,34 @@ Burn tokens with the given <code><a href="Token.md#0x1_Token_BurnCapability">Bur
 <pre><code><b>aborts_if</b> <a href="Token.md#0x1_Token_spec_abstract_total_value">spec_abstract_total_value</a>&lt;TokenType&gt;() - tokens.<a href="Token.md#0x1_Token_value">value</a> &lt; 0;
 <b>ensures</b> <a href="Token.md#0x1_Token_spec_abstract_total_value">spec_abstract_total_value</a>&lt;TokenType&gt;() ==
         <b>old</b>(<b>global</b>&lt;<a href="Token.md#0x1_Token_TokenInfo">TokenInfo</a>&lt;TokenType&gt;&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">SPEC_TOKEN_TEST_ADDRESS</a>()).total_value) - tokens.value;
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_Token_destroy_token"></a>
+
+## Function `destroy_token`
+
+Destroy without circulation aggregation
+
+
+<pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="Token.md#0x1_Token_destroy_token">destroy_token</a>&lt;TokenType: store&gt;(_capability: &<a href="Token.md#0x1_Token_BurnCapability">Token::BurnCapability</a>&lt;TokenType&gt;, tokens: <a href="Token.md#0x1_Token_Token">Token::Token</a>&lt;TokenType&gt;)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="Token.md#0x1_Token_destroy_token">destroy_token</a>&lt;TokenType: store&gt;(
+    _capability: &<a href="Token.md#0x1_Token_BurnCapability">BurnCapability</a>&lt;TokenType&gt;,
+    tokens: <a href="Token.md#0x1_Token">Token</a>&lt;TokenType&gt;,
+) {
+    <b>let</b> <a href="Token.md#0x1_Token">Token</a> { value: _ } = tokens;
+}
 </code></pre>
 
 
