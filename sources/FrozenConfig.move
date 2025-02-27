@@ -6,6 +6,7 @@ module StarcoinFramework::FrozenConfig {
     use StarcoinFramework::Signer;
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::CoreAddresses;
+    use StarcoinFramework::Vector;
 
     friend StarcoinFramework::FrozenConfigStrategy;
 
@@ -72,7 +73,7 @@ module StarcoinFramework::FrozenConfig {
     spec initialize {
         aborts_if !Timestamp::is_genesis();
         aborts_if Signer::address_of(account) != CoreAddresses::ASSOCIATION_ROOT_ADDRESS();
-        // aborts_if Vector::length(&ACL::get_vector(&frozen_account_list)) == 0;
+        aborts_if Vector::length(frozen_account_list.list) == 0;
         aborts_if exists<Config::Config<FrozenConfig>>(Signer::address_of(account));
         include Config::PublishNewConfigAbortsIf<FrozenConfig>;
         include Config::PublishNewConfigEnsures<FrozenConfig>;
