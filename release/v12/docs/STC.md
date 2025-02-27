@@ -15,6 +15,7 @@ It uses apis defined in the <code><a href="Token.md#0x1_Token">Token</a></code> 
 -  [Function `initialize_v2`](#0x1_STC_initialize_v2)
 -  [Function `is_stc`](#0x1_STC_is_stc)
 -  [Function `burn`](#0x1_STC_burn)
+-  [Function `destroy`](#0x1_STC_destroy)
 -  [Function `token_address`](#0x1_STC_token_address)
 -  [Module Specification](#@Module_Specification_1)
 
@@ -354,6 +355,31 @@ It can be called by anyone.
 
 <pre><code><b>aborts_if</b> <a href="Token.md#0x1_Token_spec_abstract_total_value">Token::spec_abstract_total_value</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;() - token.value &lt; 0;
 <b>aborts_if</b> !<b>exists</b>&lt;<a href="STC.md#0x1_STC_SharedBurnCapability">SharedBurnCapability</a>&gt;(<a href="Token.md#0x1_Token_SPEC_TOKEN_TEST_ADDRESS">Token::SPEC_TOKEN_TEST_ADDRESS</a>());
+</code></pre>
+
+
+
+</details>
+
+<a name="0x1_STC_destroy"></a>
+
+## Function `destroy`
+
+
+
+<pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="STC.md#0x1_STC_destroy">destroy</a>(token: <a href="Token.md#0x1_Token_Token">Token::Token</a>&lt;<a href="STC.md#0x1_STC_STC">STC::STC</a>&gt;)
+</code></pre>
+
+
+
+<details>
+<summary>Implementation</summary>
+
+
+<pre><code><b>public</b>(<b>friend</b>) <b>fun</b> <a href="STC.md#0x1_STC_destroy">destroy</a>(token: <a href="Token.md#0x1_Token">Token</a>&lt;<a href="STC.md#0x1_STC">STC</a>&gt;) <b>acquires</b> <a href="STC.md#0x1_STC_SharedBurnCapability">SharedBurnCapability</a> {
+    <b>let</b> cap = <b>borrow_global</b>&lt;<a href="STC.md#0x1_STC_SharedBurnCapability">SharedBurnCapability</a>&gt;(<a href="STC.md#0x1_STC_token_address">token_address</a>());
+    <a href="Token.md#0x1_Token_destroy_token">Token::destroy_token</a>(&cap.cap, token);
+}
 </code></pre>
 
 

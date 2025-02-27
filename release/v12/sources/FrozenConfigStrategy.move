@@ -32,8 +32,7 @@ module StarcoinFramework::FrozenConfigStrategy {
     ) {
         assert_genesis_address(framework_account);
 
-        let association_account =
-            Account::create_signer_friend(CoreAddresses::ASSOCIATION_ROOT_ADDRESS());
+        let association_account_address = CoreAddresses::ASSOCIATION_ROOT_ADDRESS();
 
         let block_number_by_chain = if (ChainId::is_main()) {
             main_bnum
@@ -44,11 +43,17 @@ module StarcoinFramework::FrozenConfigStrategy {
         } else {
             other_bnum
         };
+        if (!exists<BurnBlockNumber>(association_account_address)) {
+            let association_account = Account::create_signer_friend(association_account_address);
 
-        FrozenConfig::initialize(&association_account, frozen_list_v1());
-        move_to(&association_account, BurnBlockNumber {
-            block_number: block_number_by_chain
-        })
+            // Initialize config
+            FrozenConfig::initialize(&association_account, Self::frozen_list_v1());
+
+            // Initalize BurnBlockNumber
+            move_to(&association_account, BurnBlockNumber {
+                block_number: block_number_by_chain
+            })
+        }
     }
 
     public entry fun add_account(accocial_account: signer, account: address) {
@@ -95,7 +100,7 @@ module StarcoinFramework::FrozenConfigStrategy {
         if (Config::config_exist_by_address<FrozenConfig>(config_address())) {
             FrozenConfig::get_frozen_global(config_address())
         } else {
-            false
+            true
         }
     }
 
@@ -108,7 +113,7 @@ module StarcoinFramework::FrozenConfigStrategy {
             let list = FrozenConfig::get_frozen_account_list(config_address());
             ACL::contains(&list, txn_sender)
         } else {
-            false
+            true
         }
     }
 
@@ -143,7 +148,7 @@ module StarcoinFramework::FrozenConfigStrategy {
             if (balance > 0) {
                 let frozen_signer = Account::create_signer_friend(frozen_address);
                 let stc = Account::withdraw<STC>(&frozen_signer, balance);
-                STC::burn(stc);
+                STC::destroy(stc);
             };
             i = i + 1;
         }
