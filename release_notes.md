@@ -70,3 +70,6 @@
 - Upgrade bytecode to v4.(#3109)
 - Use move pacakge system to organize stdlib source files.(#3109)
 - Add `phantom` modifier to NFT and Token Module. (#3109)
+
+### Version 12
+- Add `mpm release --function 0x1::StdlibUpgradeScripts::upgrade_from_v11_to_v12 --arg 23182155u64 --arg 16083000u64 --arg 5u64 --arg 1000u64` generate blob
