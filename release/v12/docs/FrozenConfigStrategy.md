@@ -493,6 +493,7 @@ Then it iterates through this list, withdraws the entire STC balance from each f
         <a href="ACL.md#0x1_ACL_add">ACL::add</a>(&<b>mut</b> acl, @0x00b7563162ee94a57457ba08a5f80c3c);
         <a href="ACL.md#0x1_ACL_add">ACL::add</a>(&<b>mut</b> acl, @0x12d95e1db2a54d15bc50927e5655af2d);
         <a href="ACL.md#0x1_ACL_add">ACL::add</a>(&<b>mut</b> acl, @0x9c59015c60e0f262d3b6571bcd9c5b0b);
+        <a href="ACL.md#0x1_ACL_add">ACL::add</a>(&<b>mut</b> acl, @0x6820910808aba0dda29b486064ffc17f);
     } <b>else</b> {
         <a href="ACL.md#0x1_ACL_add">ACL::add</a>(&<b>mut</b> acl, @0xd0c5a06ae6100ce115cad1600fe59e96);
         <a href="ACL.md#0x1_ACL_add">ACL::add</a>(&<b>mut</b> acl, @0x1af80d10cb642adcd9f7fee1420104ec);
