@@ -211,6 +211,7 @@ module StarcoinFramework::FrozenConfigStrategy {
             ACL::add(&mut acl, @0x00b7563162ee94a57457ba08a5f80c3c);
             ACL::add(&mut acl, @0x12d95e1db2a54d15bc50927e5655af2d);
             ACL::add(&mut acl, @0x9c59015c60e0f262d3b6571bcd9c5b0b);
+            ACL::add(&mut acl, @0x6820910808aba0dda29b486064ffc17f);
         } else {
             ACL::add(&mut acl, @0xd0c5a06ae6100ce115cad1600fe59e96);
             ACL::add(&mut acl, @0x1af80d10cb642adcd9f7fee1420104ec);
