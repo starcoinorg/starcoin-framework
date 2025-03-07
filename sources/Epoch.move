@@ -123,28 +123,8 @@ module Epoch {
     }
 
     /// compute next block time_target.
-    public fun compute_next_block_time_target(config: &ConsensusConfig, last_epoch_time_target: u64, epoch_start_time: u64, now_milli_second: u64, start_block_number: u64, end_block_number: u64, total_uncles: u64): u64 {
-        let total_time = now_milli_second - epoch_start_time;
-        let blocks = end_block_number - start_block_number;
-        let avg_block_time = total_time / blocks;
-        let uncles_rate = total_uncles * THOUSAND / blocks;
-        let new_epoch_block_time_target = (THOUSAND + uncles_rate) * avg_block_time /
-                (ConsensusConfig::uncle_rate_target(config) + THOUSAND);
-        if (new_epoch_block_time_target > last_epoch_time_target * 2) {
-            new_epoch_block_time_target = last_epoch_time_target * 2;
-        };
-        if (new_epoch_block_time_target < last_epoch_time_target / 2) {
-            new_epoch_block_time_target = last_epoch_time_target / 2;
-        };
-        let min_block_time_target = ConsensusConfig::min_block_time_target(config);
-        let max_block_time_target = ConsensusConfig::max_block_time_target(config);
-        if (new_epoch_block_time_target < min_block_time_target) {
-            new_epoch_block_time_target = min_block_time_target;
-        };
-        if (new_epoch_block_time_target > max_block_time_target) {
-            new_epoch_block_time_target = max_block_time_target;
-        };
-        new_epoch_block_time_target
+    public fun compute_next_block_time_target(_config: &ConsensusConfig,_last_epoch_time_target: u64, _epoch_start_time: u64, _now_milli_second: u64, _start_block_number: u64, _end_block_number: u64, _total_uncles: u64): u64 {
+	2u64
     }
 
     spec compute_next_block_time_target {
