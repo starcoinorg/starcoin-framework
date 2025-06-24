@@ -135,6 +135,7 @@ module Genesis {
             base_max_uncles_per_block,
             base_block_gas_limit,
             strategy,
+            1,
         );
         Epoch::initialize(&genesis_account);
         BlockReward::initialize(&genesis_account, reward_delay);
@@ -275,6 +276,7 @@ module Genesis {
             min_action_delay,
             transaction_timeout,
             u64_max(),
+            1,
         );
     }
 
@@ -329,6 +331,7 @@ module Genesis {
         transaction_timeout: u64,
         // flexidag effective height
         dag_effective_height: u64,
+        blue_ratio: u64,
     ) {
         Self::do_initialize(
             stdlib_version,
@@ -374,6 +377,7 @@ module Genesis {
             min_action_delay,
             transaction_timeout,
             dag_effective_height,
+            blue_ratio,
         );
     }
 
@@ -428,6 +432,7 @@ module Genesis {
         transaction_timeout: u64,
         // flexidag effective height
         dag_effective_height: u64,
+        blue_ratio: u64,
     ) {
         Timestamp::assert_genesis();
         // create genesis account
@@ -473,6 +478,7 @@ module Genesis {
             base_max_uncles_per_block,
             base_block_gas_limit,
             strategy,
+            blue_ratio,
         );
         Epoch::initialize(&genesis_account);
         let association = Account::create_genesis_account(
@@ -583,6 +589,7 @@ module Genesis {
         let base_max_uncles_per_block: u64 = 2;
         let base_block_gas_limit: u64 = 500000000;
         let strategy: u8 = 0;
+        let blue_ratio: u64 = 1;
 
         //vm config
         let script_allowed: bool = true;
@@ -656,7 +663,8 @@ module Genesis {
             voting_quorum_rate,
             min_action_delay,
             transaction_timeout,
-            u64_max()
+            u64_max(),
+            blue_ratio,
         );
     }
 }

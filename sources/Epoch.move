@@ -85,6 +85,7 @@ module Epoch {
 
     const EUNREACHABLE: u64 = 19;
     const EINVALID_UNCLES_COUNT: u64 = 101;
+    const EINVALID_RATIO: u64 = 102;
 
     /// Initialization of the module.
     public fun initialize(
@@ -125,8 +126,35 @@ module Epoch {
     }
 
     /// compute next block time_target.
-    public fun compute_next_block_time_target(_config: &ConsensusConfig,_last_epoch_time_target: u64, _epoch_start_time: u64, _now_milli_second: u64, _start_block_number: u64, _end_block_number: u64, _total_uncles: u64): u64 {
-	2u64
+    public fun compute_next_block_time_target(blue_blocks: u64, red_blocks: u64, start_time: u64, selected_count: u64, min_block_time_target: u64, max_block_time_target: u64, k: u64, ratio: u64): u64 {
+        assert!(ratio >= 1 && ratio <= k, Errors::invalid_argument(EINVALID_RATIO));
+
+        let now = Timestamp::now_milliseconds();
+        let duration = now - start_time;
+
+        let total_blue_count = blue_blocks + selected_count;
+        let total_block_count = total_blue_count + red_blocks;
+        let expected_blue_count = (selected_count * 1000 * k / ratio - selected_count * 1000) / 1000;
+
+        let average_time = duration * 1000 / total_block_count;
+
+        let next_block_time_target = if (blue_blocks < expected_blue_count) {
+            average_time / 2 / 1000
+        } else if (blue_blocks > expected_blue_count) {
+            average_time * 2 / 1000
+        } else {
+            min_block_time_target 
+        };
+
+        next_block_time_target = if (next_block_time_target < 100) {
+            min_block_time_target
+        } else if (next_block_time_target > 2000) {
+            max_block_time_target
+        } else {
+            next_block_time_target
+        };
+
+        next_block_time_target
     }
 
     spec compute_next_block_time_target {
@@ -160,10 +188,9 @@ module Epoch {
             );
             // block time target unit is milli_seconds.
             let now_milli_seconds = timestamp;
-
             let config = ConsensusConfig::get_config();
             let last_epoch_time_target = epoch_ref.block_time_target;
-            let new_epoch_block_time_target = compute_next_block_time_target(&config, last_epoch_time_target, epoch_ref.start_time, now_milli_seconds, epoch_ref.start_block_number, epoch_ref.end_block_number, epoch_data.uncles);
+            let new_epoch_block_time_target = compute_next_block_time_target(epoch_data.uncles, epoch_data.red_blocks, epoch_ref.start_time, ConsensusConfig::epoch_block_count(&config), ConsensusConfig::min_block_time_target(&config), ConsensusConfig::max_block_time_target(&config), ConsensusConfig::base_max_uncles_per_block(&config), ConsensusConfig::blue_ratio(&config));
             let new_reward_per_block = ConsensusConfig::do_compute_reward_per_block(&config, new_epoch_block_time_target);
 
             //update epoch by adjust result or config, because ConsensusConfig may be updated.

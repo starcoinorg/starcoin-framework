@@ -157,7 +157,8 @@ module StdlibUpgradeScripts {
                 ConsensusConfig::max_block_time_target(&current_consensus_config),
                 16,
                 ConsensusConfig::base_block_gas_limit(&current_consensus_config),
-                ConsensusConfig::strategy(&current_consensus_config)
+                ConsensusConfig::strategy(&current_consensus_config),
+                ConsensusConfig::blue_ratio(&current_consensus_config)
             );
         Config::update_config_with_genesis(sender, updated_consensus_config);
     }   
