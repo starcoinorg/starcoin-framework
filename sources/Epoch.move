@@ -75,6 +75,8 @@ module Epoch {
         total_reward: u128,
         /// Up to now, Total gases during current epoch
         total_gas: u128,
+        /// The count of red blocks during current epoch
+        red_blocks: u64,
     }
 
     const THOUSAND: u64 = 1000;
@@ -109,7 +111,7 @@ module Epoch {
                 new_epoch_events: Event::new_event_handle<NewEpochEvent>(account),
             },
         );
-        move_to<EpochData>(account, EpochData { uncles: 0, total_reward: 0, total_gas: 0 });
+        move_to<EpochData>(account, EpochData { uncles: 0, total_reward: 0, total_gas: 0, red_blocks: 0, });
     }
 
     spec initialize {
@@ -132,7 +134,7 @@ module Epoch {
     }
 
     /// adjust_epoch try to advance to next epoch if current epoch ends.
-    public fun adjust_epoch(account: &signer, block_number: u64, timestamp: u64, uncles: u64, parent_gas_used:u64): u128
+    public fun adjust_epoch(account: &signer, block_number: u64, timestamp: u64, uncles: u64, parent_gas_used:u64, red_blocks: u64): u128
     acquires Epoch, EpochData {
         CoreAddresses::assert_genesis_address(account);
 
@@ -177,6 +179,7 @@ module Epoch {
             epoch_ref.strategy = ConsensusConfig::strategy(&config);
 
             epoch_data.uncles = 0;
+            epoch_data.red_blocks = 0;
             let last_epoch_total_gas = epoch_data.total_gas + (parent_gas_used as u128);
             adjust_gas_limit(&config, epoch_ref, last_epoch_time_target, new_epoch_block_time_target, last_epoch_total_gas);
             emit_epoch_event(epoch_ref, epoch_data.total_reward);
@@ -187,7 +190,7 @@ module Epoch {
         };
         let reward = reward_per_block +
                 reward_per_block * (epoch_ref.reward_per_uncle_percent as u128) * (uncles as u128) / (HUNDRED as u128);
-        update_epoch_data(epoch_data, new_epoch, reward, uncles, parent_gas_used);
+        update_epoch_data(epoch_data, new_epoch, reward, uncles, parent_gas_used, red_blocks);
         reward
     }
 
@@ -254,7 +257,7 @@ module Epoch {
         aborts_if Math::spec_mul_div() > MAX_U64;
     }
 
-    fun update_epoch_data(epoch_data: &mut EpochData, new_epoch: bool, reward: u128, uncles: u64, parent_gas_used:u64) {
+    fun update_epoch_data(epoch_data: &mut EpochData, new_epoch: bool, reward: u128, uncles: u64, parent_gas_used:u64, red_blocks: u64) {
         if (new_epoch) {
             epoch_data.total_reward = reward;
             epoch_data.uncles = uncles;
@@ -263,6 +266,7 @@ module Epoch {
             epoch_data.total_reward = epoch_data.total_reward + reward;
             epoch_data.uncles = epoch_data.uncles + uncles;
             epoch_data.total_gas = epoch_data.total_gas + (parent_gas_used as u128);
+            epoch_data.red_blocks = epoch_data.red_blocks + red_blocks;
         }
     }
 
