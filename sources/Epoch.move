@@ -146,9 +146,9 @@ module Epoch {
             min_block_time_target 
         };
 
-        next_block_time_target = if (next_block_time_target < 100) {
+        next_block_time_target = if (next_block_time_target < min_block_time_target) {
             min_block_time_target
-        } else if (next_block_time_target > 2000) {
+        } else if (next_block_time_target > max_block_time_target) {
             max_block_time_target
         } else {
             next_block_time_target
