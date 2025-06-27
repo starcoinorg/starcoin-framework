@@ -126,10 +126,9 @@ module Epoch {
     }
 
     /// compute next block time_target.
-    public fun compute_next_block_time_target(blue_blocks: u64, red_blocks: u64, start_time: u64, selected_count: u64, min_block_time_target: u64, max_block_time_target: u64, k: u64, ratio: u64): u64 {
+    public fun compute_next_block_time_target(blue_blocks: u64, red_blocks: u64, start_time: u64, selected_count: u64, min_block_time_target: u64, max_block_time_target: u64, k: u64, ratio: u64, now: u64): u64 {
         assert!(ratio >= 1 && ratio <= k, Errors::invalid_argument(EINVALID_RATIO));
 
-        let now = Timestamp::now_milliseconds();
         let duration = now - start_time;
 
         let total_blue_count = blue_blocks + selected_count;
@@ -190,7 +189,7 @@ module Epoch {
             let now_milli_seconds = timestamp;
             let config = ConsensusConfig::get_config();
             let last_epoch_time_target = epoch_ref.block_time_target;
-            let new_epoch_block_time_target = compute_next_block_time_target(epoch_data.uncles, epoch_data.red_blocks, epoch_ref.start_time, ConsensusConfig::epoch_block_count(&config), ConsensusConfig::min_block_time_target(&config), ConsensusConfig::max_block_time_target(&config), ConsensusConfig::base_max_uncles_per_block(&config), ConsensusConfig::blue_ratio(&config));
+            let new_epoch_block_time_target = compute_next_block_time_target(epoch_data.uncles, epoch_data.red_blocks, epoch_ref.start_time, ConsensusConfig::epoch_block_count(&config), ConsensusConfig::min_block_time_target(&config), ConsensusConfig::max_block_time_target(&config), ConsensusConfig::base_max_uncles_per_block(&config), ConsensusConfig::blue_ratio(&config), now_milli_seconds);
             let new_reward_per_block = ConsensusConfig::do_compute_reward_per_block(&config, new_epoch_block_time_target);
 
             //update epoch by adjust result or config, because ConsensusConfig may be updated.
