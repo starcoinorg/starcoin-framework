@@ -287,6 +287,7 @@ module Epoch {
         if (new_epoch) {
             epoch_data.total_reward = reward;
             epoch_data.uncles = uncles;
+            epoch_data.red_blocks = red_blocks;
             epoch_data.total_gas = 0;
         } else {
             epoch_data.total_reward = epoch_data.total_reward + reward;
