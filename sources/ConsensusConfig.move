@@ -105,7 +105,7 @@ module ConsensusConfig {
                                     base_block_gas_limit: u64,
                                     strategy: u8,
                                     ): ConsensusConfig {
-        assert!(uncle_rate_target >=1 && uncle_rate_target <= base_max_uncles_per_block, Errors::invalid_argument(EINVALID_ARGUMENT));
+        assert!(uncle_rate_target >=1, Errors::invalid_argument(EINVALID_ARGUMENT));
         assert!(base_block_time_target > 0, Errors::invalid_argument(EINVALID_ARGUMENT));
         assert!(base_reward_per_block > 0, Errors::invalid_argument(EINVALID_ARGUMENT));
         assert!(epoch_block_count > 0, Errors::invalid_argument(EINVALID_ARGUMENT));
