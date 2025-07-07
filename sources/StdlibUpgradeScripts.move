@@ -158,10 +158,9 @@ module StdlibUpgradeScripts {
                 16,
                 ConsensusConfig::base_block_gas_limit(&current_consensus_config),
                 ConsensusConfig::strategy(&current_consensus_config),
-                ConsensusConfig::blue_ratio(&current_consensus_config)
             );
         Config::update_config_with_genesis(sender, updated_consensus_config);
-    }   
+    }
     
     /// Burned by user account
     const ERR_NOT_RIGHT_ADDRESS: u64 = 101;

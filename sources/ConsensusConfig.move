@@ -37,8 +37,6 @@ module ConsensusConfig {
         base_block_gas_limit: u64,
         /// Strategy to calculate difficulty
         strategy: u8,
-        /// Blue block ratio 
-        blue_ratio: u64,
     }
 
     const EINVALID_ARGUMENT: u64 = 18;
@@ -57,7 +55,6 @@ module ConsensusConfig {
         base_max_uncles_per_block: u64,
         base_block_gas_limit: u64,
         strategy: u8,
-        blue_ratio: u64,
     ) {
         Timestamp::assert_genesis();
         CoreAddresses::assert_genesis_address(account);
@@ -76,7 +73,6 @@ module ConsensusConfig {
                 base_max_uncles_per_block,
                 base_block_gas_limit,
                 strategy,
-                blue_ratio,
             ),
         );
     }
@@ -108,9 +104,8 @@ module ConsensusConfig {
                                     base_max_uncles_per_block: u64,
                                     base_block_gas_limit: u64,
                                     strategy: u8,
-                                    blue_ratio: u64,
                                     ): ConsensusConfig {
-        assert!(uncle_rate_target > 0, Errors::invalid_argument(EINVALID_ARGUMENT));
+        assert!(uncle_rate_target >=1 && uncle_rate_target <= base_max_uncles_per_block, Errors::invalid_argument(EINVALID_ARGUMENT));
         assert!(base_block_time_target > 0, Errors::invalid_argument(EINVALID_ARGUMENT));
         assert!(base_reward_per_block > 0, Errors::invalid_argument(EINVALID_ARGUMENT));
         assert!(epoch_block_count > 0, Errors::invalid_argument(EINVALID_ARGUMENT));
@@ -118,8 +113,6 @@ module ConsensusConfig {
         // base_reward_per_uncle_percent can been zero.
         assert!(min_block_time_target > 0, Errors::invalid_argument(EINVALID_ARGUMENT));
         assert!(max_block_time_target >= min_block_time_target, Errors::invalid_argument(EINVALID_ARGUMENT));
-        assert!(blue_ratio >= 1 && blue_ratio <= base_max_uncles_per_block, Errors::invalid_argument(EINVALID_ARGUMENT));
-
         ConsensusConfig {
             uncle_rate_target,
             base_block_time_target,
@@ -132,7 +125,6 @@ module ConsensusConfig {
             base_max_uncles_per_block,
             base_block_gas_limit,
             strategy,
-            blue_ratio,
         }
     }
 
@@ -212,12 +204,7 @@ module ConsensusConfig {
     public fun strategy(config: &ConsensusConfig): u8 {
         config.strategy
     }
-
-    /// Get the blue ratio to calculate the next block time target
-    public fun blue_ratio(config: &ConsensusConfig): u64 {
-        config.blue_ratio
-    }
-
+    
     /// Compute block reward given the `new_epoch_block_time_target`.
     public fun compute_reward_per_block(new_epoch_block_time_target: u64): u128 {
         let config = get_config();
