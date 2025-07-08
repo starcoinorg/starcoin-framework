@@ -48,6 +48,8 @@ module Block {
         uncles: u64,
         /// An Array of the parents hash for a Dag block.
         parents_hash: vector<u8>,
+	/// number of red blocks
+	red_blocks: u64,
         /// Handle of events when new blocks are emitted
         new_block_events: Event::EventHandle<Self::NewBlockEventV2>,
     }
@@ -106,6 +108,7 @@ module Block {
                 author: block_meta_ref.author,
                 uncles: block_meta_ref.uncles,
                 parents_hash: Vector::empty(),
+		red_blocks: 0,
                 new_block_events: Event::new_event_handle<Self::NewBlockEventV2>(account),
             });
     }
@@ -215,7 +218,8 @@ module Block {
         timestamp: u64,
         uncles: u64,
         number: u64,
-        parents_hash: vector<u8>
+        parents_hash: vector<u8>,
+	red_blocks: u64,
     ) acquires BlockMetadataV2, BlockMetadata {
         CoreAddresses::assert_genesis_address(account);
 
@@ -228,7 +232,7 @@ module Block {
             block_metadata_ref.parent_hash = parent_hash;
             block_metadata_ref.uncles = uncles;
             block_metadata_ref.parents_hash = parents_hash;
-
+            block_metadata_ref.red_blocks = red_blocks;
             Event::emit_event<NewBlockEventV2>(
                 &mut block_metadata_ref.new_block_events,
                 NewBlockEventV2 {

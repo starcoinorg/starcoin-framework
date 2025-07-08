@@ -263,6 +263,7 @@ module TransactionManager {
             uncles,
             number,
             parents_hash,
+	    red_blocks,
         );
         let reward = Epoch::adjust_epoch(&account, number, timestamp, uncles, parent_gas_used, red_blocks);
         // pass in previous block gas fees.
