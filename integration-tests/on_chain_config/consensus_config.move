@@ -8,7 +8,7 @@ script {
 
     // test do_compute_reward_per_block()
     fun compute_reward_per_block() {
-        let uncle_rate_target = 80;
+        let uncle_rate_target = 1;
         let base_reward_per_block = 10000;
         let base_block_time_target = 10;
         let base_reward_per_uncle_percent = 0;
@@ -44,10 +44,9 @@ script {
 // test compute_reward_per_block
 script {
     use StarcoinFramework::ConsensusConfig;
-
     fun compute_reward_per_block() {
         let block_time_target = 10000; // equal to default block_time_target
-        let default_reward_per_block = 10000000000; // should be consistent with genesis config
+        let default_reward_per_block = 1000000000000; // should be consistent with genesis config
         let reward_per_block = ConsensusConfig::compute_reward_per_block(block_time_target);
         assert!(reward_per_block == default_reward_per_block, 102);
     }
@@ -58,7 +57,7 @@ script {
     use StarcoinFramework::ConsensusConfig;
 
     fun incorrect_uncle_rate_target() {
-        let uncle_rate_target = 0; // should large than 0
+        let uncle_rate_target = 0; // should large than 1
         let base_reward_per_block = 10000;
         let base_block_time_target = 10;
         let base_reward_per_uncle_percent = 0;
@@ -91,7 +90,7 @@ script {
     use StarcoinFramework::ConsensusConfig;
 
     fun incorrect_uncle_rate_target() {
-        let uncle_rate_target = 80;
+        let uncle_rate_target = 1;
         let base_reward_per_block = 0; // should large than 0
         let base_block_time_target = 10;
         let base_reward_per_uncle_percent = 0;
@@ -124,7 +123,7 @@ script {
     use StarcoinFramework::ConsensusConfig;
 
     fun incorrect_uncle_rate_target() {
-        let uncle_rate_target = 80;
+        let uncle_rate_target = 1;
         let base_reward_per_block = 10000;
         let base_block_time_target = 0; // should large than 0
         let base_reward_per_uncle_percent = 0;
@@ -157,7 +156,7 @@ script {
     use StarcoinFramework::ConsensusConfig;
 
     fun incorrect_uncle_rate_target() {
-        let uncle_rate_target = 80;
+        let uncle_rate_target = 1;
         let base_reward_per_block = 10000;
         let base_block_time_target = 10;
         let base_reward_per_uncle_percent = 0;
@@ -191,7 +190,7 @@ script {
     use StarcoinFramework::ConsensusConfig;
 
     fun incorrect_uncle_rate_target() {
-        let uncle_rate_target = 80;
+        let uncle_rate_target = 1;
         let base_reward_per_block = 10000;
         let base_block_time_target = 10;
         let base_reward_per_uncle_percent = 0;
@@ -225,7 +224,7 @@ script {
     use StarcoinFramework::ConsensusConfig;
 
     fun incorrect_uncle_rate_target() {
-        let uncle_rate_target = 80;
+        let uncle_rate_target = 1;
         let base_reward_per_block = 10000;
         let base_block_time_target = 10;
         let base_reward_per_uncle_percent = 0;

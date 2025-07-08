@@ -8,7 +8,7 @@ script {
     use StarcoinFramework::Epoch;
 
     fun compute_next_block_time_target() {
-        let uncle_rate_target = 80;
+        let uncle_rate_target = 1;
         let base_reward_per_block = 10000;
         let base_block_time_target = 10000;
         let base_reward_per_uncle_percent = 0;

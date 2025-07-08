@@ -22,7 +22,7 @@ use StarcoinFramework::Epoch;
                 uncles = 0;
                 //Debug::print(&Epoch::block_time_target());
             };
-            let _reward = Epoch::adjust_epoch(&genesis_account, block_number, block_time_milliseonds, uncles, 0,1);
+            let _reward = Epoch::adjust_epoch(&genesis_account, block_number, block_time_milliseonds, uncles, 0, 1);
 
             let block_time_target = Epoch::block_time_target();
             //Debug::print(&block_time_target);

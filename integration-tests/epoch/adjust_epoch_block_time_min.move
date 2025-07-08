@@ -21,7 +21,7 @@ fun main(genesis_account: signer) {
         if (block_number == Epoch::end_block_number()) {
             //Debug::print(&Epoch::block_time_target());
         };
-        let _reward = Epoch::adjust_epoch(&genesis_account, block_number, block_time_milliseonds, 0, 0);
+        let _reward = Epoch::adjust_epoch(&genesis_account, block_number, block_time_milliseonds, 0, 0, 0);
         let block_time_target = Epoch::block_time_target();
         assert!(pre_block_time_target >= block_time_target, 101);
         assert!(block_time_target >= min_block_time_target, 102);
