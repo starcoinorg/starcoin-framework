@@ -10,7 +10,7 @@ script {
     fun compute_reward_per_block() {
         let uncle_rate_target = 1;
         let base_reward_per_block = 10000;
-        let base_block_time_target = 10;
+        let base_block_time_target = 500;
         let base_reward_per_uncle_percent = 0;
         let epoch_block_count = 500;
         let base_block_difficulty_window = 50;
