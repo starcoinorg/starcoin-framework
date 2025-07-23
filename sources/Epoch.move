@@ -435,5 +435,17 @@ module Epoch {
         aborts_if !exists<Epoch>(CoreAddresses::SPEC_GENESIS_ADDRESS());
     }
 
+    /// Get max transaction per block
+    public fun max_transaction_per_block(): u64 acquires Epoch {
+        let epoch_ref = borrow_global<Epoch>(CoreAddresses::GENESIS_ADDRESS());
+        epoch_ref.max_transaction_per_block
+    }
+
+    spec max_transaction_per_block {
+        aborts_if !exists<Epoch>(CoreAddresses::SPEC_GENESIS_ADDRESS());
+    }
+
+
+
 }
 }

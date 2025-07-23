@@ -19,6 +19,7 @@ script {
         let base_max_uncles_per_block = 2;
         let base_block_gas_limit = 10000;
         let strategy = 1;
+        let max_transaction_per_block = 50;
 
         let config = ConsensusConfig::new_consensus_config(
             uncle_rate_target,
@@ -31,7 +32,8 @@ script {
             max_block_time_target,
             base_max_uncles_per_block,
             base_block_gas_limit,
-            strategy);
+            strategy,
+            max_transaction_per_block);
 
         let total_uncles = 0;
         let now_milli_seconds = epoch_block_count*base_block_time_target;
