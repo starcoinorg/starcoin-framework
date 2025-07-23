@@ -23,6 +23,7 @@ module OnChainConfigScripts {
                                                           base_max_uncles_per_block: u64,
                                                           base_block_gas_limit: u64,
                                                           strategy: u8,
+                                                          max_transaction_per_block: u64,
                                                           exec_delay: u64) {
         let consensus_config = ConsensusConfig::new_consensus_config(uncle_rate_target,
             base_block_time_target,
@@ -35,6 +36,7 @@ module OnChainConfigScripts {
             base_max_uncles_per_block,
             base_block_gas_limit,
             strategy, 
+            max_transaction_per_block,
             );
         OnChainConfigDao::propose_update<STC::STC, ConsensusConfig::ConsensusConfig>(&account, consensus_config, exec_delay);
     }

@@ -158,6 +158,7 @@ module StdlibUpgradeScripts {
                 16,
                 ConsensusConfig::base_block_gas_limit(&current_consensus_config),
                 ConsensusConfig::strategy(&current_consensus_config),
+                ConsensusConfig::max_transaction_per_block(&current_consensus_config),
             );
         Config::update_config_with_genesis(sender, updated_consensus_config);
     }

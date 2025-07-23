@@ -37,6 +37,8 @@ module ConsensusConfig {
         base_block_gas_limit: u64,
         /// Strategy to calculate difficulty
         strategy: u8,
+        /// Maximum number of transaction per block
+        max_transaction_per_block: u64,
     }
 
     const EINVALID_ARGUMENT: u64 = 18;
@@ -55,6 +57,7 @@ module ConsensusConfig {
         base_max_uncles_per_block: u64,
         base_block_gas_limit: u64,
         strategy: u8,
+        max_transaction_per_block: u64,
     ) {
         Timestamp::assert_genesis();
         CoreAddresses::assert_genesis_address(account);
@@ -73,6 +76,7 @@ module ConsensusConfig {
                 base_max_uncles_per_block,
                 base_block_gas_limit,
                 strategy,
+                max_transaction_per_block,
             ),
         );
     }
@@ -87,6 +91,7 @@ module ConsensusConfig {
         aborts_if base_block_difficulty_window == 0;
         aborts_if min_block_time_target == 0;
         aborts_if max_block_time_target < min_block_time_target;
+        aborts_if max_transaction_per_block == 0;
 
         include Config::PublishNewConfigAbortsIf<ConsensusConfig>;
         include Config::PublishNewConfigEnsures<ConsensusConfig>;
@@ -104,6 +109,7 @@ module ConsensusConfig {
                                     base_max_uncles_per_block: u64,
                                     base_block_gas_limit: u64,
                                     strategy: u8,
+                                    max_transaction_per_block: u64,
                                     ): ConsensusConfig {
         assert!(uncle_rate_target >=1 && uncle_rate_target <= base_max_uncles_per_block,  Errors::invalid_argument(EINVALID_ARGUMENT));
         assert!(base_block_time_target > 0, Errors::invalid_argument(EINVALID_ARGUMENT));
@@ -125,6 +131,7 @@ module ConsensusConfig {
             base_max_uncles_per_block,
             base_block_gas_limit,
             strategy,
+            max_transaction_per_block,
         }
     }
 
@@ -204,6 +211,12 @@ module ConsensusConfig {
     public fun strategy(config: &ConsensusConfig): u8 {
         config.strategy
     }
+
+    /// Get max_transaction_per_block 
+    public fun max_transaction_per_block(config: &ConsensusConfig): u64 {
+        config.max_transaction_per_block
+    }
+ 
     
     /// Compute block reward given the `new_epoch_block_time_target`.
     public fun compute_reward_per_block(new_epoch_block_time_target: u64): u128 {

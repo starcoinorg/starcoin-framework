@@ -45,6 +45,8 @@ module Epoch {
         block_gas_limit: u64,
         /// Strategy to calculate difficulty in current epoch
         strategy: u8,
+        /// Maximum number of transacions per block in current epoch 
+        max_transaction_per_block: u64,
         /// Switch Epoch Event
         new_epoch_events: Event::EventHandle<NewEpochEvent>,
     }
@@ -109,6 +111,7 @@ module Epoch {
                 max_uncles_per_block: ConsensusConfig::base_max_uncles_per_block(&config),
                 block_gas_limit: ConsensusConfig::base_block_gas_limit(&config),
                 strategy: ConsensusConfig::strategy(&config),
+                max_transaction_per_block: ConsensusConfig::max_transaction_per_block(&config),
                 new_epoch_events: Event::new_event_handle<NewEpochEvent>(account),
             },
         );
@@ -232,6 +235,7 @@ module Epoch {
             epoch_ref.block_difficulty_window = ConsensusConfig::base_block_difficulty_window(&config);
             epoch_ref.max_uncles_per_block = ConsensusConfig::base_max_uncles_per_block(&config);
             epoch_ref.strategy = ConsensusConfig::strategy(&config);
+            epoch_ref.max_transaction_per_block = ConsensusConfig::max_transaction_per_block(&config);
 
             epoch_data.uncles = 0;
             epoch_data.red_blocks = 0;
