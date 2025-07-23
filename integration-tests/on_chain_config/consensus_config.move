@@ -12,13 +12,14 @@ script {
         let base_reward_per_block = 10000;
         let base_block_time_target = 10;
         let base_reward_per_uncle_percent = 0;
-        let epoch_block_count = 240;
-        let base_block_difficulty_window = 24;
+        let epoch_block_count = 500;
+        let base_block_difficulty_window = 50;
         let min_block_time_target = 5;
         let max_block_time_target = 60;
         let base_max_uncles_per_block = 2;
         let base_block_gas_limit = 10000;
         let strategy = 1;
+        let max_transaction_per_block = 50;
 
         let config = ConsensusConfig::new_consensus_config(
             uncle_rate_target,
@@ -31,7 +32,8 @@ script {
             max_block_time_target,
             base_max_uncles_per_block,
             base_block_gas_limit,
-            strategy);
+            strategy,
+            max_transaction_per_block);
 
         assert!(ConsensusConfig::do_compute_reward_per_block(&config, base_block_time_target * 2) == base_reward_per_block * 2, 101);
         assert!(ConsensusConfig::do_compute_reward_per_block(&config, base_block_time_target / 2) == base_reward_per_block / 2, 102);
@@ -68,6 +70,7 @@ script {
         let base_max_uncles_per_block = 2;
         let base_block_gas_limit = 10000;
         let strategy = 1;
+        let max_transaction_per_block = 50;
 
         ConsensusConfig::new_consensus_config(
             uncle_rate_target,
@@ -80,7 +83,8 @@ script {
             max_block_time_target,
             base_max_uncles_per_block,
             base_block_gas_limit,
-            strategy);
+            strategy,
+            max_transaction_per_block);
 
     }
 }
@@ -101,6 +105,7 @@ script {
         let base_max_uncles_per_block = 2;
         let base_block_gas_limit = 10000;
         let strategy = 1;
+        let max_transaction_per_block = 50;
 
         ConsensusConfig::new_consensus_config(
             uncle_rate_target,
@@ -113,7 +118,8 @@ script {
             max_block_time_target,
             base_max_uncles_per_block,
             base_block_gas_limit,
-            strategy);
+            strategy,
+            max_transaction_per_block);
 
     }
 }
@@ -134,6 +140,7 @@ script {
         let base_max_uncles_per_block = 2;
         let base_block_gas_limit = 10000;
         let strategy = 1;
+        let max_transaction_per_block = 50;
 
         ConsensusConfig::new_consensus_config(
             uncle_rate_target,
@@ -146,7 +153,8 @@ script {
             max_block_time_target,
             base_max_uncles_per_block,
             base_block_gas_limit,
-            strategy);
+            strategy,
+            max_transaction_per_block);
 
     }
 }
@@ -167,6 +175,7 @@ script {
         let base_max_uncles_per_block = 2;
         let base_block_gas_limit = 10000;
         let strategy = 1;
+        let max_transaction_per_block = 50;
 
         ConsensusConfig::new_consensus_config(
             uncle_rate_target,
@@ -179,7 +188,8 @@ script {
             max_block_time_target,
             base_max_uncles_per_block,
             base_block_gas_limit,
-            strategy);
+            strategy,
+            max_transaction_per_block);
 
     }
 }
@@ -201,6 +211,7 @@ script {
         let base_max_uncles_per_block = 2;
         let base_block_gas_limit = 10000;
         let strategy = 1;
+        let max_transaction_per_block = 50;
 
         ConsensusConfig::new_consensus_config(
             uncle_rate_target,
@@ -213,7 +224,8 @@ script {
             max_block_time_target,
             base_max_uncles_per_block,
             base_block_gas_limit,
-            strategy);
+            strategy,
+            max_transaction_per_block);
 
     }
 }
@@ -228,13 +240,14 @@ script {
         let base_reward_per_block = 10000;
         let base_block_time_target = 10;
         let base_reward_per_uncle_percent = 0;
-        let epoch_block_count = 240;
-        let base_block_difficulty_window = 24;
+        let epoch_block_count = 500;
+        let base_block_difficulty_window = 50;
         let min_block_time_target = 0; // should large than 0
         let max_block_time_target = 60;
         let base_max_uncles_per_block = 2;
         let base_block_gas_limit = 10000;
         let strategy = 1;
+        let max_transaction_per_block = 50;
 
         ConsensusConfig::new_consensus_config(
             uncle_rate_target,
@@ -247,7 +260,8 @@ script {
             max_block_time_target,
             base_max_uncles_per_block,
             base_block_gas_limit,
-            strategy);
+            strategy,
+            max_transaction_per_block);
 
     }
 }
@@ -262,13 +276,14 @@ script {
         let base_reward_per_block = 10000;
         let base_block_time_target = 10;
         let base_reward_per_uncle_percent = 0;
-        let epoch_block_count = 240;
-        let base_block_difficulty_window = 24;
+        let epoch_block_count = 500;
+        let base_block_difficulty_window = 50;
         let min_block_time_target = 5;
         let max_block_time_target = 4; //max_block_time_target should large than min_block_time_target
         let base_max_uncles_per_block = 2;
         let base_block_gas_limit = 10000;
         let strategy = 1;
+        let max_transaction_per_block = 50;
 
         ConsensusConfig::new_consensus_config(
             uncle_rate_target,
@@ -281,7 +296,8 @@ script {
             max_block_time_target,
             base_max_uncles_per_block,
             base_block_gas_limit,
-            strategy);
+            strategy,
+            max_transaction_per_block);
 
     }
 }
