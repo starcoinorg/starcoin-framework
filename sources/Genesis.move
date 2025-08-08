@@ -65,7 +65,6 @@ module Genesis {
         base_max_uncles_per_block: u64,
         base_block_gas_limit: u64,
         strategy: u8,
-        max_transaction_per_block: u64,
         //vm config
         script_allowed: bool,
         module_publishing_allowed: bool,
@@ -136,7 +135,7 @@ module Genesis {
             base_max_uncles_per_block,
             base_block_gas_limit,
             strategy,
-            max_transaction_per_block,
+            3000,
         );
         Epoch::initialize(&genesis_account);
         BlockReward::initialize(&genesis_account, reward_delay);
@@ -208,7 +207,6 @@ module Genesis {
         base_max_uncles_per_block: u64,
         base_block_gas_limit: u64,
         strategy: u8,
-        max_transaction_per_block: u64,
         //vm config
         script_allowed: bool,
         module_publishing_allowed: bool,
@@ -257,7 +255,7 @@ module Genesis {
             base_max_uncles_per_block,
             base_block_gas_limit,
             strategy,
-            max_transaction_per_block,
+            3000,
             script_allowed,
             module_publishing_allowed,
             instruction_schedule,
