@@ -15,7 +15,7 @@ script {
         let default_start_time = 0;
         let default_total_gas = 0;
         let default_uncles = 0;
-        let default_max_transaction_per_block = 50;
+        let default_max_transaction_per_block = 700;
         let block_gas_limit = Epoch::block_gas_limit();
         let number = Epoch::number();
         let start_block_number = Epoch::start_block_number();
