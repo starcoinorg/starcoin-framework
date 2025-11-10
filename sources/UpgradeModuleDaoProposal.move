@@ -1,6 +1,6 @@
-address StarcoinFramework {
 /// UpgradeModuleDaoProposal is a proposal moudle used to upgrade contract codes under a token.
-module UpgradeModuleDaoProposal {
+module StarcoinFramework::UpgradeModuleDaoProposal {
+    use StarcoinFramework::STC::is_stc;
     use StarcoinFramework::PackageTxnManager;
     use StarcoinFramework::Token;
     use StarcoinFramework::Signer;
@@ -17,6 +17,7 @@ module UpgradeModuleDaoProposal {
     const ERR_UNABLE_TO_UPGRADE: u64 = 400;
     const ERR_NOT_AUTHORIZED: u64 = 401;
     const ERR_ADDRESS_MISSMATCH: u64 = 402;
+    const ERR_NOT_SUPPORT_UPGRADE_FOR_USER_MODULE: u64 = 403;
 
     /// A wrapper of `PackageTxnManager::UpgradePlanCapability`.
     struct UpgradeModuleCapability<phantom TokenT> has key {
@@ -42,6 +43,10 @@ module UpgradeModuleDaoProposal {
         signer: &signer,
         cap: PackageTxnManager::UpgradePlanCapability,
     ) {
+        if (!is_stc<TokenT>()) {
+            abort Errors::deprecated(ERR_NOT_SUPPORT_UPGRADE_FOR_USER_MODULE)
+        };
+
         let token_issuer = Token::token_address<TokenT>();
         assert!(Signer::address_of(signer) == token_issuer, Errors::requires_address(ERR_NOT_AUTHORIZED));
         move_to(signer, UpgradeModuleCapability<TokenT> { cap })
@@ -71,6 +76,10 @@ module UpgradeModuleDaoProposal {
         exec_delay: u64,
         enforced: bool,
     ) acquires UpgradeModuleCapability {
+        if (!is_stc<TokenT>()) {
+            abort Errors::deprecated(ERR_NOT_SUPPORT_UPGRADE_FOR_USER_MODULE)
+        };
+
         let cap = borrow_global<UpgradeModuleCapability<TokenT>>(Token::token_address<TokenT>());
         let account_address = PackageTxnManager::account_address(&cap.cap);
         assert!(account_address == module_address, Errors::requires_capability(ERR_ADDRESS_MISSMATCH));
@@ -91,10 +100,17 @@ module UpgradeModuleDaoProposal {
         proposer_address: address,
         proposal_id: u64,
     ) acquires UpgradeModuleCapability {
-        let UpgradeModuleV2 { module_address, package_hash, version, enforced } = Dao::extract_proposal_action<
-            TokenT,
-            UpgradeModuleV2,
-        >(proposer_address, proposal_id);
+        if (!is_stc<TokenT>()) {
+            abort Errors::deprecated(ERR_NOT_SUPPORT_UPGRADE_FOR_USER_MODULE)
+        };
+
+        let UpgradeModuleV2 {
+            module_address,
+            package_hash,
+            version,
+            enforced
+        } = Dao::extract_proposal_action<TokenT, UpgradeModuleV2, >(proposer_address, proposal_id);
+
         let cap = borrow_global<UpgradeModuleCapability<TokenT>>(Token::token_address<TokenT>());
         let account_address = PackageTxnManager::account_address(&cap.cap);
         assert!(account_address == module_address, Errors::requires_capability(ERR_ADDRESS_MISSMATCH));
@@ -105,13 +121,13 @@ module UpgradeModuleDaoProposal {
             enforced,
         );
     }
+
     spec submit_module_upgrade_plan {
         let expected_states = vec<u8>(6);
-        include Dao::CheckProposalStates<TokenT, UpgradeModule>{expected_states};
+        include Dao::CheckProposalStates<TokenT, UpgradeModule> { expected_states };
         let proposal = global<Dao::Proposal<TokenT, UpgradeModule>>(proposer_address);
         aborts_if Option::is_none(proposal.action);
         let action = proposal.action.vec[0];
-        include AbortIfUnableUpgrade<TokenT>{module_address: action.module_address};
+        include AbortIfUnableUpgrade<TokenT> { module_address: action.module_address };
     }
-}
 }

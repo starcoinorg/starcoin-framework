@@ -12,42 +12,40 @@ module StarcoinFramework::StdlibUpgradeScripts {
     use StarcoinFramework::Offer;
     use StarcoinFramework::OnChainConfigDao;
     use StarcoinFramework::Oracle;
-    use StarcoinFramework::STC::{Self, STC};
+    use StarcoinFramework::STC::STC;
     use StarcoinFramework::STCUSDOracle;
-    use StarcoinFramework::Timestamp;
     use StarcoinFramework::Token::{Self, LinearTimeMintKey};
     use StarcoinFramework::Treasury::{Self, LinearWithdrawCapability};
-    use StarcoinFramework::TreasuryWithdrawDaoProposal;
 
     spec module {
         pragma verify = false;
         pragma aborts_if_is_strict = true;
     }
-
-    /// Stdlib upgrade script from v2 to v3
-    public entry fun upgrade_from_v2_to_v3(account: signer, total_stc_amount: u128) {
-        CoreAddresses::assert_genesis_address(&account);
-
-        let withdraw_cap = STC::upgrade_from_v1_to_v2(&account, total_stc_amount);
-
-        let mint_keys = Collection::borrow_collection<LinearTimeMintKey<STC>>(
-            CoreAddresses::ASSOCIATION_ROOT_ADDRESS()
-        );
-        let mint_key = Collection::borrow(&mint_keys, 0);
-        let (total, minted, start_time, period) = Token::read_linear_time_key(mint_key);
-        Collection::return_collection(mint_keys);
-
-        let now = Timestamp::now_seconds();
-        let linear_withdraw_cap = Treasury::issue_linear_withdraw_capability(
-            &mut withdraw_cap,
-            total - minted,
-            period - (now - start_time)
-        );
-        // Lock the TreasuryWithdrawCapability to Dao
-        TreasuryWithdrawDaoProposal::plugin(&account, withdraw_cap);
-        // Give a LinearWithdrawCapability Offer to association, association need to take the offer, and destroy old LinearTimeMintKey.
-        Offer::create(&account, linear_withdraw_cap, CoreAddresses::ASSOCIATION_ROOT_ADDRESS(), 0);
-    }
+    //
+    // /// Stdlib upgrade script from v2 to v3
+    // public entry fun upgrade_from_v2_to_v3(account: signer, total_stc_amount: u128) {
+    //     CoreAddresses::assert_genesis_address(&account);
+    //
+    //     let withdraw_cap = STC::upgrade_from_v1_to_v2(&account, total_stc_amount);
+    //
+    //     let mint_keys = Collection::borrow_collection<LinearTimeMintKey<STC>>(
+    //         CoreAddresses::ASSOCIATION_ROOT_ADDRESS()
+    //     );
+    //     let mint_key = Collection::borrow(&mint_keys, 0);
+    //     let (total, minted, start_time, period) = Token::read_linear_time_key(mint_key);
+    //     Collection::return_collection(mint_keys);
+    //
+    //     let now = Timestamp::now_seconds();
+    //     let linear_withdraw_cap = Treasury::issue_linear_withdraw_capability(
+    //         &mut withdraw_cap,
+    //         total - minted,
+    //         period - (now - start_time)
+    //     );
+    //     // Lock the TreasuryWithdrawCapability to Dao
+    //     TreasuryWithdrawDaoProposal::plugin(&account, withdraw_cap);
+    //     // Give a LinearWithdrawCapability Offer to association, association need to take the offer, and destroy old LinearTimeMintKey.
+    //     Offer::create(&account, linear_withdraw_cap, CoreAddresses::ASSOCIATION_ROOT_ADDRESS(), 0);
+    // }
 
     /// association account should call this script after upgrade from v2 to v3.
     public entry fun take_linear_withdraw_capability(signer: signer) {
