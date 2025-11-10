@@ -1,8 +1,8 @@
 processed 5 tasks
 
-task 3 'run'. lines 7-16:
+task 3 'run'. lines 7-17:
 {
-  "gas_used": 34552,
+  "gas_used": 31147,
   "status": {
     "MoveAbort": {
       "location": {
@@ -16,19 +16,18 @@ task 3 'run'. lines 7-16:
   }
 }
 
-task 4 'run'. lines 20-30:
+task 4 'run'. lines 20-34:
 {
-  "gas_used": 80588,
+  "gas_used": 32611,
   "status": {
-    "ExecutionFailure": {
+    "MoveAbort": {
       "location": {
         "Module": {
           "address": "0x00000000000000000000000000000001",
           "name": "Token"
         }
       },
-      "function": 22,
-      "code_offset": 44
+      "abort_code": "28161"
     }
   }
 }

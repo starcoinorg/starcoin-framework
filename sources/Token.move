@@ -91,6 +91,7 @@ module Token {
     const ESPLIT: u64 = 107;
     const EPERIOD_NEW: u64 = 108;
     const EMINT_AMOUNT_EQUAL_ZERO: u64 = 109;
+    const EREGISTER_TOKEN_INFO_EXISTS: u64 = 110;
 
     /// 2^128 < 10**39
     const MAX_PRECISION: u8 = 38;
@@ -106,6 +107,8 @@ module Token {
         assert!(Signer::address_of(account) == token_address, Errors::requires_address(ETOKEN_REGISTER));
         move_to(account, MintCapability<TokenType> {});
         move_to(account, BurnCapability<TokenType> {});
+
+        assert!(!exists<TokenInfo<TokenType>>(token_address), Errors::invalid_state(EREGISTER_TOKEN_INFO_EXISTS));
         move_to(
             account,
             TokenInfo<TokenType> {

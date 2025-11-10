@@ -6,25 +6,27 @@
 
 //# run --signers alice
 script {
-use StarcoinFramework::STC;
+    use StarcoinFramework::TreasuryWithdrawDaoProposal;
+    use StarcoinFramework::STC;
 
-fun main(signer: signer) {
-    STC::initialize(&signer, 500, 5000, 10, 600);
+    fun main(alice: signer) {
+        let cap = STC::initialize_v2(&alice, 500);
+        TreasuryWithdrawDaoProposal::plugin(&alice, cap);
+    }
 }
-}
-
-// check: ABORTED
-
+// check: ABORTED, Token, 25858
 
 
 //# run --signers Genesis
 
 script {
-use StarcoinFramework::STC;
+    use StarcoinFramework::TreasuryWithdrawDaoProposal;
+    use StarcoinFramework::STC;
 
-fun main(signer: signer) {
-    STC::initialize(&signer, 500, 5000, 10, 600);
-}
-}
+    fun main(genesis: signer) {
+        let cap = STC::initialize_v2(&genesis, 500);
 
-// check: RESOURCE_ALREADY_EXISTS
+        TreasuryWithdrawDaoProposal::plugin(&genesis, cap);
+    }
+}
+// check: ABORTED, Token, 28161

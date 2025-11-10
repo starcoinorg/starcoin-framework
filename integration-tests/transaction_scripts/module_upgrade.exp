@@ -14,30 +14,82 @@ task 6 'run'. lines 41-52:
 
 task 7 'run'. lines 54-64:
 {
-  "gas_used": 44543,
-  "status": "Executed"
+  "gas_used": 48546,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "UpgradeModuleDaoProposal"
+        }
+      },
+      "abort_code": "103179"
+    }
+  }
 }
 
 task 8 'run'. lines 67-86:
 {
-  "gas_used": 158774,
-  "status": "Executed"
+  "gas_used": 30337,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "UpgradeModuleDaoProposal"
+        }
+      },
+      "abort_code": "103179"
+    }
+  }
 }
 
 task 10 'run'. lines 92-109:
 {
-  "gas_used": 118835,
-  "status": "Executed"
+  "gas_used": 54536,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Dao"
+        }
+      },
+      "function": 17,
+      "code_offset": 1
+    }
+  }
 }
 
 task 12 'run'. lines 113-126:
 {
-  "gas_used": 32929,
-  "status": "Executed"
+  "gas_used": 6590,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Dao"
+        }
+      },
+      "function": 17,
+      "code_offset": 1
+    }
+  }
 }
 
 task 14 'run'. lines 131-140:
 {
-  "gas_used": 77775,
-  "status": "Executed"
+  "gas_used": 27993,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "UpgradeModuleDaoProposal"
+        }
+      },
+      "abort_code": "103179"
+    }
+  }
 }
