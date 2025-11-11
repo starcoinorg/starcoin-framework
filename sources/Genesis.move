@@ -1,6 +1,11 @@
 address StarcoinFramework {
 /// The module for init Genesis
 module Genesis {
+    use StarcoinFramework::RewardConfig;
+    use StarcoinFramework::OnChainConfigDao;
+    use StarcoinFramework::UpgradeModuleDaoProposal;
+    use StarcoinFramework::ModifyDaoConfigProposal;
+    use StarcoinFramework::Dao;
     use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Account;
     use StarcoinFramework::Signer;
@@ -148,6 +153,13 @@ module Genesis {
         // stc should be initialized after genesis_account's module upgrade strategy set.
         {
             STC::initialize(&genesis_account, voting_delay, voting_period, voting_quorum_rate, min_action_delay);
+            Self::do_initialize_starcoin_dao(
+                &genesis_account,
+                voting_delay,
+                voting_period,
+                voting_quorum_rate,
+                min_action_delay
+            );
             Account::do_accept_token<STC>(&genesis_account);
             DummyToken::initialize(&genesis_account);
             Account::do_accept_token<STC>(&association);
@@ -390,6 +402,13 @@ module Genesis {
             voting_quorum_rate,
             min_action_delay
         );
+        Self::do_initialize_starcoin_dao(
+            &genesis_account,
+            voting_delay,
+            voting_period,
+            voting_quorum_rate,
+            min_action_delay
+        );
         Account::do_accept_token<STC>(&genesis_account);
         Account::do_accept_token<STC>(&association);
 
@@ -441,6 +460,34 @@ module Genesis {
         Timestamp::set_time_has_started(&genesis_account);
         Account::release_genesis_signer(genesis_account);
         Account::release_genesis_signer(association);
+    }
+
+    fun do_initialize_starcoin_dao(
+        genesis_account: &signer,
+        voting_delay: u64,
+        voting_period: u64,
+        voting_quorum_rate: u8,
+        min_action_delay: u64,
+    ) {
+        Dao::plugin<STC>(
+            genesis_account,
+            voting_delay,
+            voting_period,
+            voting_quorum_rate,
+            min_action_delay,
+        );
+        ModifyDaoConfigProposal::plugin<STC>(genesis_account);
+        let upgrade_plan_cap = PackageTxnManager::extract_submit_upgrade_plan_cap(genesis_account);
+        UpgradeModuleDaoProposal::plugin<STC>(
+            genesis_account,
+            upgrade_plan_cap,
+        );
+        // the following configurations are gov-ed by Dao.
+        OnChainConfigDao::plugin<STC, TransactionPublishOption::TransactionPublishOption>(genesis_account);
+        OnChainConfigDao::plugin<STC, VMConfig::VMConfig>(genesis_account);
+        OnChainConfigDao::plugin<STC, ConsensusConfig::ConsensusConfig>(genesis_account);
+        OnChainConfigDao::plugin<STC, RewardConfig::RewardConfig>(genesis_account);
+        OnChainConfigDao::plugin<STC, TransactionTimeoutConfig::TransactionTimeoutConfig>(genesis_account);
     }
 
     /// Init the genesis for unit tests

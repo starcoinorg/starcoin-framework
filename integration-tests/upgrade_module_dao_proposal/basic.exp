@@ -26,7 +26,7 @@ task 8 'run'. lines 70-80:
 
 task 9 'run'. lines 82-92:
 {
-  "gas_used": 42480,
+  "gas_used": 60369,
   "status": {
     "MoveAbort": {
       "location": {
@@ -42,13 +42,23 @@ task 9 'run'. lines 82-92:
 
 task 10 'run'. lines 95-108:
 {
-  "gas_used": 44543,
-  "status": "Executed"
+  "gas_used": 48546,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "UpgradeModuleDaoProposal"
+        }
+      },
+      "abort_code": "103179"
+    }
+  }
 }
 
 task 11 'run'. lines 110-129:
 {
-  "gas_used": 21735,
+  "gas_used": 39624,
   "status": {
     "MoveAbort": {
       "location": {
@@ -64,24 +74,67 @@ task 11 'run'. lines 110-129:
 
 task 12 'run'. lines 131-150:
 {
-  "gas_used": 158774,
-  "status": "Executed"
+  "gas_used": 30337,
+  "status": {
+    "MoveAbort": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "UpgradeModuleDaoProposal"
+        }
+      },
+      "abort_code": "103179"
+    }
+  }
 }
 
 task 14 'run'. lines 155-171:
 {
-  "gas_used": 146311,
-  "status": "Executed"
+  "gas_used": 3645,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Dao"
+        }
+      },
+      "function": 17,
+      "code_offset": 1
+    }
+  }
 }
 
 task 16 'run'. lines 175-189:
 {
-  "gas_used": 62325,
-  "status": "Executed"
+  "gas_used": 3645,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Dao"
+        }
+      },
+      "function": 17,
+      "code_offset": 1
+    }
+  }
 }
 
 task 18 'run'. lines 193-206:
 {
-  "gas_used": 97672,
-  "status": "Executed"
+  "gas_used": 3709,
+  "status": {
+    "ExecutionFailure": {
+      "location": {
+        "Module": {
+          "address": "0x00000000000000000000000000000001",
+          "name": "Dao"
+        }
+      },
+      "function": 17,
+      "code_offset": 1
+    }
+  }
 }
