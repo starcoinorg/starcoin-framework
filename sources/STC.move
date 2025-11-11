@@ -1,6 +1,7 @@
 /// STC is the token of Starcoin blockchain.
 /// It uses apis defined in the `Token` module.
 module StarcoinFramework::STC {
+    use StarcoinFramework::Errors;
     use StarcoinFramework::Token::{Self, Token};
     use StarcoinFramework::Treasury;
 
@@ -10,6 +11,8 @@ module StarcoinFramework::STC {
         pragma verify = false;
         pragma aborts_if_is_strict = true;
     }
+
+    const EDEPRECATED_FUNCTION: u64 = 1;
 
     /// STC token marker.
     struct STC has copy, drop, store { }
@@ -31,14 +34,28 @@ module StarcoinFramework::STC {
     }
 
     /// STC initialization.
+    public fun initialize(
+        _account: &signer,
+        _voting_delay: u64,
+        _voting_period: u64,
+        _voting_quorum_rate: u8,
+        _min_action_delay: u64,
+    ) {
+        abort Errors::deprecated(EDEPRECATED_FUNCTION)
+    }
+
+    /// STC initialization.
     public fun initialize_v2(
         account: &signer,
         total_amount: u128,
+        _voting_delay: u64,
+        _voting_period: u64,
+        _voting_quorum_rate: u8,
+        _min_action_delay: u64,
     ): Treasury::WithdrawCapability<STC> {
         Token::register_token<STC>(account, PRECISION);
 
         // Mint all stc, and destroy mint capability
-
         let total_stc = Token::mint<STC>(account, total_amount);
         let withdraw_cap = Treasury::initialize(account, total_stc);
         let mint_cap = Token::remove_mint_capability<STC>(account);

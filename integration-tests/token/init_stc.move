@@ -10,7 +10,7 @@ script {
     use StarcoinFramework::STC;
 
     fun main(alice: signer) {
-        let cap = STC::initialize_v2(&alice, 500);
+        let cap = STC::initialize_v2(&alice, 500, 0, 0, 0, 0);
         TreasuryWithdrawDaoProposal::plugin(&alice, cap);
     }
 }
@@ -24,7 +24,7 @@ script {
     use StarcoinFramework::STC;
 
     fun main(genesis: signer) {
-        let cap = STC::initialize_v2(&genesis, 500);
+        let cap = STC::initialize_v2(&genesis, 500, 0, 0, 0, 0);
 
         TreasuryWithdrawDaoProposal::plugin(&genesis, cap);
     }

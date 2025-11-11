@@ -300,6 +300,10 @@ module StarcoinFramework::Genesis {
         let withdraw_cap = STC::initialize_v2(
             &genesis_account,
             total_stc_amount,
+            voting_delay,
+            voting_period,
+            voting_quorum_rate,
+            min_action_delay
         );
 
         Self::do_initialize_stc_dao(
