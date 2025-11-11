@@ -25,7 +25,7 @@ module StarcoinFramework::STC {
         cap: Token::BurnCapability<STC>,
     }
 
-    spec initialize {
+    spec initialize_v2 {
         include Token::RegisterTokenAbortsIf<STC> { precision: PRECISION };
     }
 
