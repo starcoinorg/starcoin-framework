@@ -1,6 +1,6 @@
-address StarcoinFramework {
 /// The module for init Genesis
-module Genesis {
+module StarcoinFramework::Genesis {
+    use StarcoinFramework::Errors;
     use StarcoinFramework::Account;
     use StarcoinFramework::Block;
     use StarcoinFramework::BlockReward;
@@ -38,6 +38,58 @@ module Genesis {
         pragma verify = false; // break after enabling v2 compilation scheme
         pragma aborts_if_is_partial = false;
         pragma aborts_if_is_strict = true;
+    }
+
+    const ERR_DEPRECATED: u64 = 1;
+
+    // Deprecated
+    public entry fun initialize(
+        _stdlib_version: u64,
+        // block reward config
+        _reward_delay: u64,
+        _pre_mine_stc_amount: u128,
+        _time_mint_stc_amount: u128,
+        _time_mint_stc_period: u64,
+        _parent_hash: vector<u8>,
+        _association_auth_key: vector<u8>,
+        _genesis_auth_key: vector<u8>,
+        _chain_id: u8,
+        _genesis_timestamp: u64,
+        _uncle_rate_target: u64,
+        _epoch_block_count: u64,
+        _base_block_time_target: u64,
+        _base_block_difficulty_window: u64,
+        _base_reward_per_block: u128,
+        _base_reward_per_uncle_percent: u64,
+        _min_block_time_target: u64,
+        _max_block_time_target: u64,
+        _base_max_uncles_per_block: u64,
+        _base_block_gas_limit: u64,
+        _strategy: u8,
+        _script_allowed: bool,
+        _module_publishing_allowed: bool,
+        _instruction_schedule: vector<u8>,
+        _native_schedule: vector<u8>,
+        _global_memory_per_byte_cost: u64,
+        _global_memory_per_byte_write_cost: u64,
+        _min_transaction_gas_units: u64,
+        _large_transaction_cutoff: u64,
+        _instrinsic_gas_per_byte: u64,
+        _maximum_number_of_gas_units: u64,
+        _min_price_per_gas_unit: u64,
+        _max_price_per_gas_unit: u64,
+        _max_transaction_size_in_bytes: u64,
+        _gas_unit_scaling_factor: u64,
+        _default_account_size: u64,
+        // dao config
+        _voting_delay: u64,
+        _voting_period: u64,
+        _voting_quorum_rate: u8,
+        _min_action_delay: u64,
+        // transaction timeout config
+        _transaction_timeout: u64,
+    ) {
+        abort Errors::invalid_state(ERR_DEPRECATED)
     }
 
     public entry fun initialize_v2(
@@ -441,5 +493,4 @@ module Genesis {
             transaction_timeout,
         );
     }
-}
 }
