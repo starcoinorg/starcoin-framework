@@ -15,7 +15,7 @@ module StarcoinFramework::STC {
     const EDEPRECATED_FUNCTION: u64 = 1;
 
     /// STC token marker.
-    struct STC has copy, drop, store { }
+    struct STC has copy, drop, store {}
 
     /// precision of STC token.
     const PRECISION: u8 = 9;
@@ -26,7 +26,7 @@ module StarcoinFramework::STC {
     }
 
     spec initialize {
-        include Token::RegisterTokenAbortsIf<STC>{precision: PRECISION};
+        include Token::RegisterTokenAbortsIf<STC> { precision: PRECISION };
     }
 
     spec upgrade_from_v1_to_v2 {
@@ -67,7 +67,7 @@ module StarcoinFramework::STC {
     }
 
     spec initialize_v2 {
-        include Token::RegisterTokenAbortsIf<STC>{precision: PRECISION};
+        include Token::RegisterTokenAbortsIf<STC> { precision: PRECISION };
     }
 
     /// Returns true if `TokenType` is `STC::STC`
@@ -75,8 +75,7 @@ module StarcoinFramework::STC {
         Token::is_same_token<STC, TokenType>()
     }
 
-    spec is_stc {
-    }
+    spec is_stc {}
 
     /// Burn STC tokens.
     /// It can be called by anyone.
@@ -95,11 +94,14 @@ module StarcoinFramework::STC {
         aborts_if !exists<SharedBurnCapability>(Token::SPEC_TOKEN_TEST_ADDRESS());
     }
 
+    public fun upgrade_from_v1_to_v2(account: &signer, total_amount: u128): Treasury::WithdrawCapability<STC> {
+        abort Errors::deprecated(EDEPRECATED_FUNCTION)
+    }
+
     /// Return STC token address.
     public fun token_address(): address {
         Token::token_address<STC>()
     }
 
-    spec token_address {
-    }
+    spec token_address {}
 }
