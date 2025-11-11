@@ -94,7 +94,7 @@ module StarcoinFramework::STC {
         aborts_if !exists<SharedBurnCapability>(Token::SPEC_TOKEN_TEST_ADDRESS());
     }
 
-    public fun upgrade_from_v1_to_v2(account: &signer, total_amount: u128): Treasury::WithdrawCapability<STC> {
+    public fun upgrade_from_v1_to_v2(_account: &signer, _total_amount: u128): Treasury::WithdrawCapability<STC> {
         abort Errors::deprecated(EDEPRECATED_FUNCTION)
     }
 
