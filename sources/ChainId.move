@@ -1,6 +1,5 @@
-address StarcoinFramework {
 /// The module provides chain id information.
-module ChainId {
+module StarcoinFramework::ChainId {
     use StarcoinFramework::CoreAddresses;
     use StarcoinFramework::Timestamp;
     use StarcoinFramework::Signer;
@@ -45,20 +44,49 @@ module ChainId {
     public fun is_dev(): bool acquires ChainId {
         get() == DEV_CHAIN_ID
     }
+
     public fun is_test(): bool acquires ChainId {
         get() == TEST_CHAIN_ID
     }
+
     public fun is_halley(): bool acquires ChainId {
         get() == HALLEY_CHAIN_ID
     }
+
     public fun is_proxima(): bool acquires ChainId {
         get() == PROXIMA_CHAIN_ID
     }
+
     public fun is_barnard(): bool acquires ChainId {
         get() == BARNARD_CHAIN_ID
     }
+
     public fun is_main(): bool acquires ChainId {
         get() == MAIN_CHAIN_ID
+    }
+
+    public fun main(): u8 {
+        MAIN_CHAIN_ID
+    }
+
+    public fun barnard(): u8 {
+        BARNARD_CHAIN_ID
+    }
+
+    public fun proxima(): u8 {
+        PROXIMA_CHAIN_ID
+    }
+
+    public fun halley(): u8 {
+        HALLEY_CHAIN_ID
+    }
+
+    public fun dev(): u8 {
+        DEV_CHAIN_ID
+    }
+
+    public fun test(): u8 {
+        TEST_CHAIN_ID
     }
 
     spec is_dev {
@@ -90,5 +118,4 @@ module ChainId {
         aborts_if !exists<ChainId>(CoreAddresses::SPEC_GENESIS_ADDRESS());
         ensures exists<ChainId>(CoreAddresses::SPEC_GENESIS_ADDRESS());
     }
-}
 }
