@@ -285,4 +285,3 @@ module StarcoinFramework::SimpleMap {
         assert!(borrow(&map, &1) == &4, 9);
     }
 }
-}
