@@ -1,6 +1,8 @@
 address StarcoinFramework {
 /// Token implementation of Starcoin.
 module Token {
+    use StarcoinFramework::BCS;
+    use StarcoinFramework::Vector;
     use StarcoinFramework::Event;
     use StarcoinFramework::Signer;
     use StarcoinFramework::Errors;
@@ -30,7 +32,7 @@ module Token {
     }
 
     /// A minting capability allows tokens of type `TokenType` to be minted
-    struct MintCapability<phantom TokenType> has key, store { }
+    struct MintCapability<phantom TokenType> has key, store {}
 
     /// A fixed time mint key which can mint token until global time > end_time
     struct FixedTimeMintKey<phantom TokenType> has key, store { total: u128, end_time: u64 }
@@ -39,7 +41,7 @@ module Token {
     struct LinearTimeMintKey<phantom TokenType> has key, store { total: u128, minted: u128, start_time: u64, period: u64 }
 
     /// A burn capability allows tokens of type `TokenType` to be burned.
-    struct BurnCapability<phantom TokenType> has key, store { }
+    struct BurnCapability<phantom TokenType> has key, store {}
 
 
     /// Event emitted when token minted.
@@ -162,11 +164,10 @@ module Token {
 
     /// Destroy the given mint capability.
     public fun destroy_mint_capability<TokenType: store>(cap: MintCapability<TokenType>) {
-        let MintCapability<TokenType> { } = cap;
+        let MintCapability<TokenType> {} = cap;
     }
 
-    spec destroy_mint_capability {
-    }
+    spec destroy_mint_capability {}
 
     /// remove the token burn capability from `signer`.
     public fun remove_burn_capability<TokenType: store>(signer: &signer): BurnCapability<TokenType>
@@ -191,11 +192,10 @@ module Token {
 
     /// Destroy the given burn capability.
     public fun destroy_burn_capability<TokenType: store>(cap: BurnCapability<TokenType>) {
-        let BurnCapability<TokenType> { } = cap;
+        let BurnCapability<TokenType> {} = cap;
     }
 
-    spec destroy_burn_capability {
-    }
+    spec destroy_burn_capability {}
 
     /// Return `amount` tokens.
     /// Fails if the sender does not have a published MintCapability.
@@ -226,7 +226,7 @@ module Token {
     spec mint_with_capability {
         aborts_if spec_abstract_total_value<TokenType>() + amount > MAX_U128;
         ensures spec_abstract_total_value<TokenType>() ==
-                old(global<TokenInfo<TokenType>>(SPEC_TOKEN_TEST_ADDRESS()).total_value) + amount;
+            old(global<TokenInfo<TokenType>>(SPEC_TOKEN_TEST_ADDRESS()).total_value) + amount;
     }
 
     fun do_mint<TokenType: store>(amount: u128): Token<TokenType> acquires TokenInfo {
@@ -251,27 +251,25 @@ module Token {
 
     /// Deprecated since @v3
     /// Issue a `FixedTimeMintKey` with given `MintCapability`.
-    public fun issue_fixed_mint_key<TokenType: store>( _capability: &MintCapability<TokenType>,
-                                     _amount: u128, _period: u64): FixedTimeMintKey<TokenType>{
+    public fun issue_fixed_mint_key<TokenType: store>(_capability: &MintCapability<TokenType>,
+                                                      _amount: u128, _period: u64): FixedTimeMintKey<TokenType> {
         abort Errors::deprecated(EDEPRECATED_FUNCTION)
     }
 
-    spec issue_fixed_mint_key {
-    }
+    spec issue_fixed_mint_key {}
 
     /// Deprecated since @v3
     /// Issue a `LinearTimeMintKey` with given `MintCapability`.
-    public fun issue_linear_mint_key<TokenType: store>( _capability: &MintCapability<TokenType>,
-                                                _amount: u128, _period: u64): LinearTimeMintKey<TokenType>{
+    public fun issue_linear_mint_key<TokenType: store>(_capability: &MintCapability<TokenType>,
+                                                       _amount: u128, _period: u64): LinearTimeMintKey<TokenType> {
         abort Errors::deprecated(EDEPRECATED_FUNCTION)
     }
 
-    spec issue_linear_mint_key {
-    }
+    spec issue_linear_mint_key {}
 
     /// Destroy `LinearTimeMintKey`, for deprecated
     public fun destroy_linear_time_key<TokenType: store>(key: LinearTimeMintKey<TokenType>): (u128, u128, u64, u64) {
-        let LinearTimeMintKey<TokenType> { total, minted, start_time, period} = key;
+        let LinearTimeMintKey<TokenType> { total, minted, start_time, period } = key;
         (total, minted, start_time, period)
     }
 
@@ -322,7 +320,7 @@ module Token {
     spec burn_with_capability {
         aborts_if spec_abstract_total_value<TokenType>() - tokens.value < 0;
         ensures spec_abstract_total_value<TokenType>() ==
-                old(global<TokenInfo<TokenType>>(SPEC_TOKEN_TEST_ADDRESS()).total_value) - tokens.value;
+            old(global<TokenInfo<TokenType>>(SPEC_TOKEN_TEST_ADDRESS()).total_value) - tokens.value;
     }
 
     /// Create a new Token::Token<TokenType> with a value of 0
@@ -330,8 +328,7 @@ module Token {
         Token<TokenType> { value: 0 }
     }
 
-    spec zero {
-    }
+    spec zero {}
 
 
     /// Public accessor for the value of a token
@@ -463,6 +460,18 @@ module Token {
         addr
     }
 
+    /// Return canonicalize string from token code
+    /// TODO(BobOng): to convert to string
+    public fun canonicalize(code: &TokenCode): vector<u8> {
+        let ret = Vector::empty<u8>();
+        Vector::append(&mut ret, BCS::to_bytes(&code.addr));
+        Vector::append(&mut ret, b"::");
+        Vector::append(&mut ret, BCS::to_bytes(&code.module_name));
+        Vector::append(&mut ret, b"::");
+        Vector::append(&mut ret, BCS::to_bytes(&code.name));
+        ret
+    }
+
     // The specification of this function is abstracted to avoid the complexity to
     // return a real address to caller
     spec token_address {
@@ -471,7 +480,7 @@ module Token {
         ensures [abstract] exists<TokenInfo<TokenType>>(result);
         ensures [abstract] result == SPEC_TOKEN_TEST_ADDRESS();
         ensures [abstract] global<TokenInfo<TokenType>>(result).total_value == 100000000u128;
-}
+    }
 
     /// Return the token code for the registered token.
     public fun token_code<TokenType: store>(): TokenCode {
@@ -523,7 +532,5 @@ module Token {
     spec fun spec_abstract_total_value<TokenType>(): u128 {
         global<TokenInfo<TokenType>>(SPEC_TOKEN_TEST_ADDRESS()).total_value
     }
-
-
 }
 }
