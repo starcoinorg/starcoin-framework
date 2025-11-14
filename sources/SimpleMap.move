@@ -70,6 +70,17 @@ module StarcoinFramework::SimpleMap {
         pragma intrinsic = true;
     }
 
+    public fun borrow_index<Key: store, Value: store>(
+        map: &SimpleMap<Key, Value>,
+        i: u64,
+    ): &Value {
+        let e = Vector::borrow<Element<Key, Value>>(&map.data, i);
+        &e.value
+    }
+
+    spec borrow_index {
+        pragma intrinsic = true;
+    }
 
     public fun contains_key<Key: store, Value: store>(
         map: &SimpleMap<Key, Value>,
