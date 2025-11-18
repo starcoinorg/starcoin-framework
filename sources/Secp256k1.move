@@ -135,4 +135,12 @@ module StarcoinFramework::Secp256k1 {
         );
         assert!(Option::is_none(&pk), 1);
     }
+
+    #[test]
+    fun test_decompress_pubkey() {
+        let validator_pub_key = x"029bef8d556d80e43ae7e0becb3a7e6838b95defe45896ed6075bb9035d06c9964";
+        let expected_address = x"b14d3c4f5fbfbcfb98af2d330000d49c95b93aa7";
+        let output_address = Self::decompress_pubkey(validator_pub_key);
+        assert!(output_address == expected_address, 1);
+    }
 }
