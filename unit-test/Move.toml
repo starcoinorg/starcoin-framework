@@ -1,6 +1,6 @@
 [package]
-name = "UnitTest"
+name = "unit-test"
 version = "0.1.0"
 
 [addresses]
-Std="0x1"
+std="0x1"
