@@ -88,7 +88,7 @@ module StarcoinFramework::Secp256k1 {
     ///
     /// If the compressed public key is valid, return the 65-bytes uncompressed public key,
     /// otherwise throw error. May abort with `EInvalidPubKey`.
-    public native fun decompress_pubkey(pubkey: &vector<u8>): vector<u8>;
+    public native fun decompress_pubkey(pubkey: vector<u8>): vector<u8>;
 
     //
     // Tests
