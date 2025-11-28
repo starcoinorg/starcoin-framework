@@ -80,6 +80,7 @@ module StarcoinFramework::Secp256k1 {
         signature: vector<u8>
     ): (vector<u8>, bool);
 
+
     spec ecdsa_recover_internal {
         pragma opaque; // Native
     }
@@ -89,6 +90,22 @@ module StarcoinFramework::Secp256k1 {
     /// If the compressed public key is valid, return the 65-bytes uncompressed public key,
     /// otherwise throw error. May abort with `EInvalidPubKey`.
     public native fun decompress_pubkey(pubkey: vector<u8>): vector<u8>;
+
+
+    /// @param private_key: A 32-bytes private key that is used to sign the message.
+    /// @param msg: The message to sign, this is raw message without hashing.
+    /// @param hash: The hash function used to hash the message when signing.
+    /// @param recoverable: A boolean flag to indicate if the produced signature should be recoverable.
+    ///
+    /// Return the signature in form (r, s) that is signed using Secp256k1.
+    /// If `recoverable` is true, the signature will be in form (r, s, v) where v is the recovery id.
+    ///
+    public native fun secp256k1_sign(
+        private_key: &vector<u8>,
+        msg: &vector<u8>,
+        hash: u8,
+        recoverable: bool,
+    ): vector<u8>;
 
     //
     // Tests
